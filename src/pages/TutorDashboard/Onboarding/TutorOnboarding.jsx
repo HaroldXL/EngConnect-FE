@@ -146,6 +146,7 @@ const TutorOnboarding = () => {
           headline: formData.headline.trim(),
           bio: formData.bio.trim(),
           monthExperience: Number(formData.monthExperience),
+          status: "Active",
         }),
         authApi.updateUser(currentUser.userId, {
           firstName: formData.firstName.trim(),

@@ -1215,6 +1215,9 @@
         "priceRequired": "Vui lòng nhập giá hợp lệ",
         "currencyRequired": "Vui lòng chọn loại tiền tệ",
         "sessionsRequired": "Vui lòng nhập số buổi học",
+        "numsSessionRequired": "Vui lòng nhập số buổi mỗi tuần",
+        "estimatedTimeRequired": "Vui lòng nhập thời lượng mỗi buổi",
+        "categoryRequired": "Vui lòng chọn ít nhất một danh mục",
         "modulesTitleRequired": "Tất cả module phải có tên",
         "incompleteForm": "Thiếu thông tin",
         "incompleteFormDescription": "Vui lòng điền đầy đủ các trường bắt buộc trước khi tiếp tục"

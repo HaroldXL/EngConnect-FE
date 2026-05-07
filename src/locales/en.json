@@ -1217,6 +1217,9 @@
         "priceRequired": "Please enter a valid price",
         "currencyRequired": "Please select a currency",
         "sessionsRequired": "Number of sessions is required",
+        "numsSessionRequired": "Sessions per week is required",
+        "estimatedTimeRequired": "Time per lesson is required",
+        "categoryRequired": "Please select at least one category",
         "modulesTitleRequired": "All modules must have a title",
         "incompleteForm": "Missing Field",
         "incompleteFormDescription": "Please fill in all required fields before continuing"

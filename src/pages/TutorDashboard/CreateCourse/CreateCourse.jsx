@@ -1602,6 +1602,18 @@ const CreateCourse = () => {
       errors.Level = t("tutorDashboard.createCourse.validation.levelRequired");
     if (!courseData.Price || Number(courseData.Price.replace(/\./g, "")) < 0)
       errors.Price = t("tutorDashboard.createCourse.validation.priceRequired");
+    if (!courseData.NumsSessionInWeek || Number(courseData.NumsSessionInWeek) <= 0)
+      errors.NumsSessionInWeek = t(
+        "tutorDashboard.createCourse.validation.numsSessionRequired",
+      );
+    if (!courseData.EstimatedTimeLesson || Number(courseData.EstimatedTimeLesson) <= 0)
+      errors.EstimatedTimeLesson = t(
+        "tutorDashboard.createCourse.validation.estimatedTimeRequired",
+      );
+    if (courseData.CategoryIds.length === 0)
+      errors.CategoryIds = t(
+        "tutorDashboard.createCourse.validation.categoryRequired",
+      );
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -2590,7 +2602,10 @@ const CreateCourse = () => {
                   onChange={(e) =>
                     handleCourseChange("NumsSessionInWeek", e.target.value)
                   }
+                  isInvalid={!!validationErrors.NumsSessionInWeek}
+                  errorMessage={validationErrors.NumsSessionInWeek}
                   classNames={inputClassNames}
+                  isRequired
                 />
                 <Input
                   label={t("tutorDashboard.createCourse.estimatedTimeLesson")}
@@ -2601,7 +2616,10 @@ const CreateCourse = () => {
                   onChange={(e) =>
                     handleCourseChange("EstimatedTimeLesson", e.target.value)
                   }
+                  isInvalid={!!validationErrors.EstimatedTimeLesson}
+                  errorMessage={validationErrors.EstimatedTimeLesson}
                   classNames={inputClassNames}
+                  isRequired
                   endContent={
                     <span
                       className="text-sm"
@@ -2620,6 +2638,7 @@ const CreateCourse = () => {
                     style={{ color: colors.text.primary }}
                   >
                     {t("tutorDashboard.createCourse.category")}
+                    <span style={{ color: colors.state.error }}> *</span>
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => {
@@ -2660,6 +2679,14 @@ const CreateCourse = () => {
                       );
                     })}
                   </div>
+                  {validationErrors.CategoryIds && (
+                    <p
+                      className="text-xs mt-1 pl-1"
+                      style={{ color: colors.state.error }}
+                    >
+                      {validationErrors.CategoryIds}
+                    </p>
+                  )}
                 </div>
               )}
             </CardBody>
