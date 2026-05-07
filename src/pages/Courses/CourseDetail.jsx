@@ -250,7 +250,7 @@ const CourseDetail = () => {
   const category = course.courseCategories?.[0]?.categoryName;
   const outcomes = course.outcomes
     ? course.outcomes
-        .split(";")
+        .split(/[;\n]+/)
         .map((s) => s.trim())
         .filter(Boolean)
     : [];

@@ -809,7 +809,7 @@ const StudentMyCourseDetail = () => {
   const category = course.courseCategories?.[0]?.categoryName;
   const outcomes = course.outcomes
     ? course.outcomes
-        .split(";")
+        .split(/[;\n]+/)
         .map((s) => s.trim())
         .filter(Boolean)
     : [];
@@ -1581,7 +1581,7 @@ const StudentMyCourseDetail = () => {
                                     const isResOpen = expandedResources[sessId];
                                     const outcomesList = sess.sessionOutcomes
                                       ? sess.sessionOutcomes
-                                          .split(";")
+                                          .split(/[;\n]+/)
                                           .map((o) => o.trim())
                                           .filter(Boolean)
                                       : [];

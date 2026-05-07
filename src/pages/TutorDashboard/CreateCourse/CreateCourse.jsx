@@ -1602,11 +1602,17 @@ const CreateCourse = () => {
       errors.Level = t("tutorDashboard.createCourse.validation.levelRequired");
     if (!courseData.Price || Number(courseData.Price.replace(/\./g, "")) < 0)
       errors.Price = t("tutorDashboard.createCourse.validation.priceRequired");
-    if (!courseData.NumsSessionInWeek || Number(courseData.NumsSessionInWeek) <= 0)
+    if (
+      !courseData.NumsSessionInWeek ||
+      Number(courseData.NumsSessionInWeek) <= 0
+    )
       errors.NumsSessionInWeek = t(
         "tutorDashboard.createCourse.validation.numsSessionRequired",
       );
-    if (!courseData.EstimatedTimeLesson || Number(courseData.EstimatedTimeLesson) <= 0)
+    if (
+      !courseData.EstimatedTimeLesson ||
+      Number(courseData.EstimatedTimeLesson) <= 0
+    )
       errors.EstimatedTimeLesson = t(
         "tutorDashboard.createCourse.validation.estimatedTimeRequired",
       );
@@ -4742,7 +4748,10 @@ const CreateCourse = () => {
                             : historyData.session?.outcomes) && (
                             <p
                               className="text-xs"
-                              style={{ color: colors.text.tertiary }}
+                              style={{
+                                color: colors.text.tertiary,
+                                whiteSpace: "pre-wrap",
+                              }}
                             >
                               {historyType === "module"
                                 ? historyData.module?.outcomes
@@ -4797,6 +4806,7 @@ const CreateCourse = () => {
                                           className="text-xs"
                                           style={{
                                             color: colors.text.tertiary,
+                                            whiteSpace: "pre-wrap",
                                           }}
                                         >
                                           {version.outcomes}
@@ -5105,7 +5115,12 @@ const CreateCourse = () => {
                         >
                           {t("tutorDashboard.createCourse.outcomes")}
                         </p>
-                        <p style={{ color: colors.text.primary }}>
+                        <p
+                          style={{
+                            color: colors.text.primary,
+                            whiteSpace: "pre-wrap",
+                          }}
+                        >
                           {detailData.outcomes}
                         </p>
                       </div>
@@ -5156,7 +5171,10 @@ const CreateCourse = () => {
                                   {session.sessionOutcomes && (
                                     <p
                                       className="text-xs mt-1"
-                                      style={{ color: colors.text.tertiary }}
+                                      style={{
+                                        color: colors.text.tertiary,
+                                        whiteSpace: "pre-wrap",
+                                      }}
                                     >
                                       {t(
                                         "tutorDashboard.createCourse.outcomes",

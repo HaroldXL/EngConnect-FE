@@ -521,7 +521,7 @@ const AdminCourseVerificationDetail = () => {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {course.outcomes
-                              .split(";")
+                              .split(/[;\n]+/)
                               .filter((o) => o.trim())
                               .map((outcome, i) => (
                                 <div
@@ -889,7 +889,7 @@ const AdminCourseVerificationDetail = () => {
                                             ></p>
                                             <div className="flex flex-col gap-1">
                                               {mod.moduleOutcomes
-                                                .split(";")
+                                                .split(/[;\n]+/)
                                                 .filter((o) => o.trim())
                                                 .map((outcome, i) => (
                                                   <div
@@ -1007,7 +1007,7 @@ const AdminCourseVerificationDetail = () => {
                                                           ></p>
                                                           <div className="flex flex-col gap-0.5">
                                                             {sess.sessionOutcomes
-                                                              .split(";")
+                                                              .split(/[;\n]+/)
                                                               .filter((o) =>
                                                                 o.trim(),
                                                               )

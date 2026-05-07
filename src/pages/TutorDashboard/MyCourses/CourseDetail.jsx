@@ -1062,7 +1062,7 @@ const TutorCourseDetail = () => {
                       ).sort((a, b) => a.sessionNumber - b.sessionNumber);
                       const moduleOutcomes = mod.moduleOutcomes
                         ? mod.moduleOutcomes
-                            .split(";")
+                            .split(/[;\n]+/)
                             .map((s) => s.trim())
                             .filter(Boolean)
                         : [];
@@ -1214,7 +1214,7 @@ const TutorCourseDetail = () => {
                                                 ></p>
                                                 <div className="flex flex-col gap-0.5">
                                                   {sess.sessionOutcomes
-                                                    .split(";")
+                                                    .split(/[;\n]+/)
                                                     .filter((o) => o.trim())
                                                     .map((outcome, i) => (
                                                       <div

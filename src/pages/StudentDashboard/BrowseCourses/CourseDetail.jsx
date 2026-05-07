@@ -115,7 +115,7 @@ const StudentCourseDetail = () => {
   const category = course.courseCategories?.[0]?.categoryName;
   const outcomes = course.outcomes
     ? course.outcomes
-        .split(";")
+        .split(/[;\n]+/)
         .map((s) => s.trim())
         .filter(Boolean)
     : [];
@@ -538,7 +538,7 @@ const StudentCourseDetail = () => {
                                               ></p>
                                               <div className="flex flex-col gap-0.5">
                                                 {sess.sessionOutcomes
-                                                  .split(";")
+                                                  .split(/[;\n]+/)
                                                   .filter((o) => o.trim())
                                                   .map((outcome, i) => (
                                                     <div
