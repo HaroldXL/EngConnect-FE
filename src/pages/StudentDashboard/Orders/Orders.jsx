@@ -22,12 +22,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  Tabs,
+  Tab,
   useDisclosure,
 } from "@heroui/react";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
-import { studentApi, coursesApi } from "../../../api";
+import { studentApi, coursesApi, paymentApi } from "../../../api";
 import { selectUser } from "../../../store";
 import {
   Eye,
@@ -38,7 +40,8 @@ import {
   XCircle,
   CaretDown,
   Funnel,
-  CreditCard,
+  ArrowCounterClockwise,
+  Bank,
 } from "@phosphor-icons/react";
 
 const PAGE_SIZE = 10;
@@ -63,11 +66,18 @@ const formatDate = (iso) =>
     minute: "2-digit",
   });
 
-const ORDER_STATUSES = ["All", "Paid", "Pending", "Cancelled"];
+const ORDER_STATUSES = ["All", "Paid", "Pending", "Failed", "Cancelled"];
+
+const REFUND_TYPE_LABEL = {
+  NoTutorLesson: "No-Tutor Lesson",
+  StudentRequest: "Student Request",
+  TutorCancellation: "Tutor Cancellation",
+};
 
 const statusColor = (s) => {
   if (s === "Paid") return "success";
   if (s === "Pending") return "warning";
+  if (s === "Failed") return "danger";
   if (s === "Cancelled") return "danger";
   return "default";
 };
@@ -75,6 +85,7 @@ const statusColor = (s) => {
 const statusIcon = (s) => {
   if (s === "Paid") return <CheckCircle className="w-4 h-4" weight="fill" />;
   if (s === "Pending") return <Clock className="w-4 h-4" weight="fill" />;
+  if (s === "Failed") return <XCircle className="w-4 h-4" weight="fill" />;
   if (s === "Cancelled") return <XCircle className="w-4 h-4" weight="fill" />;
   return null;
 };
@@ -110,6 +121,19 @@ const Orders = () => {
 
   const [courseMap, setCourseMap] = useState({});
 
+  // Refunds tab state
+  const [activeTab, setActiveTab] = useState("orders");
+  const [refunds, setRefunds] = useState([]);
+  const [refundsPage, setRefundsPage] = useState(1);
+  const [refundsTotalPages, setRefundsTotalPages] = useState(1);
+  const [refundsLoading, setRefundsLoading] = useState(false);
+  const [selectedRefund, setSelectedRefund] = useState(null);
+  const {
+    isOpen: isRefundOpen,
+    onOpen: onRefundOpen,
+    onClose: onRefundClose,
+  } = useDisclosure();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selected, setSelected] = useState(null);
 
@@ -135,9 +159,33 @@ const Orders = () => {
     }
   }, [page, statusFilter, user?.studentId]);
 
+  const fetchRefunds = useCallback(async () => {
+    if (!user?.studentId) return;
+    setRefundsLoading(true);
+    try {
+      const res = await paymentApi.getStudentRefunds({
+        StudentId: user.studentId,
+        Status: "Paid",
+        page: refundsPage,
+        "page-size": PAGE_SIZE,
+      });
+      const data = res.data || {};
+      setRefunds(data.items || []);
+      setRefundsTotalPages(data.totalPages || 1);
+    } catch {
+      setRefunds([]);
+    } finally {
+      setRefundsLoading(false);
+    }
+  }, [user?.studentId, refundsPage]);
+
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+  useEffect(() => {
+    if (activeTab === "refunds") fetchRefunds();
+  }, [activeTab, fetchRefunds]);
 
   // Resolve course names
   useEffect(() => {
@@ -263,178 +311,331 @@ const Orders = () => {
         ))}
       </div>
 
-      {/* Filter */}
-      <div className="flex items-center gap-3">
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              variant="flat"
-              startContent={<Funnel className="w-4 h-4" />}
-              endContent={<CaretDown className="w-4 h-4" />}
-              style={{ color: colors.text.primary }}
-            >
-              Status: {statusFilter}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Status filter"
-            selectedKeys={[statusFilter]}
-            selectionMode="single"
-            onAction={(key) => {
-              setStatusFilter(key);
-              setPage(1);
-            }}
-          >
-            {ORDER_STATUSES.map((s) => (
-              <DropdownItem key={s}>{s}</DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-      </div>
-
-      {/* Table */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.15 }}
+      {/* Tabs */}
+      <Tabs
+        selectedKey={activeTab}
+        onSelectionChange={setActiveTab}
+        color="primary"
       >
-        <Card shadow="none" className="border-none" style={tableCardStyle}>
-          <CardBody className="p-0">
-            <Table
-              aria-label="My orders"
-              classNames={tableClassNames}
-              bottomContent={
-                totalPages > 1 && (
-                  <div className="flex w-full justify-center py-4">
-                    <Pagination
-                      isCompact
-                      showControls
-                      showShadow
-                      color="primary"
-                      page={page}
-                      total={totalPages}
-                      onChange={setPage}
-                    />
-                  </div>
-                )
-              }
-            >
-              <TableHeader>
-                <TableColumn>Order #</TableColumn>
-                <TableColumn>Course</TableColumn>
-                <TableColumn>Schedule</TableColumn>
-                <TableColumn>Amount</TableColumn>
-                <TableColumn>Status</TableColumn>
-                <TableColumn>Date</TableColumn>
-                <TableColumn> </TableColumn>
-              </TableHeader>
-              <TableBody
-                isLoading={loading}
-                loadingContent={<Spinner color="primary" />}
-                emptyContent={
-                  !loading && (
-                    <div className="flex flex-col items-center gap-2 py-8">
-                      <Receipt
-                        className="w-10 h-10"
-                        style={{ color: colors.text.tertiary }}
-                      />
-                      <span style={{ color: colors.text.tertiary }}>
-                        No orders yet.
-                      </span>
-                    </div>
-                  )
-                }
-              >
-                {orders.map((order) => {
-                  const meta = parseMeta(order.metaData);
-                  const slots = meta.scheduleSlots || [];
-                  return (
-                    <TableRow key={order.id}>
-                      <TableCell>
-                        <span
-                          className="font-mono text-sm font-semibold"
-                          style={{ color: colors.primary.main }}
-                        >
-                          #{order.orderNo}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: colors.text.primary }}
-                        >
-                          {meta.courseId
-                            ? courseMap[meta.courseId] || "Loading..."
-                            : "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className="text-sm"
-                          style={{ color: colors.text.secondary }}
-                        >
-                          {slots.length
-                            ? slots
-                                .map(
-                                  (s) =>
-                                    `${s.weekday.slice(0, 3)} ${s.startTime.slice(0, 5)}`,
-                                )
-                                .join(", ")
-                            : "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className="font-medium text-sm"
-                          style={{ color: colors.text.primary }}
-                        >
-                          {formatAmount(order.totalAmount, order.currency)}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="sm"
-                          variant="flat"
-                          color={statusColor(order.status)}
-                          startContent={statusIcon(order.status)}
-                        >
-                          {order.status}
-                        </Chip>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className="text-sm"
-                          style={{ color: colors.text.tertiary }}
-                        >
-                          {formatDate(order.createdAt)}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          isIconOnly
-                          size="sm"
-                          variant="light"
-                          onPress={() => {
-                            setSelected(order);
-                            onOpen();
-                          }}
-                        >
-                          <Eye
-                            className="w-4 h-4"
-                            style={{ color: colors.text.secondary }}
-                          />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardBody>
-        </Card>
-      </motion.div>
+        {/* ── Orders Tab ─────────────────────────────────────────── */}
+        <Tab
+          key="orders"
+          title={
+            <div className="flex items-center gap-2">
+              <Receipt className="w-4 h-4" />
+              Orders
+            </div>
+          }
+        >
+          <div className="space-y-4 pt-2">
+            {/* Filter */}
+            <div className="flex items-center gap-3">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    variant="flat"
+                    startContent={<Funnel className="w-4 h-4" />}
+                    endContent={<CaretDown className="w-4 h-4" />}
+                    style={{ color: colors.text.primary }}
+                  >
+                    Status: {statusFilter}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Status filter"
+                  selectedKeys={[statusFilter]}
+                  selectionMode="single"
+                  onAction={(key) => {
+                    setStatusFilter(key);
+                    setPage(1);
+                  }}
+                >
+                  {ORDER_STATUSES.map((s) => (
+                    <DropdownItem key={s}>{s}</DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
 
-      {/* Detail Modal */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Card
+                shadow="none"
+                className="border-none"
+                style={tableCardStyle}
+              >
+                <CardBody className="p-0">
+                  <Table
+                    aria-label="My orders"
+                    classNames={tableClassNames}
+                    bottomContent={
+                      totalPages > 1 && (
+                        <div className="flex w-full justify-center py-4">
+                          <Pagination
+                            isCompact
+                            showControls
+                            showShadow
+                            color="primary"
+                            page={page}
+                            total={totalPages}
+                            onChange={setPage}
+                          />
+                        </div>
+                      )
+                    }
+                  >
+                    <TableHeader>
+                      <TableColumn>Order #</TableColumn>
+                      <TableColumn>Course</TableColumn>
+                      <TableColumn>Schedule</TableColumn>
+                      <TableColumn>Amount</TableColumn>
+                      <TableColumn>Status</TableColumn>
+                      <TableColumn>Date</TableColumn>
+                      <TableColumn> </TableColumn>
+                    </TableHeader>
+                    <TableBody
+                      isLoading={loading}
+                      loadingContent={<Spinner color="primary" />}
+                      emptyContent={
+                        !loading && (
+                          <div className="flex flex-col items-center gap-2 py-8">
+                            <Receipt
+                              className="w-10 h-10"
+                              style={{ color: colors.text.tertiary }}
+                            />
+                            <span style={{ color: colors.text.tertiary }}>
+                              No orders yet.
+                            </span>
+                          </div>
+                        )
+                      }
+                    >
+                      {orders.map((order) => {
+                        const meta = parseMeta(order.metaData);
+                        const slots = meta.scheduleSlots || [];
+                        return (
+                          <TableRow key={order.id}>
+                            <TableCell>
+                              <span
+                                className="font-mono text-sm font-semibold"
+                                style={{ color: colors.primary.main }}
+                              >
+                                #{order.orderNo}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="text-sm font-medium"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {meta.courseId
+                                  ? courseMap[meta.courseId] || "Loading..."
+                                  : "—"}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="text-sm"
+                                style={{ color: colors.text.secondary }}
+                              >
+                                {slots.length
+                                  ? slots
+                                      .map(
+                                        (s) =>
+                                          `${s.weekday.slice(0, 3)} ${s.startTime.slice(0, 5)}`,
+                                      )
+                                      .join(", ")
+                                  : "—"}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="font-medium text-sm"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {formatAmount(
+                                  order.totalAmount,
+                                  order.currency,
+                                )}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                size="sm"
+                                variant="flat"
+                                color={statusColor(order.status)}
+                                startContent={statusIcon(order.status)}
+                              >
+                                {order.status}
+                              </Chip>
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="text-sm"
+                                style={{ color: colors.text.tertiary }}
+                              >
+                                {formatDate(order.createdAt)}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                isIconOnly
+                                size="sm"
+                                variant="light"
+                                onPress={() => {
+                                  setSelected(order);
+                                  onOpen();
+                                }}
+                              >
+                                <Eye
+                                  className="w-4 h-4"
+                                  style={{ color: colors.text.secondary }}
+                                />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </motion.div>
+          </div>
+        </Tab>
+
+        {/* ── Refunds Tab ─────────────────────────────────────────── */}
+        <Tab
+          key="refunds"
+          title={
+            <div className="flex items-center gap-2">
+              <ArrowCounterClockwise className="w-4 h-4" />
+              Refunds
+            </div>
+          }
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15 }}
+            className="pt-2"
+          >
+            <Card shadow="none" className="border-none" style={tableCardStyle}>
+              <CardBody className="p-0">
+                <Table
+                  aria-label="My refunds"
+                  classNames={tableClassNames}
+                  bottomContent={
+                    refundsTotalPages > 1 && (
+                      <div className="flex w-full justify-center py-4">
+                        <Pagination
+                          isCompact
+                          showControls
+                          showShadow
+                          color="primary"
+                          page={refundsPage}
+                          total={refundsTotalPages}
+                          onChange={setRefundsPage}
+                        />
+                      </div>
+                    )
+                  }
+                >
+                  <TableHeader>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Amount</TableColumn>
+                    <TableColumn>Bank</TableColumn>
+                    <TableColumn>Account</TableColumn>
+                    <TableColumn>Paid On</TableColumn>
+                    <TableColumn> </TableColumn>
+                  </TableHeader>
+                  <TableBody
+                    isLoading={refundsLoading}
+                    loadingContent={<Spinner color="primary" />}
+                    emptyContent={
+                      !refundsLoading && (
+                        <div className="flex flex-col items-center gap-2 py-8">
+                          <ArrowCounterClockwise
+                            className="w-10 h-10"
+                            style={{ color: colors.text.tertiary }}
+                          />
+                          <span style={{ color: colors.text.tertiary }}>
+                            No refunds yet.
+                          </span>
+                        </div>
+                      )
+                    }
+                  >
+                    {refunds.map((refund) => (
+                      <TableRow key={refund.id}>
+                        <TableCell>
+                          <Chip size="sm" variant="flat" color="secondary">
+                            {REFUND_TYPE_LABEL[refund.refundType] ||
+                              refund.refundType}
+                          </Chip>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className="font-semibold text-sm"
+                            style={{ color: colors.state.success }}
+                          >
+                            +{formatAmount(refund.totalAmount, refund.currency)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className="text-sm"
+                            style={{ color: colors.text.secondary }}
+                          >
+                            {refund.bankCode || "—"}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className="text-sm font-mono"
+                            style={{ color: colors.text.primary }}
+                          >
+                            {refund.bankAccountNumber || "—"}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className="text-sm"
+                            style={{ color: colors.text.tertiary }}
+                          >
+                            {refund.paidAt ? formatDate(refund.paidAt) : "—"}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            onPress={() => {
+                              setSelectedRefund(refund);
+                              onRefundOpen();
+                            }}
+                          >
+                            <Eye
+                              className="w-4 h-4"
+                              style={{ color: colors.text.secondary }}
+                            />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardBody>
+            </Card>
+          </motion.div>
+        </Tab>
+      </Tabs>
+
+      {/* Order Detail Modal */}
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -510,6 +711,107 @@ const Orders = () => {
                 {selected.status === "Paid" && (
                   <DetailRow label="Paid On">
                     {formatDate(selected.updatedAt)}
+                  </DetailRow>
+                )}
+              </div>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Refund Detail Modal */}
+      <Modal
+        isOpen={isRefundOpen}
+        onClose={onRefundClose}
+        size="md"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          <ModalHeader
+            className="flex items-center gap-2"
+            style={{ color: colors.text.primary }}
+          >
+            <ArrowCounterClockwise
+              className="w-5 h-5"
+              style={{ color: colors.state.success }}
+            />
+            Refund Details
+          </ModalHeader>
+          <ModalBody className="pb-6">
+            {selectedRefund && (
+              <div className="space-y-4">
+                <DetailRow label="Type">
+                  <Chip size="sm" variant="flat" color="secondary">
+                    {REFUND_TYPE_LABEL[selectedRefund.refundType] ||
+                      selectedRefund.refundType}
+                  </Chip>
+                </DetailRow>
+
+                <DetailRow label="Status">
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    color="success"
+                    startContent={
+                      <CheckCircle className="w-4 h-4" weight="fill" />
+                    }
+                  >
+                    {selectedRefund.status}
+                  </Chip>
+                </DetailRow>
+
+                <DetailRow label="Amount">
+                  <span
+                    className="font-semibold text-base"
+                    style={{ color: colors.state.success }}
+                  >
+                    +
+                    {formatAmount(
+                      selectedRefund.totalAmount,
+                      selectedRefund.currency,
+                    )}
+                  </span>
+                </DetailRow>
+
+                <DetailRow label="Bank">
+                  <div className="flex items-center gap-1.5">
+                    <Bank
+                      className="w-4 h-4"
+                      style={{ color: colors.text.secondary }}
+                    />
+                    {selectedRefund.bankCode || "—"}
+                  </div>
+                </DetailRow>
+
+                <DetailRow label="Account Number">
+                  <span className="font-mono">
+                    {selectedRefund.bankAccountNumber || "—"}
+                  </span>
+                </DetailRow>
+
+                <DetailRow label="Account Name">
+                  {selectedRefund.bankAccountName || "—"}
+                </DetailRow>
+
+                {selectedRefund.note && (
+                  <DetailRow label="Note">{selectedRefund.note}</DetailRow>
+                )}
+
+                {selectedRefund.externalTransactionId && (
+                  <DetailRow label="Transaction ID">
+                    <span className="font-mono text-xs break-all">
+                      {selectedRefund.externalTransactionId}
+                    </span>
+                  </DetailRow>
+                )}
+
+                <DetailRow label="Requested On">
+                  {formatDate(selectedRefund.requestedAt)}
+                </DetailRow>
+
+                {selectedRefund.paidAt && (
+                  <DetailRow label="Paid On">
+                    {formatDate(selectedRefund.paidAt)}
                   </DetailRow>
                 )}
               </div>
