@@ -2736,9 +2736,12 @@
         "title": "Reschedule Approval",
         "hint": "Set the lesson status to Reschedule so the tutor can assign a new time slot.",
         "approveBtn": "Approve Reschedule",
+        "rejectBtn": "Reject",
         "alreadyApproved": "Reschedule approved — lesson status updated",
         "approveSuccess": "Lesson status set to Reschedule",
         "approveFailed": "Failed to update lesson status",
+        "rejectSuccess": "Reschedule request rejected",
+        "rejectFailed": "Failed to reject reschedule request",
         "lessonIdNotFound": "Could not find Lesson ID in ticket description"
       },
       "refund": {

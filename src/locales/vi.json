@@ -2733,9 +2733,12 @@
         "title": "Duyệt đổi lịch",
         "hint": "Đặt trạng thái buổi học thành Reschedule để gia sư có thể xếp lịch mới.",
         "approveBtn": "Duyệt đổi lịch",
+        "rejectBtn": "Từ chối",
         "alreadyApproved": "Đã duyệt — trạng thái buổi học đã cập nhật",
         "approveSuccess": "Đã đặt trạng thái buổi học thành Reschedule",
         "approveFailed": "Cập nhật trạng thái buổi học thất bại",
+        "rejectSuccess": "Đã từ chối yêu cầu đổi lịch",
+        "rejectFailed": "Từ chối yêu cầu đổi lịch thất bại",
         "lessonIdNotFound": "Không tìm thấy Lesson ID trong mô tả phiếu"
       },
       "refund": {

@@ -584,6 +584,7 @@ const Schedule = () => {
 
   const canJoinLesson = (lesson) =>
     lesson.meetingStatus === "InProgress" ||
+    (lesson.status === "NoTutor" && lesson.meetingStatus === "Waiting") ||
     (lesson.status !== "Completed" &&
       lesson.status !== "Settled" &&
       lesson.status !== "NoStudent" &&
@@ -1745,18 +1746,44 @@ const Schedule = () => {
                                 </div>
                               </div>
                               {(() => {
-                                const hasPendOffer = rescheduleOffers.some(o => o.lessonId === lesson.id && o.status === "PendingStudentChoice");
-                                const hasPendReq = studentRequests.some(r => r.lessonId === lesson.id && r.status === "Pending");
-                                return (hasPendOffer || hasPendReq) ? (
+                                const hasPendOffer = rescheduleOffers.some(
+                                  (o) =>
+                                    o.lessonId === lesson.id &&
+                                    o.status === "PendingStudentChoice",
+                                );
+                                const hasPendReq = studentRequests.some(
+                                  (r) =>
+                                    r.lessonId === lesson.id &&
+                                    r.status === "Pending",
+                                );
+                                return hasPendOffer || hasPendReq ? (
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {hasPendOffer && (
-                                      <Chip size="sm" className="h-4 text-[10px]" style={{ backgroundColor: `${colors.state.warning}20`, color: colors.state.warning }}>
-                                        {t("tutorDashboard.schedule.reschedule.pendingChip")}
+                                      <Chip
+                                        size="sm"
+                                        className="h-4 text-[10px]"
+                                        style={{
+                                          backgroundColor: `${colors.state.warning}20`,
+                                          color: colors.state.warning,
+                                        }}
+                                      >
+                                        {t(
+                                          "tutorDashboard.schedule.reschedule.pendingChip",
+                                        )}
                                       </Chip>
                                     )}
                                     {hasPendReq && (
-                                      <Chip size="sm" className="h-4 text-[10px]" style={{ backgroundColor: `${colors.primary.main}15`, color: colors.primary.main }}>
-                                        {t("tutorDashboard.schedule.studentRequest.pendingBtn")}
+                                      <Chip
+                                        size="sm"
+                                        className="h-4 text-[10px]"
+                                        style={{
+                                          backgroundColor: `${colors.primary.main}15`,
+                                          color: colors.primary.main,
+                                        }}
+                                      >
+                                        {t(
+                                          "tutorDashboard.schedule.studentRequest.pendingBtn",
+                                        )}
                                       </Chip>
                                     )}
                                   </div>
@@ -1796,7 +1823,14 @@ const Schedule = () => {
                                   >
                                     {lesson.meetingStatus === "InProgress"
                                       ? t("tutorDashboard.schedule.joinBack")
-                                      : t("tutorDashboard.schedule.joinLesson")}
+                                      : lesson.status === "NoTutor" &&
+                                          lesson.meetingStatus === "Waiting"
+                                        ? t(
+                                            "tutorDashboard.schedule.joinLesson",
+                                          )
+                                        : t(
+                                            "tutorDashboard.schedule.joinLesson",
+                                          )}
                                   </Button>
                                 )}
                               </div>
@@ -2008,18 +2042,44 @@ const Schedule = () => {
                                 </div>
                               </div>
                               {(() => {
-                                const hasPendOffer = rescheduleOffers.some(o => o.lessonId === lesson.id && o.status === "PendingStudentChoice");
-                                const hasPendReq = studentRequests.some(r => r.lessonId === lesson.id && r.status === "Pending");
-                                return (hasPendOffer || hasPendReq) ? (
+                                const hasPendOffer = rescheduleOffers.some(
+                                  (o) =>
+                                    o.lessonId === lesson.id &&
+                                    o.status === "PendingStudentChoice",
+                                );
+                                const hasPendReq = studentRequests.some(
+                                  (r) =>
+                                    r.lessonId === lesson.id &&
+                                    r.status === "Pending",
+                                );
+                                return hasPendOffer || hasPendReq ? (
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {hasPendOffer && (
-                                      <Chip size="sm" className="h-4 text-[10px]" style={{ backgroundColor: `${colors.state.warning}20`, color: colors.state.warning }}>
-                                        {t("tutorDashboard.schedule.reschedule.pendingChip")}
+                                      <Chip
+                                        size="sm"
+                                        className="h-4 text-[10px]"
+                                        style={{
+                                          backgroundColor: `${colors.state.warning}20`,
+                                          color: colors.state.warning,
+                                        }}
+                                      >
+                                        {t(
+                                          "tutorDashboard.schedule.reschedule.pendingChip",
+                                        )}
                                       </Chip>
                                     )}
                                     {hasPendReq && (
-                                      <Chip size="sm" className="h-4 text-[10px]" style={{ backgroundColor: `${colors.primary.main}15`, color: colors.primary.main }}>
-                                        {t("tutorDashboard.schedule.studentRequest.pendingBtn")}
+                                      <Chip
+                                        size="sm"
+                                        className="h-4 text-[10px]"
+                                        style={{
+                                          backgroundColor: `${colors.primary.main}15`,
+                                          color: colors.primary.main,
+                                        }}
+                                      >
+                                        {t(
+                                          "tutorDashboard.schedule.studentRequest.pendingBtn",
+                                        )}
                                       </Chip>
                                     )}
                                   </div>
@@ -2055,7 +2115,14 @@ const Schedule = () => {
                                   >
                                     {lesson.meetingStatus === "InProgress"
                                       ? t("tutorDashboard.schedule.joinBack")
-                                      : t("tutorDashboard.schedule.joinLesson")}
+                                      : lesson.status === "NoTutor" &&
+                                          lesson.meetingStatus === "Waiting"
+                                        ? t(
+                                            "tutorDashboard.schedule.joinLesson",
+                                          )
+                                        : t(
+                                            "tutorDashboard.schedule.joinLesson",
+                                          )}
                                   </Button>
                                 )}
                               </div>
@@ -2134,7 +2201,11 @@ const Schedule = () => {
                 </span>
                 <Select
                   label={t("tutorDashboard.schedule.duration")}
-                  selectedKeys={formDurationMinutes != null ? [String(formDurationMinutes)] : []}
+                  selectedKeys={
+                    formDurationMinutes != null
+                      ? [String(formDurationMinutes)]
+                      : []
+                  }
                   classNames={selectClassNames}
                   isLoading={sessionTimesLoading}
                   onSelectionChange={(keys) => {
@@ -2163,7 +2234,9 @@ const Schedule = () => {
                   className="font-medium"
                   style={{ color: colors.text.primary }}
                 >
-                  {formDurationMinutes != null ? computeEndTime(formStartTime, formDurationMinutes) : "—"}
+                  {formDurationMinutes != null
+                    ? computeEndTime(formStartTime, formDurationMinutes)
+                    : "—"}
                 </span>
               </div>
             </div>
@@ -2313,16 +2386,30 @@ const Schedule = () => {
                                 lesson?.sessionTitle ||
                                 `Lesson #${offer.lessonId?.slice(0, 8)}`}
                             </p>
-                            {(lesson?.studentFirstName || lesson?.studentLastName) && (
+                            {(lesson?.studentFirstName ||
+                              lesson?.studentLastName) && (
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <Avatar
                                   src={withCDN(lesson?.studentAvatar)}
-                                  name={[lesson?.studentFirstName, lesson?.studentLastName].filter(Boolean).join(" ")}
+                                  name={[
+                                    lesson?.studentFirstName,
+                                    lesson?.studentLastName,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(" ")}
                                   size="sm"
                                   className="w-4 h-4 text-[8px] flex-shrink-0"
                                 />
-                                <p className="text-xs" style={{ color: colors.text.secondary }}>
-                                  {[lesson?.studentFirstName, lesson?.studentLastName].filter(Boolean).join(" ")}
+                                <p
+                                  className="text-xs"
+                                  style={{ color: colors.text.secondary }}
+                                >
+                                  {[
+                                    lesson?.studentFirstName,
+                                    lesson?.studentLastName,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(" ")}
                                 </p>
                               </div>
                             )}
@@ -2349,7 +2436,9 @@ const Schedule = () => {
                                   {lesson.endTime && (
                                     <>
                                       {" — "}
-                                      {new Date(lesson.endTime).toLocaleTimeString(dateLocale, {
+                                      {new Date(
+                                        lesson.endTime,
+                                      ).toLocaleTimeString(dateLocale, {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                       })}
@@ -2413,11 +2502,24 @@ const Schedule = () => {
                               </div>
                             ))}
                             {offer.tutorNote && (
-                              <div className="px-2.5 py-1.5 rounded-lg" style={{ backgroundColor: colors.background.light }}>
-                                <p className="text-[10px] font-medium mb-0.5" style={{ color: colors.text.tertiary }}>
-                                  {t("tutorDashboard.schedule.reschedule.tutorNote")}
+                              <div
+                                className="px-2.5 py-1.5 rounded-lg"
+                                style={{
+                                  backgroundColor: colors.background.light,
+                                }}
+                              >
+                                <p
+                                  className="text-[10px] font-medium mb-0.5"
+                                  style={{ color: colors.text.tertiary }}
+                                >
+                                  {t(
+                                    "tutorDashboard.schedule.reschedule.tutorNote",
+                                  )}
                                 </p>
-                                <p className="text-xs italic" style={{ color: colors.text.secondary }}>
+                                <p
+                                  className="text-xs italic"
+                                  style={{ color: colors.text.secondary }}
+                                >
                                   "{offer.tutorNote}"
                                 </p>
                               </div>
@@ -2489,49 +2591,51 @@ const Schedule = () => {
                             </p>
                             {lesson && (
                               <div className="flex items-center justify-between gap-2">
-                              <p
-                                className="text-xs flex items-center gap-1"
-                                style={{ color: colors.text.tertiary }}
-                              >
-                                <Clock
-                                  weight="duotone"
-                                  className="w-3.5 h-3.5 flex-shrink-0"
-                                />
-                                {t(
-                                  "tutorDashboard.schedule.studentRequest.originalTime",
-                                )}{" "}
-                                {new Date(lesson.startTime).toLocaleString(
-                                  dateLocale,
-                                  {
-                                    weekday: "short",
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  },
-                                )}
-                                {lesson.endTime && (
-                                  <>
-                                    {" — "}
-                                    {new Date(lesson.endTime).toLocaleTimeString(dateLocale, {
+                                <p
+                                  className="text-xs flex items-center gap-1"
+                                  style={{ color: colors.text.tertiary }}
+                                >
+                                  <Clock
+                                    weight="duotone"
+                                    className="w-3.5 h-3.5 flex-shrink-0"
+                                  />
+                                  {t(
+                                    "tutorDashboard.schedule.studentRequest.originalTime",
+                                  )}{" "}
+                                  {new Date(lesson.startTime).toLocaleString(
+                                    dateLocale,
+                                    {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
                                       hour: "2-digit",
                                       minute: "2-digit",
-                                    })}
-                                  </>
-                                )}
-                              </p>
-                              <Button
-                                size="sm"
-                                variant="light"
-                                className="h-6 px-2 text-xs flex-shrink-0"
-                                startContent={<Eye className="w-3 h-3" />}
-                                onPress={() => {
-                                  setIsRequestsModalOpen(false);
-                                  handleOpenLessonDetail(lesson);
-                                }}
-                              >
-                                {t("studentDashboard.schedule.viewDetail")}
-                              </Button>
+                                    },
+                                  )}
+                                  {lesson.endTime && (
+                                    <>
+                                      {" — "}
+                                      {new Date(
+                                        lesson.endTime,
+                                      ).toLocaleTimeString(dateLocale, {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </>
+                                  )}
+                                </p>
+                                <Button
+                                  size="sm"
+                                  variant="light"
+                                  className="h-6 px-2 text-xs flex-shrink-0"
+                                  startContent={<Eye className="w-3 h-3" />}
+                                  onPress={() => {
+                                    setIsRequestsModalOpen(false);
+                                    handleOpenLessonDetail(lesson);
+                                  }}
+                                >
+                                  {t("studentDashboard.schedule.viewDetail")}
+                                </Button>
                               </div>
                             )}
                             <div
@@ -2573,11 +2677,24 @@ const Schedule = () => {
                               </p>
                             </div>
                             {req.studentNote && (
-                              <div className="px-2.5 py-1.5 rounded-lg" style={{ backgroundColor: colors.background.light }}>
-                                <p className="text-[10px] font-medium mb-0.5" style={{ color: colors.text.tertiary }}>
-                                  {t("tutorDashboard.schedule.studentRequest.studentNote")}
+                              <div
+                                className="px-2.5 py-1.5 rounded-lg"
+                                style={{
+                                  backgroundColor: colors.background.light,
+                                }}
+                              >
+                                <p
+                                  className="text-[10px] font-medium mb-0.5"
+                                  style={{ color: colors.text.tertiary }}
+                                >
+                                  {t(
+                                    "tutorDashboard.schedule.studentRequest.studentNote",
+                                  )}
                                 </p>
-                                <p className="text-xs italic" style={{ color: colors.text.secondary }}>
+                                <p
+                                  className="text-xs italic"
+                                  style={{ color: colors.text.secondary }}
+                                >
                                   "{req.studentNote}"
                                 </p>
                               </div>
@@ -2842,8 +2959,7 @@ const Schedule = () => {
                   </button>
 
                   {enrolledStudents.map((enrollment) => {
-                    const isSelected =
-                      filterStudentId === enrollment.studentId;
+                    const isSelected = filterStudentId === enrollment.studentId;
                     return (
                       <button
                         key={enrollment.studentId}
@@ -2858,8 +2974,7 @@ const Schedule = () => {
                         }}
                         onMouseEnter={(e) => {
                           if (!isSelected)
-                            e.currentTarget.style.backgroundColor =
-                              `${colors.primary.main}10`;
+                            e.currentTarget.style.backgroundColor = `${colors.primary.main}10`;
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected)

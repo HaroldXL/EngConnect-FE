@@ -118,6 +118,7 @@ const SupportTickets = () => {
 
   // Reschedule approval
   const [approvingReschedule, setApprovingReschedule] = useState(false);
+  const [rejectingReschedule, setRejectingReschedule] = useState(false);
   const [rescheduleLesson, setRescheduleLesson] = useState(null);
   const [rescheduleLessonLoading, setRescheduleLessonLoading] = useState(false);
   const [isLessonDetailOpen, setIsLessonDetailOpen] = useState(false);
@@ -322,6 +323,27 @@ const SupportTickets = () => {
     }
   };
 
+  const handleRejectReschedule = async () => {
+    if (!selectedTicket) return;
+    setRejectingReschedule(true);
+    try {
+      await supportApi.updateTicketStatus(selectedTicket.id, "Closed");
+      setSelectedTicket((prev) => ({ ...prev, status: "Closed" }));
+      fetchTickets();
+      addToast({
+        title: t("adminDashboard.supportTickets.reschedule.rejectSuccess"),
+        color: "success",
+      });
+    } catch {
+      addToast({
+        title: t("adminDashboard.supportTickets.reschedule.rejectFailed"),
+        color: "danger",
+      });
+    } finally {
+      setRejectingReschedule(false);
+    }
+  };
+
   const handleApproveReschedule = async () => {
     if (!selectedTicket) return;
     const match = selectedTicket.description?.match(
@@ -338,8 +360,8 @@ const SupportTickets = () => {
     setApprovingReschedule(true);
     try {
       await studentApi.updateLessonStatus(lessonId, "Reschedule");
-      await supportApi.updateTicketStatus(selectedTicket.id, "InProgress");
-      setSelectedTicket((prev) => ({ ...prev, status: "InProgress" }));
+      await supportApi.updateTicketStatus(selectedTicket.id, "Resolved");
+      setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
       fetchTickets();
       addToast({
         title: t("adminDashboard.supportTickets.reschedule.approveSuccess"),
@@ -757,26 +779,43 @@ const SupportTickets = () => {
                         </p>
                       </div>
                     ) : (
-                      <Button
-                        isLoading={approvingReschedule}
-                        onPress={handleApproveReschedule}
-                        startContent={
-                          !approvingReschedule && (
-                            <ArrowCounterClockwise
-                              weight="bold"
-                              className="w-4 h-4"
-                            />
-                          )
-                        }
-                        style={{
-                          backgroundColor: colors.state.warning,
-                          color: "#fff",
-                        }}
-                      >
-                        {t(
-                          "adminDashboard.supportTickets.reschedule.approveBtn",
-                        )}
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          isLoading={approvingReschedule}
+                          isDisabled={rejectingReschedule}
+                          onPress={handleApproveReschedule}
+                          startContent={
+                            !approvingReschedule && (
+                              <ArrowCounterClockwise
+                                weight="bold"
+                                className="w-4 h-4"
+                              />
+                            )
+                          }
+                          style={{
+                            backgroundColor: colors.state.warning,
+                            color: "#fff",
+                          }}
+                        >
+                          {t(
+                            "adminDashboard.supportTickets.reschedule.approveBtn",
+                          )}
+                        </Button>
+                        <Button
+                          isLoading={rejectingReschedule}
+                          isDisabled={approvingReschedule}
+                          onPress={handleRejectReschedule}
+                          variant="flat"
+                          style={{
+                            backgroundColor: `${colors.state.error}15`,
+                            color: colors.state.error,
+                          }}
+                        >
+                          {t(
+                            "adminDashboard.supportTickets.reschedule.rejectBtn",
+                          )}
+                        </Button>
+                      </div>
                     )}
                   </CardBody>
                 </Card>
