@@ -179,7 +179,7 @@ const Schedule = () => {
 
   const allTimeOptions = [];
   for (let h = 6; h <= 22; h++) {
-    for (let m = 0; m < 60; m += 30) {
+    for (let m = 0; m < 60; m += 15) {
       allTimeOptions.push(
         `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`,
       );
@@ -392,7 +392,7 @@ const Schedule = () => {
     setFormWeekday(weekday);
     setWeekdayLocked(true);
     setFormStartTime("09:00");
-    setFormDurationMinutes(sessionTimes[0] ?? 60);
+    setFormDurationMinutes(null);
     setSaveError(null);
     fetchSessionTimes();
     onOpen();
@@ -2134,7 +2134,7 @@ const Schedule = () => {
                 </span>
                 <Select
                   label={t("tutorDashboard.schedule.duration")}
-                  selectedKeys={[String(formDurationMinutes)]}
+                  selectedKeys={formDurationMinutes != null ? [String(formDurationMinutes)] : []}
                   classNames={selectClassNames}
                   isLoading={sessionTimesLoading}
                   onSelectionChange={(keys) => {
@@ -2163,7 +2163,7 @@ const Schedule = () => {
                   className="font-medium"
                   style={{ color: colors.text.primary }}
                 >
-                  {computeEndTime(formStartTime, formDurationMinutes)}
+                  {formDurationMinutes != null ? computeEndTime(formStartTime, formDurationMinutes) : "—"}
                 </span>
               </div>
             </div>
@@ -2174,6 +2174,7 @@ const Schedule = () => {
             </Button>
             <Button
               isLoading={saving}
+              isDisabled={formDurationMinutes == null}
               style={{
                 backgroundColor: colors.primary.main,
                 color: colors.text.white,
