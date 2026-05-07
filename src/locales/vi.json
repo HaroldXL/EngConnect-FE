@@ -800,7 +800,10 @@
         "submitSuccess": "Đã gửi yêu cầu hoàn tiền thành công",
         "submitFailed": "Gửi yêu cầu hoàn tiền thất bại",
         "ticketsBtn": "Ticket Hoàn Tiền",
-        "noTickets": "Chưa có ticket hoàn tiền nào"
+        "noTickets": "Chưa có ticket hoàn tiền nào",
+        "noBankTitle": "Chưa có tài khoản ngân hàng",
+        "noBankMessage": "Bạn cần thêm tài khoản ngân hàng vào hồ sơ trước khi gửi yêu cầu hoàn tiền. Tiền hoàn sẽ được chuyển vào tài khoản ngân hàng của bạn.",
+        "goToProfile": "Đến trang hồ sơ"
       }
     },
     "homework": {
@@ -2851,9 +2854,12 @@
         "Scheduled": "Đã lên lịch",
         "InProgress": "Đang diễn ra",
         "Completed": "Hoàn thành",
+        "Settled": "Hoàn thành",
         "Cancelled": "Đã hủy",
         "NoStudent": "Vắng học viên",
-        "NoTutor": "Vắng gia sư"
+        "NoTutor": "Vắng gia sư",
+        "Refund": "Đã hoàn tiền",
+        "Reschedule": "Đổi lịch"
       },
       "scheduleStatuses": {
         "Open": "Mở",

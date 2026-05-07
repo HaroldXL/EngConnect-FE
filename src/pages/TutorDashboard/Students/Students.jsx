@@ -135,13 +135,43 @@ const Students = () => {
           color: colors.primary.main,
         };
       case "InProgress":
-        return { bg: "#FEF3C7", color: "#D97706" };
+        return { bg: `${colors.state.warning}20`, color: colors.state.warning };
       case "Completed":
-        return { bg: "#D1FAE5", color: "#059669" };
+      case "Settled":
+        return { bg: `${colors.state.success}20`, color: colors.state.success };
       case "Cancelled":
-        return { bg: "#FEE2E2", color: "#DC2626" };
+      case "NoStudent":
+      case "NoTutor":
+      case "Refund":
+        return { bg: `${colors.state.error}20`, color: colors.state.error };
+      case "Reschedule":
+        return { bg: `${colors.state.warning}20`, color: colors.state.warning };
       default:
         return { bg: colors.background.gray, color: colors.text.secondary };
+    }
+  };
+
+  const getLessonStatusLabel = (status) => {
+    switch (status) {
+      case "Scheduled":
+        return t("tutorDashboard.schedule.lessonStatus.scheduled");
+      case "Completed":
+      case "Settled":
+        return t("tutorDashboard.schedule.lessonStatus.completed");
+      case "Cancelled":
+        return t("tutorDashboard.schedule.lessonStatus.cancelled");
+      case "Refund":
+        return t("tutorDashboard.schedule.lessonStatus.refund");
+      case "InProgress":
+        return t("tutorDashboard.schedule.lessonStatus.inProgress");
+      case "NoStudent":
+        return t("tutorDashboard.schedule.lessonStatus.noStudent");
+      case "NoTutor":
+        return t("tutorDashboard.schedule.lessonStatus.noTutor");
+      case "Reschedule":
+        return t("tutorDashboard.schedule.lessonStatus.reschedule");
+      default:
+        return status || "";
     }
   };
 
@@ -528,7 +558,7 @@ const Students = () => {
                               color: statusStyle.color,
                             }}
                           >
-                            {lesson.status}
+                            {getLessonStatusLabel(lesson.status)}
                           </Chip>
                         </div>
                       );

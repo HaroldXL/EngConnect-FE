@@ -126,6 +126,7 @@ const Schedule = () => {
   const [refundModalOpen, setRefundModalOpen] = useState(false);
   const [refundNote, setRefundNote] = useState("");
   const [submittingRefund, setSubmittingRefund] = useState(false);
+  const [noBankModalOpen, setNoBankModalOpen] = useState(false);
 
   // Action panel modals
   const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
@@ -299,7 +300,21 @@ const Schedule = () => {
   const hasPendingRequest = (lesson) =>
     studentRequestsByLesson[lesson.id]?.status === "Pending";
 
-  const handleOpenRefundRequest = (lesson) => {
+  const handleOpenRefundRequest = async (lesson) => {
+    try {
+      const res = await studentApi.getStudentProfile();
+      const profile = res?.data;
+      if (
+        !profile?.bankCode ||
+        !profile?.bankAccountNumber ||
+        !profile?.bankAccountName
+      ) {
+        setNoBankModalOpen(true);
+        return;
+      }
+    } catch {
+      // If check fails, allow proceeding
+    }
     setRefundLesson(lesson);
     setRefundNote("");
     setRefundModalOpen(true);
@@ -964,8 +979,11 @@ const Schedule = () => {
                     "Scheduled",
                     "InProgress",
                     "Completed",
+                    "Cancelled",
                     "NoStudent",
                     "NoTutor",
+                    "Refund",
+                    "Reschedule",
                   ].map((status) => (
                     <div key={status} className="flex items-center gap-1.5">
                       <div
@@ -1531,6 +1549,53 @@ const Schedule = () => {
         }}
         onSubmit={handleSubmitRefundTicket}
       />
+
+      {/* No Bank Account Warning Modal */}
+      <Modal
+        isOpen={noBankModalOpen}
+        onOpenChange={setNoBankModalOpen}
+        size="sm"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <Warning
+                  weight="duotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.state.warning }}
+                />
+                {t("studentDashboard.schedule.refundRequest.noBankTitle")}
+              </ModalHeader>
+              <ModalBody className="pb-2">
+                <p className="text-sm" style={{ color: colors.text.secondary }}>
+                  {t("studentDashboard.schedule.refundRequest.noBankMessage")}
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: colors.primary.main,
+                    color: colors.text.white,
+                  }}
+                  onPress={() => {
+                    onClose();
+                    navigate("/student/profile");
+                  }}
+                >
+                  {t("studentDashboard.schedule.refundRequest.goToProfile")}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       {/* ==================== TUTOR OFFERS MODAL ==================== */}
       <Modal

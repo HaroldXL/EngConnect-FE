@@ -419,12 +419,15 @@ const ScheduleManagement = () => {
       case "Scheduled":
         return colors.primary.main;
       case "InProgress":
+      case "Reschedule":
         return colors.state.warning;
       case "Completed":
+      case "Settled":
         return colors.state.success;
       case "Cancelled":
       case "NoStudent":
       case "NoTutor":
+      case "Refund":
         return colors.state.error;
       default:
         return colors.text.tertiary;

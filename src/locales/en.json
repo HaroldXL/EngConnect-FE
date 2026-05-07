@@ -802,7 +802,10 @@
         "submitSuccess": "Refund request submitted successfully",
         "submitFailed": "Failed to submit refund request",
         "ticketsBtn": "Refund Tickets",
-        "noTickets": "No refund tickets yet"
+        "noTickets": "No refund tickets yet",
+        "noBankTitle": "Bank Account Required",
+        "noBankMessage": "You need to add a bank account to your profile before submitting a refund request. The refund will be transferred to your bank account.",
+        "goToProfile": "Go to Profile"
       }
     },
     "homework": {
@@ -2854,9 +2857,12 @@
         "Scheduled": "Scheduled",
         "InProgress": "In Progress",
         "Completed": "Completed",
+        "Settled": "Completed",
         "Cancelled": "Cancelled",
         "NoStudent": "No Student",
-        "NoTutor": "No Tutor"
+        "NoTutor": "No Tutor",
+        "Refund": "Refunded",
+        "Reschedule": "Rescheduling"
       },
       "scheduleStatuses": {
         "Open": "Open",

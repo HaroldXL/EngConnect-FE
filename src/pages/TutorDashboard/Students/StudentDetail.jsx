@@ -180,7 +180,12 @@ const StudentDetail = () => {
   const [hwItems, setHwItems] = useState([]);
   const [hwLoading, setHwLoading] = useState(false);
   const [showCreateHw, setShowCreateHw] = useState(false);
-  const [newHw, setNewHw] = useState({ courseResourceId: "", description: "", maxScore: "100", dueAt: "" });
+  const [newHw, setNewHw] = useState({
+    courseResourceId: "",
+    description: "",
+    maxScore: "100",
+    dueAt: "",
+  });
   const [hwSubmitting, setHwSubmitting] = useState(false);
   const [gradingId, setGradingId] = useState(null);
   const [gradeForm, setGradeForm] = useState({ score: "", tutorFeedback: "" });
@@ -286,8 +291,10 @@ const StudentDetail = () => {
       case "Cancelled":
       case "NoStudent":
       case "NoTutor":
+      case "Refund":
         return colors.state.error;
       case "InProgress":
+      case "Reschedule":
         return colors.state.warning;
       default:
         return colors.text.secondary;
@@ -303,12 +310,16 @@ const StudentDetail = () => {
         return t("tutorDashboard.schedule.lessonStatus.completed");
       case "Cancelled":
         return t("tutorDashboard.schedule.lessonStatus.cancelled");
+      case "Refund":
+        return t("tutorDashboard.schedule.lessonStatus.refund");
       case "InProgress":
         return t("tutorDashboard.schedule.lessonStatus.inProgress");
       case "NoStudent":
         return t("tutorDashboard.schedule.lessonStatus.noStudent");
       case "NoTutor":
         return t("tutorDashboard.schedule.lessonStatus.noTutor");
+      case "Reschedule":
+        return t("tutorDashboard.schedule.lessonStatus.reschedule");
       default:
         return status || "";
     }
@@ -361,7 +372,10 @@ const StudentDetail = () => {
   const fetchHwItems = async (lessonId) => {
     setHwLoading(true);
     try {
-      const res = await lessonHomeworkApi.getHomeworks({ LessonId: lessonId, "page-size": 50 });
+      const res = await lessonHomeworkApi.getHomeworks({
+        LessonId: lessonId,
+        "page-size": 50,
+      });
       setHwItems(res?.data?.items || []);
     } catch {
       setHwItems([]);
@@ -375,7 +389,12 @@ const StudentDetail = () => {
     setShowCreateHw(false);
     setGradingId(null);
     setGradeForm({ score: "", tutorFeedback: "" });
-    setNewHw({ courseResourceId: "", description: "", maxScore: "100", dueAt: "" });
+    setNewHw({
+      courseResourceId: "",
+      description: "",
+      maxScore: "100",
+      dueAt: "",
+    });
     setSessionResources([]);
     onHwOpen();
     fetchHwItems(lesson.id);
@@ -408,7 +427,12 @@ const StudentDetail = () => {
         dueAt: newHw.dueAt ? new Date(newHw.dueAt).toISOString() : null,
       });
       setShowCreateHw(false);
-      setNewHw({ courseResourceId: "", description: "", maxScore: "100", dueAt: "" });
+      setNewHw({
+        courseResourceId: "",
+        description: "",
+        maxScore: "100",
+        dueAt: "",
+      });
       fetchHwItems(hwLesson.id);
     } catch {
       // ignore
@@ -429,7 +453,11 @@ const StudentDetail = () => {
   const handleGrade = async (hw) => {
     setHwSubmitting(true);
     try {
-      await lessonHomeworkApi.gradeHomework(hw.id, Number(gradeForm.score), gradeForm.tutorFeedback);
+      await lessonHomeworkApi.gradeHomework(
+        hw.id,
+        Number(gradeForm.score),
+        gradeForm.tutorFeedback,
+      );
       setGradingId(null);
       fetchHwItems(hwLesson.id);
     } catch {
@@ -441,10 +469,14 @@ const StudentDetail = () => {
 
   const hwStatusProps = (status) => {
     switch (status) {
-      case "Assigned": return { color: colors.state.warning, label: "Assigned" };
-      case "Submitted": return { color: colors.primary.main, label: "Submitted" };
-      case "Scored": return { color: colors.state.success, label: "Scored" };
-      default: return { color: colors.text.tertiary, label: "Draft" };
+      case "Assigned":
+        return { color: colors.state.warning, label: "Assigned" };
+      case "Submitted":
+        return { color: colors.primary.main, label: "Submitted" };
+      case "Scored":
+        return { color: colors.state.success, label: "Scored" };
+      default:
+        return { color: colors.text.tertiary, label: "Draft" };
     }
   };
 
@@ -999,7 +1031,10 @@ const StudentDetail = () => {
                                             openHomework(primary);
                                           }}
                                         >
-                                          <NotePencil weight="duotone" className="w-3 h-3" />
+                                          <NotePencil
+                                            weight="duotone"
+                                            className="w-3 h-3"
+                                          />
                                           {hwList.length > 0
                                             ? `${hwList.length} ${t("studentDashboard.homework.title")}`
                                             : `+ ${t("studentDashboard.homework.title")}`}
@@ -1217,17 +1252,26 @@ const StudentDetail = () => {
         <ModalContent style={{ backgroundColor: colors.background.light }}>
           <ModalHeader style={{ color: colors.text.primary }}>
             <div className="flex items-center gap-2">
-              <ClipboardText weight="duotone" className="w-5 h-5" style={{ color: colors.primary.main }} />
+              <ClipboardText
+                weight="duotone"
+                className="w-5 h-5"
+                style={{ color: colors.primary.main }}
+              />
               <span>{hwLesson?.sessionTitle || "Homework"}</span>
             </div>
           </ModalHeader>
           <ModalBody className="pb-2">
             {hwLoading ? (
-              <div className="flex justify-center py-8"><Spinner color="primary" /></div>
+              <div className="flex justify-center py-8">
+                <Spinner color="primary" />
+              </div>
             ) : (
               <div className="space-y-3">
                 {hwItems.length === 0 && !showCreateHw && (
-                  <p className="text-sm text-center py-4" style={{ color: colors.text.tertiary }}>
+                  <p
+                    className="text-sm text-center py-4"
+                    style={{ color: colors.text.tertiary }}
+                  >
                     No homework assigned for this lesson yet.
                   </p>
                 )}
@@ -1238,23 +1282,44 @@ const StudentDetail = () => {
                     <div
                       key={hw.id}
                       className="rounded-xl p-3 border space-y-2"
-                      style={{ borderColor: colors.border.medium, backgroundColor: colors.background.gray }}
+                      style={{
+                        borderColor: colors.border.medium,
+                        backgroundColor: colors.background.gray,
+                      }}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-medium flex-1" style={{ color: colors.text.primary }}>
+                        <p
+                          className="text-sm font-medium flex-1"
+                          style={{ color: colors.text.primary }}
+                        >
                           {hw.description || "—"}
                         </p>
                         <Chip
                           size="sm"
-                          style={{ backgroundColor: `${sp.color}20`, color: sp.color, fontSize: "10px" }}
+                          style={{
+                            backgroundColor: `${sp.color}20`,
+                            color: sp.color,
+                            fontSize: "10px",
+                          }}
                         >
                           {sp.label}
                         </Chip>
                       </div>
-                      <div className="flex items-center gap-3 text-xs" style={{ color: colors.text.tertiary }}>
-                        {hw.dueAt && <span>Due: {new Date(hw.dueAt).toLocaleDateString()}</span>}
+                      <div
+                        className="flex items-center gap-3 text-xs"
+                        style={{ color: colors.text.tertiary }}
+                      >
+                        {hw.dueAt && (
+                          <span>
+                            Due: {new Date(hw.dueAt).toLocaleDateString()}
+                          </span>
+                        )}
                         <span>Max: {hw.maxScore} pts</span>
-                        {hw.score != null && <span style={{ color: colors.state.success }}>Score: {hw.score}</span>}
+                        {hw.score != null && (
+                          <span style={{ color: colors.state.success }}>
+                            Score: {hw.score}
+                          </span>
+                        )}
                       </div>
                       {hw.submissionUrl && (
                         <a
@@ -1268,13 +1333,21 @@ const StudentDetail = () => {
                         </a>
                       )}
                       {hw.tutorFeedback && (
-                        <p className="text-xs italic" style={{ color: colors.text.secondary }}>
+                        <p
+                          className="text-xs italic"
+                          style={{ color: colors.text.secondary }}
+                        >
                           Feedback: {hw.tutorFeedback}
                         </p>
                       )}
                       <div className="flex gap-2 pt-1">
                         {hw.status === "NotStarted" && (
-                          <Button size="sm" color="primary" variant="flat" onPress={() => handleAssign(hw)}>
+                          <Button
+                            size="sm"
+                            color="primary"
+                            variant="flat"
+                            onPress={() => handleAssign(hw)}
+                          >
                             Assign to Student
                           </Button>
                         )}
@@ -1282,8 +1355,13 @@ const StudentDetail = () => {
                           <Button
                             size="sm"
                             variant="flat"
-                            style={{ backgroundColor: `${colors.state.success}20`, color: colors.state.success }}
-                            startContent={<Star weight="fill" className="w-3.5 h-3.5" />}
+                            style={{
+                              backgroundColor: `${colors.state.success}20`,
+                              color: colors.state.success,
+                            }}
+                            startContent={
+                              <Star weight="fill" className="w-3.5 h-3.5" />
+                            }
                             onPress={() => {
                               setGradingId(hw.id);
                               setGradeForm({ score: "", tutorFeedback: "" });
@@ -1300,22 +1378,41 @@ const StudentDetail = () => {
                                 type="number"
                                 placeholder={`Score / ${hw.maxScore}`}
                                 value={gradeForm.score}
-                                onChange={(e) => setGradeForm((p) => ({ ...p, score: e.target.value }))}
+                                onChange={(e) =>
+                                  setGradeForm((p) => ({
+                                    ...p,
+                                    score: e.target.value,
+                                  }))
+                                }
                                 className="w-28"
                               />
                               <Input
                                 size="sm"
                                 placeholder="Feedback (optional)"
                                 value={gradeForm.tutorFeedback}
-                                onChange={(e) => setGradeForm((p) => ({ ...p, tutorFeedback: e.target.value }))}
+                                onChange={(e) =>
+                                  setGradeForm((p) => ({
+                                    ...p,
+                                    tutorFeedback: e.target.value,
+                                  }))
+                                }
                                 className="flex-1"
                               />
                             </div>
                             <div className="flex gap-2">
-                              <Button size="sm" color="success" isLoading={hwSubmitting} onPress={() => handleGrade(hw)}>
+                              <Button
+                                size="sm"
+                                color="success"
+                                isLoading={hwSubmitting}
+                                onPress={() => handleGrade(hw)}
+                              >
                                 Submit Grade
                               </Button>
-                              <Button size="sm" variant="light" onPress={() => setGradingId(null)}>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                onPress={() => setGradingId(null)}
+                              >
                                 Cancel
                               </Button>
                             </div>
@@ -1328,77 +1425,149 @@ const StudentDetail = () => {
 
                 {/* Create form */}
                 {showCreateHw && (
-                  <div className="rounded-xl p-4 border space-y-4" style={{ borderColor: colors.border.medium }}>
-                    <p className="text-sm font-semibold" style={{ color: colors.text.primary }}>Create homework</p>
+                  <div
+                    className="rounded-xl p-4 border space-y-4"
+                    style={{ borderColor: colors.border.medium }}
+                  >
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: colors.text.primary }}
+                    >
+                      Create homework
+                    </p>
 
                     {/* Lesson resource */}
                     <div className="space-y-1">
-                      <p className="text-sm" style={{ color: colors.text.secondary }}>Lesson resource</p>
+                      <p
+                        className="text-sm"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        Lesson resource
+                      </p>
                       {resourcesLoading ? (
                         <Spinner size="sm" color="primary" />
                       ) : sessionResources.length === 0 ? (
-                        <p className="text-xs italic" style={{ color: colors.text.tertiary }}>
-                          This lesson has no resources. Add one in the course first.
+                        <p
+                          className="text-xs italic"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          This lesson has no resources. Add one in the course
+                          first.
                         </p>
                       ) : (
                         <Select
                           size="sm"
                           placeholder="Select a resource (optional)"
-                          selectedKeys={newHw.courseResourceId ? [newHw.courseResourceId] : []}
+                          selectedKeys={
+                            newHw.courseResourceId
+                              ? [newHw.courseResourceId]
+                              : []
+                          }
                           onSelectionChange={(keys) =>
-                            setNewHw((p) => ({ ...p, courseResourceId: Array.from(keys)[0] || "" }))
+                            setNewHw((p) => ({
+                              ...p,
+                              courseResourceId: Array.from(keys)[0] || "",
+                            }))
                           }
                         >
                           {sessionResources.map((r) => (
-                            <SelectItem key={r.id}>{r.title || r.url || r.id}</SelectItem>
+                            <SelectItem key={r.id}>
+                              {r.title || r.url || r.id}
+                            </SelectItem>
                           ))}
                         </Select>
                       )}
-                      <p className="text-xs" style={{ color: colors.text.tertiary }}>
+                      <p
+                        className="text-xs"
+                        style={{ color: colors.text.tertiary }}
+                      >
                         Attach a resource from this lesson as reference material
                       </p>
                     </div>
 
                     {/* Description */}
                     <div className="space-y-1">
-                      <p className="text-sm" style={{ color: colors.text.secondary }}>Description</p>
+                      <p
+                        className="text-sm"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        Description
+                      </p>
                       <Textarea
                         size="sm"
                         placeholder="Describe what the student needs to do"
                         value={newHw.description}
-                        onChange={(e) => setNewHw((p) => ({ ...p, description: e.target.value }))}
+                        onChange={(e) =>
+                          setNewHw((p) => ({
+                            ...p,
+                            description: e.target.value,
+                          }))
+                        }
                         minRows={2}
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <p className="text-sm" style={{ color: colors.text.secondary }}>Max score</p>
+                        <p
+                          className="text-sm"
+                          style={{ color: colors.text.secondary }}
+                        >
+                          Max score
+                        </p>
                         <Input
                           size="sm"
                           type="number"
                           placeholder="100"
                           value={newHw.maxScore}
-                          onChange={(e) => setNewHw((p) => ({ ...p, maxScore: e.target.value }))}
+                          onChange={(e) =>
+                            setNewHw((p) => ({
+                              ...p,
+                              maxScore: e.target.value,
+                            }))
+                          }
                         />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm" style={{ color: colors.text.secondary }}>Due date</p>
+                        <p
+                          className="text-sm"
+                          style={{ color: colors.text.secondary }}
+                        >
+                          Due date
+                        </p>
                         <Input
                           size="sm"
                           type="datetime-local"
                           value={newHw.dueAt}
-                          onChange={(e) => setNewHw((p) => ({ ...p, dueAt: e.target.value }))}
+                          onChange={(e) =>
+                            setNewHw((p) => ({ ...p, dueAt: e.target.value }))
+                          }
                         />
-                        <p className="text-xs" style={{ color: colors.text.tertiary }}>Leave empty for no deadline</p>
+                        <p
+                          className="text-xs"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          Leave empty for no deadline
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex gap-2">
-                      <Button size="sm" color="primary" isLoading={hwSubmitting} onPress={handleCreateHw}>
+                      <Button
+                        size="sm"
+                        color="primary"
+                        isLoading={hwSubmitting}
+                        onPress={handleCreateHw}
+                      >
                         Create
                       </Button>
-                      <Button size="sm" variant="light" onPress={() => setShowCreateHw(false)}>Cancel</Button>
+                      <Button
+                        size="sm"
+                        variant="light"
+                        onPress={() => setShowCreateHw(false)}
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -1410,7 +1579,10 @@ const StudentDetail = () => {
               type="button"
               className="text-xs flex items-center gap-1 hover:underline"
               style={{ color: colors.text.tertiary }}
-              onClick={() => { onHwClose(); navigate("/tutor/homework"); }}
+              onClick={() => {
+                onHwClose();
+                navigate("/tutor/homework");
+              }}
             >
               <ArrowSquareOut className="w-3 h-3" />
               View all in Homework page
@@ -1427,7 +1599,9 @@ const StudentDetail = () => {
                   Add Homework
                 </Button>
               )}
-              <Button size="sm" variant="light" onPress={onHwClose}>Close</Button>
+              <Button size="sm" variant="light" onPress={onHwClose}>
+                Close
+              </Button>
             </div>
           </ModalFooter>
         </ModalContent>

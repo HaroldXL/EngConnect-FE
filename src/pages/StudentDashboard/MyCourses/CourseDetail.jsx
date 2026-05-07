@@ -199,6 +199,7 @@ const StudentMyCourseDetail = () => {
   const [refundModalOpen, setRefundModalOpen] = useState(false);
   const [refundNote, setRefundNote] = useState("");
   const [submittingRefund, setSubmittingRefund] = useState(false);
+  const [noBankModalOpen, setNoBankModalOpen] = useState(false);
 
   // Review state
   const [existingReview, setExistingReview] = useState(null);
@@ -218,7 +219,21 @@ const StudentMyCourseDetail = () => {
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
 
-  const handleOpenRefundRequest = (lesson) => {
+  const handleOpenRefundRequest = async (lesson) => {
+    try {
+      const res = await studentApi.getStudentProfile();
+      const profile = res?.data;
+      if (
+        !profile?.bankCode ||
+        !profile?.bankAccountNumber ||
+        !profile?.bankAccountName
+      ) {
+        setNoBankModalOpen(true);
+        return;
+      }
+    } catch {
+      // If check fails, allow proceeding
+    }
     setRefundLesson(lesson);
     setRefundNote("");
     setRefundModalOpen(true);
@@ -887,7 +902,7 @@ const StudentMyCourseDetail = () => {
         </Tooltip>,
       );
     }
-    if (lesson.lessonScript?.id && lesson.status === "Completed") {
+    if (lesson.lessonScript?.id) {
       actions.push(
         <Tooltip
           key="quiz"
@@ -2742,23 +2757,53 @@ const StudentMyCourseDetail = () => {
             ) : (
               <div className="space-y-2">
                 {pastLessons.map((lesson) => {
-                  const info =
-                    lesson.status === "Completed"
-                      ? {
+                  const getLessonInfo = (s) => {
+                    switch (s) {
+                      case "Completed":
+                      case "Settled":
+                        return {
                           color: colors.state.success,
                           label: t(
                             "studentDashboard.myCourses.sessionCompleted",
                           ),
-                        }
-                      : lesson.status === "Cancelled"
-                        ? {
-                            color: colors.state.error,
-                            label: t("studentDashboard.schedule.cancelled"),
-                          }
-                        : {
-                            color: colors.text.tertiary,
-                            label: lesson.status,
-                          };
+                        };
+                      case "Cancelled":
+                        return {
+                          color: colors.state.error,
+                          label: t("studentDashboard.schedule.cancelled"),
+                        };
+                      case "Refund":
+                        return {
+                          color: colors.state.error,
+                          label: t("studentDashboard.schedule.refund"),
+                        };
+                      case "NoStudent":
+                        return {
+                          color: colors.state.error,
+                          label: t("studentDashboard.schedule.noStudent"),
+                        };
+                      case "NoTutor":
+                        return {
+                          color: colors.state.error,
+                          label: t("studentDashboard.schedule.noTutor"),
+                        };
+                      case "InProgress":
+                        return {
+                          color: colors.state.warning,
+                          label: t("studentDashboard.schedule.inProgress"),
+                        };
+                      case "Reschedule":
+                        return {
+                          color: colors.state.warning,
+                          label: t(
+                            "studentDashboard.schedule.rescheduleStatus",
+                          ),
+                        };
+                      default:
+                        return { color: colors.text.tertiary, label: s || "" };
+                    }
+                  };
+                  const info = getLessonInfo(lesson.status);
                   return (
                     <div
                       key={lesson.id}
@@ -2905,6 +2950,53 @@ const StudentMyCourseDetail = () => {
         }}
         onSubmit={handleSubmitRefundTicket}
       />
+
+      {/* No Bank Account Warning Modal */}
+      <Modal
+        isOpen={noBankModalOpen}
+        onOpenChange={setNoBankModalOpen}
+        size="sm"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <Warning
+                  weight="duotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.state.warning }}
+                />
+                {t("studentDashboard.schedule.refundRequest.noBankTitle")}
+              </ModalHeader>
+              <ModalBody className="pb-2">
+                <p className="text-sm" style={{ color: colors.text.secondary }}>
+                  {t("studentDashboard.schedule.refundRequest.noBankMessage")}
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: colors.primary.main,
+                    color: colors.text.white,
+                  }}
+                  onPress={() => {
+                    onClose();
+                    navigate("/student/profile");
+                  }}
+                >
+                  {t("studentDashboard.schedule.refundRequest.goToProfile")}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

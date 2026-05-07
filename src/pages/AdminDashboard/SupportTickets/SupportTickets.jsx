@@ -438,8 +438,8 @@ const SupportTickets = () => {
         password: refundPassword,
         note: refundNote.trim() || undefined,
       });
-      await supportApi.updateTicketStatus(selectedTicket.id, "InProgress");
-      setSelectedTicket((prev) => ({ ...prev, status: "InProgress" }));
+      await supportApi.updateTicketStatus(selectedTicket.id, "Resolved");
+      setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
       setRefundPasswordOpen(false);
       setRefundPassword("");
       setRefundNote("");
@@ -719,7 +719,9 @@ const SupportTickets = () => {
                             flexShrink: 0,
                           }}
                         >
-                          {rescheduleLesson.status}
+                          {t(
+                            `adminDashboard.schedule.lessonStatuses.${rescheduleLesson.status}`,
+                          ) || rescheduleLesson.status}
                         </Chip>
                       </div>
                     ) : null}
@@ -1053,7 +1055,9 @@ const SupportTickets = () => {
                             flexShrink: 0,
                           }}
                         >
-                          {refundLesson.status}
+                          {t(
+                            `adminDashboard.schedule.lessonStatuses.${refundLesson.status}`,
+                          ) || refundLesson.status}
                         </Chip>
                       </div>
                     ) : (
