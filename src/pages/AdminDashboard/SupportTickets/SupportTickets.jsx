@@ -391,8 +391,8 @@ const SupportTickets = () => {
         tutorId: payoutTutorId,
         password: payoutPassword,
       });
-      await supportApi.updateTicketStatus(selectedTicket.id, "InProgress");
-      setSelectedTicket((prev) => ({ ...prev, status: "InProgress" }));
+      await supportApi.updateTicketStatus(selectedTicket.id, "Resolved");
+      setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
       setPayoutPasswordOpen(false);
       setPayoutPassword("");
       fetchTickets();
