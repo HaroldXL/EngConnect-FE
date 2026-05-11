@@ -274,6 +274,13 @@
       "feature2": "Học mọi lúc, mọi nơi",
       "feature3": "Chú ý cá nhân từ gia sư bản ngữ"
     },
+    "categories": {
+      "title": "Khám phá theo",
+      "titleHighlight": "Danh mục",
+      "description": "Tìm khóa học phù hợp với mục tiêu học tập của bạn",
+      "moreAvailable": "Chúng tôi còn nhiều danh mục khác.",
+      "browseAll": "Xem tất cả"
+    },
     "courses": {
       "title": "Khóa học",
       "titleHighlight": "Nổi bật",
@@ -1150,6 +1157,10 @@
       "thumbnail": "Ảnh bìa",
       "demoVideo": "Video giới thiệu",
       "category": "Danh mục",
+      "categoryBySkill": "Theo kỹ năng",
+      "categorySkillHint": "(chọn 1–2)",
+      "categoryByPurpose": "Theo mục tiêu",
+      "categoryPurposeHint": "(chọn 1)",
       "sessionsCount": "{{count}} buổi học",
       "resourcesCount": "{{count}} tài liệu",
       "modulesCount": "{{count}} module",

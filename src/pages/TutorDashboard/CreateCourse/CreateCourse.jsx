@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Input,
   Button,
@@ -45,6 +45,10 @@ import {
   X,
   Eye,
   ArrowSquareOut,
+  SpeakerHigh,
+  Ear,
+  BookOpenUser,
+  Tag,
 } from "@phosphor-icons/react";
 import { coursesApi } from "../../../api";
 import { selectUser } from "../../../store";
@@ -56,6 +60,31 @@ const normalizeResourceUrl = (url) => {
   if (!url) return "";
   if (url.startsWith(CDN_BASE + CDN_BASE)) return url.slice(CDN_BASE.length);
   return url;
+};
+
+const getSkillStyle = (name = "") => {
+  const n = name.toLowerCase();
+  if (n.includes("speak"))
+    return {
+      Icon: SpeakerHigh,
+      color: "#F97316",
+      iconBg: "rgba(249,115,22,0.15)",
+    };
+  if (n.includes("listen"))
+    return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+  if (n.includes("read"))
+    return {
+      Icon: BookOpenUser,
+      color: "#10B981",
+      iconBg: "rgba(16,185,129,0.15)",
+    };
+  if (n.includes("writ"))
+    return {
+      Icon: PencilSimple,
+      color: "#3B82F6",
+      iconBg: "rgba(59,130,246,0.15)",
+    };
+  return { Icon: Tag, color: "#6B7280", iconBg: "rgba(107,114,128,0.15)" };
 };
 
 const LEVELS = [
@@ -107,6 +136,14 @@ const CreateCourse = () => {
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState(null);
   const [existingDemoVideoUrl, setExistingDemoVideoUrl] = useState(null);
   const [categories, setCategories] = useState([]);
+  const skillCategories = useMemo(
+    () => categories.filter((c) => c.type === "Skill"),
+    [categories],
+  );
+  const purposeCategories = useMemo(
+    () => categories.filter((c) => c.type === "Purpose"),
+    [categories],
+  );
 
   // Step 2: Modules
   const [modules, setModules] = useState([
@@ -2638,53 +2675,158 @@ const CreateCourse = () => {
               </div>
               {/* Categories */}
               {categories.length > 0 && (
-                <div>
+                <div className="space-y-4">
                   <p
-                    className="text-sm font-medium mb-2"
+                    className="text-sm font-medium"
                     style={{ color: colors.text.primary }}
                   >
                     {t("tutorDashboard.createCourse.category")}
                     <span style={{ color: colors.state.error }}> *</span>
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((cat) => {
-                      const isSelected = courseData.CategoryIds.includes(
-                        cat.id,
-                      );
-                      const isDisabled =
-                        !isSelected && courseData.CategoryIds.length >= 3;
-                      return (
-                        <Chip
-                          key={cat.id}
-                          variant={isSelected ? "solid" : "flat"}
-                          className={
-                            isDisabled
-                              ? "cursor-not-allowed opacity-40"
-                              : "cursor-pointer"
-                          }
-                          style={{
-                            backgroundColor: isSelected
-                              ? colors.primary.main
-                              : colors.background.gray,
-                            color: isSelected
-                              ? colors.text.white
-                              : colors.text.primary,
-                          }}
-                          onClick={() => {
-                            if (isDisabled) return;
-                            setCourseData((prev) => ({
-                              ...prev,
-                              CategoryIds: prev.CategoryIds.includes(cat.id)
-                                ? prev.CategoryIds.filter((id) => id !== cat.id)
-                                : [...prev.CategoryIds, cat.id],
-                            }));
-                          }}
-                        >
-                          {cat.name}
-                        </Chip>
-                      );
-                    })}
-                  </div>
+
+                  {/* By Skill — card grid */}
+                  {skillCategories.length > 0 && (
+                    <div>
+                      <p
+                        className="text-xs font-semibold uppercase tracking-wider mb-2"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {t("tutorDashboard.createCourse.categoryBySkill")}
+                        <span className="ml-1 font-normal normal-case tracking-normal">
+                          {" "}
+                          {t("tutorDashboard.createCourse.categorySkillHint")}
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {skillCategories.map((cat) => {
+                          const { Icon, color, iconBg } = getSkillStyle(
+                            cat.name,
+                          );
+                          const isSelected = courseData.CategoryIds.includes(
+                            cat.id,
+                          );
+                          const isDisabled =
+                            !isSelected && courseData.CategoryIds.length >= 3;
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              disabled={isDisabled}
+                              className="relative flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+                              style={{
+                                backgroundColor: isSelected
+                                  ? iconBg
+                                  : colors.background.gray,
+                                opacity: isDisabled ? 0.4 : 1,
+                                cursor: isDisabled ? "not-allowed" : "pointer",
+                              }}
+                              onClick={() => {
+                                if (isDisabled) return;
+                                setCourseData((prev) => ({
+                                  ...prev,
+                                  CategoryIds: prev.CategoryIds.includes(cat.id)
+                                    ? prev.CategoryIds.filter(
+                                        (id) => id !== cat.id,
+                                      )
+                                    : [...prev.CategoryIds, cat.id],
+                                }));
+                              }}
+                            >
+                              <div
+                                className="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center"
+                                style={{ backgroundColor: iconBg }}
+                              >
+                                <Icon
+                                  size={18}
+                                  weight="duotone"
+                                  style={{ color }}
+                                />
+                              </div>
+                              <span
+                                className="text-xs font-medium leading-tight"
+                                style={{
+                                  color: isSelected
+                                    ? color
+                                    : colors.text.primary,
+                                }}
+                              >
+                                {cat.name}
+                              </span>
+                              {isSelected && (
+                                <CheckCircle
+                                  size={16}
+                                  weight="fill"
+                                  style={{
+                                    color,
+                                    position: "absolute",
+                                    top: 6,
+                                    right: 6,
+                                  }}
+                                />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* By Purpose — pill toggles */}
+                  {purposeCategories.length > 0 && (
+                    <div>
+                      <p
+                        className="text-xs font-semibold uppercase tracking-wider mb-2"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {t("tutorDashboard.createCourse.categoryByPurpose")}
+                        <span className="ml-1 font-normal normal-case tracking-normal">
+                          {" "}
+                          {t("tutorDashboard.createCourse.categoryPurposeHint")}
+                        </span>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {purposeCategories.map((cat) => {
+                          const isSelected = courseData.CategoryIds.includes(
+                            cat.id,
+                          );
+                          const isDisabled =
+                            !isSelected && courseData.CategoryIds.length >= 3;
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              disabled={isDisabled}
+                              className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                              style={{
+                                backgroundColor: isSelected
+                                  ? "rgba(16,185,129,0.1)"
+                                  : colors.background.gray,
+                                color: isSelected
+                                  ? "#10B981"
+                                  : colors.text.primary,
+                                opacity: isDisabled ? 0.4 : 1,
+                                cursor: isDisabled ? "not-allowed" : "pointer",
+                              }}
+                              onClick={() => {
+                                if (isDisabled) return;
+                                setCourseData((prev) => ({
+                                  ...prev,
+                                  CategoryIds: prev.CategoryIds.includes(cat.id)
+                                    ? prev.CategoryIds.filter(
+                                        (id) => id !== cat.id,
+                                      )
+                                    : [...prev.CategoryIds, cat.id],
+                                }));
+                              }}
+                            >
+                              {cat.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {validationErrors.CategoryIds && (
                     <p
                       className="text-xs mt-1 pl-1"

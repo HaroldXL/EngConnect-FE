@@ -572,14 +572,14 @@ const Home = () => {
                 className="text-3xl sm:text-4xl font-bold mb-4"
                 style={{ color: colors.text.primary }}
               >
-                Browse by{" "}
-                <span style={{ color: colors.primary.main }}>Category</span>
+                {t("home.categories.title")}{" "}
+                <span style={{ color: colors.primary.main }}>{t("home.categories.titleHighlight")}</span>
               </h2>
               <p
                 className="text-lg max-w-2xl mx-auto"
                 style={{ color: colors.text.secondary }}
               >
-                Find the perfect course for your learning goals
+                {t("home.categories.description")}
               </p>
             </motion.div>
 
@@ -790,14 +790,14 @@ const Home = () => {
                   className="text-sm inline"
                   style={{ color: colors.text.secondary }}
                 >
-                  We have more categories available.{" "}
+                  {t("home.categories.moreAvailable")}{" "}
                 </p>
                 <button
                   className="text-sm font-semibold inline-flex items-center gap-1 hover:underline"
                   style={{ color: colors.primary.main }}
                   onClick={() => navigate("/courses")}
                 >
-                  Browse All <ArrowRight size={14} />
+                  {t("home.categories.browseAll")} <ArrowRight size={14} />
                 </button>
               </div>
             )}

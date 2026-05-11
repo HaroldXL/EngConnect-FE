@@ -274,6 +274,13 @@
       "feature2": "Learn anytime, anywhere",
       "feature3": "Personal attention from native tutors"
     },
+    "categories": {
+      "title": "Browse by",
+      "titleHighlight": "Category",
+      "description": "Find the perfect course for your learning goals",
+      "moreAvailable": "We have more categories available.",
+      "browseAll": "Browse All"
+    },
     "courses": {
       "title": "Our Featured",
       "titleHighlight": "Courses",
@@ -1152,6 +1159,10 @@
       "thumbnail": "Thumbnail",
       "demoVideo": "Demo Video",
       "category": "Category",
+      "categoryBySkill": "By Skill",
+      "categorySkillHint": "(select 1–2)",
+      "categoryByPurpose": "By Purpose",
+      "categoryPurposeHint": "(select 1)",
       "sessionsCount": "{{count}} sessions",
       "resourcesCount": "{{count}} resources",
       "modulesCount": "{{count}} modules",
