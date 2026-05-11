@@ -67,7 +67,8 @@ const Courses = () => {
   const { inputClassNames, selectClassNames } = useInputStyles();
 
   // Sidebar collapse states
-  const [categoryOpen, setCategoryOpen] = useState(true);
+  const [skillOpen, setSkillOpen] = useState(true);
+  const [purposeOpen, setPurposeOpen] = useState(true);
   const [levelOpen, setLevelOpen] = useState(true);
   // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -76,9 +77,23 @@ const Courses = () => {
   useEffect(() => {
     coursesApi
       .getCategories({ "page-size": 50 })
-      .then((res) => setCategories(res?.data?.items || []))
+      .then((res) => {
+        const items = res?.data?.items || [];
+        setCategories(items);
+        const catParam = searchParams.get("category");
+        if (catParam) setSelectedCategories(new Set([catParam]));
+      })
       .catch(() => {});
   }, []);
+
+  const skillCategories = useMemo(
+    () => categories.filter((c) => c.type === "Skill"),
+    [categories],
+  );
+  const purposeCategories = useMemo(
+    () => categories.filter((c) => c.type === "Purpose"),
+    [categories],
+  );
 
   // Reset to page 1 when search/filters change
   useEffect(() => {
@@ -198,73 +213,145 @@ const Courses = () => {
   // Sidebar content (shared between desktop and mobile)
   const sidebarContent = (
     <div className="space-y-1">
-      {/* Category Section */}
-      <div
-        className="rounded-xl overflow-hidden"
-        style={{ backgroundColor: colors.background.gray }}
-      >
-        <button
-          className="w-full flex items-center justify-between p-4 transition-colors hover:opacity-80"
-          onClick={() => setCategoryOpen(!categoryOpen)}
+      {/* By Skill Section */}
+      {skillCategories.length > 0 && (
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{ backgroundColor: colors.background.gray }}
         >
-          <span
-            className="text-sm font-bold uppercase tracking-wider"
-            style={{ color: colors.text.primary }}
+          <button
+            className="w-full flex items-center justify-between p-4 transition-colors hover:opacity-80"
+            onClick={() => setSkillOpen(!skillOpen)}
           >
-            {t("courses.categories.category")}
-          </span>
-          {categoryOpen ? (
-            <CaretUp size={16} style={{ color: colors.text.secondary }} />
-          ) : (
-            <CaretDown size={16} style={{ color: colors.text.secondary }} />
-          )}
-        </button>
-        {categoryOpen && (
-          <div className="px-2 pb-3 space-y-0.5">
-            {categories.map((cat) => {
-              const isSelected = selectedCategories.has(cat.id);
-              return (
-                <button
-                  key={cat.id}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors"
-                  style={{
-                    backgroundColor: isSelected
-                      ? `${colors.primary.main}15`
-                      : "transparent",
-                    color: isSelected
-                      ? colors.primary.main
-                      : colors.text.secondary,
-                  }}
-                  onClick={() => toggleCategory(cat.id)}
-                >
-                  <span className="text-sm font-medium">{cat.name}</span>
-                  {isSelected && (
-                    <span
-                      className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: colors.primary.main }}
-                    >
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 10 10"
-                        fill="none"
+            <span
+              className="text-sm font-bold uppercase tracking-wider"
+              style={{ color: colors.text.primary }}
+            >
+              By Skill
+            </span>
+            {skillOpen ? (
+              <CaretUp size={16} style={{ color: colors.text.secondary }} />
+            ) : (
+              <CaretDown size={16} style={{ color: colors.text.secondary }} />
+            )}
+          </button>
+          {skillOpen && (
+            <div className="px-2 pb-3 space-y-0.5">
+              {skillCategories.map((cat) => {
+                const isSelected = selectedCategories.has(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors"
+                    style={{
+                      backgroundColor: isSelected
+                        ? `${colors.primary.main}15`
+                        : "transparent",
+                      color: isSelected
+                        ? colors.primary.main
+                        : colors.text.secondary,
+                    }}
+                    onClick={() => toggleCategory(cat.id)}
+                  >
+                    <span className="text-sm font-medium">{cat.name}</span>
+                    {isSelected && (
+                      <span
+                        className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: colors.primary.main }}
                       >
-                        <path
-                          d="M2 5l2 2 4-4"
-                          stroke="white"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 10 10"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 5l2 2 4-4"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* By Purpose Section */}
+      {purposeCategories.length > 0 && (
+        <div
+          className="rounded-xl overflow-hidden mt-2"
+          style={{ backgroundColor: colors.background.gray }}
+        >
+          <button
+            className="w-full flex items-center justify-between p-4 transition-colors hover:opacity-80"
+            onClick={() => setPurposeOpen(!purposeOpen)}
+          >
+            <span
+              className="text-sm font-bold uppercase tracking-wider"
+              style={{ color: colors.text.primary }}
+            >
+              By Purpose
+            </span>
+            {purposeOpen ? (
+              <CaretUp size={16} style={{ color: colors.text.secondary }} />
+            ) : (
+              <CaretDown size={16} style={{ color: colors.text.secondary }} />
+            )}
+          </button>
+          {purposeOpen && (
+            <div className="px-2 pb-3 space-y-0.5">
+              {purposeCategories.map((cat) => {
+                const isSelected = selectedCategories.has(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors"
+                    style={{
+                      backgroundColor: isSelected
+                        ? `${colors.primary.main}15`
+                        : "transparent",
+                      color: isSelected
+                        ? colors.primary.main
+                        : colors.text.secondary,
+                    }}
+                    onClick={() => toggleCategory(cat.id)}
+                  >
+                    <span className="text-sm font-medium">{cat.name}</span>
+                    {isSelected && (
+                      <span
+                        className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: colors.primary.main }}
+                      >
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 10 10"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 5l2 2 4-4"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Level Section */}
       <div

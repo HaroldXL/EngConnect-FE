@@ -1,20 +1,9 @@
-import { useState, useEffect } from "react";
-import { Button, Card, CardBody, Image } from "@heroui/react";
+import { useState, useEffect, useMemo } from "react";
+import { Button, Card, CardBody, Image, Skeleton } from "@heroui/react";
 import CourseCardSkeleton from "../../components/CourseCardSkeleton/CourseCardSkeleton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Award,
-  Calendar,
-  BookOpen,
-  Users,
-  Star,
-  ArrowRight,
-  Globe,
-  TrendingUp,
-  Sparkles,
-  User,
-} from "lucide-react";
+import { Star, ArrowRight, Sparkles } from "lucide-react";
 import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
@@ -30,6 +19,9 @@ import {
   UserList,
   Clock,
   Laptop,
+  SpeakerHigh,
+  Ear,
+  PencilSimple,
 } from "@phosphor-icons/react";
 
 // eslint-disable-next-line no-unused-vars
@@ -62,6 +54,7 @@ import avatarSelene from "../../assets/images/avatar-selene.png";
 import avatarTalon from "../../assets/images/avatar-talon.png";
 import aiImage from "../../assets/illustrations/ai.avif";
 import videoImage from "../../assets/illustrations/video.avif";
+import foldersImage from "../../assets/illustrations/folders.avif";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -71,6 +64,8 @@ const Home = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [coursesLoading, setCoursesLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   useEffect(() => {
     coursesApi
@@ -79,6 +74,61 @@ const Home = () => {
       .catch(() => {})
       .finally(() => setCoursesLoading(false));
   }, []);
+
+  useEffect(() => {
+    coursesApi
+      .getCategories({ "page-size": 50 })
+      .then((res) => setCategories(res?.data?.items || []))
+      .catch(() => {})
+      .finally(() => setCategoriesLoading(false));
+  }, []);
+
+  const skillCategories = useMemo(
+    () => categories.filter((c) => c.type === "Skill"),
+    [categories],
+  );
+  const purposeCategories = useMemo(
+    () => categories.filter((c) => c.type === "Purpose"),
+    [categories],
+  );
+
+  const getSkillStyle = (name = "") => {
+    const n = name.toLowerCase();
+    if (n.includes("speak"))
+      return {
+        Icon: SpeakerHigh,
+        color: "#F97316",
+        iconBg: "rgba(249,115,22,0.15)",
+        cardBg: "rgba(249,115,22,0.07)",
+      };
+    if (n.includes("listen"))
+      return {
+        Icon: Ear,
+        color: "#06B6D4",
+        iconBg: "rgba(6,182,212,0.15)",
+        cardBg: "rgba(6,182,212,0.07)",
+      };
+    if (n.includes("read"))
+      return {
+        Icon: BookOpenUser,
+        color: "#10B981",
+        iconBg: "rgba(16,185,129,0.15)",
+        cardBg: "rgba(16,185,129,0.07)",
+      };
+    if (n.includes("writ"))
+      return {
+        Icon: PencilSimple,
+        color: "#3B82F6",
+        iconBg: "rgba(59,130,246,0.15)",
+        cardBg: "rgba(59,130,246,0.07)",
+      };
+    return {
+      Icon: Tag,
+      color: colors.primary.main,
+      iconBg: "rgba(59,130,246,0.15)",
+      cardBg: "rgba(59,130,246,0.07)",
+    };
+  };
 
   const testimonials = [
     {
@@ -142,29 +192,29 @@ const Home = () => {
       icon: (props) => <IdentificationBadge weight="duotone" {...props} />,
       title: t("home.features.expertTutors.title"),
       description: t("home.features.expertTutors.description"),
-      color: "#3B82F6",
-      bgColor: "rgba(59, 130, 246, 0.1)",
+      color: "#F97316",
+      bgColor: "rgba(249, 115, 22, 0.1)",
     },
     {
       icon: (props) => <CalendarDots weight="duotone" {...props} />,
       title: t("home.features.flexibleSchedule.title"),
       description: t("home.features.flexibleSchedule.description"),
-      color: "#10B981",
-      bgColor: "rgba(16, 185, 129, 0.1)",
+      color: "#06B6D4",
+      bgColor: "rgba(6, 182, 212, 0.1)",
     },
     {
       icon: (props) => <BookOpenUser weight="duotone" {...props} />,
       title: t("home.features.customCurriculum.title"),
       description: t("home.features.customCurriculum.description"),
-      color: "#F59E0B",
-      bgColor: "rgba(245, 158, 11, 0.1)",
+      color: "#10B981",
+      bgColor: "rgba(16, 185, 129, 0.1)",
     },
     {
       icon: (props) => <Tag weight="duotone" {...props} />,
       title: t("home.features.affordablePricing.title"),
       description: t("home.features.affordablePricing.description"),
-      color: "#8B5CF6",
-      bgColor: "rgba(139, 92, 246, 0.1)",
+      color: "#3B82F6",
+      bgColor: "rgba(59, 130, 246, 0.1)",
     },
   ];
 
@@ -502,10 +552,263 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Browse by Category Section */}
+      {(categoriesLoading ||
+        skillCategories.length > 0 ||
+        purposeCategories.length > 0) && (
+        <section
+          className="py-20 px-6 md:px-12"
+          style={{ backgroundColor: colors.background.gray }}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="text-center mb-12"
+            >
+              <h2
+                className="text-3xl sm:text-4xl font-bold mb-4"
+                style={{ color: colors.text.primary }}
+              >
+                Browse by{" "}
+                <span style={{ color: colors.primary.main }}>Category</span>
+              </h2>
+              <p
+                className="text-lg max-w-2xl mx-auto"
+                style={{ color: colors.text.secondary }}
+              >
+                Find the perfect course for your learning goals
+              </p>
+            </motion.div>
+
+            {/* Skeleton loading */}
+            {categoriesLoading && (
+              <div>
+                {/* Skill skeleton */}
+                {/* <div className="flex justify-center mb-8">
+                  <Skeleton className="h-7 w-20 rounded-full" />
+                </div> */}
+                <div className="grid lg:grid-cols-2 gap-10 items-center mb-10">
+                  <div className="space-y-3">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-4 rounded-2xl p-4"
+                        style={{ backgroundColor: colors.background.card }}
+                      >
+                        <Skeleton className="w-14 h-14 rounded-xl flex-shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-2/5 rounded-lg" />
+                          <Skeleton className="h-3 w-3/4 rounded-lg" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* <div className="hidden lg:flex justify-center">
+                    <Skeleton className="w-full max-w-md h-64 rounded-2xl" />
+                  </div> */}
+                </div>
+                {/* Purpose skeleton */}
+                {/* <div className="flex justify-center mb-5">
+                  <Skeleton className="h-7 w-24 rounded-full" />
+                </div> */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="rounded-2xl px-5 py-4"
+                      style={{ backgroundColor: colors.background.card }}
+                    >
+                      <Skeleton className="h-4 w-3/4 rounded-lg mb-2" />
+                      <Skeleton className="h-3 w-full rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Skill Cards */}
+            {!categoriesLoading && skillCategories.length > 0 && (
+              <div className="mb-10">
+                {/* <div className="flex justify-center mb-8">
+                  <div
+                    className="inline-flex items-center px-4 py-1.5 rounded-full"
+                    style={{ backgroundColor: colors.background.primaryLight }}
+                  >
+                    <span className="text-sm font-semibold" style={{ color: colors.primary.main }}>
+                      By Skill
+                    </span>
+                  </div>
+                </div> */}
+
+                <div className="grid lg:grid-cols-2 gap-10 items-center">
+                  {/* Left: cards stacked */}
+                  <div className="space-y-3">
+                    {skillCategories.map((cat, index) => {
+                      const { Icon, color, iconBg } = getSkillStyle(cat.name);
+                      return (
+                        <motion.div
+                          key={cat.id}
+                          initial={{ opacity: 0, x: -16 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.45, delay: index * 0.07 }}
+                          whileHover={{
+                            x: 4,
+                            transition: {
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 25,
+                            },
+                          }}
+                        >
+                          <button
+                            className="w-full flex items-center gap-4 rounded-2xl p-4 text-left transition-all"
+                            style={{ backgroundColor: colors.background.card }}
+                            onClick={() =>
+                              navigate(`/courses?category=${cat.id}`)
+                            }
+                          >
+                            <div
+                              className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
+                              style={{ backgroundColor: iconBg }}
+                            >
+                              <Icon
+                                size={28}
+                                weight="duotone"
+                                style={{ color }}
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p
+                                className="font-semibold text-sm"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {cat.name}
+                              </p>
+                              {cat.description && (
+                                <p
+                                  className="text-xs mt-0.5 line-clamp-2"
+                                  style={{ color: colors.text.secondary }}
+                                >
+                                  {cat.description}
+                                </p>
+                              )}
+                            </div>
+                          </button>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Right: illustration */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.7, delay: 0.1 }}
+                    className="hidden lg:flex justify-center"
+                  >
+                    <img
+                      src={foldersImage}
+                      alt="Browse skill categories"
+                      draggable={false}
+                      onDragStart={(e) => e.preventDefault()}
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="w-full max-w-md h-auto"
+                    />
+                  </motion.div>
+                </div>
+              </div>
+            )}
+
+            {/* Purpose Tiles */}
+            {!categoriesLoading && purposeCategories.length > 0 && (
+              <div>
+                {/* <div className="flex justify-center mb-5">
+                  <div
+                    className="inline-flex items-center px-4 py-1.5 rounded-full"
+                    style={{ backgroundColor: "rgba(16,185,129,0.12)" }}
+                  >
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: "#10B981" }}
+                    >
+                      By Purpose
+                    </span>
+                  </div>
+                </div> */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {purposeCategories.map((cat, index) => (
+                    <motion.div
+                      key={cat.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.45, delay: index * 0.07 }}
+                      whileHover={{
+                        y: -3,
+                        transition: {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 25,
+                        },
+                      }}
+                    >
+                      <button
+                        className="w-full rounded-2xl px-5 py-4 text-left transition-all"
+                        style={{ backgroundColor: colors.background.light }}
+                        onClick={() => navigate(`/courses?category=${cat.id}`)}
+                      >
+                        <p
+                          className="font-semibold text-sm"
+                          style={{ color: colors.text.primary }}
+                        >
+                          {cat.name}
+                        </p>
+                        {cat.description && (
+                          <p
+                            className="text-xs mt-1 line-clamp-1"
+                            style={{ color: colors.text.secondary }}
+                          >
+                            {cat.description}
+                          </p>
+                        )}
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Browse All footer */}
+            {!categoriesLoading && (
+              <div className="text-center mt-10">
+                <p
+                  className="text-sm inline"
+                  style={{ color: colors.text.secondary }}
+                >
+                  We have more categories available.{" "}
+                </p>
+                <button
+                  className="text-sm font-semibold inline-flex items-center gap-1 hover:underline"
+                  style={{ color: colors.primary.main }}
+                  onClick={() => navigate("/courses")}
+                >
+                  Browse All <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Featured Courses Section */}
       <section
         className="py-20 px-6 md:px-12"
-        style={{ backgroundColor: colors.background.gray }}
+        style={{ backgroundColor: colors.background.light }}
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -535,7 +838,7 @@ const Home = () => {
           {coursesLoading ? (
             <CourseCardSkeleton
               count={4}
-              cardBgColor={colors.background.light}
+              cardBgColor={colors.background.gray}
             />
           ) : (
             <motion.div
@@ -551,6 +854,7 @@ const Home = () => {
                     course={course}
                     showTutorInfo={true}
                     showCategory={true}
+                    style={{ backgroundColor: colors.background.gray }}
                   />
                 </motion.div>
               ))}
@@ -579,7 +883,7 @@ const Home = () => {
       {/* Testimonials Section */}
       <section
         className="py-20 px-6 md:px-12 overflow-hidden"
-        style={{ backgroundColor: colors.background.light }}
+        style={{ backgroundColor: colors.background.gray }}
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -621,7 +925,7 @@ const Home = () => {
                   <Card
                     className="h-full shadow-none"
                     style={{
-                      backgroundColor: colors.background.gray,
+                      backgroundColor: colors.background.light,
                       borderColor: colors.border.light,
                     }}
                   >
