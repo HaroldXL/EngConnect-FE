@@ -1,7 +1,16 @@
 import { Card, CardBody, Chip, Avatar, Progress } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { Star, Users } from "@phosphor-icons/react";
+import { Star, Users, SpeakerHigh, Ear, BookOpenUser, PencilSimple } from "@phosphor-icons/react";
+
+const getSkillStyle = (name = "") => {
+  const n = name.toLowerCase();
+  if (n.includes("speak")) return { Icon: SpeakerHigh, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
+  if (n.includes("listen")) return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+  if (n.includes("read")) return { Icon: BookOpenUser, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
+  if (n.includes("writ")) return { Icon: PencilSimple, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+  return null;
+};
 
 const CourseCard = ({
   course,
@@ -21,7 +30,8 @@ const CourseCard = ({
     return price.toLocaleString("vi-VN") + "₫";
   };
 
-  const category = course.courseCategories?.[0]?.categoryName;
+  const skillCat = course.courseCategories?.find((c) => getSkillStyle(c.categoryName));
+  const fallbackCat = !skillCat ? course.courseCategories?.[0] : null;
 
   return (
     <Card
@@ -74,7 +84,20 @@ const CourseCard = ({
               {course.level}
             </Chip>
           )}
-          {showCategory && category && (
+          {showCategory && skillCat && (() => {
+            const { Icon, color, iconBg } = getSkillStyle(skillCat.categoryName);
+            return (
+              <Chip
+                size="sm"
+                variant="flat"
+                startContent={<Icon size={12} weight="duotone" style={{ color }} />}
+                style={{ backgroundColor: iconBg, color }}
+              >
+                {skillCat.categoryName}
+              </Chip>
+            );
+          })()}
+          {showCategory && fallbackCat && (
             <Chip
               size="sm"
               variant="flat"
@@ -83,7 +106,7 @@ const CourseCard = ({
                 color: colors.text.secondary,
               }}
             >
-              {category}
+              {fallbackCat.categoryName}
             </Chip>
           )}
         </div>

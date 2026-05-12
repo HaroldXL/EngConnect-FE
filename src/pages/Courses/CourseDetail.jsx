@@ -30,7 +30,20 @@ import {
   CaretUp,
   Play,
   Certificate,
+  SpeakerHigh,
+  Ear,
+  BookOpenUser,
+  PencilSimple,
 } from "@phosphor-icons/react";
+
+const getSkillStyle = (name = "") => {
+  const n = name.toLowerCase();
+  if (n.includes("speak")) return { Icon: SpeakerHigh, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
+  if (n.includes("listen")) return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+  if (n.includes("read")) return { Icon: BookOpenUser, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
+  if (n.includes("writ")) return { Icon: PencilSimple, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+  return null;
+};
 import { coursesApi, tutorApi, studentApi } from "../../api";
 import VideoModal from "../../components/VideoModal/VideoModal";
 
@@ -247,7 +260,8 @@ const CourseDetail = () => {
   }
 
   const duration = formatDuration(course.estimatedTimeLesson);
-  const category = course.courseCategories?.[0]?.categoryName;
+  const skillCats = (course.courseCategories || []).filter((c) => getSkillStyle(c.categoryName));
+  const purposeCats = (course.courseCategories || []).filter((c) => !getSkillStyle(c.categoryName));
   const outcomes = course.outcomes
     ? course.outcomes
         .split(/[;\n]+/)
@@ -297,20 +311,35 @@ const CourseDetail = () => {
                 >
                   {course.level}
                 </Chip>
-                {category && (
+                {skillCats.map((cat) => {
+                  const { Icon, color, iconBg } = getSkillStyle(cat.categoryName);
+                  return (
+                    <Chip
+                      key={cat.categoryId}
+                      size="sm"
+                      variant="flat"
+                      startContent={<Icon size={13} weight="duotone" style={{ color }} />}
+                      style={{ backgroundColor: iconBg, color }}
+                    >
+                      {cat.categoryName}
+                    </Chip>
+                  );
+                })}
+                {purposeCats.map((cat) => (
                   <Chip
+                    key={cat.categoryId}
                     size="sm"
+                    variant="flat"
+                    className="cursor-pointer"
                     style={{
-                      backgroundColor:
-                        theme === "dark"
-                          ? "rgba(255,255,255,0.15)"
-                          : "rgba(59, 130, 246, 0.1)",
-                      color: theme === "dark" ? "#fff" : colors.primary.main,
+                      backgroundColor: theme === "dark" ? "rgba(255,255,255,0.1)" : colors.background.gray,
+                      color: theme === "dark" ? "rgba(255,255,255,0.7)" : colors.text.secondary,
                     }}
+                    onClick={() => navigate(`/courses?category=${cat.categoryId}`)}
                   >
-                    {category}
+                    {cat.categoryName}
                   </Chip>
-                )}
+                ))}
               </div>
 
               {/* Title */}

@@ -100,24 +100,29 @@ const Courses = () => {
     setPage(1);
   }, [searchQuery, selectedCategories, selectedLevels, sortBy]);
 
-  // Fetch courses whenever searchQuery or page changes (uses API search-term)
+  // Fetch courses — server-paginated normally; when client filters active, fetch all at once
   useEffect(() => {
     const fetchCourses = async () => {
+      const hasFilters = selectedCategories.size > 0 || selectedLevels.size > 0;
       try {
         setLoading(true);
-        const params = {
-          Status: "Published",
-          "page-size": PAGE_SIZE,
-          page: page,
-        };
+        const params = { Status: "Published" };
+        if (hasFilters) {
+          params["page-size"] = 200;
+          params.page = 1;
+        } else {
+          params["page-size"] = PAGE_SIZE;
+          params.page = page;
+        }
         if (searchQuery.trim()) params["search-term"] = searchQuery.trim();
         const res = await coursesApi.getAllCourses(params);
         const items = res?.data?.items || [];
         const total = res?.data?.totalItems ?? items.length;
         setCourses(items);
-        setTotalPages(Math.max(1, Math.ceil(total / PAGE_SIZE)));
-        // Keep unfiltered snapshot for sidebar counts (no search-term, page 1)
-        if (!searchQuery.trim() && page === 1) setAllCourses(items);
+        if (!hasFilters) {
+          setTotalPages(Math.max(1, Math.ceil(total / PAGE_SIZE)));
+          if (!searchQuery.trim() && page === 1) setAllCourses(items);
+        }
       } catch (err) {
         console.error("Failed to fetch courses:", err);
       } finally {
@@ -125,7 +130,7 @@ const Courses = () => {
       }
     };
     fetchCourses();
-  }, [searchQuery, page]);
+  }, [searchQuery, page, selectedCategories, selectedLevels]);
 
   const toggleCategory = (id) => {
     setSelectedCategories((prev) => {
@@ -777,7 +782,7 @@ const Courses = () => {
                     ))}
                   </motion.div>
 
-                  {totalPages > 1 && (
+                  {selectedCategories.size === 0 && selectedLevels.size === 0 && totalPages > 1 && (
                     <div className="flex justify-center mt-8">
                       <Pagination
                         total={totalPages}
