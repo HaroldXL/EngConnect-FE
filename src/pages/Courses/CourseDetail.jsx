@@ -38,10 +38,26 @@ import {
 
 const getSkillStyle = (name = "") => {
   const n = name.toLowerCase();
-  if (n.includes("speak")) return { Icon: SpeakerHigh, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
-  if (n.includes("listen")) return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
-  if (n.includes("read")) return { Icon: BookOpenUser, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
-  if (n.includes("writ")) return { Icon: PencilSimple, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+  if (n.includes("speak"))
+    return {
+      Icon: SpeakerHigh,
+      color: "#F97316",
+      iconBg: "rgba(249,115,22,0.15)",
+    };
+  if (n.includes("listen"))
+    return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+  if (n.includes("read"))
+    return {
+      Icon: BookOpenUser,
+      color: "#10B981",
+      iconBg: "rgba(16,185,129,0.15)",
+    };
+  if (n.includes("writ"))
+    return {
+      Icon: PencilSimple,
+      color: "#3B82F6",
+      iconBg: "rgba(59,130,246,0.15)",
+    };
   return null;
 };
 import { coursesApi, tutorApi, studentApi } from "../../api";
@@ -260,8 +276,12 @@ const CourseDetail = () => {
   }
 
   const duration = formatDuration(course.estimatedTimeLesson);
-  const skillCats = (course.courseCategories || []).filter((c) => getSkillStyle(c.categoryName));
-  const purposeCats = (course.courseCategories || []).filter((c) => !getSkillStyle(c.categoryName));
+  const skillCats = (course.courseCategories || []).filter((c) =>
+    getSkillStyle(c.categoryName),
+  );
+  const purposeCats = (course.courseCategories || []).filter(
+    (c) => !getSkillStyle(c.categoryName),
+  );
   const outcomes = course.outcomes
     ? course.outcomes
         .split(/[;\n]+/)
@@ -312,13 +332,17 @@ const CourseDetail = () => {
                   {course.level}
                 </Chip>
                 {skillCats.map((cat) => {
-                  const { Icon, color, iconBg } = getSkillStyle(cat.categoryName);
+                  const { Icon, color, iconBg } = getSkillStyle(
+                    cat.categoryName,
+                  );
                   return (
                     <Chip
                       key={cat.categoryId}
                       size="sm"
                       variant="flat"
-                      startContent={<Icon size={13} weight="duotone" style={{ color }} />}
+                      startContent={
+                        <Icon size={13} weight="duotone" style={{ color }} />
+                      }
                       style={{ backgroundColor: iconBg, color }}
                     >
                       {cat.categoryName}
@@ -332,10 +356,18 @@ const CourseDetail = () => {
                     variant="flat"
                     className="cursor-pointer"
                     style={{
-                      backgroundColor: theme === "dark" ? "rgba(255,255,255,0.1)" : colors.background.gray,
-                      color: theme === "dark" ? "rgba(255,255,255,0.7)" : colors.text.secondary,
+                      backgroundColor:
+                        theme === "dark"
+                          ? "rgba(255,255,255,0.1)"
+                          : colors.background.gray,
+                      color:
+                        theme === "dark"
+                          ? "rgba(255,255,255,0.7)"
+                          : colors.text.secondary,
                     }}
-                    onClick={() => navigate(`/courses?category=${cat.categoryId}`)}
+                    onClick={() =>
+                      navigate(`/courses?category=${cat.categoryId}`)
+                    }
                   >
                     {cat.categoryName}
                   </Chip>
@@ -839,7 +871,7 @@ const CourseDetail = () => {
                       </div>
                       {tutorInfo.bio && (
                         <p
-                          className="text-sm leading-relaxed"
+                          className="text-sm leading-relaxed whitespace-pre-wrap"
                           style={{ color: colors.text.secondary }}
                         >
                           {tutorInfo.bio}

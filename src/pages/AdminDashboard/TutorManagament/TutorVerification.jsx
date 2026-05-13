@@ -867,7 +867,10 @@ const TutorVerification = () => {
                               >
                                 {t("adminDashboard.verification.bio")}
                               </p>
-                              <p style={{ color: colors.text.primary }}>
+                              <p
+                                className="whitespace-pre-wrap"
+                                style={{ color: colors.text.primary }}
+                              >
                                 {detailTutor.bio}
                               </p>
                             </div>

@@ -12,7 +12,7 @@ import ImageViewerModal from "../../components/ImageViewerModal/ImageViewerModal
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { Star, Clock, BookOpen, EnvelopeSimple } from "@phosphor-icons/react";
 import { tutorApi, coursesApi } from "../../api";
-import searchIllustration from "../../assets/illustrations/search.avif";
+import searchIllustration from "../../assets/illustrations/folders.avif";
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -94,12 +94,16 @@ const TutorProfile = () => {
   const renderCoursesTab = () => {
     if (loadingCourses) {
       return (
-        <CourseCardSkeleton count={2} cardBgColor={colors.background.gray} />
+        <CourseCardSkeleton
+          count={4}
+          gridClassName="grid grid-cols-1 sm:grid-cols-2 gap-5"
+          cardBgColor={colors.background.gray}
+        />
       );
     }
     if (courses.length > 0) {
       return (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {courses.map((course) => (
             <CourseCard
               key={course.id}
@@ -120,7 +124,7 @@ const TutorProfile = () => {
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
             onContextMenu={(e) => e.preventDefault()}
-            className="w-32 h-32 object-contain mb-4 opacity-75"
+            className="w-62 h-62 object-contain opacity-75"
           />
           <p className="text-sm" style={{ color: colors.text.secondary }}>
             {t("tutorProfile.noCourses")}
@@ -133,7 +137,7 @@ const TutorProfile = () => {
   const renderDocumentsTab = () => {
     if (loadingDocs) {
       return (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {DOC_SKEL_KEYS.map((key) => (
             <Card
               key={key}
@@ -153,7 +157,7 @@ const TutorProfile = () => {
     }
     if (documents.length > 0) {
       return (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {documents.map((doc) => (
             <DocumentCard
               key={doc.id}
@@ -174,7 +178,7 @@ const TutorProfile = () => {
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
             onContextMenu={(e) => e.preventDefault()}
-            className="w-32 h-32 object-contain mb-4 opacity-75"
+            className="w-62 h-62 object-contain opacity-75"
           />
           <p className="text-sm" style={{ color: colors.text.secondary }}>
             {t("tutorProfile.noDocuments")}
@@ -338,7 +342,7 @@ const TutorProfile = () => {
           className="flex flex-col lg:flex-row gap-6 items-start"
         >
           {/* Left: About Me */}
-          <div className="w-full lg:w-106 shrink-0">
+          <div className="w-full lg:w-116 shrink-0">
             <Card
               shadow="none"
               style={{ backgroundColor: colors.background.gray }}

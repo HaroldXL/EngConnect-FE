@@ -623,7 +623,7 @@ const Profile = () => {
                   </div>
                 )}
                 <p
-                  className="text-sm max-w-lg"
+                  className="text-sm max-w-lg whitespace-pre-wrap"
                   style={{ color: colors.text.secondary }}
                 >
                   {tutorProfile?.bio}
@@ -857,6 +857,8 @@ const Profile = () => {
                   onValueChange={(v) =>
                     setEditData((prev) => ({ ...prev, bio: v }))
                   }
+                  minRows={4}
+                  maxRows={12}
                   classNames={textareaClassNames}
                 />
               </div>

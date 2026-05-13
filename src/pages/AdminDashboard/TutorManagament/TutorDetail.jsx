@@ -7,13 +7,15 @@ import { motion } from "framer-motion";
 import { adminApi, coursesApi, tutorApi } from "../../../api";
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../../components/CourseCardSkeleton/CourseCardSkeleton";
+import DocumentCard from "../../../components/DocumentCard/DocumentCard";
+import ImageViewerModal from "../../../components/ImageViewerModal/ImageViewerModal";
 import {
   ArrowLeft,
   Star,
-  CheckCircle,
   GraduationCap,
   CalendarDots,
   Clock,
+  Files,
 } from "@phosphor-icons/react";
 import searchIllustration from "../../../assets/illustrations/search.avif";
 
@@ -29,6 +31,9 @@ const AdminTutorDetail = () => {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [scheduleSlots, setScheduleSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
+  const [documents, setDocuments] = useState([]);
+  const [loadingDocs, setLoadingDocs] = useState(true);
+  const [viewingImageUrl, setViewingImageUrl] = useState(null);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -70,9 +75,25 @@ const AdminTutorDetail = () => {
         setLoadingSlots(false);
       }
     };
+    const fetchDocuments = async () => {
+      try {
+        setLoadingDocs(true);
+        const res = await tutorApi.getTutorDocuments({ TutorId: id });
+        const items = Array.isArray(res.data)
+          ? res.data
+          : res.data?.items || [];
+        setDocuments(items);
+      } catch {
+        // silently ignore
+      } finally {
+        setLoadingDocs(false);
+      }
+    };
+
     fetchDetail();
     fetchCourses();
     fetchSlots();
+    fetchDocuments();
   }, [id]);
 
   const getVerifiedColor = (status) => {
@@ -279,7 +300,12 @@ const AdminTutorDetail = () => {
                       >
                         {t("adminDashboard.tutors.bio")}
                       </p>
-                      <p style={{ color: colors.text.primary }}>{tutor.bio}</p>
+                      <p
+                        className="whitespace-pre-wrap"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {tutor.bio}
+                      </p>
                     </div>
                   )}
                   <div className="grid grid-cols-2 gap-3">
@@ -315,38 +341,72 @@ const AdminTutorDetail = () => {
                       </p>
                     </div>
                   </div>
-                  {tutor.introVideoUrl && (
-                    <div>
-                      <p
-                        className="text-sm font-semibold mb-1"
-                        style={{ color: colors.text.secondary }}
-                      >
-                        {t("adminDashboard.tutors.introVideo")}
-                      </p>
-                      <video
-                        src={tutor.introVideoUrl}
-                        controls
-                        className="w-full max-h-60 rounded-lg"
-                      />
-                    </div>
-                  )}
-                  {tutor.cvUrl && (
-                    <div>
-                      <p
-                        className="text-sm font-semibold mb-1"
-                        style={{ color: colors.text.secondary }}
-                      >
-                        {t("adminDashboard.tutors.cvFile")}
-                      </p>
-                      <a
-                        href={tutor.cvUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm underline"
-                        style={{ color: colors.primary.main }}
-                      >
-                        {t("adminDashboard.tutors.view")} CV
-                      </a>
+                  {(tutor.introVideoUrl || tutor.cvUrl) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {tutor.introVideoUrl && (
+                        <div>
+                          <p
+                            className="text-sm font-semibold mb-2"
+                            style={{ color: colors.text.secondary }}
+                          >
+                            {t("adminDashboard.tutors.introVideo")}
+                          </p>
+                          <div
+                            className="rounded-xl overflow-hidden w-full"
+                            style={{ backgroundColor: "#000" }}
+                          >
+                            <video
+                              src={tutor.introVideoUrl}
+                              controls
+                              className="w-full aspect-video"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {tutor.cvUrl && (
+                        <div>
+                          <p
+                            className="text-sm font-semibold mb-2"
+                            style={{ color: colors.text.secondary }}
+                          >
+                            {t("adminDashboard.tutors.cvFile")}
+                          </p>
+                          <div
+                            className="rounded-xl flex flex-col items-center justify-center gap-3 aspect-video"
+                            style={{ backgroundColor: colors.background.gray }}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="w-10 h-10"
+                              fill="none"
+                              style={{ color: "#EF4444" }}
+                            >
+                              <path
+                                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                                fill="currentColor"
+                                opacity="0.15"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                              />
+                              <path
+                                d="M14 2v6h6M9 13h6M9 17h4"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            <a
+                              href={tutor.cvUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium underline"
+                              style={{ color: colors.primary.main }}
+                            >
+                              {t("adminDashboard.tutors.view")} CV
+                            </a>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -356,11 +416,87 @@ const AdminTutorDetail = () => {
         </Card>
       </motion.div>
 
-      {/* Tutor Courses */}
+      {/* Documents */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15, delay: 0.1 }}
+      >
+        <h2
+          className="text-xl font-bold mb-4 flex items-center gap-2"
+          style={{ color: colors.text.primary }}
+        >
+          <Files
+            size={22}
+            weight="duotone"
+            style={{ color: colors.primary.main }}
+          />
+          {t("tutorDashboard.profile.documents.myDocuments")}
+          {!loadingDocs && (
+            <span
+              className="text-sm font-normal"
+              style={{ color: colors.text.tertiary }}
+            >
+              ({documents.length})
+            </span>
+          )}
+        </h2>
+        {loadingDocs ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {["ds-0", "ds-1", "ds-2", "ds-3"].map((k) => (
+              <Card
+                key={k}
+                shadow="none"
+                style={{ backgroundColor: colors.background.light }}
+              >
+                <CardBody className="p-4 gap-2">
+                  <div
+                    className="h-4 w-24 rounded animate-pulse"
+                    style={{ backgroundColor: colors.background.gray }}
+                  />
+                  <div
+                    className="h-4 w-full rounded animate-pulse"
+                    style={{ backgroundColor: colors.background.gray }}
+                  />
+                  <div
+                    className="h-32 w-full rounded-xl mt-1 animate-pulse"
+                    style={{ backgroundColor: colors.background.gray }}
+                  />
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        ) : documents.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {documents.map((doc) => (
+              <DocumentCard
+                key={doc.id}
+                doc={doc}
+                onViewImage={setViewingImageUrl}
+                cardBgColor={colors.background.light}
+              />
+            ))}
+          </div>
+        ) : (
+          <Card
+            shadow="none"
+            className="border-none"
+            style={{ backgroundColor: colors.background.light }}
+          >
+            <CardBody className="flex flex-col items-center justify-center py-10">
+              <p className="text-sm" style={{ color: colors.text.secondary }}>
+                {t("tutorProfile.noDocuments")}
+              </p>
+            </CardBody>
+          </Card>
+        )}
+      </motion.div>
+
+      {/* Tutor Courses */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.15, delay: 0.15 }}
       >
         <h2
           className="text-xl font-bold mb-4 flex items-center gap-2"
@@ -426,7 +562,7 @@ const AdminTutorDetail = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.15, delay: 0.15 }}
+        transition={{ duration: 0.15, delay: 0.2 }}
       >
         <h2
           className="text-xl font-bold mb-4 flex items-center gap-2"
@@ -527,6 +663,10 @@ const AdminTutorDetail = () => {
           </Card>
         )}
       </motion.div>
+      <ImageViewerModal
+        imageUrl={viewingImageUrl}
+        onClose={() => setViewingImageUrl(null)}
+      />
     </div>
   );
 };

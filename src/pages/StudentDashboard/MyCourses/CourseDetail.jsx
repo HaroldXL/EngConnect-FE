@@ -2287,7 +2287,7 @@ const StudentMyCourseDetail = () => {
                   </div>
                   {tutorInfo.bio && (
                     <p
-                      className="text-sm leading-relaxed"
+                      className="text-sm leading-relaxed whitespace-pre-wrap"
                       style={{ color: colors.text.secondary }}
                     >
                       {tutorInfo.bio}
