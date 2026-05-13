@@ -4,7 +4,16 @@ import {
   CardBody,
   Button,
   Avatar,
+  Chip,
   Input,
+  Select,
+  SelectItem,
+  DatePicker,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Tabs,
   Tab,
   Switch,
@@ -13,6 +22,7 @@ import {
   Spinner,
   addToast,
 } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
@@ -35,10 +45,14 @@ import {
   SealCheck,
   Bank,
   CaretDown,
+  Files,
+  Trash,
 } from "@phosphor-icons/react";
 import BankSelectModal, {
   BANK_LIST,
 } from "../../../components/BankSelectModal/BankSelectModal";
+import ImageViewerModal from "../../../components/ImageViewerModal/ImageViewerModal";
+import DocumentCard from "../../../components/DocumentCard/DocumentCard";
 import { tutorApi } from "../../../api/tutorApi";
 import { authApi } from "../../../api/authApi";
 import ProfileSkeleton from "../../../components/ProfileSkeleton/ProfileSkeleton";
@@ -48,7 +62,8 @@ import { updateTutorAvatar, updateUserInfo, selectUser } from "../../../store";
 const Profile = () => {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const { inputClassNames, textareaClassNames } = useInputStyles();
+  const { inputClassNames, textareaClassNames, selectClassNames } =
+    useInputStyles();
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const [isEditing, setIsEditing] = useState(false);
@@ -82,6 +97,24 @@ const Profile = () => {
   const avatarInputRef = useRef(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  const [documents, setDocuments] = useState([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [deletingDocId, setDeletingDocId] = useState(null);
+  const [docUploading, setDocUploading] = useState(false);
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [docToDelete, setDocToDelete] = useState(null);
+  const [viewingImageUrl, setViewingImageUrl] = useState(null);
+  const docFileRef = useRef(null);
+
+  const [docForm, setDocForm] = useState({
+    name: "",
+    docType: "",
+    issuedBy: "",
+    issuedAt: "",
+    expiredAt: "",
+    file: null,
+  });
+
   const [bankForm, setBankForm] = useState({
     bankCode: "",
     bankAccountNumber: "",
@@ -97,6 +130,81 @@ const Profile = () => {
   // Auto-select verification tab when unverified
   const isUnverified = tutorProfile?.verifiedStatus === "Unverified";
   const [selectedTab, setSelectedTab] = useState("profile");
+
+  const fetchDocuments = async () => {
+    setDocumentsLoading(true);
+    try {
+      const res = await tutorApi.getTutorDocuments();
+      const items = Array.isArray(res.data) ? res.data : res.data?.items || [];
+      setDocuments(items);
+    } catch (err) {
+      console.error("Failed to fetch documents:", err);
+    } finally {
+      setDocumentsLoading(false);
+    }
+  };
+
+  const handleDocUpload = async () => {
+    if (!docForm.name.trim() || !docForm.file) return;
+    setDocUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("Name", docForm.name.trim());
+      fd.append("DocType", docForm.docType);
+      if (docForm.issuedBy) fd.append("IssuedBy", docForm.issuedBy);
+      if (docForm.issuedAt) fd.append("IssuedAt", docForm.issuedAt);
+      if (docForm.expiredAt) fd.append("ExpiredAt", docForm.expiredAt);
+      fd.append("File", docForm.file);
+      fd.append("FileName", docForm.file.name);
+      const res = await tutorApi.uploadTutorDocument(fd);
+      if (res.isSuccess) {
+        addToast({
+          title: t("tutorDashboard.profile.documents.uploadSuccess"),
+          color: "success",
+        });
+        setDocForm({
+          name: "",
+          docType: "",
+          issuedBy: "",
+          issuedAt: "",
+          expiredAt: "",
+          file: null,
+        });
+        if (docFileRef.current) docFileRef.current.value = "";
+        setDocModalOpen(false);
+        fetchDocuments();
+      }
+    } catch {
+      addToast({
+        title: t("tutorDashboard.profile.documents.uploadFailed"),
+        color: "danger",
+      });
+    } finally {
+      setDocUploading(false);
+    }
+  };
+
+  const handleDocDelete = async (docId) => {
+    setDeletingDocId(docId);
+    try {
+      const res = await tutorApi.deleteTutorDocument(docId);
+      if (res.isSuccess) {
+        addToast({
+          title: t("tutorDashboard.profile.documents.deleteSuccess"),
+          color: "success",
+        });
+        setDocuments((prev) => prev.filter((d) => d.id !== docId));
+        setDocToDelete(null);
+      }
+    } catch {
+      addToast({
+        title: t("tutorDashboard.profile.documents.deleteFailed"),
+        color: "danger",
+      });
+    } finally {
+      setDeletingDocId(null);
+    }
+  };
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
@@ -214,6 +322,10 @@ const Profile = () => {
       setSelectedTab("verification");
     }
   }, [tutorProfile]);
+
+  useEffect(() => {
+    if (selectedTab === "documents") fetchDocuments();
+  }, [selectedTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCvUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -557,6 +669,17 @@ const Profile = () => {
                     <User className="w-5 h-5" />
                     <span className="font-medium">
                       {t("tutorDashboard.profile.tabs.profile")}
+                    </span>
+                  </div>
+                }
+              />
+              <Tab
+                key="documents"
+                title={
+                  <div className="flex items-center gap-2">
+                    <Files className="w-5 h-5" />
+                    <span className="font-medium">
+                      {t("tutorDashboard.profile.tabs.documents")}
                     </span>
                   </div>
                 }
@@ -1280,6 +1403,343 @@ const Profile = () => {
               </div>
             </CardBody>
           </Card>
+        )}
+
+        {selectedTab === "documents" && (
+          <>
+            <Card
+              shadow="none"
+              className="border-none"
+              style={{ backgroundColor: colors.background.light }}
+            >
+              <CardBody className="p-6">
+                {/* Header row */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                      style={{
+                        backgroundColor: colors.background.primaryLight,
+                      }}
+                    >
+                      <Files
+                        weight="duotone"
+                        className="w-4.5 h-4.5"
+                        style={{ color: colors.primary.main }}
+                      />
+                    </div>
+                    <h3
+                      className="text-lg font-semibold"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t("tutorDashboard.profile.documents.myDocuments")}
+                    </h3>
+                  </div>
+                  <Button
+                    startContent={<Upload weight="bold" className="w-4 h-4" />}
+                    onPress={() => setDocModalOpen(true)}
+                    style={{
+                      backgroundColor: colors.primary.main,
+                      color: colors.text.white,
+                    }}
+                  >
+                    {t("tutorDashboard.profile.documents.addButton")}
+                  </Button>
+                </div>
+
+                {/* Documents list */}
+                {documentsLoading ? (
+                  <div className="flex justify-center py-10">
+                    <Spinner />
+                  </div>
+                ) : documents.length === 0 ? (
+                  <div
+                    className="flex flex-col items-center py-12"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    <Files weight="duotone" className="w-12 h-12 mb-3" />
+                    <p className="text-sm">
+                      {t("tutorDashboard.profile.documents.noDocuments")}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {documents.map((doc) => (
+                      <DocumentCard
+                        key={doc.id}
+                        doc={doc}
+                        onDelete={setDocToDelete}
+                        onViewImage={setViewingImageUrl}
+                        cardBgColor={colors.background.gray}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+
+            {/* Add Document Modal */}
+            <Modal
+              isOpen={docModalOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setDocForm({
+                    name: "",
+                    docType: "",
+                    issuedBy: "",
+                    issuedAt: "",
+                    expiredAt: "",
+                    file: null,
+                  });
+                  if (docFileRef.current) docFileRef.current.value = "";
+                }
+                setDocModalOpen(open);
+              }}
+              size="lg"
+            >
+              <ModalContent style={{ backgroundColor: colors.background.card }}>
+                {(onClose) => (
+                  <>
+                    <ModalHeader style={{ color: colors.text.primary }}>
+                      {t("tutorDashboard.profile.documents.modalTitle")}
+                    </ModalHeader>
+                    <ModalBody className="gap-4 pb-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Input
+                          label={`${t("tutorDashboard.profile.documents.nameLabel")} *`}
+                          labelPlacement="outside"
+                          placeholder={t(
+                            "tutorDashboard.profile.documents.namePlaceholder",
+                          )}
+                          value={docForm.name}
+                          onValueChange={(v) =>
+                            setDocForm((p) => ({ ...p, name: v }))
+                          }
+                          classNames={inputClassNames}
+                        />
+                        <Select
+                          label={`${t("tutorDashboard.profile.documents.typeLabel")} *`}
+                          labelPlacement="outside"
+                          placeholder={t(
+                            "tutorDashboard.profile.documents.typePlaceholder",
+                          )}
+                          selectedKeys={
+                            docForm.docType ? [docForm.docType] : []
+                          }
+                          onSelectionChange={(keys) =>
+                            setDocForm((p) => ({
+                              ...p,
+                              docType: [...keys][0] || "",
+                            }))
+                          }
+                          classNames={selectClassNames}
+                        >
+                          {["Degree", "Certificate", "License", "Other"].map(
+                            (type) => (
+                              <SelectItem key={type}>
+                                {t(
+                                  `tutorDashboard.profile.documents.types.${type}`,
+                                )}
+                              </SelectItem>
+                            ),
+                          )}
+                        </Select>
+                        <Input
+                          label={t(
+                            "tutorDashboard.profile.documents.issuedByLabel",
+                          )}
+                          labelPlacement="outside"
+                          placeholder={t(
+                            "tutorDashboard.profile.documents.issuedByPlaceholder",
+                          )}
+                          value={docForm.issuedBy}
+                          onValueChange={(v) =>
+                            setDocForm((p) => ({ ...p, issuedBy: v }))
+                          }
+                          classNames={inputClassNames}
+                        />
+                        <DatePicker
+                          label={t(
+                            "tutorDashboard.profile.documents.issuedAtLabel",
+                          )}
+                          labelPlacement="outside"
+                          value={
+                            docForm.issuedAt
+                              ? parseDate(docForm.issuedAt)
+                              : null
+                          }
+                          onChange={(date) =>
+                            setDocForm((p) => ({
+                              ...p,
+                              issuedAt: date ? date.toString() : "",
+                            }))
+                          }
+                          classNames={inputClassNames}
+                        />
+                        <DatePicker
+                          label={t(
+                            "tutorDashboard.profile.documents.expiredAtLabel",
+                          )}
+                          labelPlacement="outside"
+                          value={
+                            docForm.expiredAt
+                              ? parseDate(docForm.expiredAt)
+                              : null
+                          }
+                          onChange={(date) =>
+                            setDocForm((p) => ({
+                              ...p,
+                              expiredAt: date ? date.toString() : "",
+                            }))
+                          }
+                          classNames={inputClassNames}
+                        />
+                      </div>
+
+                      <div
+                        className="flex items-center gap-3 p-4 rounded-xl border-2 border-dashed cursor-pointer"
+                        style={{
+                          borderColor: docForm.file
+                            ? colors.state.success
+                            : colors.border.light,
+                          backgroundColor: colors.background.gray,
+                        }}
+                        onClick={() => docFileRef.current?.click()}
+                      >
+                        {docForm.file ? (
+                          <>
+                            <CheckCircle
+                              weight="fill"
+                              className="w-5 h-5 shrink-0"
+                              style={{ color: colors.state.success }}
+                            />
+                            <span
+                              className="text-sm truncate"
+                              style={{ color: colors.text.primary }}
+                            >
+                              {docForm.file.name}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload
+                              weight="duotone"
+                              className="w-5 h-5 shrink-0"
+                              style={{ color: colors.text.tertiary }}
+                            />
+                            <span
+                              className="text-sm"
+                              style={{ color: colors.text.tertiary }}
+                            >
+                              {t(
+                                "tutorDashboard.profile.documents.filePlaceholder",
+                              )}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        ref={docFileRef}
+                        type="file"
+                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={(e) =>
+                          setDocForm((p) => ({
+                            ...p,
+                            file: e.target.files?.[0] || null,
+                          }))
+                        }
+                      />
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button
+                        variant="flat"
+                        onPress={onClose}
+                        style={{
+                          backgroundColor: colors.background.gray,
+                          color: colors.text.secondary,
+                        }}
+                      >
+                        {t("tutorDashboard.profile.cancel")}
+                      </Button>
+                      <Button
+                        isLoading={docUploading}
+                        isDisabled={
+                          !docForm.name.trim() ||
+                          !docForm.docType ||
+                          !docForm.file
+                        }
+                        onPress={handleDocUpload}
+                        startContent={
+                          !docUploading && (
+                            <Upload weight="bold" className="w-4 h-4" />
+                          )
+                        }
+                        style={{
+                          backgroundColor: colors.primary.main,
+                          color: colors.text.white,
+                        }}
+                      >
+                        {t("tutorDashboard.profile.documents.uploadButton")}
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+
+            {/* Delete Confirm Modal */}
+            <Modal
+              isOpen={!!docToDelete}
+              onOpenChange={(open) => {
+                if (!open) setDocToDelete(null);
+              }}
+              size="sm"
+            >
+              <ModalContent style={{ backgroundColor: colors.background.card }}>
+                {(onClose) => (
+                  <>
+                    <ModalHeader style={{ color: colors.text.primary }}>
+                      {t("tutorDashboard.profile.documents.deleteConfirmTitle")}
+                    </ModalHeader>
+                    <ModalBody>
+                      <p
+                        className="text-sm"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {t(
+                          "tutorDashboard.profile.documents.deleteConfirmMessage",
+                          { name: docToDelete?.name },
+                        )}
+                      </p>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button variant="light" onPress={onClose}>
+                        {t("tutorDashboard.profile.cancel")}
+                      </Button>
+                      <Button
+                        color="danger"
+                        isLoading={!!deletingDocId}
+                        onPress={() => handleDocDelete(docToDelete.id)}
+                        startContent={
+                          !deletingDocId && (
+                            <Trash weight="bold" className="w-4 h-4" />
+                          )
+                        }
+                      >
+                        {t("tutorDashboard.profile.documents.deleteButton")}
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+
+            <ImageViewerModal
+              imageUrl={viewingImageUrl}
+              onClose={() => setViewingImageUrl(null)}
+            />
+          </>
         )}
 
         {selectedTab === "verification" && (

@@ -146,6 +146,25 @@ export const tutorApi = {
     return response.data;
   },
 
+  // ---- Tutor Documents ----
+
+  getTutorDocuments: async (params = {}) => {
+    const response = await axiosInstance.get("/tutor-documents", { params });
+    return response.data;
+  },
+
+  uploadTutorDocument: async (formData) => {
+    const response = await axiosInstance.post("/tutor-documents", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+
+  deleteTutorDocument: async (documentId) => {
+    const response = await axiosInstance.delete(`/tutor-documents/${documentId}`);
+    return response.data;
+  },
+
   // ---- Tutor Schedules ----
 
   // Get tutor schedules (list)

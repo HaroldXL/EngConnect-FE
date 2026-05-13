@@ -145,7 +145,11 @@ const Schedule = () => {
       };
       if (statusFilter !== "all") params.Status = statusFilter;
       const res = await studentApi.getLessons(params);
-      setLessons(res?.data?.items || []);
+      setLessons(
+        (res?.data?.items || []).filter(
+          (l) => l.status !== "MadeUp" && l.status !== "Rescheduled",
+        ),
+      );
     } catch (err) {
       console.error("Failed to fetch lessons:", err);
     } finally {

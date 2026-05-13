@@ -782,20 +782,22 @@ const Courses = () => {
                     ))}
                   </motion.div>
 
-                  {selectedCategories.size === 0 && selectedLevels.size === 0 && totalPages > 1 && (
-                    <div className="flex justify-center mt-8">
-                      <Pagination
-                        total={totalPages}
-                        page={page}
-                        onChange={(p) => {
-                          setPage(p);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        color="primary"
-                        showControls
-                      />
-                    </div>
-                  )}
+                  {selectedCategories.size === 0 &&
+                    selectedLevels.size === 0 &&
+                    totalPages > 1 && (
+                      <div className="flex justify-center mt-8">
+                        <Pagination
+                          total={totalPages}
+                          page={page}
+                          onChange={(p) => {
+                            setPage(p);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          color="primary"
+                          showControls
+                        />
+                      </div>
+                    )}
                 </>
               )}
             </div>

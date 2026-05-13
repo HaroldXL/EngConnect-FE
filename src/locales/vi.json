@@ -1692,7 +1692,8 @@
         "notifications": "Thông báo",
         "security": "Bảo mật",
         "earnings": "Thu nhập",
-        "verification": "Xác minh"
+        "verification": "Xác minh",
+        "documents": "Tài liệu"
       },
       "personalInfo": "Thông tin cá nhân",
       "edit": "Sửa",
@@ -1758,6 +1759,38 @@
         "verifiedButton": "Đã xác minh",
         "submitSuccess": "Yêu cầu xác minh đã được gửi thành công! Chúng tôi sẽ xem xét hồ sơ của bạn sớm.",
         "submitFailed": "Gửi yêu cầu xác minh thất bại"
+      },
+      "documents": {
+        "addButton": "Thêm tài liệu",
+        "modalTitle": "Thêm tài liệu mới",
+        "nameLabel": "Tên tài liệu",
+        "typeLabel": "Loại tài liệu",
+        "issuedByLabel": "Cơ quan cấp",
+        "issuedAtLabel": "Ngày cấp",
+        "expiredAtLabel": "Ngày hết hạn",
+        "namePlaceholder": "VD: Chứng chỉ IELTS",
+        "typePlaceholder": "Chọn loại tài liệu",
+        "issuedByPlaceholder": "VD: Bộ Giáo dục và Đào tạo",
+        "deleteConfirmTitle": "Xác nhận xóa tài liệu",
+        "deleteConfirmMessage": "Bạn có chắc muốn xóa \"{{name}}\"? Hành động này không thể hoàn tác.",
+        "deleteButton": "Xóa",
+        "filePlaceholder": "Chọn file (PDF, DOC, DOCX, JPG, PNG)",
+        "uploadButton": "Tải lên tài liệu",
+        "myDocuments": "Tài liệu của tôi",
+        "noDocuments": "Chưa có tài liệu nào",
+        "view": "Xem",
+        "active": "Đang hiệu lực",
+        "inactive": "Hết hiệu lực",
+        "uploadSuccess": "Tài liệu đã được tải lên",
+        "uploadFailed": "Tải lên tài liệu thất bại",
+        "deleteSuccess": "Đã xóa tài liệu",
+        "deleteFailed": "Xóa tài liệu thất bại",
+        "types": {
+          "Degree": "Bằng cấp",
+          "Certificate": "Chứng chỉ",
+          "License": "Giấy phép",
+          "Other": "Khác"
+        }
       }
     },
     "verificationBanner": {
@@ -2955,7 +2988,14 @@
     "coursesBy": "Khóa học của {{name}}",
     "noCourses": "Gia sư này chưa có khóa học nào.",
     "notFound": "Không tìm thấy hồ sơ gia sư.",
-    "viewProfile": "Xem hồ sơ"
+    "viewProfile": "Xem hồ sơ",
+    "aboutMe": "Giới thiệu",
+    "noBio": "Gia sư này chưa thêm giới thiệu.",
+    "noDocuments": "Chưa có tài liệu công khai.",
+    "tabs": {
+      "courses": "Khóa học",
+      "documents": "Chứng chỉ"
+    }
   },
   "studentProfile": {
     "totalCourses": "khóa học đã đăng ký",

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://engconnect-prod.gdev.id.vn/api/";
+const BASE_URL = "https://engconnect-qa.gdev.id.vn/api/";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

@@ -210,9 +210,7 @@ const LessonDetailModal = ({
           const allLessons = lessonsRes?.data?.items || [];
           const next = allLessons
             .filter(
-              (l) =>
-                new Date(l.startTime) > new Date(lesson.startTime) &&
-                l.status === "Scheduled",
+              (l) => new Date(l.startTime) > new Date(lesson.startTime),
             )
             .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
           setComputedDeadline(

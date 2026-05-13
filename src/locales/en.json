@@ -1694,7 +1694,8 @@
         "notifications": "Notifications",
         "security": "Security",
         "earnings": "Earnings",
-        "verification": "Verification"
+        "verification": "Verification",
+        "documents": "Documents"
       },
       "personalInfo": "Personal Information",
       "edit": "Edit",
@@ -1760,6 +1761,38 @@
         "verifiedButton": "Already Verified",
         "submitSuccess": "Verification request submitted successfully! We will review your profile shortly.",
         "submitFailed": "Failed to submit verification request"
+      },
+      "documents": {
+        "addButton": "Add Document",
+        "modalTitle": "Add New Document",
+        "nameLabel": "Document Name",
+        "typeLabel": "Document Type",
+        "issuedByLabel": "Issued By",
+        "issuedAtLabel": "Issue Date",
+        "expiredAtLabel": "Expiry Date",
+        "namePlaceholder": "e.g. IELTS Certificate",
+        "typePlaceholder": "Select document type",
+        "issuedByPlaceholder": "e.g. British Council",
+        "deleteConfirmTitle": "Confirm Delete",
+        "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+        "deleteButton": "Delete",
+        "filePlaceholder": "Select file (PDF, DOC, DOCX, JPG, PNG)",
+        "uploadButton": "Upload Document",
+        "myDocuments": "My Documents",
+        "noDocuments": "No documents yet",
+        "view": "View",
+        "active": "Active",
+        "inactive": "Inactive",
+        "uploadSuccess": "Document uploaded successfully",
+        "uploadFailed": "Failed to upload document",
+        "deleteSuccess": "Document deleted",
+        "deleteFailed": "Failed to delete document",
+        "types": {
+          "Degree": "Degree",
+          "Certificate": "Certificate",
+          "License": "License",
+          "Other": "Other"
+        }
       }
     },
     "verificationBanner": {
@@ -2958,7 +2991,14 @@
     "coursesBy": "Courses by {{name}}",
     "noCourses": "This tutor has no published courses yet.",
     "notFound": "Tutor profile not found.",
-    "viewProfile": "View Profile"
+    "viewProfile": "View Profile",
+    "aboutMe": "About Me",
+    "noBio": "This tutor hasn't added a bio yet.",
+    "noDocuments": "No public documents available.",
+    "tabs": {
+      "courses": "Courses",
+      "documents": "Certificates"
+    }
   },
   "studentProfile": {
     "totalCourses": "courses enrolled",

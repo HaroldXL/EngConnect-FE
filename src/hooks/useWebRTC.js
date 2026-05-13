@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import * as signalR from "@microsoft/signalr";
 import { meetingApi } from "../api";
 
-const HUB_URL = "https://engconnect-prod.gdev.id.vn/hubs/video-call";
+const HUB_URL = "https://engconnect-qa.gdev.id.vn/hubs/video-call";
 
 const DEFAULT_ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 

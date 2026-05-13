@@ -216,7 +216,7 @@ const Schedule = () => {
       setLoading(true);
       const res = await tutorApi.getTutorSchedules({
         TutorId: user.tutorId,
-        "page-size": 200,
+        "page-size": 500,
       });
       if (res.isSuccess) {
         setSchedules(res.data.items || []);
@@ -240,7 +240,11 @@ const Schedule = () => {
         TutorId: user.tutorId,
         "page-size": 200,
       });
-      setLessons(res?.data?.items || []);
+      setLessons(
+        (res?.data?.items || []).filter(
+          (l) => l.status !== "MadeUp" && l.status !== "Rescheduled",
+        ),
+      );
     } catch (err) {
       console.error("Failed to fetch lessons:", err);
     } finally {
@@ -623,8 +627,7 @@ const Schedule = () => {
       .filter(
         (l) =>
           l.studentId === noTutorLesson.studentId &&
-          new Date(l.startTime) > new Date(noTutorLesson.startTime) &&
-          l.status === "Scheduled",
+          new Date(l.startTime) > new Date(noTutorLesson.startTime),
       )
       .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
     if (!next) return null;

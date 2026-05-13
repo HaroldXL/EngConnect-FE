@@ -54,7 +54,7 @@ import avatarSelene from "../../assets/images/avatar-selene.png";
 import avatarTalon from "../../assets/images/avatar-talon.png";
 import aiImage from "../../assets/illustrations/ai.avif";
 import videoImage from "../../assets/illustrations/video.avif";
-import foldersImage from "../../assets/illustrations/folders.avif";
+import iconsImage from "../../assets/illustrations/icons.avif";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -573,7 +573,9 @@ const Home = () => {
                 style={{ color: colors.text.primary }}
               >
                 {t("home.categories.title")}{" "}
-                <span style={{ color: colors.primary.main }}>{t("home.categories.titleHighlight")}</span>
+                <span style={{ color: colors.primary.main }}>
+                  {t("home.categories.titleHighlight")}
+                </span>
               </h2>
               <p
                 className="text-lg max-w-2xl mx-auto"
@@ -712,7 +714,7 @@ const Home = () => {
                     className="hidden lg:flex justify-center"
                   >
                     <img
-                      src={foldersImage}
+                      src={iconsImage}
                       alt="Browse skill categories"
                       draggable={false}
                       onDragStart={(e) => e.preventDefault()}

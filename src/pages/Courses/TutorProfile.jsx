@@ -1,23 +1,16 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Avatar, Card, CardBody, Chip, Skeleton } from "@heroui/react";
+import { Avatar, Card, CardBody, Skeleton, Tabs, Tab } from "@heroui/react";
 import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import CourseCard from "../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../components/CourseCardSkeleton/CourseCardSkeleton";
+import DocumentCard from "../../components/DocumentCard/DocumentCard";
+import ImageViewerModal from "../../components/ImageViewerModal/ImageViewerModal";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { useTheme } from "../../contexts/ThemeContext";
-import {
-  Star,
-  Clock,
-  BookOpen,
-  Users,
-  ArrowLeft,
-  GraduationCap,
-  EnvelopeSimple,
-} from "@phosphor-icons/react";
+import { Star, Clock, BookOpen, EnvelopeSimple } from "@phosphor-icons/react";
 import { tutorApi, coursesApi } from "../../api";
 import searchIllustration from "../../assets/illustrations/search.avif";
 
@@ -26,15 +19,17 @@ const { motion } = MotionLib;
 
 const TutorProfile = () => {
   const { tutorId } = useParams();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const { theme } = useTheme();
 
   const [tutor, setTutor] = useState(null);
   const [courses, setCourses] = useState([]);
+  const [documents, setDocuments] = useState([]);
   const [loadingTutor, setLoadingTutor] = useState(true);
   const [loadingCourses, setLoadingCourses] = useState(true);
+  const [loadingDocs, setLoadingDocs] = useState(true);
+  const [selectedTab, setSelectedTab] = useState("courses");
+  const [viewingImageUrl, setViewingImageUrl] = useState(null);
 
   useEffect(() => {
     const fetchTutor = async () => {
@@ -65,11 +60,129 @@ const TutorProfile = () => {
       }
     };
 
+    const fetchDocuments = async () => {
+      try {
+        setLoadingDocs(true);
+        const res = await tutorApi.getTutorDocuments({
+          TutorId: tutorId,
+          Status: "Active",
+        });
+        const items = Array.isArray(res.data)
+          ? res.data
+          : res.data?.items || [];
+        setDocuments(items);
+      } catch {
+        // silently ignore — docs are supplementary info
+      } finally {
+        setLoadingDocs(false);
+      }
+    };
+
     if (tutorId) {
       fetchTutor();
       fetchCourses();
+      fetchDocuments();
     }
   }, [tutorId]);
+
+  const tutorName = tutor
+    ? `${tutor.user?.firstName ?? ""} ${tutor.user?.lastName ?? ""}`.trim()
+    : "";
+
+  const DOC_SKEL_KEYS = ["doc-skel-0", "doc-skel-1", "doc-skel-2"];
+
+  const renderCoursesTab = () => {
+    if (loadingCourses) {
+      return (
+        <CourseCardSkeleton count={2} cardBgColor={colors.background.gray} />
+      );
+    }
+    if (courses.length > 0) {
+      return (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {courses.map((course) => (
+            <CourseCard
+              key={course.id}
+              course={course}
+              showCategory
+              style={{ backgroundColor: colors.background.gray }}
+            />
+          ))}
+        </div>
+      );
+    }
+    return (
+      <Card shadow="none" style={{ backgroundColor: colors.background.gray }}>
+        <CardBody className="flex flex-col items-center justify-center py-12">
+          <img
+            src={searchIllustration}
+            alt="No courses"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-32 h-32 object-contain mb-4 opacity-75"
+          />
+          <p className="text-sm" style={{ color: colors.text.secondary }}>
+            {t("tutorProfile.noCourses")}
+          </p>
+        </CardBody>
+      </Card>
+    );
+  };
+
+  const renderDocumentsTab = () => {
+    if (loadingDocs) {
+      return (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {DOC_SKEL_KEYS.map((key) => (
+            <Card
+              key={key}
+              shadow="none"
+              style={{ backgroundColor: colors.background.gray }}
+            >
+              <CardBody className="p-4 gap-2">
+                <Skeleton className="h-4 w-24 rounded" />
+                <Skeleton className="h-4 w-full rounded" />
+                <Skeleton className="h-3 w-3/4 rounded" />
+                <Skeleton className="w-full h-36 rounded-xl mt-2" />
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+    if (documents.length > 0) {
+      return (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {documents.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              doc={doc}
+              onViewImage={setViewingImageUrl}
+              cardBgColor={colors.background.gray}
+            />
+          ))}
+        </div>
+      );
+    }
+    return (
+      <Card shadow="none" style={{ backgroundColor: colors.background.gray }}>
+        <CardBody className="flex flex-col items-center justify-center py-12">
+          <img
+            src={searchIllustration}
+            alt="No documents"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-32 h-32 object-contain mb-4 opacity-75"
+          />
+          <p className="text-sm" style={{ color: colors.text.secondary }}>
+            {t("tutorProfile.noDocuments")}
+          </p>
+        </CardBody>
+      </Card>
+    );
+  };
 
   return (
     <div
@@ -78,68 +191,66 @@ const TutorProfile = () => {
     >
       <Header />
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 py-8">
-        {/* Tutor info section */}
+      <div className="max-w-7xl mx-auto py-8">
+        {/* ── Tutor header card ── */}
         {loadingTutor ? (
           <Card
-            className="shadow-none mb-8"
+            shadow="none"
+            className="mb-8"
             style={{ backgroundColor: colors.background.gray }}
           >
             <CardBody className="p-8">
               <div className="flex flex-col md:flex-row items-start gap-6">
-                <Skeleton className="w-24 h-24 rounded-full flex-shrink-0" />
+                <Skeleton className="w-20 h-20 rounded-full shrink-0" />
                 <div className="flex-1 space-y-3">
-                  <Skeleton className="h-7 w-56 rounded-lg" />
-                  <Skeleton className="h-4 w-72 rounded-lg" />
-                  <Skeleton className="h-4 w-48 rounded-lg" />
+                  <Skeleton className="h-6 w-48 rounded-lg" />
+                  <Skeleton className="h-4 w-64 rounded-lg" />
                   <div className="flex gap-4 mt-2">
+                    <Skeleton className="h-4 w-20 rounded-lg" />
                     <Skeleton className="h-4 w-24 rounded-lg" />
-                    <Skeleton className="h-4 w-28 rounded-lg" />
-                    <Skeleton className="h-4 w-24 rounded-lg" />
+                    <Skeleton className="h-4 w-20 rounded-lg" />
                   </div>
-                  <Skeleton className="h-4 w-full rounded-lg" />
-                  <Skeleton className="h-4 w-4/5 rounded-lg" />
                 </div>
               </div>
             </CardBody>
           </Card>
         ) : tutor ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
+            className="mb-8"
           >
             <Card
-              className="shadow-none mb-8"
+              shadow="none"
               style={{ backgroundColor: colors.background.gray }}
             >
-              <CardBody className="p-8">
+              <CardBody className="p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start gap-6">
                   <Avatar
                     src={tutor.avatar}
-                    name={`${tutor.user?.firstName} ${tutor.user?.lastName}`}
-                    className="w-24 h-24 text-xl flex-shrink-0"
+                    name={tutorName}
+                    className="w-20 h-20 text-xl shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <h1
-                      className="text-2xl font-bold mb-1"
+                      className="text-2xl font-bold mb-0.5"
                       style={{ color: colors.text.primary }}
                     >
-                      {tutor.user?.firstName} {tutor.user?.lastName}
+                      {tutorName}
                     </h1>
                     {tutor.headline && (
                       <p
-                        className="text-base mb-4"
+                        className="text-sm mb-3"
                         style={{ color: colors.text.secondary }}
                       >
                         {tutor.headline}
                       </p>
                     )}
-
                     {tutor.user?.email && (
-                      <div className="flex items-center gap-1.5 mb-4">
+                      <div className="flex items-center gap-1.5 mb-3">
                         <EnvelopeSimple
-                          size={18}
+                          size={16}
                           style={{ color: colors.primary.main }}
                         />
                         <a
@@ -151,11 +262,10 @@ const TutorProfile = () => {
                         </a>
                       </div>
                     )}
-
-                    <div className="flex flex-wrap items-center gap-4 mb-4">
+                    <div className="flex flex-wrap items-center gap-4">
                       <div className="flex items-center gap-1.5">
                         <Star
-                          size={18}
+                          size={16}
                           weight="fill"
                           style={{ color: "#f59e0b" }}
                         />
@@ -176,7 +286,7 @@ const TutorProfile = () => {
                       {tutor.monthExperience > 0 && (
                         <div className="flex items-center gap-1.5">
                           <Clock
-                            size={18}
+                            size={16}
                             style={{ color: colors.primary.main }}
                           />
                           <span
@@ -190,26 +300,17 @@ const TutorProfile = () => {
                       )}
                       <div className="flex items-center gap-1.5">
                         <BookOpen
-                          size={18}
+                          size={16}
                           style={{ color: colors.primary.main }}
                         />
                         <span
                           className="text-sm"
                           style={{ color: colors.text.secondary }}
                         >
-                          {courses.length} {t("tutorProfile.courses")}
+                          {courses.length} {t("tutorProfile.tabs.courses")}
                         </span>
                       </div>
                     </div>
-
-                    {tutor.bio && (
-                      <p
-                        className="text-sm leading-relaxed"
-                        style={{ color: colors.text.secondary }}
-                      >
-                        {tutor.bio}
-                      </p>
-                    )}
                   </div>
                 </div>
               </CardBody>
@@ -217,7 +318,8 @@ const TutorProfile = () => {
           </motion.div>
         ) : (
           <Card
-            className="shadow-none mb-8"
+            shadow="none"
+            className="mb-8"
             style={{ backgroundColor: colors.background.gray }}
           >
             <CardBody className="p-8 text-center">
@@ -228,67 +330,85 @@ const TutorProfile = () => {
           </Card>
         )}
 
-        {/* Courses section */}
+        {/* ── Main content: About Me (left) + Tabs (right) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="flex flex-col lg:flex-row gap-6 items-start"
         >
-          <h2
-            className="text-xl font-bold mb-6"
-            style={{ color: colors.text.primary }}
-          >
-            <GraduationCap
-              size={24}
-              weight="duotone"
-              className="inline-block mr-2 -mt-0.5"
-              style={{ color: colors.primary.main }}
-            />
-            {t("tutorProfile.coursesBy", {
-              name: tutor
-                ? `${tutor.user?.firstName} ${tutor.user?.lastName}`
-                : "",
-            })}
-          </h2>
-
-          {loadingCourses ? (
-            <CourseCardSkeleton
-              count={4}
-              cardBgColor={colors.background.gray}
-            />
-          ) : courses.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  showCategory
-                  style={{ backgroundColor: colors.background.gray }}
-                />
-              ))}
-            </div>
-          ) : (
+          {/* Left: About Me */}
+          <div className="w-full lg:w-106 shrink-0">
             <Card
-              className="shadow-none"
+              shadow="none"
               style={{ backgroundColor: colors.background.gray }}
             >
-              <CardBody className="flex flex-col items-center justify-center py-12">
-                <img
-                  src={searchIllustration}
-                  alt="No courses"
-                  draggable={false}
-                  onDragStart={(e) => e.preventDefault()}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="w-36 h-36 object-contain mb-4 opacity-80"
-                />
-                <p className="text-sm" style={{ color: colors.text.secondary }}>
-                  {t("tutorProfile.noCourses")}
-                </p>
+              <CardBody className="p-6">
+                <h3
+                  className="text-xs font-bold uppercase tracking-widest mb-4"
+                  style={{ color: colors.text.tertiary }}
+                >
+                  {t("tutorProfile.aboutMe")}
+                </h3>
+                {loadingTutor ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-3 w-full rounded" />
+                    <Skeleton className="h-3 w-5/6 rounded" />
+                    <Skeleton className="h-3 w-full rounded" />
+                    <Skeleton className="h-3 w-4/5 rounded" />
+                  </div>
+                ) : (
+                  <p
+                    className="text-sm leading-relaxed whitespace-pre-line"
+                    style={{ color: colors.text.secondary }}
+                  >
+                    {tutor?.bio || t("tutorProfile.noBio")}
+                  </p>
+                )}
               </CardBody>
             </Card>
-          )}
+          </div>
+
+          {/* Right: Tabs */}
+          <div className="flex-1 min-w-0">
+            <Tabs
+              selectedKey={selectedTab}
+              onSelectionChange={setSelectedTab}
+              color="primary"
+              // classNames={{
+              //   tabList: "gap-6 border-b pb-0 mb-6 w-full",
+              //   tab: "h-10 px-0 font-semibold",
+              //   cursor: "bg-primary",
+              // }}
+            >
+              {/* Courses tab */}
+              <Tab
+                key="courses"
+                title={<span>{t("tutorProfile.tabs.courses")}</span>}
+              >
+                {renderCoursesTab()}
+              </Tab>
+
+              {/* Documents tab */}
+              <Tab
+                key="documents"
+                title={
+                  <span className="flex items-center gap-1.5">
+                    {t("tutorProfile.tabs.documents")}
+                  </span>
+                }
+              >
+                {renderDocumentsTab()}
+              </Tab>
+            </Tabs>
+          </div>
         </motion.div>
       </div>
+
+      <ImageViewerModal
+        imageUrl={viewingImageUrl}
+        onClose={() => setViewingImageUrl(null)}
+      />
 
       <Footer />
     </div>
