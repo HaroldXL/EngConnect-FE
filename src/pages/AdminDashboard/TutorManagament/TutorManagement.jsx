@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { CheckCircle, Export, Eye, Filter, Magnifer, MenuDots, Pen, PresentationGraph, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -34,18 +35,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { adminApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  DotsThree,
-  Eye,
-  PencilSimple,
-  Trash,
-  Export,
-  Funnel,
-  ChalkboardTeacher,
-  Star,
-  CheckCircle,
-} from "@phosphor-icons/react";
+
 
 const TutorManagement = () => {
   const { t } = useTranslation();
@@ -148,7 +138,7 @@ const TutorManagement = () => {
 
   const stats = [
     {
-      icon: ChalkboardTeacher,
+      icon: PresentationGraph,
       label: t("adminDashboard.tutors.stats.totalTutors"),
       value: totalTutorsCount.toLocaleString(),
       color: colors.primary.main,
@@ -302,7 +292,7 @@ const TutorManagement = () => {
                   >
                     <stat.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -346,7 +336,7 @@ const TutorManagement = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />
@@ -359,7 +349,7 @@ const TutorManagement = () => {
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      startContent={<Funnel className="w-4 h-4" />}
+                      startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                     >
                       {t("adminDashboard.tutors.verifiedStatusLabel")}:{" "}
                       {selectedVerifiedStatus === "all"
@@ -491,7 +481,7 @@ const TutorManagement = () => {
                         <div className="flex items-center gap-1">
                           <Star
                             className="w-4 h-4"
-                            weight="fill"
+                            weight="BoldDuotone"
                             style={{ color: colors.state.warning }}
                           />
                           <span style={{ color: colors.text.primary }}>
@@ -535,9 +525,9 @@ const TutorManagement = () => {
                         <Dropdown>
                           <DropdownTrigger>
                             <Button isIconOnly variant="light" size="sm">
-                              <DotsThree
+                              <MenuDots
                                 className="w-5 h-5"
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             </Button>
@@ -545,7 +535,7 @@ const TutorManagement = () => {
                           <DropdownMenu aria-label="Tutor actions">
                             <DropdownItem
                               key="view"
-                              startContent={<Eye className="w-4 h-4" />}
+                              startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleViewTutor(tutor)}
                             >
                               {t("adminDashboard.tutors.view")}
@@ -553,7 +543,7 @@ const TutorManagement = () => {
                             <DropdownItem
                               key="edit"
                               startContent={
-                                <PencilSimple className="w-4 h-4" />
+                                <Pen weight="BoldDuotone" className="w-4 h-4" />
                               }
                               onPress={() => handleEditClick(tutor)}
                             >
@@ -562,7 +552,7 @@ const TutorManagement = () => {
                             <DropdownItem
                               key="delete"
                               color="danger"
-                              startContent={<Trash className="w-4 h-4" />}
+                              startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleDeleteClick(tutor)}
                             >
                               {t("adminDashboard.tutors.delete")}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, Magnifer, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -33,20 +34,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { adminApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  DotsThree,
-  Eye,
-  CheckCircle,
-  XCircle,
-  Trash,
-  Export,
-  Funnel,
-  ClipboardText,
-  HourglassMedium,
-  Prohibit,
-  Star,
-} from "@phosphor-icons/react";
+
 
 const TutorVerification = () => {
   const { t, i18n } = useTranslation();
@@ -187,14 +175,14 @@ const TutorVerification = () => {
 
   const stats = [
     {
-      icon: ClipboardText,
+      icon: ClipboardList,
       label: t("adminDashboard.verification.stats.totalRequests"),
       value: totalCount.toLocaleString(),
       color: colors.primary.main,
       bg: colors.background.primaryLight,
     },
     {
-      icon: HourglassMedium,
+      icon: Hourglass,
       label: t("adminDashboard.verification.stats.pending"),
       value: pendingCount.toLocaleString(),
       color: colors.state.warning,
@@ -208,7 +196,7 @@ const TutorVerification = () => {
       bg: `${colors.state.success}20`,
     },
     {
-      icon: Prohibit,
+      icon: ForbiddenCircle,
       label: t("adminDashboard.verification.stats.rejected"),
       value: rejectedCount.toLocaleString(),
       color: colors.state.error,
@@ -423,7 +411,7 @@ const TutorVerification = () => {
                   >
                     <stat.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -467,7 +455,7 @@ const TutorVerification = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />
@@ -480,7 +468,7 @@ const TutorVerification = () => {
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      startContent={<Funnel className="w-4 h-4" />}
+                      startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                     >
                       {t("adminDashboard.verification.statusLabel")}:{" "}
                       {selectedStatus === "all"
@@ -611,9 +599,9 @@ const TutorVerification = () => {
                         <Dropdown>
                           <DropdownTrigger>
                             <Button isIconOnly variant="light" size="sm">
-                              <DotsThree
+                              <MenuDots
                                 className="w-5 h-5"
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             </Button>
@@ -621,7 +609,7 @@ const TutorVerification = () => {
                           <DropdownMenu aria-label="Request actions">
                             <DropdownItem
                               key="view"
-                              startContent={<Eye className="w-4 h-4" />}
+                              startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleViewRequest(req)}
                             >
                               {t("adminDashboard.verification.view")}
@@ -630,7 +618,7 @@ const TutorVerification = () => {
                               <DropdownItem
                                 key="approve"
                                 startContent={
-                                  <CheckCircle className="w-4 h-4" />
+                                  <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
                                 }
                                 className="text-success"
                                 onPress={() =>
@@ -643,7 +631,7 @@ const TutorVerification = () => {
                             {req.status === "Pending" && (
                               <DropdownItem
                                 key="reject"
-                                startContent={<XCircle className="w-4 h-4" />}
+                                startContent={<CloseCircle weight="BoldDuotone" className="w-4 h-4" />}
                                 className="text-warning"
                                 onPress={() =>
                                   handleReviewClick(req.id, "reject")
@@ -655,7 +643,7 @@ const TutorVerification = () => {
                             <DropdownItem
                               key="delete"
                               color="danger"
-                              startContent={<Trash className="w-4 h-4" />}
+                              startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleDeleteClick(req)}
                             >
                               {t("adminDashboard.verification.delete")}
@@ -796,7 +784,7 @@ const TutorVerification = () => {
                               <div className="flex items-center justify-center gap-1 mb-1">
                                 <Star
                                   className="w-4 h-4"
-                                  weight="fill"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.state.warning }}
                                 />
                                 <span

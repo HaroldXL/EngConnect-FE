@@ -1,4 +1,19 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  AltArrowLeft,
+  AltArrowRight,
+  BookBookmark,
+  CalendarMark,
+  CheckCircle,
+  CircleBottomUp,
+  ClockCircle,
+  DangerTriangle,
+  Dollar,
+  Eye,
+  Record,
+  Restart,
+  Videocamera,
+} from "@solar-icons/react";
 import { useNotifications } from "../../../contexts/NotificationContext";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -28,20 +43,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  CalendarDots,
-  Clock,
-  VideoCamera,
-  CaretLeft,
-  CaretRight,
-  BookOpen,
-  Circle,
-  Eye,
-  ArrowCounterClockwise,
-  Warning,
-  CheckCircle,
-  CurrencyDollar,
-} from "@phosphor-icons/react";
+
 import calendarIllustration from "../../../assets/illustrations/calendar.avif";
 import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
 import StudentRescheduleAcceptModal from "../../../components/StudentRescheduleAcceptModal/StudentRescheduleAcceptModal";
@@ -569,9 +571,7 @@ const Schedule = () => {
           {[
             {
               key: "offers",
-              icon: (
-                <ArrowCounterClockwise weight="duotone" className="w-4 h-4" />
-              ),
+              icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("studentDashboard.schedule.reschedule.tutorOfferedBtn"),
               badge: Object.values(offersByLesson).filter(
                 (o) => o.status === "PendingStudentChoice",
@@ -583,9 +583,7 @@ const Schedule = () => {
             },
             {
               key: "requests",
-              icon: (
-                <ArrowCounterClockwise weight="duotone" className="w-4 h-4" />
-              ),
+              icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("studentDashboard.schedule.reschedule.myRequestBtn"),
               badge: allStudentRequests.filter((r) => r.status === "Pending")
                 .length,
@@ -596,7 +594,7 @@ const Schedule = () => {
             },
             {
               key: "refundTickets",
-              icon: <CurrencyDollar weight="duotone" className="w-4 h-4" />,
+              icon: <Dollar weight="BoldDuotone" className="w-4 h-4" />,
               label: t("studentDashboard.schedule.refundRequest.ticketsBtn"),
               badge: refundTickets.filter((tk) => tk.status === "Open").length,
               badgeColor: colors.state.error,
@@ -716,8 +714,8 @@ const Schedule = () => {
                       variant="light"
                       onPress={goToPrevWeek}
                     >
-                      <CaretLeft
-                        weight="bold"
+                      <AltArrowLeft
+                        weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.secondary }}
                       />
@@ -734,8 +732,8 @@ const Schedule = () => {
                       variant="light"
                       onPress={goToNextWeek}
                     >
-                      <CaretRight
-                        weight="bold"
+                      <AltArrowRight
+                        weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.secondary }}
                       />
@@ -1026,8 +1024,8 @@ const Schedule = () => {
                     key="today"
                     title={
                       <div className="flex items-center gap-1.5 text-xs">
-                        <CalendarDots
-                          weight="duotone"
+                        <CalendarMark
+                          weight="BoldDuotone"
                           className="w-3.5 h-3.5"
                         />
                         <span>{t("studentDashboard.schedule.today")}</span>
@@ -1047,7 +1045,10 @@ const Schedule = () => {
                     key="upcoming"
                     title={
                       <div className="flex items-center gap-1.5 text-xs">
-                        <Clock weight="duotone" className="w-3.5 h-3.5" />
+                        <ClockCircle
+                          weight="BoldDuotone"
+                          className="w-3.5 h-3.5"
+                        />
                         <span>
                           {t("studentDashboard.schedule.upcomingTab")}
                         </span>
@@ -1142,8 +1143,8 @@ const Schedule = () => {
                                       color: colors.text.tertiary,
                                     }}
                                   >
-                                    <Clock
-                                      weight="duotone"
+                                    <ClockCircle
+                                      weight="BoldDuotone"
                                       className="w-3 h-3"
                                     />
                                     {sidebarView === "upcoming" &&
@@ -1171,7 +1172,10 @@ const Schedule = () => {
                                     className="text-[11px] flex items-center gap-1 mt-1"
                                     style={{ color: meetingInfo.color }}
                                   >
-                                    <Circle weight="fill" className="w-2 h-2" />
+                                    <Record
+                                      weight="BoldDuotone"
+                                      className="w-2 h-2"
+                                    />
                                     {meetingInfo.label}
                                   </span>
                                 )}
@@ -1182,7 +1186,12 @@ const Schedule = () => {
                                 size="sm"
                                 variant="flat"
                                 className="flex-1"
-                                startContent={<Eye className="w-3.5 h-3.5" />}
+                                startContent={
+                                  <Eye
+                                    weight="BoldDuotone"
+                                    className="w-3.5 h-3.5"
+                                  />
+                                }
                                 onPress={() => handleOpenLessonDetail(lesson)}
                               >
                                 {t("studentDashboard.schedule.viewDetail")}
@@ -1196,8 +1205,8 @@ const Schedule = () => {
                                     color: colors.text.white,
                                   }}
                                   startContent={
-                                    <VideoCamera
-                                      weight="fill"
+                                    <Videocamera
+                                      weight="BoldDuotone"
                                       className="w-3.5 h-3.5"
                                     />
                                   }
@@ -1218,8 +1227,8 @@ const Schedule = () => {
                                     variant="flat"
                                     className="w-full"
                                     startContent={
-                                      <Warning
-                                        weight="fill"
+                                      <DangerTriangle
+                                        weight="BoldDuotone"
                                         className="w-3.5 h-3.5"
                                       />
                                     }
@@ -1252,8 +1261,8 @@ const Schedule = () => {
                                   size="sm"
                                   className="w-full"
                                   startContent={
-                                    <ArrowCounterClockwise
-                                      weight="bold"
+                                    <Restart
+                                      weight="BoldDuotone"
                                       className="w-3.5 h-3.5"
                                     />
                                   }
@@ -1284,8 +1293,8 @@ const Schedule = () => {
                                   size="sm"
                                   className="w-full"
                                   startContent={
-                                    <CurrencyDollar
-                                      weight="bold"
+                                    <Dollar
+                                      weight="BoldDuotone"
                                       className="w-3.5 h-3.5"
                                     />
                                   }
@@ -1363,8 +1372,8 @@ const Schedule = () => {
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <ArrowCounterClockwise
-                  weight="duotone"
+                <Restart
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />
@@ -1418,7 +1427,7 @@ const Schedule = () => {
                       className="text-xs mt-1 flex items-center gap-1"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock weight="duotone" className="w-3 h-3" />
+                      <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                       {new Date(viewingRequestLesson.startTime).toLocaleString(
                         i18n.language === "vi" ? "vi-VN" : "en-US",
                         {
@@ -1519,7 +1528,9 @@ const Schedule = () => {
               <ModalFooter>
                 <Button
                   variant="flat"
-                  startContent={<Eye className="w-3.5 h-3.5" />}
+                  startContent={
+                    <Eye weight="BoldDuotone" className="w-3.5 h-3.5" />
+                  }
                   onPress={() => {
                     onClose();
                     if (viewingRequestLesson)
@@ -1554,7 +1565,7 @@ const Schedule = () => {
         onSubmit={handleSubmitRefundTicket}
       />
 
-      {/* No Bank Account Warning Modal */}
+      {/* No Bank Account DangerTriangle Modal */}
       <Modal
         isOpen={noBankModalOpen}
         onOpenChange={setNoBankModalOpen}
@@ -1567,8 +1578,8 @@ const Schedule = () => {
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <Warning
-                  weight="duotone"
+                <DangerTriangle
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />
@@ -1671,8 +1682,8 @@ const Schedule = () => {
                                   className="text-xs flex items-center gap-1"
                                   style={{ color: colors.text.tertiary }}
                                 >
-                                  <Clock
-                                    weight="duotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3.5 h-3.5 flex-shrink-0"
                                   />
                                   {new Date(lesson.startTime).toLocaleString(
@@ -1702,7 +1713,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="light"
                                   className="h-6 px-2 text-xs flex-shrink-0"
-                                  startContent={<Eye className="w-3 h-3" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3 h-3"
+                                    />
+                                  }
                                   onPress={() => {
                                     setIsOffersModalOpen(false);
                                     handleOpenLessonDetail(lesson);
@@ -1737,8 +1753,8 @@ const Schedule = () => {
                                 color: colors.state.warning,
                               }}
                               startContent={
-                                <ArrowCounterClockwise
-                                  weight="bold"
+                                <Restart
+                                  weight="BoldDuotone"
                                   className="w-3.5 h-3.5"
                                 />
                               }
@@ -1851,8 +1867,8 @@ const Schedule = () => {
                                   className="text-xs flex items-center gap-1"
                                   style={{ color: colors.text.tertiary }}
                                 >
-                                  <Clock
-                                    weight="duotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3.5 h-3.5 flex-shrink-0"
                                   />
                                   {new Date(lesson.startTime).toLocaleString(
@@ -1880,7 +1896,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="light"
                                   className="h-6 px-2 text-xs flex-shrink-0"
-                                  startContent={<Eye className="w-3 h-3" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3 h-3"
+                                    />
+                                  }
                                   onPress={() => {
                                     setIsRequestsModalOpen(false);
                                     handleOpenLessonDetail(lesson);

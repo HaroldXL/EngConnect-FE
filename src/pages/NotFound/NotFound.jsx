@@ -1,9 +1,10 @@
 import { Button, Image } from "@heroui/react";
+import { HomeSmile, AltArrowLeft } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { House, ArrowLeft } from "@phosphor-icons/react";
+
 import NotFoundImage from "../../assets/illustrations/not-found.avif";
 
 const NotFound = () => {
@@ -60,7 +61,7 @@ const NotFound = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              startContent={<ArrowLeft className="w-5 h-5" />}
+              startContent={<AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />}
               variant="flat"
               onPress={() => navigate(-1)}
               style={{ color: colors.text.primary }}
@@ -69,7 +70,7 @@ const NotFound = () => {
             </Button>
             <Button
               size="lg"
-              startContent={<House className="w-5 h-5" weight="fill" />}
+              startContent={<HomeSmile className="w-5 h-5" weight="BoldDuotone" />}
               onPress={() => navigate("/")}
               style={{
                 backgroundColor: colors.primary.main,

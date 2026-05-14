@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { AltArrowDown, AltArrowRight, BookBookmark, Camera, Card as CardIcon, CheckCircle, Letter, LockKeyhole, Notes, Pen, SquareAcademicCap, UserRounded } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -12,21 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  User,
-  Envelope,
-  Camera,
-  PencilSimple,
-  Lock,
-  CheckCircle,
-  GraduationCapIcon,
-  BookBookmarkIcon,
-  BookOpenIcon,
-  NoteIcon,
-  ArrowRight,
-  Bank,
-  CaretDown,
-} from "@phosphor-icons/react";
+
 import BankSelectModal, {
   BANK_LIST,
 } from "../../../components/BankSelectModal/BankSelectModal";
@@ -211,7 +198,7 @@ const Profile = () => {
       }
     } catch (err) {
       const errorCode = err.response?.data?.error?.code;
-      if (errorCode === "User.InvalidPassword")
+      if (errorCode === "UserRounded.InvalidPassword")
         setBankError(t("tutorOnboarding.bankInvalidPassword"));
       else if (errorCode === "Validation.Failed")
         setBankError(t("tutorOnboarding.bankValidationFailed"));
@@ -245,7 +232,7 @@ const Profile = () => {
       });
     } catch (err) {
       const errorCode = err?.response?.data?.error?.code;
-      if (errorCode === "User.InvalidPassword") {
+      if (errorCode === "UserRounded.InvalidPassword") {
         setPasswordError(t("studentDashboard.profile.invalidPassword"));
       } else {
         setPasswordError(t("studentDashboard.profile.passwordChangeFailed"));
@@ -318,7 +305,7 @@ const Profile = () => {
                   onPress={() => fileInputRef.current?.click()}
                 >
                   {!uploadingAvatar && (
-                    <Camera weight="fill" className="w-4 h-4" />
+                    <Camera weight="BoldDuotone" className="w-4 h-4" />
                   )}
                 </Button>
               </div>
@@ -353,7 +340,7 @@ const Profile = () => {
                       color: colors.text.white,
                     }}
                     onPress={() => navigate("/become-tutor")}
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
                   >
                     {t("nav.becomeTutor")}
                   </Button>
@@ -402,9 +389,9 @@ const Profile = () => {
                   size="sm"
                   startContent={
                     isEditing ? (
-                      <CheckCircle weight="duotone" className="w-4 h-4" />
+                      <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
                     ) : (
-                      <PencilSimple weight="duotone" className="w-4 h-4" />
+                      <Pen weight="BoldDuotone" className="w-4 h-4" />
                     )
                   }
                   style={
@@ -443,7 +430,7 @@ const Profile = () => {
                 value={profileData.firstName}
                 isDisabled={!isEditing}
                 startContent={
-                  <User
+                  <UserRounded weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -458,7 +445,7 @@ const Profile = () => {
                 value={profileData.lastName}
                 isDisabled={!isEditing}
                 startContent={
-                  <User
+                  <UserRounded weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -473,7 +460,7 @@ const Profile = () => {
                 value={profileData.email}
                 isDisabled
                 startContent={
-                  <Envelope
+                  <Letter weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -485,7 +472,7 @@ const Profile = () => {
                 value={profileData.school}
                 isDisabled={!isEditing}
                 startContent={
-                  <GraduationCapIcon
+                  <SquareAcademicCap weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -500,7 +487,7 @@ const Profile = () => {
                 value={profileData.grade}
                 isDisabled={!isEditing}
                 startContent={
-                  <BookBookmarkIcon
+                  <BookBookmark weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -515,7 +502,7 @@ const Profile = () => {
                 value={profileData.class}
                 isDisabled={!isEditing}
                 startContent={
-                  <BookOpenIcon
+                  <BookBookmark weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -530,7 +517,7 @@ const Profile = () => {
                 value={profileData.notes}
                 isDisabled={!isEditing}
                 startContent={
-                  <NoteIcon
+                  <Notes weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -544,15 +531,15 @@ const Profile = () => {
 
             <Divider className="my-8" />
 
-            {/* ── Bank Account ── */}
+            {/* ── Card Account ── */}
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2.5">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: colors.background.primaryLight }}
                 >
-                  <Bank
-                    weight="duotone"
+                  <CardIcon
+                    weight="BoldDuotone"
                     className="w-4.5 h-4.5"
                     style={{ color: colors.primary.main }}
                   />
@@ -568,7 +555,7 @@ const Profile = () => {
                   bankForm.bankAccountNumber &&
                   bankForm.bankAccountName && (
                     <CheckCircle
-                      weight="fill"
+                      weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.state.success }}
                     />
@@ -588,7 +575,7 @@ const Profile = () => {
                     }
                     startContent={
                       !bankSaving && (
-                        <CheckCircle weight="duotone" className="w-4 h-4" />
+                        <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
                       )
                     }
                     style={{
@@ -621,7 +608,7 @@ const Profile = () => {
                   variant="outline"
                   size="sm"
                   startContent={
-                    <PencilSimple weight="duotone" className="w-4 h-4" />
+                    <Pen weight="BoldDuotone" className="w-4 h-4" />
                   }
                   style={{
                     backgroundColor: colors.button.primaryLight.background,
@@ -645,7 +632,7 @@ const Profile = () => {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6 max-w-2xl">
-              {/* Bank selector */}
+              {/* Card selector */}
               <div className="sm:col-span-2">
                 <label
                   className="block text-sm font-medium mb-1.5"
@@ -684,7 +671,7 @@ const Profile = () => {
                       {t("tutorOnboarding.bankCodePlaceholder")}
                     </span>
                   )}
-                  {isBankEditing && <CaretDown className="w-4 h-4 shrink-0" />}
+                  {isBankEditing && <AltArrowDown weight="BoldDuotone" className="w-4 h-4 shrink-0" />}
                 </button>
               </div>
 
@@ -796,8 +783,8 @@ const Profile = () => {
                 label={t("studentDashboard.profile.currentPassword")}
                 value={passwordData.oldPassword}
                 startContent={
-                  <Lock
-                    weight="duotone"
+                  <LockKeyhole
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -813,8 +800,8 @@ const Profile = () => {
                 label={t("studentDashboard.profile.newPassword")}
                 value={passwordData.newPassword}
                 startContent={
-                  <Lock
-                    weight="duotone"
+                  <LockKeyhole
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -841,8 +828,8 @@ const Profile = () => {
                     : ""
                 }
                 startContent={
-                  <Lock
-                    weight="duotone"
+                  <LockKeyhole
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />

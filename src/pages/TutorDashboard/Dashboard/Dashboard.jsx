@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AltArrowRight, BookBookmark, CalendarMark, ClockCircle, Dollar, GraphUp, Star, UsersGroupRounded, Videocamera } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -12,18 +13,7 @@ import UpcomingLessonsSkeleton from "../../../components/UpcomingLessonsSkeleton
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion } from "framer-motion";
-import {
-  BookOpen,
-  Clock,
-  CurrencyDollar,
-  CalendarCheck,
-  VideoCamera,
-  ArrowRight,
-  Star,
-  TrendUp,
-  Users,
-  ChartLine,
-} from "@phosphor-icons/react";
+
 import IllustrationImage from "../../../assets/illustrations/wait.avif";
 import calendarIllustration from "../../../assets/illustrations/calendar.avif";
 import message from "../../../assets/illustrations/message.avif";
@@ -198,7 +188,7 @@ const Dashboard = () => {
                 </p>
                 <Button
                   color="primary"
-                  endContent={<VideoCamera weight="fill" className="w-4 h-4" />}
+                  endContent={<Videocamera weight="BoldDuotone" className="w-4 h-4" />}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,
@@ -244,8 +234,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <CalendarCheck
-                      weight="duotone"
+                    <CalendarMark
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.primary.main }}
                     />
@@ -254,7 +244,7 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/schedule")}
                   >
@@ -328,7 +318,7 @@ const Dashboard = () => {
                               color: colors.text.white,
                             }}
                             startContent={
-                              <VideoCamera weight="fill" className="w-4 h-4" />
+                              <Videocamera weight="BoldDuotone" className="w-4 h-4" />
                             }
                             onPress={() => navigate(`/meeting/${lesson.id}`)}
                           >
@@ -362,8 +352,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <Users
-                      weight="duotone"
+                    <UsersGroupRounded
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.primary.main }}
                     />
@@ -372,7 +362,7 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/students")}
                   >
@@ -481,8 +471,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <CurrencyDollar
-                      weight="duotone"
+                    <Dollar
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.state.success }}
                     />
@@ -491,7 +481,7 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/earnings")}
                   >
@@ -596,7 +586,7 @@ const Dashboard = () => {
                   style={{ color: colors.text.primary }}
                 >
                   <Star
-                    weight="duotone"
+                    weight="BoldDuotone"
                     className="w-5 h-5 inline-block mr-2"
                     style={{ color: colors.state.warning }}
                   />
@@ -656,9 +646,7 @@ const Dashboard = () => {
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  weight={
-                                    i < review.rating ? "fill" : "regular"
-                                  }
+                                  weight="BoldDuotone"
                                   className="w-3 h-3"
                                   style={{
                                     color:

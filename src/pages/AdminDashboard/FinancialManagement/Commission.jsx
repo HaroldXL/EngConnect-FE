@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Calendar, DollarMinimalistic, InfoCircle, Pen } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -17,12 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  Percent,
-  PencilSimple,
-  CalendarBlank,
-  Info,
-} from "@phosphor-icons/react";
+
 import { paymentApi } from "../../../api";
 
 const Commission = () => {
@@ -148,7 +144,7 @@ const Commission = () => {
         </div>
         {config && (
           <Button
-            startContent={<PencilSimple weight="bold" className="w-4 h-4" />}
+            startContent={<Pen weight="BoldDuotone" className="w-4 h-4" />}
             style={{ backgroundColor: colors.primary.main, color: "#fff" }}
             onPress={openEdit}
           >
@@ -186,8 +182,8 @@ const Commission = () => {
                 className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${colors.primary.main}15` }}
               >
-                <Percent
-                  weight="duotone"
+                <DollarMinimalistic
+                  weight="BoldDuotone"
                   className="w-10 h-10"
                   style={{ color: colors.primary.main }}
                 />
@@ -223,8 +219,8 @@ const Commission = () => {
                 className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${colors.state.success}15` }}
               >
-                <CalendarBlank
-                  weight="duotone"
+                <Calendar
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.success }}
                 />
@@ -257,8 +253,8 @@ const Commission = () => {
                 className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${colors.state.warning}15` }}
               >
-                <Info
-                  weight="duotone"
+                <InfoCircle
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />
@@ -282,7 +278,7 @@ const Commission = () => {
             </CardBody>
           </Card>
 
-          {/* Info box */}
+          {/* InfoCircle box */}
           <Card
             shadow="none"
             className="md:col-span-2 border-none"

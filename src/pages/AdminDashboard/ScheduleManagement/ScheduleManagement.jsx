@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, Magnifer, PresentationGraph, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -34,21 +35,6 @@ import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { studentApi, tutorApi, adminApi } from "../../../api";
 import AdminLessonDetailModal from "../../../components/AdminLessonDetailModal/AdminLessonDetailModal";
-import {
-  MagnifyingGlass,
-  Funnel,
-  CalendarDots,
-  Clock,
-  BookOpen,
-  Eye,
-  CheckCircle,
-  XCircle,
-  Hourglass,
-  Lightning,
-  ChalkboardTeacher,
-  Users,
-  X,
-} from "@phosphor-icons/react";
 
 // ── constants ──────────────────────────────────────────────
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
@@ -424,6 +410,9 @@ const ScheduleManagement = () => {
       case "Completed":
       case "Settled":
         return colors.state.success;
+      case "MadeUp":
+      case "Rescheduled":
+        return colors.text.tertiary;
       case "Cancelled":
       case "NoStudent":
       case "NoTutor":
@@ -599,7 +588,7 @@ const ScheduleManagement = () => {
               onDetailOpen();
             }}
           >
-            <Eye className="w-4 h-4" style={{ color: colors.text.secondary }} />
+            <Eye weight="BoldDuotone" className="w-4 h-4" style={{ color: colors.text.secondary }} />
           </Button>
         );
       default:
@@ -619,7 +608,7 @@ const ScheduleManagement = () => {
     {
       label: t("adminDashboard.schedule.stats.totalLessons"),
       value: statsTotal,
-      icon: CalendarDots,
+      icon: CalendarMark,
       color: colors.primary.main,
       bg: colors.background.primaryLight,
     },
@@ -647,7 +636,7 @@ const ScheduleManagement = () => {
     {
       label: t("adminDashboard.schedule.stats.cancelled"),
       value: statsCancelled,
-      icon: XCircle,
+      icon: CloseCircle,
       color: colors.state.error,
       bg: `${colors.state.error}20`,
     },
@@ -688,7 +677,7 @@ const ScheduleManagement = () => {
             key="overview"
             title={
               <div className="flex items-center gap-2">
-                <CalendarDots weight="duotone" className="w-4 h-4" />
+                <CalendarMark weight="BoldDuotone" className="w-4 h-4" />
                 <span>{t("adminDashboard.schedule.overviewTab")}</span>
               </div>
             }
@@ -697,7 +686,7 @@ const ScheduleManagement = () => {
             key="lessons"
             title={
               <div className="flex items-center gap-2">
-                <BookOpen weight="duotone" className="w-4 h-4" />
+                <BookBookmark weight="BoldDuotone" className="w-4 h-4" />
                 <span>{t("adminDashboard.schedule.lessonsTab")}</span>
               </div>
             }
@@ -706,7 +695,7 @@ const ScheduleManagement = () => {
             key="slots"
             title={
               <div className="flex items-center gap-2">
-                <ChalkboardTeacher weight="duotone" className="w-4 h-4" />
+                <PresentationGraph weight="BoldDuotone" className="w-4 h-4" />
                 <span>{t("adminDashboard.schedule.tutorSlotsTab")}</span>
               </div>
             }
@@ -744,7 +733,7 @@ const ScheduleManagement = () => {
                       >
                         <s.icon
                           className="w-4 h-4"
-                          weight="duotone"
+                          weight="BoldDuotone"
                           style={{ color: s.color }}
                         />
                       </div>
@@ -779,8 +768,8 @@ const ScheduleManagement = () => {
             >
               <CardBody className="p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <CalendarDots
-                    weight="duotone"
+                  <CalendarMark
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.primary.main }}
                   />
@@ -845,7 +834,7 @@ const ScheduleManagement = () => {
                             {tutorLabel(lesson)} → {lessonLabel(lesson)}
                           </p>
                         </div>
-                        <Eye
+                        <Eye weight="BoldDuotone"
                           size={14}
                           style={{ color: colors.text.tertiary }}
                         />
@@ -941,7 +930,7 @@ const ScheduleManagement = () => {
                             {tutorLabel(lesson)} → {lessonLabel(lesson)}
                           </p>
                         </div>
-                        <Eye
+                        <Eye weight="BoldDuotone"
                           size={14}
                           style={{ color: colors.text.tertiary }}
                         />
@@ -980,7 +969,7 @@ const ScheduleManagement = () => {
                       value={lessonSearch}
                       onChange={(e) => setLessonSearch(e.target.value)}
                       startContent={
-                        <MagnifyingGlass
+                        <Magnifer weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.text.secondary }}
                         />
@@ -992,7 +981,7 @@ const ScheduleManagement = () => {
                     <DropdownTrigger>
                       <Button
                         variant="flat"
-                        startContent={<Funnel className="w-4 h-4" />}
+                        startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                         className="flex-shrink-0"
                       >
                         {t("adminDashboard.schedule.status")}:{" "}
@@ -1021,6 +1010,8 @@ const ScheduleManagement = () => {
                         "Cancelled",
                         "NoStudent",
                         "NoTutor",
+                        "Rescheduled",
+                        "MadeUp",
                       ].map((s) => (
                         <DropdownItem key={s}>
                           {t(`adminDashboard.schedule.lessonStatuses.${s}`)}
@@ -1061,7 +1052,7 @@ const ScheduleManagement = () => {
                   ) : (
                     <Button
                       variant="flat"
-                      startContent={<ChalkboardTeacher className="w-4 h-4" />}
+                      startContent={<PresentationGraph weight="BoldDuotone" className="w-4 h-4" />}
                       className="h-10 rounded-xl text-sm"
                       style={{
                         backgroundColor: colors.background.gray,
@@ -1099,7 +1090,7 @@ const ScheduleManagement = () => {
                   ) : (
                     <Button
                       variant="flat"
-                      startContent={<Users className="w-4 h-4" />}
+                      startContent={<UsersGroupRounded weight="BoldDuotone" className="w-4 h-4" />}
                       className="h-10 rounded-xl text-sm"
                       style={{
                         backgroundColor: colors.background.gray,
@@ -1260,7 +1251,7 @@ const ScheduleManagement = () => {
             >
               <CardBody className="p-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Funnel
+                  <Filter weight="BoldDuotone"
                     className="w-4 h-4 flex-shrink-0"
                     style={{ color: colors.text.secondary }}
                   />
@@ -1500,7 +1491,7 @@ const ScheduleManagement = () => {
               value={tutorPickerSearch}
               onChange={(e) => setTutorPickerSearch(e.target.value)}
               startContent={
-                <MagnifyingGlass
+                <Magnifer weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -1558,7 +1549,7 @@ const ScheduleManagement = () => {
                       </span>
                       {isSelected && (
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           size={16}
                           style={{ color: colors.primary.main, flexShrink: 0 }}
                         />
@@ -1579,7 +1570,7 @@ const ScheduleManagement = () => {
                   setLessonPage(1);
                   setTutorPickerOpen(false);
                 }}
-                startContent={<X size={14} />}
+                startContent={<CloseSquare weight="BoldDuotone" size={14} />}
               >
                 {t("adminDashboard.schedule.clearFilter")}
               </Button>
@@ -1613,7 +1604,7 @@ const ScheduleManagement = () => {
               value={studentPickerSearch}
               onChange={(e) => setStudentPickerSearch(e.target.value)}
               startContent={
-                <MagnifyingGlass
+                <Magnifer weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -1671,7 +1662,7 @@ const ScheduleManagement = () => {
                       </span>
                       {isSelected && (
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           size={16}
                           style={{ color: colors.state.success, flexShrink: 0 }}
                         />
@@ -1692,7 +1683,7 @@ const ScheduleManagement = () => {
                   setLessonPage(1);
                   setStudentPickerOpen(false);
                 }}
-                startContent={<X size={14} />}
+                startContent={<CloseSquare weight="BoldDuotone" size={14} />}
               >
                 {t("adminDashboard.schedule.clearFilter")}
               </Button>

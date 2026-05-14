@@ -1,4 +1,33 @@
 ﻿import { useState, useEffect, useRef } from "react";
+import {
+  AddCircle,
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  AltArrowUp,
+  BookBookmark,
+  ChatDots,
+  CheckCircle,
+  Checklist,
+  ClockCircle,
+  DangerCircle,
+  Diploma,
+  DocumentText,
+  File,
+  FolderWithFiles,
+  LinkMinimalistic,
+  Pen,
+  PenNewSquare,
+  Play,
+  PlayCircle,
+  SquareAltArrowRight,
+  Star,
+  Target,
+  TrashBinMinimalistic,
+  UsersGroupRounded,
+  Videocamera,
+} from "@solar-icons/react";
+import { Check } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,32 +57,7 @@ import { useTheme } from "../../../contexts/ThemeContext";
 import CourseDetailSkeleton from "../../../components/CourseDetailSkeleton/CourseDetailSkeleton";
 import VideoModal from "../../../components/VideoModal/VideoModal";
 import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
-import {
-  Star,
-  Clock,
-  Users,
-  BookOpen,
-  Check,
-  Certificate,
-  ArrowLeft,
-  PencilSimple,
-  CaretDown,
-  CaretUp,
-  ListNumbers,
-  Play,
-  WarningCircle,
-  ArrowRight,
-  FileText,
-  FilePdf,
-  VideoCamera,
-  Link,
-  Trash,
-  ArrowSquareOut,
-  Target,
-  ArrowRightIcon,
-  Plus,
-  ChatTeardropText,
-} from "@phosphor-icons/react";
+
 import { coursesApi, tutorApi, studentApi } from "../../../api";
 import { selectUser } from "../../../store";
 import useInputStyles from "../../../hooks/useInputStyles";
@@ -486,18 +490,36 @@ const TutorCourseDetail = () => {
     const t = (type || "").toLowerCase();
     if (t === "video")
       return (
-        <VideoCamera size={14} weight="fill" style={{ color: "#8b5cf6" }} />
+        <Videocamera
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#8b5cf6" }}
+        />
       );
     if (t === "slide")
-      return <FilePdf size={14} weight="fill" style={{ color: "#f97316" }} />;
+      return (
+        <File size={14} weight="BoldDuotone" style={{ color: "#f97316" }} />
+      );
     if (t === "audio")
-      return <FileText size={14} weight="fill" style={{ color: "#06b6d4" }} />;
+      return (
+        <DocumentText
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#06b6d4" }}
+        />
+      );
     if (t === "homework" || t === "exercise" || t === "practiceexam")
-      return <FileText size={14} weight="fill" style={{ color: "#f59e0b" }} />;
+      return (
+        <DocumentText
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#f59e0b" }}
+        />
+      );
     return (
-      <FileText
+      <DocumentText
         size={14}
-        weight="fill"
+        weight="BoldDuotone"
         style={{ color: colors.text.secondary }}
       />
     );
@@ -519,7 +541,7 @@ const TutorCourseDetail = () => {
         <Button
           color="primary"
           variant="flat"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/tutor/my-courses")}
         >
           {t("courses.detail.backToCourses")}
@@ -649,7 +671,7 @@ const TutorCourseDetail = () => {
       >
         <Button
           variant="light"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/tutor/my-courses")}
           style={{ color: colors.text.secondary }}
         >
@@ -674,7 +696,7 @@ const TutorCourseDetail = () => {
               <Button
                 color="warning"
                 variant="flat"
-                startContent={<ArrowRight size={18} />}
+                startContent={<AltArrowRight weight="BoldDuotone" size={18} />}
                 onPress={() => navigate(`/tutor/create-course/${course.id}`)}
               >
                 {t("courses.detail.continueCourse")}
@@ -682,7 +704,7 @@ const TutorCourseDetail = () => {
             ) : (
               <Button
                 color="primary"
-                startContent={<PencilSimple size={18} />}
+                startContent={<Pen weight="BoldDuotone" size={18} />}
                 onPress={() => navigate(`/tutor/create-course/${course.id}`)}
                 style={{
                   backgroundColor: colors.primary.main,
@@ -695,7 +717,7 @@ const TutorCourseDetail = () => {
           ) : statusLower === "published" && !course.isEnrollment ? (
             <Button
               variant="flat"
-              startContent={<WarningCircle size={18} />}
+              startContent={<DangerCircle weight="BoldDuotone" size={18} />}
               onPress={() => setInactiveConfirmOpen(true)}
               style={{
                 backgroundColor: `${colors.state.warning}20`,
@@ -818,7 +840,7 @@ const TutorCourseDetail = () => {
                       }}
                     >
                       <span className="flex items-center gap-1">
-                        <Certificate size={14} />{" "}
+                        <Diploma weight="BoldDuotone" size={14} />{" "}
                         {t("courses.detail.certificate")}
                       </span>
                     </Chip>
@@ -867,7 +889,7 @@ const TutorCourseDetail = () => {
                           <Star
                             key={i}
                             size={16}
-                            weight="fill"
+                            weight="BoldDuotone"
                             style={{
                               color:
                                 i < Math.floor(course.ratingAverage)
@@ -895,7 +917,7 @@ const TutorCourseDetail = () => {
                     className="text-sm flex items-center gap-1.5"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Users size={16} weight="duotone" />
+                    <UsersGroupRounded size={16} weight="BoldDuotone" />
                     {course.numberOfEnrollment?.toLocaleString() || 0}{" "}
                     {t("courses.detail.students")}
                   </span>
@@ -903,7 +925,7 @@ const TutorCourseDetail = () => {
                     className="text-sm flex items-center gap-1.5"
                     style={{ color: colors.text.secondary }}
                   >
-                    <BookOpen size={16} weight="duotone" />
+                    <BookBookmark size={16} weight="BoldDuotone" />
                     {modules.length} {t("courses.detail.modules")} ·{" "}
                     {totalSessions} {t("courses.detail.sessions")}
                   </span>
@@ -1001,7 +1023,7 @@ const TutorCourseDetail = () => {
                         >
                           <Check
                             size={14}
-                            weight="bold"
+                            weight="BoldDuotone"
                             style={{ color: colors.primary.main }}
                           />
                         </div>
@@ -1109,15 +1131,15 @@ const TutorCourseDetail = () => {
                               </div>
                             </div>
                             {isExpanded ? (
-                              <CaretUp
+                              <AltArrowUp
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             ) : (
-                              <CaretDown
+                              <AltArrowDown
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             )}
@@ -1178,7 +1200,7 @@ const TutorCourseDetail = () => {
                                           >
                                             <Play
                                               size={12}
-                                              weight="fill"
+                                              weight="BoldDuotone"
                                               style={{
                                                 color: colors.primary.main,
                                               }}
@@ -1221,9 +1243,9 @@ const TutorCourseDetail = () => {
                                                         key={i}
                                                         className="flex items-start gap-1"
                                                       >
-                                                        <ArrowRightIcon
+                                                        <AltArrowRight
                                                           size={10}
-                                                          weight="fill"
+                                                          weight="BoldDuotone"
                                                           className="flex-shrink-0 mt-0.5"
                                                           style={{
                                                             color:
@@ -1264,22 +1286,22 @@ const TutorCourseDetail = () => {
                                                     )
                                                   }
                                                 >
-                                                  <FileText
+                                                  <FolderWithFiles
                                                     size={13}
-                                                    weight="fill"
+                                                    weight="BoldDuotone"
                                                   />
                                                   {t(
                                                     "courses.detail.resources.label",
                                                   )}
                                                   {isResExpanded ? (
-                                                    <CaretUp
+                                                    <AltArrowUp
                                                       size={11}
-                                                      weight="bold"
+                                                      weight="BoldDuotone"
                                                     />
                                                   ) : (
-                                                    <CaretDown
+                                                    <AltArrowDown
                                                       size={11}
-                                                      weight="bold"
+                                                      weight="BoldDuotone"
                                                     />
                                                   )}
                                                 </button>
@@ -1360,7 +1382,8 @@ const TutorCourseDetail = () => {
                                                               "courses.detail.resources.open",
                                                             )}
                                                           >
-                                                            <ArrowSquareOut
+                                                            <SquareAltArrowRight
+                                                              weight="BoldDuotone"
                                                               size={14}
                                                               style={{
                                                                 color:
@@ -1386,7 +1409,8 @@ const TutorCourseDetail = () => {
                                                               )
                                                             }
                                                           >
-                                                            <Trash
+                                                            <TrashBinMinimalistic
+                                                              weight="BoldDuotone"
                                                               size={13}
                                                               style={{
                                                                 color:
@@ -1411,9 +1435,9 @@ const TutorCourseDetail = () => {
                                                         openAddResource(sessId)
                                                       }
                                                     >
-                                                      <Plus
+                                                      <AddCircle
                                                         size={12}
-                                                        weight="bold"
+                                                        weight="BoldDuotone"
                                                       />
                                                       {t(
                                                         "courses.detail.resources.add",
@@ -1463,7 +1487,9 @@ const TutorCourseDetail = () => {
                     size="sm"
                     variant="light"
                     style={{ color: colors.primary.main }}
-                    endContent={<ArrowRight size={16} />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" size={16} />
+                    }
                     onPress={() => navigate("/tutor/schedule")}
                   >
                     {t("courses.detail.viewAllSchedule")}
@@ -1576,8 +1602,8 @@ const TutorCourseDetail = () => {
                                     <Button
                                       size="sm"
                                       startContent={
-                                        <VideoCamera
-                                          weight="fill"
+                                        <Videocamera
+                                          weight="BoldDuotone"
                                           className="w-3.5 h-3.5"
                                         />
                                       }
@@ -1689,8 +1715,8 @@ const TutorCourseDetail = () => {
                                     <Button
                                       size="sm"
                                       startContent={
-                                        <VideoCamera
-                                          weight="fill"
+                                        <Videocamera
+                                          weight="BoldDuotone"
                                           className="w-3.5 h-3.5"
                                         />
                                       }
@@ -1765,7 +1791,7 @@ const TutorCourseDetail = () => {
                     <div className="flex items-center gap-1">
                       <Star
                         size={18}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: "#f59e0b" }}
                       />
                       <span
@@ -1784,7 +1810,8 @@ const TutorCourseDetail = () => {
                     </div>
                     {tutorInfo.monthExperience > 0 && (
                       <div className="flex items-center gap-1">
-                        <Clock
+                        <ClockCircle
+                          weight="BoldDuotone"
                           size={18}
                           style={{ color: colors.primary.main }}
                         />
@@ -1903,7 +1930,7 @@ const TutorCourseDetail = () => {
                               <Star
                                 key={s}
                                 size={14}
-                                weight={s <= review.rating ? "fill" : "regular"}
+                                weight="BoldDuotone"
                                 color={
                                   s <= review.rating
                                     ? "#FBBF24"
@@ -1974,7 +2001,7 @@ const TutorCourseDetail = () => {
                     <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
                       <Play
                         size={24}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: colors.primary.main }}
                       />
                     </div>
@@ -2002,7 +2029,7 @@ const TutorCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock size={16} weight="duotone" />
+                      <ClockCircle size={16} weight="BoldDuotone" />
                       {t("courses.detail.totalDuration")}
                     </span>
                     <span
@@ -2017,7 +2044,7 @@ const TutorCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock size={16} weight="duotone" />
+                      <ClockCircle size={16} weight="BoldDuotone" />
                       {t("courses.detail.timePerLesson")}
                     </span>
                     <span
@@ -2032,7 +2059,7 @@ const TutorCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <BookOpen size={16} weight="duotone" />
+                      <BookBookmark size={16} weight="BoldDuotone" />
                       {t("courses.detail.level")}
                     </span>
                     <span
@@ -2048,7 +2075,7 @@ const TutorCourseDetail = () => {
                         className="flex items-center gap-2"
                         style={{ color: colors.text.secondary }}
                       >
-                        <Clock size={16} weight="duotone" />
+                        <ClockCircle size={16} weight="BoldDuotone" />
                         {t("courses.detail.sessionsPerWeek")}
                       </span>
                       <span
@@ -2064,7 +2091,7 @@ const TutorCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Users size={16} weight="duotone" />
+                      <UsersGroupRounded size={16} weight="BoldDuotone" />
                       {t("courses.detail.studentsEnrolled")}
                     </span>
                     <span
@@ -2079,7 +2106,7 @@ const TutorCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Certificate size={16} weight="duotone" />
+                      <Diploma size={16} weight="BoldDuotone" />
                       {t("courses.detail.certificate")}
                     </span>
                     <span
@@ -2317,7 +2344,8 @@ const TutorCourseDetail = () => {
                         className="flex items-center gap-3 p-3 rounded-xl border-2 border-dashed cursor-pointer"
                         style={{ borderColor: colors.border.light }}
                       >
-                        <FileText
+                        <DocumentText
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.text.tertiary }}
                         />
@@ -2430,7 +2458,8 @@ const TutorCourseDetail = () => {
                                   onClick={(e) => e.stopPropagation()}
                                   className="flex-shrink-0 flex items-center"
                                 >
-                                  <ArrowSquareOut
+                                  <SquareAltArrowRight
+                                    weight="BoldDuotone"
                                     size={15}
                                     style={{ color: colors.primary.main }}
                                   />
@@ -2439,7 +2468,7 @@ const TutorCourseDetail = () => {
                               {selectedReuseId === r.id && (
                                 <Check
                                   size={16}
-                                  weight="bold"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.primary.main }}
                                 />
                               )}

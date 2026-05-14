@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CalendarMark, ClockCircle, DangerTriangle, Ticket } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -7,12 +8,7 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import {
-  CalendarDots,
-  Clock,
-  Warning,
-  Ticket,
-} from "@phosphor-icons/react";
+
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { supportApi } from "../../api";
@@ -113,7 +109,7 @@ export default function TutorRescheduleTicketModal({
           style={{ color: colors.text.primary }}
         >
           <Ticket
-            weight="duotone"
+            weight="BoldDuotone"
             className="w-5 h-5"
             style={{ color: colors.primary.main }}
           />
@@ -136,7 +132,7 @@ export default function TutorRescheduleTicketModal({
                 className="text-xs mt-0.5 flex items-center gap-1"
                 style={{ color: colors.text.secondary }}
               >
-                <Clock weight="duotone" className="w-3 h-3" />
+                <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                 {lessonDate}
                 {" · "}
                 {durationMin}m
@@ -153,7 +149,7 @@ export default function TutorRescheduleTicketModal({
                   color: deadlinePast ? colors.state.error : colors.state.warning,
                 }}
               >
-                <Clock weight="duotone" className="w-4 h-4 flex-shrink-0" />
+                <ClockCircle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
                 {deadlinePast
                   ? t("tutorDashboard.schedule.reschedule.deadlinePassed")
                   : t("tutorDashboard.schedule.reschedule.deadlineUntil", {
@@ -222,7 +218,7 @@ export default function TutorRescheduleTicketModal({
                 className="text-xs font-medium mb-1 flex items-center gap-1"
                 style={{ color: colors.text.secondary }}
               >
-                <CalendarDots weight="duotone" className="w-3.5 h-3.5" />
+                <CalendarMark weight="BoldDuotone" className="w-3.5 h-3.5" />
                 {t("tutorDashboard.schedule.reschedule.ticketPreviewLabel")}
               </p>
               <pre
@@ -248,7 +244,7 @@ export default function TutorRescheduleTicketModal({
                 border: `1px solid ${colors.state.error}30`,
               }}
             >
-              <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+              <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}

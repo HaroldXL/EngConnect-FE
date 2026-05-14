@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AltArrowDown, AltArrowRight, AltArrowUp, BookBookmark, Calendar, Cart2, CheckCircle, ClipboardList, Dollar, PresentationGraph, SquareAltArrowRight, Star, UsersGroupRounded, Wallet } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -21,22 +22,6 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { adminApi, coursesApi } from "../../../api";
-import {
-  Users,
-  ChalkboardTeacher,
-  BookOpen,
-  CurrencyDollar,
-  ArrowRight,
-  ShoppingCart,
-  Star,
-  CalendarBlank,
-  ArrowSquareOut,
-  Wallet,
-  Receipt,
-  CaretDown,
-  CaretUp,
-  CheckCircle,
-} from "@phosphor-icons/react";
 
 // ---- helpers ----
 const toApiDate = (dateStr) => `${dateStr}T00:00:00Z`;
@@ -315,10 +300,10 @@ const Dashboard = () => {
 
   const summaryCards = overallTotals
     ? [
-        { label: t("adminDashboard.dashboard.stats.totalStudents"), value: overallTotals.totalStudents.toLocaleString(), icon: Users,          color: "#6366f1",           bg: "#6366f120" },
-        { label: t("adminDashboard.dashboard.stats.totalTutors"),   value: overallTotals.totalTutors.toLocaleString(),   icon: ChalkboardTeacher, color: colors.state.success, bg: `${colors.state.success}20` },
+        { label: t("adminDashboard.dashboard.stats.totalStudents"), value: overallTotals.totalStudents.toLocaleString(), icon: UsersGroupRounded,          color: "#6366f1",           bg: "#6366f120" },
+        { label: t("adminDashboard.dashboard.stats.totalTutors"),   value: overallTotals.totalTutors.toLocaleString(),   icon: PresentationGraph, color: colors.state.success, bg: `${colors.state.success}20` },
         { label: t("adminDashboard.dashboard.totalPaidOrders"),     value: overallTotals.totalPaidOrders.toLocaleString(), icon: CheckCircle,    color: "#f59e0b",           bg: "#f59e0b20" },
-        { label: t("adminDashboard.dashboard.stats.revenue"),       value: formatVND(overallTotals.totalRevenue),          icon: CurrencyDollar, color: "#ef4444",           bg: "#ef444420" },
+        { label: t("adminDashboard.dashboard.stats.revenue"),       value: formatVND(overallTotals.totalRevenue),          icon: Dollar, color: "#ef4444",           bg: "#ef444420" },
       ]
     : [];
 
@@ -358,7 +343,7 @@ const Dashboard = () => {
                 <CardBody className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bg }}>
-                      <s.icon className="w-5 h-5" weight="duotone" style={{ color: s.color }} />
+                      <s.icon className="w-5 h-5" weight="BoldDuotone" style={{ color: s.color }} />
                     </div>
                     <div className="min-w-0">
                       <p className="text-lg font-bold truncate" style={{ color: colors.text.primary }}>{s.value}</p>
@@ -516,7 +501,7 @@ const Dashboard = () => {
             <CardBody className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" style={{ color: colors.primary.main }} />
+                  <BookBookmark weight="BoldDuotone" className="w-5 h-5" style={{ color: colors.primary.main }} />
                   <h3 className="text-base font-semibold" style={{ color: colors.text.primary }}>
                     {t("adminDashboard.dashboard.courseVerification")}
                   </h3>
@@ -524,7 +509,7 @@ const Dashboard = () => {
                     {pendingCoursesCount}
                   </span>
                 </div>
-                <Button variant="light" size="sm" endContent={<ArrowRight className="w-3 h-3" />} style={{ color: colors.primary.main }} onPress={() => navigate("/admin/course-verification")}>
+                <Button variant="light" size="sm" endContent={<AltArrowRight weight="BoldDuotone" className="w-3 h-3" />} style={{ color: colors.primary.main }} onPress={() => navigate("/admin/course-verification")}>
                   {t("adminDashboard.dashboard.viewAll")}
                 </Button>
               </div>
@@ -539,7 +524,7 @@ const Dashboard = () => {
                     return (
                       <div key={item.id} className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: colors.background.gray }}>
                         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: colors.background.primaryLight }}>
-                          <BookOpen className="w-3.5 h-3.5" style={{ color: colors.primary.main }} />
+                          <BookBookmark weight="BoldDuotone" className="w-3.5 h-3.5" style={{ color: colors.primary.main }} />
                         </div>
                         <p className="text-xs flex-1 truncate" style={{ color: colors.text.primary }}>{course?.title || item.courseId}</p>
                       </div>
@@ -555,7 +540,7 @@ const Dashboard = () => {
             <CardBody className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <ChalkboardTeacher className="w-5 h-5" style={{ color: colors.state.success }} />
+                  <PresentationGraph weight="BoldDuotone" className="w-5 h-5" style={{ color: colors.state.success }} />
                   <h3 className="text-base font-semibold" style={{ color: colors.text.primary }}>
                     {t("adminDashboard.dashboard.tutorVerification")}
                   </h3>
@@ -563,7 +548,7 @@ const Dashboard = () => {
                     {pendingTutorsCount}
                   </span>
                 </div>
-                <Button variant="light" size="sm" endContent={<ArrowRight className="w-3 h-3" />} style={{ color: colors.primary.main }} onPress={() => navigate("/admin/verification")}>
+                <Button variant="light" size="sm" endContent={<AltArrowRight weight="BoldDuotone" className="w-3 h-3" />} style={{ color: colors.primary.main }} onPress={() => navigate("/admin/verification")}>
                   {t("adminDashboard.dashboard.viewAll")}
                 </Button>
               </div>
@@ -595,7 +580,7 @@ const Dashboard = () => {
           <Card shadow="none" className="border-none h-full" style={{ backgroundColor: colors.background.light }}>
             <CardBody className="p-5 flex flex-col">
               <div className="flex items-center gap-2 mb-4">
-                <Receipt weight="duotone" className="w-5 h-5" style={{ color: colors.state.warning }} />
+                <ClipboardList weight="BoldDuotone" className="w-5 h-5" style={{ color: colors.state.warning }} />
                 <h3 className="font-semibold text-base" style={{ color: colors.text.primary }}>
                   {t("adminDashboard.dashboard.recentOrders")}
                 </h3>
@@ -632,7 +617,7 @@ const Dashboard = () => {
             <Card shadow="none" className="border-none" style={{ backgroundColor: colors.background.light }}>
               <CardBody className="p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <BookOpen weight="duotone" className="w-5 h-5" style={{ color: colors.primary.main }} />
+                  <BookBookmark weight="BoldDuotone" className="w-5 h-5" style={{ color: colors.primary.main }} />
                   <h3 className="font-semibold text-base" style={{ color: colors.text.primary }}>
                     {t("adminDashboard.dashboard.topCourses")}
                   </h3>
@@ -660,7 +645,7 @@ const Dashboard = () => {
                             </div>
                           </div>
                           <button type="button" onClick={() => navigate(`/admin/courses/${course.courseId}`)} title={t("adminDashboard.dashboard.viewDetail")}>
-                            <ArrowSquareOut size={14} style={{ color: colors.primary.main }} />
+                            <SquareAltArrowRight weight="BoldDuotone" size={14} style={{ color: colors.primary.main }} />
                           </button>
                         </div>
                       );
@@ -674,7 +659,7 @@ const Dashboard = () => {
             <Card shadow="none" className="border-none flex-1" style={{ backgroundColor: colors.background.light }}>
               <CardBody className="p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Star weight="duotone" className="w-5 h-5" style={{ color: "#f59e0b" }} />
+                  <Star weight="BoldDuotone" className="w-5 h-5" style={{ color: "#f59e0b" }} />
                   <h3 className="font-semibold text-base" style={{ color: colors.text.primary }}>
                     {t("adminDashboard.dashboard.recentReviews")}
                   </h3>
@@ -699,7 +684,7 @@ const Dashboard = () => {
                             </div>
                             <div className="flex items-center gap-0.5 flex-shrink-0">
                               {[1, 2, 3, 4, 5].map((s) => (
-                                <Star key={s} size={11} weight="fill" style={{ color: s <= review.rating ? "#f59e0b" : "rgba(0,0,0,0.15)" }} />
+                                <Star key={s} size={11} weight="BoldDuotone" style={{ color: s <= review.rating ? "#f59e0b" : "rgba(0,0,0,0.15)" }} />
                               ))}
                             </div>
                           </div>
@@ -733,7 +718,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-2">
                 <Wallet
-                  weight="duotone"
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: "#f59e0b" }}
                 />
@@ -808,14 +793,14 @@ const Dashboard = () => {
                       value: salary.totalTutors,
                       color: colors.state.success,
                       bg: `${colors.state.success}15`,
-                      icon: ChalkboardTeacher,
+                      icon: PresentationGraph,
                     },
                     {
                       label: t("adminDashboard.dashboard.scheduledLessons"),
                       value: salary.totalScheduledLessons,
                       color: colors.primary.main,
                       bg: colors.background.primaryLight,
-                      icon: CalendarBlank,
+                      icon: Calendar,
                     },
                     {
                       label: t("adminDashboard.dashboard.totalPayout"),
@@ -836,7 +821,7 @@ const Dashboard = () => {
                       >
                         <s.icon
                           className="w-4 h-4"
-                          weight="duotone"
+                          weight="BoldDuotone"
                           style={{ color: s.color }}
                         />
                       </div>
@@ -906,12 +891,12 @@ const Dashboard = () => {
                               {formatVND(tutor.totalAmount)}
                             </span>
                             {isExpanded ? (
-                              <CaretUp
+                              <AltArrowUp weight="BoldDuotone"
                                 size={15}
                                 style={{ color: colors.text.secondary }}
                               />
                             ) : (
-                              <CaretDown
+                              <AltArrowDown weight="BoldDuotone"
                                 size={15}
                                 style={{ color: colors.text.secondary }}
                               />
@@ -975,7 +960,7 @@ const Dashboard = () => {
                                           }
                                         >
                                           {eb.courseId.slice(0, 8)}…
-                                          <ArrowSquareOut size={11} />
+                                          <SquareAltArrowRight weight="BoldDuotone" size={11} />
                                         </button>
                                       </td>
                                       <td

@@ -7,15 +7,10 @@ import {
   Avatar,
   Chip,
 } from "@heroui/react";
+import { BookBookmark, CalendarMark, ClockCircle, Videocamera } from "@solar-icons/react"
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import {
-  CalendarDots,
-  Clock,
-  BookOpen,
-  VideoCamera,
-} from "@phosphor-icons/react";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
 const withCDN = (url) => {
@@ -76,8 +71,8 @@ const AdminLessonDetailModal = ({ isOpen, onClose, lesson }) => {
               className="flex items-center gap-2"
               style={{ color: colors.text.primary }}
             >
-              <BookOpen
-                weight="duotone"
+              <BookBookmark
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
               />
@@ -116,7 +111,7 @@ const AdminLessonDetailModal = ({ isOpen, onClose, lesson }) => {
                       className="text-xs font-semibold flex items-center gap-1 mb-1"
                       style={{ color: colors.text.secondary }}
                     >
-                      <CalendarDots className="w-3.5 h-3.5" />
+                      <CalendarMark weight="BoldDuotone" className="w-3.5 h-3.5" />
                       {t("adminDashboard.schedule.detail.date")}
                     </p>
                     <p
@@ -139,7 +134,7 @@ const AdminLessonDetailModal = ({ isOpen, onClose, lesson }) => {
                       className="text-xs font-semibold flex items-center gap-1 mb-1"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock className="w-3.5 h-3.5" />
+                      <ClockCircle weight="BoldDuotone" className="w-3.5 h-3.5" />
                       {t("adminDashboard.schedule.detail.time")}
                     </p>
                     <p
@@ -279,8 +274,8 @@ const AdminLessonDetailModal = ({ isOpen, onClose, lesson }) => {
                     className="p-3 rounded-xl flex items-center gap-3"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <VideoCamera
-                      weight="duotone"
+                    <Videocamera
+                      weight="BoldDuotone"
                       className="w-5 h-5 flex-shrink-0"
                       style={{ color: colors.primary.main }}
                     />
@@ -309,7 +304,7 @@ const AdminLessonDetailModal = ({ isOpen, onClose, lesson }) => {
                   <Button
                     variant="flat"
                     className="w-full"
-                    startContent={<BookOpen className="w-4 h-4" />}
+                    startContent={<BookBookmark weight="BoldDuotone" className="w-4 h-4" />}
                     onPress={() =>
                       handleNavigate(`/admin/courses/${lesson.courseId}`)
                     }

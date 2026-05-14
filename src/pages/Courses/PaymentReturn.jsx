@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AltArrowRight, CheckCircle, CloseCircle, HomeSmile } from "@solar-icons/react"
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody, Button, Spinner, Divider } from "@heroui/react";
@@ -6,7 +7,7 @@ import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { CheckCircle, XCircle, ArrowRight, House } from "@phosphor-icons/react";
+
 import { studentApi } from "../../api";
 
 import successIllustration from "../../assets/illustrations/good-news.avif";
@@ -108,7 +109,7 @@ const PaymentReturn = () => {
                   <Button
                     color="primary"
                     variant="flat"
-                    startContent={<House size={18} />}
+                    startContent={<HomeSmile weight="BoldDuotone" size={18} />}
                     onPress={() => navigate("/")}
                   >
                     {t("paymentReturn.goHome")}
@@ -180,7 +181,7 @@ const PaymentReturn = () => {
                   <div className="flex flex-col gap-2 pt-2">
                     <Button
                       color="primary"
-                      startContent={<ArrowRight size={18} />}
+                      startContent={<AltArrowRight weight="BoldDuotone" size={18} />}
                       onPress={() => navigate("/student/my-courses")}
                       style={{
                         backgroundColor: colors.primary.main,
@@ -191,7 +192,7 @@ const PaymentReturn = () => {
                     </Button>
                     <Button
                       variant="flat"
-                      startContent={<House size={18} />}
+                      startContent={<HomeSmile weight="BoldDuotone" size={18} />}
                       onPress={() => navigate("/")}
                     >
                       {t("paymentReturn.goHome")}
@@ -262,7 +263,7 @@ const PaymentReturn = () => {
                     </Button>
                     <Button
                       variant="flat"
-                      startContent={<House size={18} />}
+                      startContent={<HomeSmile weight="BoldDuotone" size={18} />}
                       onPress={() => navigate("/")}
                     >
                       {t("paymentReturn.goHome")}

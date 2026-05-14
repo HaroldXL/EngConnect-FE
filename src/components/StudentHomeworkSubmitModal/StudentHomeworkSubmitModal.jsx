@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
+import { CloseSquare, CloudUpload, DangerTriangle, DocumentText, File, Gallery, Plain } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -8,17 +9,7 @@ import {
   Button,
   addToast,
 } from "@heroui/react";
-import {
-  CloudArrowUp,
-  X as XIcon,
-  Warning,
-  PaperPlaneTilt,
-  FileImage,
-  FilePdf,
-  FileDoc,
-  FileZip,
-  File as FileIcon,
-} from "@phosphor-icons/react";
+
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { lessonHomeworkApi } from "../../api";
@@ -39,14 +30,14 @@ const getFileBaseName = (name) => {
 const getFileTypeIcon = (name, className, style) => {
   const base = getFileBaseName(name || "");
   if (IMAGE_RE.test(base))
-    return <FileImage weight="duotone" className={className} style={style} />;
+    return <Gallery weight="BoldDuotone" className={className} style={style} />;
   if (PDF_RE.test(base))
-    return <FilePdf weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
   if (DOC_RE.test(base))
-    return <FileDoc weight="duotone" className={className} style={style} />;
+    return <DocumentText weight="BoldDuotone" className={className} style={style} />;
   if (ZIP_RE.test(base))
-    return <FileZip weight="duotone" className={className} style={style} />;
-  return <FileIcon weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
+  return <File weight="BoldDuotone" className={className} style={style} />;
 };
 
 const formatFileSize = (bytes) => {
@@ -193,8 +184,8 @@ export default function StudentHomeworkSubmitModal({
                     : colors.background.gray,
                 }}
               >
-                <CloudArrowUp
-                  weight="duotone"
+                <CloudUpload
+                  weight="BoldDuotone"
                   className="w-12 h-12 mx-auto mb-3"
                   style={{ color: colors.primary.main }}
                 />
@@ -263,7 +254,7 @@ export default function StudentHomeworkSubmitModal({
                   isDisabled={submitting}
                   aria-label={t("studentDashboard.homework.removeFile")}
                 >
-                  <XIcon weight="bold" className="w-4 h-4" />
+                  <CloseSquare weight="BoldDuotone" className="w-4 h-4" />
                 </Button>
               </div>
             )}
@@ -276,7 +267,7 @@ export default function StudentHomeworkSubmitModal({
                   color: colors.state.error,
                 }}
               >
-                <Warning weight="fill" className="w-4 h-4 shrink-0" />
+                <DangerTriangle weight="BoldDuotone" className="w-4 h-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -286,8 +277,8 @@ export default function StudentHomeworkSubmitModal({
                 className="flex items-start gap-2 p-3 rounded-xl"
                 style={{ backgroundColor: `${colors.state.warning}12` }}
               >
-                <Warning
-                  weight="fill"
+                <DangerTriangle
+                  weight="BoldDuotone"
                   className="w-4 h-4 shrink-0 mt-0.5"
                   style={{ color: colors.state.warning }}
                 />
@@ -309,7 +300,7 @@ export default function StudentHomeworkSubmitModal({
             isDisabled={!file}
             startContent={
               !submitting && (
-                <PaperPlaneTilt weight="bold" className="w-4 h-4" />
+                <Plain weight="BoldDuotone" className="w-4 h-4" />
               )
             }
             style={{

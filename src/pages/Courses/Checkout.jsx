@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AltArrowLeft, CalendarMark, CheckCircle, ClockCircle, CloseCircle, DangerTriangle } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody, Button, Chip, Divider, Spinner } from "@heroui/react";
@@ -6,14 +7,7 @@ import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import {
-  ArrowLeft,
-  Clock,
-  Warning,
-  XCircle,
-  Check,
-  CalendarDots,
-} from "@phosphor-icons/react";
+
 import { coursesApi, tutorApi, studentApi } from "../../api";
 
 // eslint-disable-next-line no-unused-vars
@@ -202,7 +196,7 @@ const Checkout = () => {
           <Button
             color="primary"
             variant="flat"
-            startContent={<ArrowLeft size={18} />}
+            startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
             onPress={() => navigate("/courses")}
           >
             {t("courses.detail.backToCourses")}
@@ -225,7 +219,7 @@ const Checkout = () => {
           {/* Back button */}
           <Button
             variant="light"
-            startContent={<ArrowLeft size={18} />}
+            startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
             className="mb-6"
             onPress={() => navigate(-1)}
             style={{ color: colors.text.secondary }}
@@ -255,8 +249,8 @@ const Checkout = () => {
                       className="font-semibold text-lg"
                       style={{ color: colors.text.primary }}
                     >
-                      <CalendarDots
-                        weight="duotone"
+                      <CalendarMark
+                        weight="BoldDuotone"
                         className="w-5 h-5 inline-block mr-2"
                         style={{ color: colors.primary.main }}
                       />
@@ -286,8 +280,8 @@ const Checkout = () => {
                         border: `1px solid ${colors.state.error}30`,
                       }}
                     >
-                      <Warning
-                        weight="fill"
+                      <DangerTriangle
+                        weight="BoldDuotone"
                         className="w-4 h-4 flex-shrink-0"
                       />
                       {t("checkout.notEnoughSlots", {
@@ -307,7 +301,7 @@ const Checkout = () => {
                         border: `1px solid ${colors.state.error}30`,
                       }}
                     >
-                      <XCircle weight="fill" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <CloseCircle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0 mt-0.5" />
                       <span>{t("checkout.slotConflict")}</span>
                     </div>
                   )}
@@ -320,7 +314,7 @@ const Checkout = () => {
                         border: `1px solid ${colors.state.error}30`,
                       }}
                     >
-                      <Warning weight="fill" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0 mt-0.5" />
                       <span>{checkoutError}</span>
                     </div>
                   )}
@@ -331,7 +325,7 @@ const Checkout = () => {
                       className="text-center py-8"
                       style={{ color: colors.text.tertiary }}
                     >
-                      <CalendarDots className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <CalendarMark weight="BoldDuotone" className="w-12 h-12 mx-auto mb-2 opacity-50" />
                       <p>{t("checkout.noSlots")}</p>
                     </div>
                   ) : (
@@ -381,11 +375,11 @@ const Checkout = () => {
                                   }}
                                 >
                                   {isConflict ? (
-                                    <XCircle weight="fill" className="w-4 h-4" />
+                                    <CloseCircle weight="BoldDuotone" className="w-4 h-4" />
                                   ) : isSelected ? (
-                                    <Check weight="bold" className="w-4 h-4" />
+                                    <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
                                   ) : (
-                                    <Clock weight="duotone" className="w-4 h-4" />
+                                    <ClockCircle weight="BoldDuotone" className="w-4 h-4" />
                                   )}
                                   {formatTime(slot.startTime)} —{" "}
                                   {formatTime(slot.endTime)}

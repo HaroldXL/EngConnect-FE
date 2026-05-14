@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AltArrowLeft, BookBookmark, CalendarMark, GraphUp, Letter, SquareAcademicCap } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -13,15 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion } from "framer-motion";
 import { adminApi, coursesApi } from "../../../api";
-import {
-  ArrowLeft,
-  BookOpen,
-  TrendUp,
-  CalendarCheck,
-  EnvelopeSimple,
-  GraduationCap,
-  Student,
-} from "@phosphor-icons/react";
+
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
 const withCDN = (url) => {
@@ -147,7 +140,7 @@ const AdminStudentDetail = () => {
           variant="light"
           onPress={() => navigate("/admin/students")}
         >
-          <ArrowLeft size={20} style={{ color: colors.text.primary }} />
+          <AltArrowLeft weight="BoldDuotone" size={20} style={{ color: colors.text.primary }} />
         </Button>
         <h1
           className="text-2xl lg:text-3xl font-bold"
@@ -157,7 +150,7 @@ const AdminStudentDetail = () => {
         </h1>
       </motion.div>
 
-      {/* Student info card */}
+      {/* SquareAcademicCap info card */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -224,7 +217,7 @@ const AdminStudentDetail = () => {
                     style={{ backgroundColor: colors.background.gray }}
                   >
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <BookOpen
+                      <BookBookmark weight="BoldDuotone"
                         size={20}
                         style={{ color: colors.primary.main }}
                       />
@@ -247,7 +240,7 @@ const AdminStudentDetail = () => {
                     style={{ backgroundColor: colors.background.gray }}
                   >
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <TrendUp
+                      <GraphUp weight="BoldDuotone"
                         size={20}
                         style={{ color: colors.state.warning }}
                       />
@@ -270,7 +263,7 @@ const AdminStudentDetail = () => {
                     style={{ backgroundColor: colors.background.gray }}
                   >
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <CalendarCheck
+                      <CalendarMark weight="BoldDuotone"
                         size={20}
                         style={{ color: colors.state.success }}
                       />
@@ -294,7 +287,7 @@ const AdminStudentDetail = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <InfoRow
                     icon={
-                      <EnvelopeSimple
+                      <Letter weight="BoldDuotone"
                         size={15}
                         style={{ color: colors.primary.main }}
                       />
@@ -307,7 +300,7 @@ const AdminStudentDetail = () => {
                   />
                   <InfoRow
                     icon={
-                      <GraduationCap
+                      <SquareAcademicCap weight="BoldDuotone"
                         size={15}
                         style={{ color: colors.primary.main }}
                       />
@@ -318,7 +311,7 @@ const AdminStudentDetail = () => {
                   />
                   <InfoRow
                     icon={
-                      <Student
+                      <SquareAcademicCap weight="BoldDuotone"
                         size={15}
                         style={{ color: colors.primary.main }}
                       />
@@ -333,7 +326,7 @@ const AdminStudentDetail = () => {
                   />
                   <InfoRow
                     icon={
-                      <CalendarCheck
+                      <CalendarMark weight="BoldDuotone"
                         size={15}
                         style={{ color: colors.primary.main }}
                       />
@@ -344,7 +337,7 @@ const AdminStudentDetail = () => {
                   />
                   <InfoRow
                     icon={
-                      <CalendarCheck
+                      <CalendarMark weight="BoldDuotone"
                         size={15}
                         style={{ color: colors.primary.main }}
                       />
@@ -391,9 +384,9 @@ const AdminStudentDetail = () => {
           className="text-xl font-bold mb-4 flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <BookOpen
+          <BookBookmark
             size={22}
-            weight="duotone"
+            weight="BoldDuotone"
             style={{ color: colors.primary.main }}
           />
           {t("studentProfile.enrolledCourses")}

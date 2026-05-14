@@ -1,4 +1,28 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  AddCircle,
+  AltArrowLeft,
+  AltArrowRight,
+  BookBookmark,
+  CalendarAdd,
+  CalendarMark,
+  CircleBottomUp,
+  ClockCircle,
+  CloseSquare,
+  DangerTriangle,
+  DocumentText,
+  Eye,
+  Filter,
+  LinkMinimalistic,
+  MenuDots,
+  Pen,
+  PlayCircle,
+  Record,
+  Restart,
+  TrashBinMinimalistic,
+  UserRounded,
+  Videocamera,
+} from "@solar-icons/react";
 import { useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { selectUser } from "../../../store";
@@ -32,29 +56,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  CalendarDots,
-  Clock,
-  Plus,
-  PencilSimple,
-  Trash,
-  Warning,
-  VideoCamera,
-  BookOpen,
-  CaretLeft,
-  CaretRight,
-  User,
-  Record,
-  Play,
-  Circle,
-  Eye,
-  FileText,
-  LinkSimple,
-  SpinnerGap,
-  ArrowCounterClockwise,
-  FunnelSimple,
-  X,
-} from "@phosphor-icons/react";
+
 import calendarIllustration from "../../../assets/illustrations/calendar.avif";
 import VideoModal from "../../../components/VideoModal/VideoModal";
 import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
@@ -818,7 +820,7 @@ const Schedule = () => {
             key="lessons"
             title={
               <div className="flex items-center gap-2">
-                <BookOpen weight="duotone" className="w-5 h-5" />
+                <BookBookmark weight="BoldDuotone" className="w-5 h-5" />
                 <span>{t("tutorDashboard.schedule.myLessons")}</span>
               </div>
             }
@@ -827,7 +829,7 @@ const Schedule = () => {
             key="schedules"
             title={
               <div className="flex items-center gap-2">
-                <CalendarDots weight="duotone" className="w-5 h-5" />
+                <CalendarMark weight="BoldDuotone" className="w-5 h-5" />
                 <span>{t("tutorDashboard.schedule.scheduleSlots")}</span>
               </div>
             }
@@ -839,9 +841,7 @@ const Schedule = () => {
           {[
             {
               key: "offers",
-              icon: (
-                <ArrowCounterClockwise weight="duotone" className="w-4 h-4" />
-              ),
+              icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("tutorDashboard.schedule.panel.offersBtn"),
               badge: rescheduleOffers.filter(
                 (o) => o.status === "PendingStudentChoice",
@@ -853,9 +853,7 @@ const Schedule = () => {
             },
             {
               key: "requests",
-              icon: (
-                <ArrowCounterClockwise weight="duotone" className="w-4 h-4" />
-              ),
+              icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("tutorDashboard.schedule.panel.studentRequestsBtn"),
               badge: studentRequests.filter((r) => r.status === "Pending")
                 .length,
@@ -866,7 +864,7 @@ const Schedule = () => {
             },
             {
               key: "tickets",
-              icon: <FileText weight="duotone" className="w-4 h-4" />,
+              icon: <DocumentText weight="BoldDuotone" className="w-4 h-4" />,
               label: t("tutorDashboard.schedule.panel.ticketsBtn"),
               badge: rescheduleTickets.filter((tk) => tk.status === "Open")
                 .length,
@@ -946,7 +944,10 @@ const Schedule = () => {
                         setFilterStudentId(null);
                       }}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <CloseSquare
+                        weight="BoldDuotone"
+                        className="w-3.5 h-3.5"
+                      />
                     </button>
                   </div>
                 );
@@ -962,7 +963,7 @@ const Schedule = () => {
                   border: `1px solid ${colors.primary.main}30`,
                 }}
                 startContent={
-                  <FunnelSimple weight="duotone" className="w-4 h-4" />
+                  <Filter weight="BoldDuotone" className="w-4 h-4" />
                 }
                 onPress={() => setIsStudentFilterOpen(true)}
               >
@@ -1042,7 +1043,9 @@ const Schedule = () => {
                                 <Button
                                   size="sm"
                                   color="primary"
-                                  startContent={<Plus />}
+                                  startContent={
+                                    <CalendarAdd weight="BoldDuotone" />
+                                  }
                                   style={{
                                     backgroundColor: colors.primary.main,
                                     color: colors.text.white,
@@ -1072,8 +1075,8 @@ const Schedule = () => {
                                     }}
                                   >
                                     <div className="flex items-center gap-3">
-                                      <Clock
-                                        weight="duotone"
+                                      <ClockCircle
+                                        weight="BoldDuotone"
                                         className="w-4 h-4"
                                         style={{
                                           color: getStatusColor(
@@ -1117,8 +1120,8 @@ const Schedule = () => {
                                               handleOpenEdit(schedule)
                                             }
                                           >
-                                            <PencilSimple
-                                              weight="duotone"
+                                            <Pen
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{
                                                 color: colors.primary.main,
@@ -1139,8 +1142,8 @@ const Schedule = () => {
                                               handleOpenDelete(schedule)
                                             }
                                           >
-                                            <Trash
-                                              weight="duotone"
+                                            <TrashBinMinimalistic
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{
                                                 color: colors.state.error,
@@ -1236,8 +1239,8 @@ const Schedule = () => {
                         variant="light"
                         onPress={goToPrevWeek}
                       >
-                        <CaretLeft
-                          weight="bold"
+                        <AltArrowLeft
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.text.secondary }}
                         />
@@ -1254,8 +1257,8 @@ const Schedule = () => {
                         variant="light"
                         onPress={goToNextWeek}
                       >
-                        <CaretRight
-                          weight="bold"
+                        <AltArrowRight
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.text.secondary }}
                         />
@@ -1549,8 +1552,8 @@ const Schedule = () => {
                       key="today"
                       title={
                         <div className="flex items-center gap-1.5 text-xs">
-                          <CalendarDots
-                            weight="duotone"
+                          <CalendarMark
+                            weight="BoldDuotone"
                             className="w-3.5 h-3.5"
                           />
                           <span>{t("tutorDashboard.schedule.today")}</span>
@@ -1570,7 +1573,10 @@ const Schedule = () => {
                       key="upcoming"
                       title={
                         <div className="flex items-center gap-1.5 text-xs">
-                          <Clock weight="duotone" className="w-3.5 h-3.5" />
+                          <ClockCircle
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
                           <span>
                             {t("tutorDashboard.schedule.upcomingSidebarTab")}
                           </span>
@@ -1667,8 +1673,8 @@ const Schedule = () => {
                                         color: colors.text.tertiary,
                                       }}
                                     >
-                                      <Clock
-                                        weight="duotone"
+                                      <ClockCircle
+                                        weight="BoldDuotone"
                                         className="w-3 h-3"
                                       />
                                       {sidebarView === "upcoming" &&
@@ -1698,8 +1704,8 @@ const Schedule = () => {
                                       className="text-[11px] flex items-center gap-1 mt-1"
                                       style={{ color: meetingInfo.color }}
                                     >
-                                      <Circle
-                                        weight="fill"
+                                      <Record
+                                        weight="BoldDuotone"
                                         className="w-2 h-2"
                                       />
                                       {meetingInfo.label}
@@ -1721,8 +1727,8 @@ const Schedule = () => {
                                               : colors.state.warning,
                                           }}
                                         >
-                                          <Clock
-                                            weight="duotone"
+                                          <ClockCircle
+                                            weight="BoldDuotone"
                                             className="w-3 h-3"
                                           />
                                           {isPast
@@ -1797,7 +1803,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="flat"
                                   className="flex-1"
-                                  startContent={<Eye className="w-3.5 h-3.5" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3.5 h-3.5"
+                                    />
+                                  }
                                   onPress={(e) => {
                                     e.stopPropagation?.();
                                     handleOpenLessonDetail(lesson);
@@ -1814,8 +1825,8 @@ const Schedule = () => {
                                       color: colors.text.white,
                                     }}
                                     startContent={
-                                      <VideoCamera
-                                        weight="fill"
+                                      <Videocamera
+                                        weight="BoldDuotone"
                                         className="w-3.5 h-3.5"
                                       />
                                     }
@@ -1864,8 +1875,8 @@ const Schedule = () => {
                       key="today"
                       title={
                         <div className="flex items-center gap-1.5 text-xs">
-                          <CalendarDots
-                            weight="duotone"
+                          <CalendarMark
+                            weight="BoldDuotone"
                             className="w-3.5 h-3.5"
                           />
                           <span>{t("tutorDashboard.schedule.today")}</span>
@@ -1885,7 +1896,10 @@ const Schedule = () => {
                       key="upcoming"
                       title={
                         <div className="flex items-center gap-1.5 text-xs">
-                          <Clock weight="duotone" className="w-3.5 h-3.5" />
+                          <ClockCircle
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
                           <span>
                             {t("tutorDashboard.schedule.upcomingSidebarTab")}
                           </span>
@@ -1963,8 +1977,8 @@ const Schedule = () => {
                                       className="text-[11px] flex items-center gap-1"
                                       style={{ color: colors.text.tertiary }}
                                     >
-                                      <Clock
-                                        weight="duotone"
+                                      <ClockCircle
+                                        weight="BoldDuotone"
                                         className="w-3 h-3"
                                       />
                                       {sidebarView === "upcoming" &&
@@ -1994,8 +2008,8 @@ const Schedule = () => {
                                       className="text-[11px] flex items-center gap-1 mt-1"
                                       style={{ color: meetingInfo.color }}
                                     >
-                                      <Circle
-                                        weight="fill"
+                                      <Record
+                                        weight="BoldDuotone"
                                         className="w-2 h-2"
                                       />
                                       {meetingInfo.label}
@@ -2017,8 +2031,8 @@ const Schedule = () => {
                                               : colors.state.warning,
                                           }}
                                         >
-                                          <Clock
-                                            weight="duotone"
+                                          <ClockCircle
+                                            weight="BoldDuotone"
                                             className="w-3 h-3"
                                           />
                                           {isPast
@@ -2093,7 +2107,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="flat"
                                   className="flex-1"
-                                  startContent={<Eye className="w-3.5 h-3.5" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3.5 h-3.5"
+                                    />
+                                  }
                                   onPress={() => handleOpenLessonDetail(lesson)}
                                 >
                                   {t("tutorDashboard.schedule.viewDetail")}
@@ -2107,8 +2126,8 @@ const Schedule = () => {
                                       color: colors.text.white,
                                     }}
                                     startContent={
-                                      <VideoCamera
-                                        weight="fill"
+                                      <Videocamera
+                                        weight="BoldDuotone"
                                         className="w-3.5 h-3.5"
                                       />
                                     }
@@ -2161,7 +2180,10 @@ const Schedule = () => {
                     border: `1px solid ${colors.state.error}30`,
                   }}
                 >
-                  <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+                  <DangerTriangle
+                    weight="BoldDuotone"
+                    className="w-4 h-4 flex-shrink-0"
+                  />
                   {saveError}
                 </div>
               )}
@@ -2271,8 +2293,8 @@ const Schedule = () => {
           </ModalHeader>
           <ModalBody>
             <div className="flex items-start gap-3">
-              <Warning
-                weight="fill"
+              <DangerTriangle
+                weight="BoldDuotone"
                 className="w-6 h-6 flex-shrink-0"
                 style={{ color: colors.state.warning }}
               />
@@ -2422,8 +2444,8 @@ const Schedule = () => {
                                   className="text-xs flex items-center gap-1"
                                   style={{ color: colors.text.tertiary }}
                                 >
-                                  <Clock
-                                    weight="duotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3.5 h-3.5 flex-shrink-0"
                                   />
                                   {new Date(lesson.startTime).toLocaleString(
@@ -2452,7 +2474,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="light"
                                   className="h-6 px-2 text-xs flex-shrink-0"
-                                  startContent={<Eye className="w-3 h-3" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3 h-3"
+                                    />
+                                  }
                                   onPress={() => {
                                     setIsOffersModalOpen(false);
                                     handleOpenLessonDetail(lesson);
@@ -2598,8 +2625,8 @@ const Schedule = () => {
                                   className="text-xs flex items-center gap-1"
                                   style={{ color: colors.text.tertiary }}
                                 >
-                                  <Clock
-                                    weight="duotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3.5 h-3.5 flex-shrink-0"
                                   />
                                   {t(
@@ -2631,7 +2658,12 @@ const Schedule = () => {
                                   size="sm"
                                   variant="light"
                                   className="h-6 px-2 text-xs flex-shrink-0"
-                                  startContent={<Eye className="w-3 h-3" />}
+                                  startContent={
+                                    <Eye
+                                      weight="BoldDuotone"
+                                      className="w-3 h-3"
+                                    />
+                                  }
                                   onPress={() => {
                                     setIsRequestsModalOpen(false);
                                     handleOpenLessonDetail(lesson);
@@ -2898,7 +2930,7 @@ const Schedule = () => {
             <>
               <ModalHeader style={{ color: colors.text.primary }}>
                 <div className="flex items-center gap-2">
-                  <FunnelSimple weight="duotone" className="w-5 h-5" />
+                  <Filter weight="BoldDuotone" className="w-5 h-5" />
                   {t("tutorDashboard.schedule.filterStudent")}
                 </div>
               </ModalHeader>
@@ -2939,8 +2971,8 @@ const Schedule = () => {
                           : colors.background.light,
                       }}
                     >
-                      <User
-                        weight="duotone"
+                      <UserRounded
+                        weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{
                           color: !filterStudentId

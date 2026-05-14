@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { AltArrowLeft, ChatDots, CloseSquare, DangerTriangle, DownloadMinimalistic, FileDownload, MenuDots, Microphone, Muted, Paperclip, PhoneCalling, PresentationGraph, Plain, SlashCircle, Stopwatch, UploadMinimalistic, UserCircle, Videocamera, WiFiRouter } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store";
@@ -6,28 +7,7 @@ import { useTranslation } from "react-i18next";
 import { meetingApi, authApi, studentApi } from "../../api";
 import useWebRTC from "../../hooks/useWebRTC";
 import WhiteboardPanel from "./WhiteboardPanel";
-import {
-  Microphone,
-  MicrophoneSlash,
-  VideoCamera,
-  VideoCameraSlash,
-  PhoneDisconnect,
-  ChatCircle,
-  PaperPlaneTilt,
-  WifiHigh,
-  WifiSlash,
-  CircleNotch,
-  ArrowLeft,
-  X,
-  UserCircle,
-  MonitorArrowUp,
-  Warning,
-  Timer,
-  ChalkboardSimple,
-  Paperclip,
-  DownloadSimple,
-  FileArrowDown,
-} from "@phosphor-icons/react";
+
 import conversationIllustration from "../../assets/illustrations/conversation.avif";
 
 // ── File transfer via RTCDataChannel ────────────────────────────────────────
@@ -447,9 +427,9 @@ const VideoCall = () => {
         style={{ backgroundColor: bg, color: "white" }}
       >
         {connectionState === "connected" ? (
-          <WifiHigh weight="bold" className="w-3.5 h-3.5" />
+          <WiFiRouter weight="BoldDuotone" className="w-3.5 h-3.5" />
         ) : (
-          <WifiSlash weight="bold" className="w-3.5 h-3.5" />
+          <SlashCircle weight="BoldDuotone" className="w-3.5 h-3.5" />
         )}
         {t(`videoCall.connection.${connectionState}`)}
       </div>
@@ -462,7 +442,7 @@ const VideoCall = () => {
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
         <div className="text-center max-w-sm mx-4">
           <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-            <Warning weight="fill" className="w-9 h-9 text-red-400" />
+            <DangerTriangle weight="BoldDuotone" className="w-9 h-9 text-red-400" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">
             {t("videoCall.accessDenied")}
@@ -486,8 +466,8 @@ const VideoCall = () => {
     return (
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
         <div className="text-center">
-          <PhoneDisconnect
-            weight="fill"
+          <PhoneCalling
+            weight="BoldDuotone"
             className="w-16 h-16 text-red-400 mx-auto mb-4"
           />
           <h2 className="text-2xl font-bold text-white mb-2">
@@ -513,8 +493,8 @@ const VideoCall = () => {
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
         <div className="max-w-lg w-full mx-4">
           <div className="text-center mb-8">
-            <VideoCamera
-              weight="duotone"
+            <Videocamera
+              weight="BoldDuotone"
               className="w-12 h-12 text-emerald-400 mx-auto mb-3"
             />
             <h1 className="text-2xl font-bold text-white mb-1">
@@ -529,7 +509,7 @@ const VideoCall = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
                 <UserCircle
-                  weight="fill"
+                  weight="BoldDuotone"
                   className="w-6 h-6 text-emerald-400"
                 />
               </div>
@@ -560,9 +540,9 @@ const VideoCall = () => {
               className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors flex items-center justify-center gap-2"
             >
               {loadingInfo ? (
-                <CircleNotch className="w-5 h-5 animate-spin" />
+                <MenuDots weight="BoldDuotone" className="w-5 h-5 animate-spin" />
               ) : (
-                <VideoCamera weight="bold" className="w-5 h-5" />
+                <Videocamera weight="BoldDuotone" className="w-5 h-5" />
               )}
               {t("videoCall.joinMeeting")}
             </button>
@@ -572,7 +552,7 @@ const VideoCall = () => {
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 mx-auto text-gray-400 hover:text-white text-sm transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <AltArrowLeft weight="BoldDuotone" className="w-4 h-4" />
             {t("videoCall.backToSchedule")}
           </button>
         </div>
@@ -601,7 +581,7 @@ const VideoCall = () => {
         {/* Center: elapsed timer */}
         {connectionState === "connected" && (
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-emerald-400 text-sm font-mono font-medium">
-            <Timer weight="fill" className="w-4 h-4" />
+            <Stopwatch weight="BoldDuotone" className="w-4 h-4" />
             {formatElapsed(elapsedSeconds)}
           </div>
         )}
@@ -611,8 +591,8 @@ const VideoCall = () => {
           onClick={() => setShowChat(!showChat)}
           className={`relative p-2 rounded-xl transition-colors ${showChat ? "bg-emerald-500/20 text-emerald-400" : "text-gray-400 hover:text-white hover:bg-gray-700"}`}
         >
-          <ChatCircle
-            weight={showChat ? "fill" : "regular"}
+          <ChatDots
+            weight="BoldDuotone"
             className="w-5 h-5"
           />
         </button>
@@ -649,7 +629,7 @@ const VideoCall = () => {
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-1">
                       <UserCircle
-                        weight="fill"
+                        weight="BoldDuotone"
                         className="w-10 h-10 text-gray-600"
                       />
                       {remoteName && (
@@ -662,8 +642,8 @@ const VideoCall = () => {
                   {/* Remote status badges */}
                   {!remoteAudioEnabled && (
                     <div className="absolute top-1.5 left-1.5 bg-red-500 rounded-full p-1">
-                      <MicrophoneSlash
-                        weight="bold"
+                      <Muted
+                        weight="BoldDuotone"
                         className="w-3 h-3 text-white"
                       />
                     </div>
@@ -694,15 +674,15 @@ const VideoCall = () => {
                   {!(localStream && isVideoEnabled) && (
                     <div className="w-full h-full flex items-center justify-center bg-gray-800">
                       <UserCircle
-                        weight="fill"
+                        weight="BoldDuotone"
                         className="w-10 h-10 text-gray-600"
                       />
                     </div>
                   )}
                   {!isAudioEnabled && (
                     <div className="absolute top-1.5 left-1.5 bg-red-500 rounded-full p-1">
-                      <MicrophoneSlash
-                        weight="bold"
+                      <Muted
+                        weight="BoldDuotone"
                         className="w-3 h-3 text-white"
                       />
                     </div>
@@ -730,7 +710,7 @@ const VideoCall = () => {
                   {/* Avatar when remote camera is off */}
                   {!remoteVideoEnabled && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-800">
-                      <UserCircle weight="fill" className="w-24 h-24 text-gray-600" />
+                      <UserCircle weight="BoldDuotone" className="w-24 h-24 text-gray-600" />
                       {remoteName && (
                         <span className="text-gray-300 text-sm font-medium">{remoteName}</span>
                       )}
@@ -740,8 +720,8 @@ const VideoCall = () => {
                   <div className="absolute top-3 right-3 flex gap-1.5">
                     {!remoteAudioEnabled && (
                       <div className="flex items-center gap-1 bg-gray-900/80 backdrop-blur px-2 py-1 rounded-full">
-                        <MicrophoneSlash
-                          weight="bold"
+                        <Muted
+                          weight="BoldDuotone"
                           className="w-3.5 h-3.5 text-red-400"
                         />
                         <span className="text-[11px] text-red-400 font-medium">
@@ -751,8 +731,8 @@ const VideoCall = () => {
                     )}
                     {!remoteVideoEnabled && (
                       <div className="flex items-center gap-1 bg-gray-900/80 backdrop-blur px-2 py-1 rounded-full">
-                        <VideoCameraSlash
-                          weight="bold"
+                        <Videocamera
+                          weight="BoldDuotone"
                           className="w-3.5 h-3.5 text-amber-400"
                         />
                         <span className="text-[11px] text-amber-400 font-medium">
@@ -776,8 +756,8 @@ const VideoCall = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   {connectionState === "connecting" ? (
                     <>
-                      <CircleNotch
-                        weight="bold"
+                      <MenuDots
+                        weight="BoldDuotone"
                         className="w-12 h-12 text-emerald-400 animate-spin mb-4"
                       />
                       <p className="text-gray-400 text-sm">
@@ -791,7 +771,7 @@ const VideoCall = () => {
                         <div className="absolute w-24 h-24 rounded-full border-2 border-emerald-500/30 animate-ping [animation-delay:0.3s]" />
                         <div className="relative w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
                           <UserCircle
-                            weight="fill"
+                            weight="BoldDuotone"
                             className="w-14 h-14 text-gray-500"
                           />
                         </div>
@@ -840,15 +820,15 @@ const VideoCall = () => {
                 {!(localStream && isVideoEnabled) && (
                   <div className="w-full h-full flex items-center justify-center bg-gray-800">
                     <UserCircle
-                      weight="fill"
+                      weight="BoldDuotone"
                       className="w-12 h-12 text-gray-600"
                     />
                   </div>
                 )}
                 {!isAudioEnabled && (
                   <div className="absolute top-2 left-2 bg-red-500 rounded-full p-1">
-                    <MicrophoneSlash
-                      weight="bold"
+                    <Muted
+                      weight="BoldDuotone"
                       className="w-3 h-3 text-white"
                     />
                   </div>
@@ -873,7 +853,7 @@ const VideoCall = () => {
                   onClick={() => setShowChat(false)}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <CloseSquare weight="BoldDuotone" className="w-4 h-4" />
                 </button>
               </div>
 
@@ -946,8 +926,8 @@ const VideoCall = () => {
                             )}
                             <div className="flex items-center gap-2 px-3 py-2">
                               {!isImage && (
-                                <FileArrowDown
-                                  weight="bold"
+                                <FileDownload
+                                  weight="BoldDuotone"
                                   className="w-5 h-5 shrink-0 text-white/70"
                                 />
                               )}
@@ -967,8 +947,8 @@ const VideoCall = () => {
                                 className={`p-1.5 rounded-lg shrink-0 transition-colors ${isMe ? "bg-emerald-500 hover:bg-emerald-400" : "bg-gray-600 hover:bg-gray-500"}`}
                                 title="Download"
                               >
-                                <DownloadSimple
-                                  weight="bold"
+                                <DownloadMinimalistic
+                                  weight="BoldDuotone"
                                   className="w-3.5 h-3.5 text-white"
                                 />
                               </a>
@@ -1034,7 +1014,7 @@ const VideoCall = () => {
                     }
                     className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
                   >
-                    <Paperclip weight="bold" className="w-4 h-4" />
+                    <Paperclip weight="BoldDuotone" className="w-4 h-4" />
                   </button>
                   <input
                     value={chatInput}
@@ -1048,7 +1028,7 @@ const VideoCall = () => {
                     disabled={!chatInput.trim()}
                     className="p-2 rounded-xl bg-emerald-500 text-white disabled:opacity-40 hover:bg-emerald-600 transition-colors"
                   >
-                    <PaperPlaneTilt weight="fill" className="w-4 h-4" />
+                    <Plain weight="BoldDuotone" className="w-4 h-4" />
                   </button>
                 </div>
               </form>
@@ -1069,9 +1049,9 @@ const VideoCall = () => {
           }`}
         >
           {isAudioEnabled ? (
-            <Microphone weight="bold" className="w-5 h-5" />
+            <Microphone weight="BoldDuotone" className="w-5 h-5" />
           ) : (
-            <MicrophoneSlash weight="bold" className="w-5 h-5" />
+            <Muted weight="BoldDuotone" className="w-5 h-5" />
           )}
           <span className="text-[11px] font-medium leading-none">
             {t("videoCall.mic")}
@@ -1088,9 +1068,9 @@ const VideoCall = () => {
           }`}
         >
           {isVideoEnabled ? (
-            <VideoCamera weight="bold" className="w-5 h-5" />
+            <Videocamera weight="BoldDuotone" className="w-5 h-5" />
           ) : (
-            <VideoCameraSlash weight="bold" className="w-5 h-5" />
+            <Videocamera weight="BoldDuotone" className="w-5 h-5" />
           )}
           <span className="text-[11px] font-medium leading-none">
             {t("videoCall.camera")}
@@ -1110,7 +1090,7 @@ const VideoCall = () => {
                   : "bg-gray-700 text-white hover:bg-gray-600"
             }`}
           >
-            <MonitorArrowUp weight="bold" className="w-5 h-5" />
+            <UploadMinimalistic weight="BoldDuotone" className="w-5 h-5" />
             <span className="text-[11px] font-medium leading-none">
               {t("videoCall.screen")}
             </span>
@@ -1129,7 +1109,7 @@ const VideoCall = () => {
                 : "bg-gray-700 text-white hover:bg-gray-600"
           }`}
         >
-          <ChalkboardSimple weight="bold" className="w-5 h-5" />
+          <PresentationGraph weight="BoldDuotone" className="w-5 h-5" />
           <span className="text-[11px] font-medium leading-none">
             {t("videoCall.whiteboard")}
             {showWhiteboard && !isDataChannelOpen && (
@@ -1149,7 +1129,7 @@ const VideoCall = () => {
             onClick={() => setConfirmDialog("end")}
             className="flex flex-col items-center gap-1 px-5 py-3 rounded-2xl bg-red-500 text-white hover:bg-red-600 transition-colors"
           >
-            <PhoneDisconnect weight="bold" className="w-5 h-5" />
+            <PhoneCalling weight="BoldDuotone" className="w-5 h-5" />
             <span className="text-[11px] font-medium leading-none">
               {t("videoCall.endMeeting")}
             </span>
@@ -1159,7 +1139,7 @@ const VideoCall = () => {
             onClick={() => setConfirmDialog("leave")}
             className="flex flex-col items-center gap-1 px-5 py-3 rounded-2xl bg-red-500 text-white hover:bg-red-600 transition-colors"
           >
-            <PhoneDisconnect weight="bold" className="w-5 h-5" />
+            <PhoneCalling weight="BoldDuotone" className="w-5 h-5" />
             <span className="text-[11px] font-medium leading-none">
               {t("videoCall.leave")}
             </span>
@@ -1173,7 +1153,7 @@ const VideoCall = () => {
           <div className="bg-gray-800 rounded-2xl p-6 w-80 shadow-2xl border border-gray-700">
             <div className="flex justify-center mb-4">
               <div className="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center">
-                <Warning weight="fill" className="w-8 h-8 text-red-400" />
+                <DangerTriangle weight="BoldDuotone" className="w-8 h-8 text-red-400" />
               </div>
             </div>
             <h3 className="text-white font-bold text-lg text-center mb-2">

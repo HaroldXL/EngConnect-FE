@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { AltArrowDown, AltArrowUp, CloseSquare, Diploma, Filter, GraphUp, Lightning, Magnifer, Target } from "@solar-icons/react"
 import {
   Button,
   Card,
@@ -19,17 +20,7 @@ import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
 import useInputStyles from "../../hooks/useInputStyles";
 import { coursesApi } from "../../api";
-import {
-  MagnifyingGlass,
-  Target,
-  Lightning,
-  TrendUp,
-  Certificate,
-  CaretDown,
-  CaretUp,
-  FunnelSimple,
-  X,
-} from "@phosphor-icons/react";
+
 import readingImage from "../../assets/illustrations/boy-and-laptop.avif";
 import searchImage from "../../assets/illustrations/search.avif";
 
@@ -181,28 +172,28 @@ const Courses = () => {
 
   const benefits = [
     {
-      icon: (props) => <Target weight="duotone" {...props} />,
+      icon: (props) => <Target weight="BoldDuotone" {...props} />,
       title: t("courses.benefits.personalized.title"),
       description: t("courses.benefits.personalized.description"),
       color: "#3B82F6",
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     {
-      icon: (props) => <Lightning weight="duotone" {...props} />,
+      icon: (props) => <Lightning weight="BoldDuotone" {...props} />,
       title: t("courses.benefits.practical.title"),
       description: t("courses.benefits.practical.description"),
       color: "#F59E0B",
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     {
-      icon: (props) => <TrendUp weight="duotone" {...props} />,
+      icon: (props) => <GraphUp weight="BoldDuotone" {...props} />,
       title: t("courses.benefits.progress.title"),
       description: t("courses.benefits.progress.description"),
       color: "#10B981",
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     {
-      icon: (props) => <Certificate weight="duotone" {...props} />,
+      icon: (props) => <Diploma weight="BoldDuotone" {...props} />,
       title: t("courses.benefits.certificate.title"),
       description: t("courses.benefits.certificate.description"),
       color: "#8B5CF6",
@@ -235,9 +226,9 @@ const Courses = () => {
               By Skill
             </span>
             {skillOpen ? (
-              <CaretUp size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
             ) : (
-              <CaretDown size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
             )}
           </button>
           {skillOpen && (
@@ -305,9 +296,9 @@ const Courses = () => {
               By Purpose
             </span>
             {purposeOpen ? (
-              <CaretUp size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
             ) : (
-              <CaretDown size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
             )}
           </button>
           {purposeOpen && (
@@ -374,9 +365,9 @@ const Courses = () => {
             {t("courses.categories.level")}
           </span>
           {levelOpen ? (
-            <CaretUp size={16} style={{ color: colors.text.secondary }} />
+            <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
           ) : (
-            <CaretDown size={16} style={{ color: colors.text.secondary }} />
+            <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
           )}
         </button>
         {levelOpen && (
@@ -433,7 +424,7 @@ const Courses = () => {
           variant="flat"
           className="w-full"
           style={{ color: colors.state.error }}
-          startContent={<X size={14} />}
+          startContent={<CloseSquare weight="BoldDuotone" size={14} />}
           onPress={() => {
             setSelectedCategories(new Set());
             setSelectedLevels(new Set());
@@ -532,7 +523,7 @@ const Courses = () => {
                   if (e.key === "Enter") setSearchQuery(searchInput.trim());
                 }}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     size={18}
                     style={{ color: colors.text.secondary }}
                   />
@@ -546,7 +537,7 @@ const Courses = () => {
                       }}
                       className="hover:opacity-70"
                     >
-                      <X size={16} style={{ color: colors.text.tertiary }} />
+                      <CloseSquare weight="BoldDuotone" size={16} style={{ color: colors.text.tertiary }} />
                     </button>
                   ) : null
                 }
@@ -596,7 +587,7 @@ const Courses = () => {
                 }}
                 onPress={() => setSidebarOpen(!sidebarOpen)}
               >
-                <FunnelSimple size={20} weight="bold" />
+                <Filter size={20} weight="BoldDuotone" />
               </Button>
             </div>
           </div>
@@ -624,7 +615,7 @@ const Courses = () => {
                       onClick={() => toggleCategory(catId)}
                       className="ml-0.5 hover:opacity-70"
                     >
-                      <X size={12} />
+                      <CloseSquare weight="BoldDuotone" size={12} />
                     </button>
                   </span>
                 ))}
@@ -642,7 +633,7 @@ const Courses = () => {
                       onClick={() => toggleLevel(level)}
                       className="ml-0.5 hover:opacity-70"
                     >
-                      <X size={12} />
+                      <CloseSquare weight="BoldDuotone" size={12} />
                     </button>
                   </span>
                 ))}
@@ -662,7 +653,7 @@ const Courses = () => {
                       }}
                       className="ml-0.5 hover:opacity-70"
                     >
-                      <X size={12} />
+                      <CloseSquare weight="BoldDuotone" size={12} />
                     </button>
                   </span>
                 )}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { AltArrowDown, AltArrowLeft, AltArrowRight, AltArrowUp, BookBookmark, CheckCircle, Checklist, ClockCircle, Diploma, PlayCircle, Star, UsersGroupRounded } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, Chip, Avatar, Divider } from "@heroui/react";
@@ -10,20 +11,7 @@ import VideoModal from "../../../components/VideoModal/VideoModal";
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
-import {
-  Star,
-  Clock,
-  Users,
-  BookOpen,
-  Check,
-  ArrowLeft,
-  CaretDown,
-  CaretUp,
-  Play,
-  ListNumbers,
-  Certificate,
-  ArrowRightIcon,
-} from "@phosphor-icons/react";
+
 import { coursesApi, tutorApi } from "../../../api";
 
 const formatDuration = (timeStr) => {
@@ -102,7 +90,7 @@ const StudentCourseDetail = () => {
         <Button
           color="primary"
           variant="flat"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/student/browse-courses")}
         >
           {t("courses.detail.backToCourses")}
@@ -137,7 +125,7 @@ const StudentCourseDetail = () => {
       >
         <Button
           variant="light"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/student/browse-courses")}
           style={{ color: colors.text.secondary }}
         >
@@ -207,7 +195,7 @@ const StudentCourseDetail = () => {
                         <Star
                           key={i}
                           size={16}
-                          weight="fill"
+                          weight="BoldDuotone"
                           style={{
                             color:
                               i < Math.floor(course.ratingAverage || 0)
@@ -235,7 +223,7 @@ const StudentCourseDetail = () => {
                     className="text-sm flex items-center gap-1.5"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Users size={16} weight="duotone" />
+                    <UsersGroupRounded size={16} weight="BoldDuotone" />
                     {course.numberOfEnrollment?.toLocaleString() || 0}{" "}
                     {t("courses.detail.students")}
                   </span>
@@ -331,9 +319,9 @@ const StudentCourseDetail = () => {
                               backgroundColor: colors.background.primaryLight,
                             }}
                           >
-                            <Check
+                            <CheckCircle
                               size={14}
-                              weight="bold"
+                              weight="BoldDuotone"
                               style={{ color: colors.primary.main }}
                             />
                           </div>
@@ -355,9 +343,9 @@ const StudentCourseDetail = () => {
                               backgroundColor: colors.background.primaryLight,
                             }}
                           >
-                            <Check
+                            <CheckCircle
                               size={14}
-                              weight="bold"
+                              weight="BoldDuotone"
                               style={{ color: colors.primary.main }}
                             />
                           </div>
@@ -447,15 +435,15 @@ const StudentCourseDetail = () => {
                               </div>
                             </div>
                             {isExpanded ? (
-                              <CaretUp
+                              <AltArrowUp
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             ) : (
-                              <CaretDown
+                              <AltArrowDown
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             )}
@@ -500,9 +488,9 @@ const StudentCourseDetail = () => {
                                               colors.background.primaryLight,
                                           }}
                                         >
-                                          <Play
+                                          <PlayCircle
                                             size={12}
-                                            weight="fill"
+                                            weight="BoldDuotone"
                                             style={{
                                               color: colors.primary.main,
                                             }}
@@ -545,9 +533,9 @@ const StudentCourseDetail = () => {
                                                       key={i}
                                                       className="flex items-start gap-1"
                                                     >
-                                                      <ArrowRightIcon
+                                                      <AltArrowRight
                                                         size={10}
-                                                        weight="fill"
+                                                        weight="BoldDuotone"
                                                         className="flex-shrink-0 mt-0.5"
                                                         style={{
                                                           color:
@@ -634,7 +622,7 @@ const StudentCourseDetail = () => {
                     <div className="flex items-center gap-1">
                       <Star
                         size={18}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: "#f59e0b" }}
                       />
                       <span
@@ -653,7 +641,7 @@ const StudentCourseDetail = () => {
                     </div>
                     {tutorInfo.monthExperience > 0 && (
                       <div className="flex items-center gap-1">
-                        <Clock
+                        <ClockCircle weight="BoldDuotone"
                           size={18}
                           style={{ color: colors.primary.main }}
                         />
@@ -708,9 +696,9 @@ const StudentCourseDetail = () => {
                     className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
                   >
                     <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
-                      <Play
+                      <PlayCircle
                         size={24}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: colors.primary.main }}
                       />
                     </div>
@@ -758,7 +746,7 @@ const StudentCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock size={16} weight="duotone" />
+                      <ClockCircle size={16} weight="BoldDuotone" />
                       {t("courses.detail.totalDuration")}
                     </span>
                     <span
@@ -773,7 +761,7 @@ const StudentCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock size={16} weight="duotone" />
+                      <ClockCircle size={16} weight="BoldDuotone" />
                       {t("courses.detail.timePerLesson")}
                     </span>
                     <span
@@ -788,7 +776,7 @@ const StudentCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <BookOpen size={16} weight="duotone" />
+                      <BookBookmark size={16} weight="BoldDuotone" />
                       {t("courses.detail.level")}
                     </span>
                     <span
@@ -804,7 +792,7 @@ const StudentCourseDetail = () => {
                         className="flex items-center gap-2"
                         style={{ color: colors.text.secondary }}
                       >
-                        <Clock size={16} weight="duotone" />
+                        <ClockCircle size={16} weight="BoldDuotone" />
                         {t("courses.detail.sessionsPerWeek")}
                       </span>
                       <span
@@ -820,7 +808,7 @@ const StudentCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Users size={16} weight="duotone" />
+                      <UsersGroupRounded size={16} weight="BoldDuotone" />
                       {t("courses.detail.studentsEnrolled")}
                     </span>
                     <span
@@ -835,7 +823,7 @@ const StudentCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Certificate size={16} weight="duotone" />
+                      <Diploma size={16} weight="BoldDuotone" />
                       {t("courses.detail.certificate")}
                     </span>
                     <span

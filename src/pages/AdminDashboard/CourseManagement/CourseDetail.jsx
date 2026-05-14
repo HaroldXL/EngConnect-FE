@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AltArrowDown, AltArrowLeft, AltArrowRight, AltArrowUp, BookBookmark, Calendar, ClockCircle, Diploma, DocumentText, File, LinkMinimalistic, PlayCircle, SquareAltArrowRight, Star, Target, UsersGroupRounded, Videocamera } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -14,26 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion } from "framer-motion";
 import { coursesApi, tutorApi, studentApi } from "../../../api";
-import {
-  ArrowLeft,
-  BookOpen,
-  Star,
-  CaretDown,
-  CaretUp,
-  Play,
-  Certificate,
-  Users,
-  VideoCamera,
-  Clock,
-  CalendarBlank,
-  Target,
-  FileText,
-  FilePdf,
-  Link,
-  ArrowSquareOut,
-  ArrowRightIcon,
-  ArrowBendDownRightIcon,
-} from "@phosphor-icons/react";
+
 
 const AdminCourseDetail = () => {
   const { id } = useParams();
@@ -90,17 +72,17 @@ const AdminCourseDetail = () => {
   const getResourceIcon = (type) => {
     const lo = (type || "").toLowerCase();
     if (lo === "pdf")
-      return <FilePdf size={13} weight="fill" style={{ color: "#ef4444" }} />;
+      return <File size={13} weight="BoldDuotone" style={{ color: "#ef4444" }} />;
     if (lo === "video")
       return (
-        <VideoCamera size={13} weight="fill" style={{ color: "#8b5cf6" }} />
+        <Videocamera size={13} weight="BoldDuotone" style={{ color: "#8b5cf6" }} />
       );
     if (lo === "link")
-      return <Link size={13} weight="bold" style={{ color: "#3b82f6" }} />;
+      return <LinkMinimalistic size={13} weight="BoldDuotone" style={{ color: "#3b82f6" }} />;
     return (
-      <FileText
+      <DocumentText
         size={13}
-        weight="fill"
+        weight="BoldDuotone"
         style={{ color: colors.text.secondary }}
       />
     );
@@ -271,7 +253,7 @@ const AdminCourseDetail = () => {
           variant="light"
           onPress={() => navigate("/admin/courses")}
         >
-          <ArrowLeft size={20} style={{ color: colors.text.primary }} />
+          <AltArrowLeft weight="BoldDuotone" size={20} style={{ color: colors.text.primary }} />
         </Button>
         <h1
           className="text-2xl lg:text-3xl font-bold"
@@ -336,7 +318,7 @@ const AdminCourseDetail = () => {
                             backgroundColor: colors.background.gray,
                           }}
                         >
-                          <BookOpen
+                          <BookBookmark weight="BoldDuotone"
                             className="w-8 h-8"
                             style={{ color: colors.text.secondary }}
                           />
@@ -385,7 +367,7 @@ const AdminCourseDetail = () => {
                             variant="flat"
                             color="secondary"
                             startContent={
-                              <Certificate size={14} weight="fill" />
+                              <Diploma size={14} weight="BoldDuotone" />
                             }
                           >
                             {t("adminDashboard.courses.certificate")}
@@ -425,7 +407,7 @@ const AdminCourseDetail = () => {
                               backgroundColor: colors.background.primaryLight,
                             }}
                           >
-                            <Users
+                            <UsersGroupRounded weight="BoldDuotone"
                               size={18}
                               style={{ color: colors.primary.main }}
                             />
@@ -454,7 +436,7 @@ const AdminCourseDetail = () => {
                         <div className="flex items-center gap-1">
                           <Star
                             size={12}
-                            weight="fill"
+                            weight="BoldDuotone"
                             style={{ color: colors.state.warning }}
                           />
                           <span
@@ -513,7 +495,7 @@ const AdminCourseDetail = () => {
                                 >
                                   <Target
                                     size={14}
-                                    weight="fill"
+                                    weight="BoldDuotone"
                                     style={{ color: colors.state.success }}
                                   />
                                   <span
@@ -611,7 +593,7 @@ const AdminCourseDetail = () => {
                       <div className="flex items-center justify-center gap-1">
                         <Star
                           size={16}
-                          weight="fill"
+                          weight="BoldDuotone"
                           style={{ color: colors.state.warning }}
                         />
                         <p
@@ -637,7 +619,7 @@ const AdminCourseDetail = () => {
                     style={{ backgroundColor: colors.background.gray }}
                   >
                     <div className="flex items-center gap-2">
-                      <Users
+                      <UsersGroupRounded weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -654,7 +636,7 @@ const AdminCourseDetail = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CalendarBlank
+                      <Calendar weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -671,7 +653,7 @@ const AdminCourseDetail = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <VideoCamera
+                      <Videocamera weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -688,7 +670,7 @@ const AdminCourseDetail = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock
+                      <ClockCircle weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -705,7 +687,7 @@ const AdminCourseDetail = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock
+                      <ClockCircle weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -722,7 +704,7 @@ const AdminCourseDetail = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Certificate
+                      <Diploma weight="BoldDuotone"
                         size={16}
                         style={{ color: colors.text.secondary }}
                       />
@@ -856,17 +838,17 @@ const AdminCourseDetail = () => {
                                     </div>
                                   </div>
                                   {isExp ? (
-                                    <CaretUp
+                                    <AltArrowUp
                                       size={16}
-                                      weight="bold"
+                                      weight="BoldDuotone"
                                       style={{
                                         color: colors.text.secondary,
                                       }}
                                     />
                                   ) : (
-                                    <CaretDown
+                                    <AltArrowDown
                                       size={16}
-                                      weight="bold"
+                                      weight="BoldDuotone"
                                       style={{
                                         color: colors.text.secondary,
                                       }}
@@ -905,9 +887,9 @@ const AdminCourseDetail = () => {
                                                 key={i}
                                                 className="flex items-start gap-1"
                                               >
-                                                <ArrowRightIcon
+                                                <AltArrowRight
                                                   size={11}
-                                                  weight="fill"
+                                                  weight="BoldDuotone"
                                                   className="flex-shrink-0 mt-0.5"
                                                   style={{
                                                     color: colors.state.success,
@@ -967,9 +949,9 @@ const AdminCourseDetail = () => {
                                                         .primaryLight,
                                                   }}
                                                 >
-                                                  <Play
+                                                  <PlayCircle
                                                     size={10}
-                                                    weight="fill"
+                                                    weight="BoldDuotone"
                                                     style={{
                                                       color:
                                                         colors.primary.main,
@@ -1020,9 +1002,9 @@ const AdminCourseDetail = () => {
                                                               key={i}
                                                               className="flex items-start gap-1"
                                                             >
-                                                              <ArrowRightIcon
+                                                              <AltArrowRight
                                                                 size={10}
-                                                                weight="fill"
+                                                                weight="BoldDuotone"
                                                                 className="flex-shrink-0 mt-0.5"
                                                                 style={{
                                                                   color:
@@ -1064,22 +1046,22 @@ const AdminCourseDetail = () => {
                                                           )
                                                         }
                                                       >
-                                                        <FileText
+                                                        <DocumentText
                                                           size={12}
-                                                          weight="fill"
+                                                          weight="BoldDuotone"
                                                         />
                                                         {t(
                                                           "courses.detail.resources.label",
                                                         )}
                                                         {isResExp ? (
-                                                          <CaretUp
+                                                          <AltArrowUp
                                                             size={10}
-                                                            weight="bold"
+                                                            weight="BoldDuotone"
                                                           />
                                                         ) : (
-                                                          <CaretDown
+                                                          <AltArrowDown
                                                             size={10}
-                                                            weight="bold"
+                                                            weight="BoldDuotone"
                                                           />
                                                         )}
                                                       </button>
@@ -1167,7 +1149,7 @@ const AdminCourseDetail = () => {
                                                                       "courses.detail.resources.open",
                                                                     )}
                                                                   >
-                                                                    <ArrowSquareOut
+                                                                    <SquareAltArrowRight weight="BoldDuotone"
                                                                       size={13}
                                                                       style={{
                                                                         color:
@@ -1281,9 +1263,7 @@ const AdminCourseDetail = () => {
                                   <Star
                                     key={s}
                                     size={12}
-                                    weight={
-                                      s <= review.rating ? "fill" : "regular"
-                                    }
+                                    weight="BoldDuotone"
                                     color={
                                       s <= review.rating
                                         ? "#FBBF24"

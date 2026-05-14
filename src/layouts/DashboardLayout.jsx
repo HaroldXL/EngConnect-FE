@@ -1,4 +1,24 @@
 import { useState } from "react";
+import {
+  AltArrowDown,
+  Banknote,
+  Bell,
+  BookBookmark,
+  CalendarMark,
+  Card2,
+  ChecklistMinimalistic,
+  CloseSquare,
+  HomeSmile,
+  Logout,
+  Magnifer,
+  PenNewRound,
+  PenNewSquare,
+  QuestionCircle,
+  SquareAcademicCap,
+  UserCircle,
+  Wallet,
+  Widget5,
+} from "@solar-icons/react";
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import {
   Button,
@@ -24,26 +44,6 @@ import LanguageSwitcher from "../components/LanguageSwitcher/LanguageSwitcher";
 import logoImage from "../assets/images/logo.png";
 import defaultAvatar from "../assets/images/null-avatar.jpg";
 import { selectUser } from "../store";
-import {
-  House,
-  MagnifyingGlass,
-  BookOpen,
-  CalendarDots,
-  UserCircle,
-  SignOut,
-  List,
-  X,
-  Bell,
-  CaretDown,
-  MagnifyingGlassIcon,
-  SquaresFour,
-  Question,
-  NotePencil,
-  Wallet,
-  CreditCard,
-  GraduationCap,
-} from "@phosphor-icons/react";
-import { BookOpenIcon } from "@phosphor-icons/react/dist/ssr";
 
 const DashboardLayout = () => {
   const { t } = useTranslation();
@@ -62,27 +62,27 @@ const DashboardLayout = () => {
     {
       path: "/student/dashboard",
       label: t("studentDashboard.nav.dashboard"),
-      icon: House,
+      icon: (props) => <HomeSmile weight="BoldDuotone" {...props} />,
     },
     {
       path: "/student/my-courses",
       label: t("studentDashboard.nav.myCourses"),
-      icon: BookOpen,
+      icon: (props) => <BookBookmark weight="BoldDuotone" {...props} />,
     },
     {
       path: "/student/schedule",
       label: t("studentDashboard.nav.schedule"),
-      icon: CalendarDots,
+      icon: (props) => <CalendarMark weight="BoldDuotone" {...props} />,
     },
     {
       path: "/student/homework",
       label: t("studentDashboard.nav.homework"),
-      icon: NotePencil,
+      icon: (props) => <PenNewSquare weight="BoldDuotone" {...props} />,
     },
     {
       path: "/student/orders",
       label: t("studentDashboard.nav.myPayment"),
-      icon: CreditCard,
+      icon: (props) => <Banknote weight="BoldDuotone" {...props} />,
     },
   ];
 
@@ -120,7 +120,7 @@ const DashboardLayout = () => {
             <Chip
               size="lg"
               startContent={
-                <BookOpenIcon weight="fill" className="w-3.5 h-3.5" />
+                <BookBookmark weight="BoldDuotone" className="w-3.5 h-3.5" />
               }
               style={{
                 backgroundColor: `${colors.primary.main}18`,
@@ -140,7 +140,8 @@ const DashboardLayout = () => {
               type="text"
               placeholder={t("studentDashboard.search.placeholder")}
               startContent={
-                <MagnifyingGlass
+                <Magnifer
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -174,7 +175,7 @@ const DashboardLayout = () => {
                 radius="full"
                 onPress={() => navigate("/student/notifications")}
               >
-                <Bell
+                <Bell weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -202,7 +203,8 @@ const DashboardLayout = () => {
                       ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
                       : ""}
                   </span>
-                  <CaretDown
+                  <AltArrowDown
+                    weight="BoldDuotone"
                     className="w-4 h-4 hidden sm:block"
                     style={{ color: colors.text.secondary }}
                   />
@@ -212,7 +214,11 @@ const DashboardLayout = () => {
                 <DropdownItem
                   key="profile"
                   startContent={
-                    <UserCircle weight="duotone" className="w-5 h-5" />
+                    <UserCircle
+                      style={{ color: colors.text.secondary }}
+                      weight="BoldDuotone"
+                      className="w-6 h-6"
+                    />
                   }
                   onPress={() => navigate("/student/profile")}
                 >
@@ -221,7 +227,11 @@ const DashboardLayout = () => {
                 <DropdownItem
                   key="help-support"
                   startContent={
-                    <Question weight="duotone" className="w-5 h-5" />
+                    <QuestionCircle
+                      style={{ color: colors.text.secondary }}
+                      weight="BoldDuotone"
+                      className="w-6 h-6"
+                    />
                   }
                   onPress={() => navigate("/help-support")}
                 >
@@ -232,7 +242,7 @@ const DashboardLayout = () => {
                   className="text-danger"
                   color="danger"
                   startContent={
-                    <SignOut weight="duotone" className="w-5 h-5" />
+                    <Logout weight="BoldDuotone" className="w-6 h-6" />
                   }
                   onPress={() => setLogoutModalOpen(true)}
                 >
@@ -249,9 +259,14 @@ const DashboardLayout = () => {
               onPress={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6" style={{ color: colors.text.primary }} />
+                <CloseSquare
+                  weight="BoldDuotone"
+                  className="w-6 h-6"
+                  style={{ color: colors.text.primary }}
+                />
               ) : (
-                <List
+                <ChecklistMinimalistic
+                  weight="BoldDuotone"
                   className="w-6 h-6"
                   style={{ color: colors.text.primary }}
                 />
@@ -293,7 +308,7 @@ const DashboardLayout = () => {
                     }
                   }}
                 >
-                  <item.icon className="w-4 h-4" />
+                  <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
                 </Link>
               </li>
@@ -400,7 +415,7 @@ const DashboardLayout = () => {
                       }
                     }}
                   >
-                    <UserCircle weight="duotone" className="w-5 h-5" />
+                    <UserCircle weight="BoldDuotone" className="w-5 h-5" />
                     <span>{t("studentDashboard.nav.profile")}</span>
                   </Link>
                 </motion.li>

@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react";
+import {
+  BookBookmark,
+  ClockCircle,
+  Documents,
+  Letter,
+  Star,
+} from "@solar-icons/react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Avatar, Card, CardBody, Skeleton, Tabs, Tab } from "@heroui/react";
@@ -10,7 +17,7 @@ import CourseCardSkeleton from "../../components/CourseCardSkeleton/CourseCardSk
 import DocumentCard from "../../components/DocumentCard/DocumentCard";
 import ImageViewerModal from "../../components/ImageViewerModal/ImageViewerModal";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { Star, Clock, BookOpen, EnvelopeSimple } from "@phosphor-icons/react";
+
 import { tutorApi, coursesApi } from "../../api";
 import searchIllustration from "../../assets/illustrations/folders.avif";
 
@@ -253,7 +260,8 @@ const TutorProfile = () => {
                     )}
                     {tutor.user?.email && (
                       <div className="flex items-center gap-1.5 mb-3">
-                        <EnvelopeSimple
+                        <Letter
+                          weight="BoldDuotone"
                           size={16}
                           style={{ color: colors.primary.main }}
                         />
@@ -270,7 +278,7 @@ const TutorProfile = () => {
                       <div className="flex items-center gap-1.5">
                         <Star
                           size={16}
-                          weight="fill"
+                          weight="BoldDuotone"
                           style={{ color: "#f59e0b" }}
                         />
                         <span
@@ -289,7 +297,8 @@ const TutorProfile = () => {
                       </div>
                       {tutor.monthExperience > 0 && (
                         <div className="flex items-center gap-1.5">
-                          <Clock
+                          <ClockCircle
+                            weight="BoldDuotone"
                             size={16}
                             style={{ color: colors.primary.main }}
                           />
@@ -303,7 +312,8 @@ const TutorProfile = () => {
                         </div>
                       )}
                       <div className="flex items-center gap-1.5">
-                        <BookOpen
+                        <BookBookmark
+                          weight="BoldDuotone"
                           size={16}
                           style={{ color: colors.primary.main }}
                         />
@@ -388,7 +398,12 @@ const TutorProfile = () => {
               {/* Courses tab */}
               <Tab
                 key="courses"
-                title={<span>{t("tutorProfile.tabs.courses")}</span>}
+                title={
+                  <span className="flex items-center gap-1.5">
+                    <BookBookmark weight="BoldDuotone" size={16} />
+                    {t("tutorProfile.tabs.courses")}
+                  </span>
+                }
               >
                 {renderCoursesTab()}
               </Tab>
@@ -398,6 +413,7 @@ const TutorProfile = () => {
                 key="documents"
                 title={
                   <span className="flex items-center gap-1.5">
+                    <Documents weight="BoldDuotone" size={16} />
                     {t("tutorProfile.tabs.documents")}
                   </span>
                 }

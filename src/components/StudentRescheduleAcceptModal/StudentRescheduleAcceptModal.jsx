@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AltArrowRight, CalendarMark, CheckCircle, ClockCircle, CloseCircle, DangerTriangle, Eye, InfoCircle, UserRounded } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -8,17 +9,7 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import {
-  CalendarDots,
-  Clock,
-  Warning,
-  Info,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
-  User,
-  Eye,
-} from "@phosphor-icons/react";
+
 import { Avatar } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
@@ -128,8 +119,8 @@ export default function StudentRescheduleAcceptModal({
           className="flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <CalendarDots
-            weight="duotone"
+          <CalendarMark
+            weight="BoldDuotone"
             className="w-5 h-5"
             style={{ color: colors.primary.main }}
           />
@@ -177,7 +168,7 @@ export default function StudentRescheduleAcceptModal({
                   className="text-xs flex items-center gap-1"
                   style={{ color: colors.text.secondary }}
                 >
-                  <Clock weight="duotone" className="w-3 h-3" />
+                  <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                   {formatDateTime(lesson.startTime)}
                   {lesson.endTime && (
                     <> — {formatTime(lesson.endTime)}</>
@@ -188,7 +179,7 @@ export default function StudentRescheduleAcceptModal({
                     size="sm"
                     variant="light"
                     className="h-6 px-2 text-xs flex-shrink-0"
-                    startContent={<Eye className="w-3 h-3" />}
+                    startContent={<Eye weight="BoldDuotone" className="w-3 h-3" />}
                     onPress={onViewLesson}
                   >
                     {t("studentDashboard.schedule.viewDetail")}
@@ -332,8 +323,8 @@ export default function StudentRescheduleAcceptModal({
                       border: `1px solid ${colors.primary.main}20`,
                     }}
                   >
-                    <Info
-                      weight="duotone"
+                    <InfoCircle
+                      weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0 mt-0.5"
                       style={{ color: colors.primary.main }}
                     />
@@ -359,7 +350,7 @@ export default function StudentRescheduleAcceptModal({
               >
                 <div className="flex items-center gap-2">
                   <CheckCircle
-                    weight="duotone"
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.state.success }}
                   />
@@ -390,8 +381,8 @@ export default function StudentRescheduleAcceptModal({
                       {formatDateTime(lesson.startTime)}
                     </p>
                   </div>
-                  <ArrowRight
-                    weight="bold"
+                  <AltArrowRight
+                    weight="BoldDuotone"
                     className="w-4 h-4 flex-shrink-0"
                     style={{ color: colors.state.success }}
                   />
@@ -436,8 +427,8 @@ export default function StudentRescheduleAcceptModal({
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <XCircle
-                    weight="duotone"
+                  <CloseCircle
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.state.error }}
                   />
@@ -460,8 +451,8 @@ export default function StudentRescheduleAcceptModal({
                   className="p-2.5 rounded-lg flex items-center gap-2"
                   style={{ backgroundColor: colors.background.gray }}
                 >
-                  <Clock
-                    weight="duotone"
+                  <ClockCircle
+                    weight="BoldDuotone"
                     className="w-3.5 h-3.5 flex-shrink-0"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -489,7 +480,7 @@ export default function StudentRescheduleAcceptModal({
                   border: `1px solid ${colors.state.error}30`,
                 }}
               >
-                <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+                <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
                 {error}
               </div>
             )}
@@ -555,7 +546,7 @@ export default function StudentRescheduleAcceptModal({
                   color: colors.text.white,
                 }}
                 startContent={
-                  !confirming && <CheckCircle weight="fill" className="w-4 h-4" />
+                  !confirming && <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
                 }
               >
                 {t("studentDashboard.schedule.reschedule.confirmAccept")}
@@ -580,7 +571,7 @@ export default function StudentRescheduleAcceptModal({
                   color: colors.text.white,
                 }}
                 startContent={
-                  !rejecting && <XCircle weight="fill" className="w-4 h-4" />
+                  !rejecting && <CloseCircle weight="BoldDuotone" className="w-4 h-4" />
                 }
               >
                 {t("studentDashboard.schedule.reschedule.confirmReject")}

@@ -1,17 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
+import {
+  AltArrowRight,
+  CalendarMark,
+  ClipboardList,
+  ClockCircle,
+  CourseUp,
+  GraphUp,
+  Play,
+  PlayCircle,
+} from "@solar-icons/react";
 import { Card, CardBody, Button, Avatar, Progress, Image } from "@heroui/react";
 import UpcomingLessonsSkeleton from "../../../components/UpcomingLessonsSkeleton/UpcomingLessonsSkeleton";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion } from "framer-motion";
-import {
-  Clock,
-  CalendarCheck,
-  Play,
-  ArrowRight,
-  TrendUp,
-  ClipboardText,
-} from "@phosphor-icons/react";
+
 import IllustrationImage from "../../../assets/illustrations/morning.avif";
 import calendarIllustration from "../../../assets/illustrations/calendar.avif";
 import chillIllustration from "../../../assets/illustrations/chill.avif";
@@ -147,7 +150,7 @@ const Dashboard = () => {
                 </p>
                 <Button
                   color="primary"
-                  endContent={<Play weight="fill" className="w-4 h-4" />}
+                  endContent={<Play weight="BoldDuotone" className="w-4 h-4" />}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,
@@ -193,7 +196,7 @@ const Dashboard = () => {
                   style={{ backgroundColor: stat.bg }}
                 >
                   <stat.icon
-                    weight="duotone"
+                    weight="BoldDuotone"
                     className="w-6 h-6"
                     style={{ color: stat.color }}
                   />
@@ -239,8 +242,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <CalendarCheck
-                      weight="duotone"
+                    <CalendarMark
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.primary.main }}
                     />
@@ -249,7 +252,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/student/schedule")}
                   >
@@ -320,7 +325,7 @@ const Dashboard = () => {
                             }}
                             onPress={() => navigate(`/meeting/${lesson.id}`)}
                           >
-                            <Play weight="fill" className="w-4 h-4" />
+                            <Play weight="BoldDuotone" className="w-4 h-4" />
                           </Button>
                         )}
                       </div>
@@ -348,8 +353,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <TrendUp
-                      weight="duotone"
+                    <CourseUp
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.state.success }}
                     />
@@ -358,7 +363,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/student/my-courses")}
                   >
@@ -482,8 +489,8 @@ const Dashboard = () => {
                     className="text-lg font-semibold"
                     style={{ color: colors.text.primary }}
                   >
-                    <ClipboardText
-                      weight="duotone"
+                    <ClipboardList
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                       style={{ color: colors.state.warning }}
                     />
@@ -492,7 +499,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<ArrowRight className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/student/homework")}
                   >
@@ -581,8 +590,8 @@ const Dashboard = () => {
                             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{ backgroundColor: `${due.color}20` }}
                           >
-                            <Clock
-                              weight="bold"
+                            <ClockCircle
+                              weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: due.color }}
                             />

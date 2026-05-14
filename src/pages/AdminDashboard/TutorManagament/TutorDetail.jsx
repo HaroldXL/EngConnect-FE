@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AltArrowLeft, CalendarMark, ClockCircle, File, SquareAcademicCap, Star } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardBody, Button, Avatar, Chip, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
@@ -9,14 +10,7 @@ import CourseCard from "../../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../../components/CourseCardSkeleton/CourseCardSkeleton";
 import DocumentCard from "../../../components/DocumentCard/DocumentCard";
 import ImageViewerModal from "../../../components/ImageViewerModal/ImageViewerModal";
-import {
-  ArrowLeft,
-  Star,
-  GraduationCap,
-  CalendarDots,
-  Clock,
-  Files,
-} from "@phosphor-icons/react";
+
 import searchIllustration from "../../../assets/illustrations/search.avif";
 
 const AdminTutorDetail = () => {
@@ -163,7 +157,7 @@ const AdminTutorDetail = () => {
           variant="light"
           onPress={() => navigate("/admin/tutors")}
         >
-          <ArrowLeft size={20} style={{ color: colors.text.primary }} />
+          <AltArrowLeft weight="BoldDuotone" size={20} style={{ color: colors.text.primary }} />
         </Button>
         <h1
           className="text-2xl lg:text-3xl font-bold"
@@ -232,7 +226,7 @@ const AdminTutorDetail = () => {
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Star
                         className="w-5 h-5"
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: colors.state.warning }}
                       />
                       <span
@@ -426,9 +420,9 @@ const AdminTutorDetail = () => {
           className="text-xl font-bold mb-4 flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <Files
+          <File
             size={22}
-            weight="duotone"
+            weight="BoldDuotone"
             style={{ color: colors.primary.main }}
           />
           {t("tutorDashboard.profile.documents.myDocuments")}
@@ -502,9 +496,9 @@ const AdminTutorDetail = () => {
           className="text-xl font-bold mb-4 flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <GraduationCap
+          <SquareAcademicCap
             size={22}
-            weight="duotone"
+            weight="BoldDuotone"
             style={{ color: colors.primary.main }}
           />
           {t("adminDashboard.tutors.tutorCourses")}
@@ -568,9 +562,9 @@ const AdminTutorDetail = () => {
           className="text-xl font-bold mb-4 flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <CalendarDots
+          <CalendarMark
             size={22}
-            weight="duotone"
+            weight="BoldDuotone"
             style={{ color: colors.primary.main }}
           />
           {t("adminDashboard.tutors.scheduleSlots")}
@@ -624,7 +618,7 @@ const AdminTutorDetail = () => {
                             className="flex items-center gap-1 text-sm"
                             style={{ color: colors.text.primary }}
                           >
-                            <Clock
+                            <ClockCircle weight="BoldDuotone"
                               size={14}
                               style={{ color: colors.text.secondary }}
                             />

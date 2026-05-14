@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { AddCircle, CalendarMark, CheckCircle, ClockCircle, CloseSquare, DangerTriangle, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -8,15 +9,7 @@ import {
   Button,
   Spinner,
 } from "@heroui/react";
-import {
-  CalendarDots,
-  Clock,
-  Plus,
-  Trash,
-  Warning,
-  CheckCircle,
-  X,
-} from "@phosphor-icons/react";
+
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { rescheduleApi, overlapsApi } from "../../api";
@@ -253,8 +246,8 @@ export default function TutorRescheduleOfferModal({
               className="p-3 rounded-xl flex items-start gap-3"
               style={{ backgroundColor: colors.background.gray }}
             >
-              <CalendarDots
-                weight="duotone"
+              <CalendarMark
+                weight="BoldDuotone"
                 className="w-5 h-5 flex-shrink-0 mt-0.5"
                 style={{ color: colors.primary.main }}
               />
@@ -269,7 +262,7 @@ export default function TutorRescheduleOfferModal({
                   className="text-xs mt-0.5 flex items-center gap-1"
                   style={{ color: colors.text.secondary }}
                 >
-                  <Clock weight="duotone" className="w-3 h-3" />
+                  <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                   {new Date(lesson.startTime).toLocaleString(dateLocale, {
                     weekday: "short",
                     month: "short",
@@ -361,8 +354,8 @@ export default function TutorRescheduleOfferModal({
                         }
                         className="p-1 rounded hover:opacity-60 transition-opacity"
                       >
-                        <Trash
-                          weight="duotone"
+                        <TrashBinMinimalistic
+                          weight="BoldDuotone"
                           className="w-3.5 h-3.5"
                           style={{ color: colors.state.error }}
                         />
@@ -447,8 +440,8 @@ export default function TutorRescheduleOfferModal({
                                   className="text-sm flex items-center gap-1.5"
                                   style={{ color: colors.text.primary }}
                                 >
-                                  <Clock
-                                    weight="duotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3.5 h-3.5 flex-shrink-0"
                                     style={{ color: colors.primary.main }}
                                   />
@@ -477,7 +470,7 @@ export default function TutorRescheduleOfferModal({
                                       backgroundColor: `${colors.primary.main}12`,
                                     }}
                                   >
-                                    <Plus weight="bold" className="w-3 h-3" />
+                                    <AddCircle weight="BoldDuotone" className="w-3 h-3" />
                                     {t(
                                       "tutorDashboard.schedule.reschedule.pickTime",
                                     )}
@@ -489,7 +482,7 @@ export default function TutorRescheduleOfferModal({
                                     className="p-1 rounded hover:opacity-60 transition-opacity"
                                     style={{ color: colors.text.tertiary }}
                                   >
-                                    <X weight="bold" className="w-3.5 h-3.5" />
+                                    <CloseSquare weight="BoldDuotone" className="w-3.5 h-3.5" />
                                   </button>
                                 )}
                               </div>
@@ -530,7 +523,7 @@ export default function TutorRescheduleOfferModal({
                                     }}
                                   >
                                     <CheckCircle
-                                      weight="fill"
+                                      weight="BoldDuotone"
                                       className="w-4 h-4"
                                     />
                                   </Button>
@@ -558,7 +551,7 @@ export default function TutorRescheduleOfferModal({
                 border: `1px solid ${colors.state.error}30`,
               }}
             >
-              <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+              <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}

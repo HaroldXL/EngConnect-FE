@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useRef } from "react";
+import { AltArrowDown, Camera, Card as CardIcon, CheckCircle, DocumentText, Eye, UploadMinimalistic, VerifiedCheck, Videocamera } from "@solar-icons/react"
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -20,17 +21,7 @@ import { tutorApi } from "../../../api/tutorApi";
 import { authApi } from "../../../api/authApi";
 import { selectUser, updateUserInfo } from "../../../store";
 import logoImage from "../../../assets/images/logo.png";
-import {
-  CheckCircle,
-  FileText,
-  VideoCamera,
-  Upload,
-  SealCheck,
-  Camera,
-  Eye,
-  Bank,
-  CaretDown,
-} from "@phosphor-icons/react";
+
 import BankSelectModal, {
   BANK_LIST,
 } from "../../../components/BankSelectModal/BankSelectModal";
@@ -315,7 +306,7 @@ const TutorOnboarding = () => {
       }}
     >
       {done ? (
-        <CheckCircle weight="fill" className="w-4 h-4 sm:w-5 sm:h-5" />
+        <CheckCircle weight="BoldDuotone" className="w-4 h-4 sm:w-5 sm:h-5" />
       ) : (
         <span className="text-xs sm:text-sm font-semibold">{index + 1}</span>
       )}
@@ -358,8 +349,8 @@ const TutorOnboarding = () => {
             className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4"
             style={{ backgroundColor: colors.background.primaryLight }}
           >
-            <SealCheck
-              weight="duotone"
+            <VerifiedCheck
+              weight="BoldDuotone"
               className="w-7 h-7 sm:w-8 sm:h-8"
               style={{ color: colors.primary.main }}
             />
@@ -478,7 +469,7 @@ const TutorOnboarding = () => {
                         className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
                         style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
                       >
-                        <Camera weight="fill" className="w-5 h-5 text-white" />
+                        <Camera weight="BoldDuotone" className="w-5 h-5 text-white" />
                       </div>
                     </>
                   )}
@@ -619,15 +610,15 @@ const TutorOnboarding = () => {
             transition={{ duration: 0.3, delay: 0.15 }}
             className="lg:w-[380px] xl:w-[420px] flex flex-col gap-5 sm:gap-6"
           >
-            {/* CV Upload */}
+            {/* CV UploadMinimalistic */}
             <div className="p-5 sm:p-6 rounded-2xl" style={cardStyle}>
               <div className="flex items-center gap-2.5 mb-4">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: colors.background.primaryLight }}
                 >
-                  <FileText
-                    weight="duotone"
+                  <DocumentText
+                    weight="BoldDuotone"
                     className="w-4.5 h-4.5"
                     style={{ color: colors.primary.main }}
                   />
@@ -640,7 +631,7 @@ const TutorOnboarding = () => {
                 </h2>
                 {tutorProfile?.cvUrl && (
                   <CheckCircle
-                    weight="fill"
+                    weight="BoldDuotone"
                     className="w-5 h-5 shrink-0"
                     style={{ color: colors.state.success }}
                   />
@@ -651,8 +642,8 @@ const TutorOnboarding = () => {
                   className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ backgroundColor: `${colors.primary.main}12` }}
                 >
-                  <FileText
-                    weight="duotone"
+                  <DocumentText
+                    weight="BoldDuotone"
                     className="w-5 h-5 shrink-0"
                     style={{ color: colors.primary.main }}
                   />
@@ -672,7 +663,7 @@ const TutorOnboarding = () => {
                       rel="noopener noreferrer"
                       style={{ color: colors.primary.main }}
                     >
-                      <Eye weight="bold" className="w-4 h-4" />
+                      <Eye weight="BoldDuotone" className="w-4 h-4" />
                       {t("tutorOnboarding.view")}
                     </Button>
                     <Button
@@ -705,8 +696,8 @@ const TutorOnboarding = () => {
                         className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
                         style={{ backgroundColor: colors.background.gray }}
                       >
-                        <Upload
-                          weight="duotone"
+                        <UploadMinimalistic
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.text.tertiary }}
                         />
@@ -736,15 +727,15 @@ const TutorOnboarding = () => {
               />
             </div>
 
-            {/* Video Upload */}
+            {/* Video UploadMinimalistic */}
             <div className="p-5 sm:p-6 rounded-2xl" style={cardStyle}>
               <div className="flex items-center gap-2.5 mb-4">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: colors.background.primaryLight }}
                 >
-                  <VideoCamera
-                    weight="duotone"
+                  <Videocamera
+                    weight="BoldDuotone"
                     className="w-4.5 h-4.5"
                     style={{ color: colors.primary.main }}
                   />
@@ -757,7 +748,7 @@ const TutorOnboarding = () => {
                 </h2>
                 {tutorProfile?.introVideoUrl && (
                   <CheckCircle
-                    weight="fill"
+                    weight="BoldDuotone"
                     className="w-5 h-5 shrink-0"
                     style={{ color: colors.state.success }}
                   />
@@ -768,8 +759,8 @@ const TutorOnboarding = () => {
                   className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ backgroundColor: `${colors.primary.main}12` }}
                 >
-                  <VideoCamera
-                    weight="duotone"
+                  <Videocamera
+                    weight="BoldDuotone"
                     className="w-5 h-5 shrink-0"
                     style={{ color: colors.primary.main }}
                   />
@@ -786,7 +777,7 @@ const TutorOnboarding = () => {
                       onPress={() => setIntroVideoOpen(true)}
                       style={{ color: colors.primary.main }}
                     >
-                      <Eye weight="bold" className="w-4 h-4" />
+                      <Eye weight="BoldDuotone" className="w-4 h-4" />
                       {t("tutorOnboarding.view")}
                     </Button>
                     <Button
@@ -819,8 +810,8 @@ const TutorOnboarding = () => {
                         className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
                         style={{ backgroundColor: colors.background.gray }}
                       >
-                        <Upload
-                          weight="duotone"
+                        <UploadMinimalistic
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.text.tertiary }}
                         />
@@ -852,7 +843,7 @@ const TutorOnboarding = () => {
           </motion.div>
         </div>
 
-        {/* Bank Information */}
+        {/* Card Information */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -865,8 +856,7 @@ const TutorOnboarding = () => {
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{ backgroundColor: colors.background.primaryLight }}
             >
-              <Bank
-                weight="duotone"
+              <CardIcon weight="BoldDuotone"
                 className="w-4.5 h-4.5"
                 style={{ color: colors.primary.main }}
               />
@@ -881,7 +871,7 @@ const TutorOnboarding = () => {
               tutorProfile?.bankAccountNumber &&
               tutorProfile?.bankAccountName && (
                 <CheckCircle
-                  weight="fill"
+                  weight="BoldDuotone"
                   className="w-5 h-5 shrink-0"
                   style={{ color: colors.state.success }}
                 />
@@ -889,7 +879,7 @@ const TutorOnboarding = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Bank selector */}
+            {/* Card selector */}
             <div className="sm:col-span-2">
               <label
                 className="block text-sm font-medium mb-1.5"
@@ -929,7 +919,7 @@ const TutorOnboarding = () => {
                     {t("tutorOnboarding.bankCodePlaceholder")}
                   </span>
                 )}
-                <CaretDown className="w-4 h-4 shrink-0" />
+                <AltArrowDown weight="BoldDuotone" className="w-4 h-4 shrink-0" />
               </button>
             </div>
 
@@ -1070,7 +1060,7 @@ const TutorOnboarding = () => {
                 color: colors.text.white,
               }}
             >
-              <SealCheck weight="fill" className="w-5 h-5 mr-1.5" />
+              <VerifiedCheck weight="BoldDuotone" className="w-5 h-5 mr-1.5" />
               {t("tutorOnboarding.submitVerification")}
             </Button>
           </div>

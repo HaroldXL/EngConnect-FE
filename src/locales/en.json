@@ -1621,7 +1621,24 @@
       "previewLabel": "Admin will receive",
       "sendRequest": "Send Request",
       "withdrawError": "Failed to send withdrawal request",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "courseSalesTab": "Course Sales",
+      "courseSalesList": "Course Enrollments",
+      "noSales": "No course sales yet",
+      "purchaseDate": "Purchase Date",
+      "student": "Student",
+      "course": "Course",
+      "tutorEarning": "Your Earning",
+      "saleDetail": "Enrollment Detail",
+      "breakdown": "Financial Breakdown",
+      "subtotal": "Subtotal",
+      "sessionProgress": "Session Progress",
+      "schedule": "Class Schedule",
+      "saleStatuses": {
+        "InProgress": "In Progress",
+        "Pending": "Pending",
+        "Cancelled": "Cancelled"
+      }
     },
     "community": {
       "title": "Community",
@@ -2906,7 +2923,9 @@
         "NoStudent": "No Student",
         "NoTutor": "No Tutor",
         "Refund": "Refunded",
-        "Reschedule": "Rescheduling"
+        "Reschedule": "Rescheduling",
+        "Rescheduled": "Rescheduled",
+        "MadeUp": "Made Up"
       },
       "scheduleStatuses": {
         "Open": "Open",

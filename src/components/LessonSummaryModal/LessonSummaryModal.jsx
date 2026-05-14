@@ -8,7 +8,7 @@ import {
 } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { FileText } from "@phosphor-icons/react";
+import { DocumentText } from "@solar-icons/react";
 
 const LessonSummaryModal = ({ isOpen, onClose, summarizeText }) => {
   const { t } = useTranslation();
@@ -24,8 +24,8 @@ const LessonSummaryModal = ({ isOpen, onClose, summarizeText }) => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <FileText
-              weight="duotone"
+            <DocumentText
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.primary.main }}
             />

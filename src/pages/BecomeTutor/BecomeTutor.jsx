@@ -1,4 +1,21 @@
 import { Button, Card, CardBody } from "@heroui/react";
+import {
+  CheckCircle,
+  ClockCircle,
+  Dollar,
+  GraphUp,
+  HandShake,
+  HeadphonesRound,
+  Monitor,
+  PresentationGraph,
+  UserId,
+  UserRounded,
+  AltArrowRight,
+  UserCheck,
+  VideocameraAdd,
+  MonitorCamera,
+} from "@solar-icons/react";
+import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -11,19 +28,7 @@ import {
   selectIsAuthenticated,
   selectUser,
 } from "../../store/slices/authSlice";
-import {
-  Clock,
-  CurrencyDollar,
-  Headset,
-  TrendUp,
-  Check,
-  IdentificationCard,
-  UserCircleGear,
-  PresentationChart,
-  MonitorPlay,
-  Handshake,
-} from "@phosphor-icons/react";
-import { ArrowRight } from "lucide-react";
+
 import contractImage from "../../assets/illustrations/contract.avif";
 import findingImage from "../../assets/illustrations/boy-girl.avif";
 
@@ -45,28 +50,28 @@ const BecomeTutor = () => {
 
   const benefits = [
     {
-      icon: (props) => <Clock weight="duotone" {...props} />,
+      icon: (props) => <ClockCircle weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.benefits.flexibility.title"),
       description: t("becomeTutor.benefits.flexibility.description"),
       color: "#3B82F6",
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     {
-      icon: (props) => <CurrencyDollar weight="duotone" {...props} />,
+      icon: (props) => <Dollar weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.benefits.earnings.title"),
       description: t("becomeTutor.benefits.earnings.description"),
       color: "#10B981",
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     {
-      icon: (props) => <Headset weight="duotone" {...props} />,
+      icon: (props) => <HeadphonesRound weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.benefits.support.title"),
       description: t("becomeTutor.benefits.support.description"),
       color: "#8B5CF6",
       bgColor: "rgba(139, 92, 246, 0.1)",
     },
     {
-      icon: (props) => <TrendUp weight="duotone" {...props} />,
+      icon: (props) => <GraphUp weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.benefits.growth.title"),
       description: t("becomeTutor.benefits.growth.description"),
       color: "#F59E0B",
@@ -83,22 +88,22 @@ const BecomeTutor = () => {
 
   const steps = [
     {
-      icon: (props) => <IdentificationCard weight="duotone" {...props} />,
+      icon: (props) => <UserId weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.howItWorks.step1.title"),
       description: t("becomeTutor.howItWorks.step1.description"),
     },
     {
-      icon: (props) => <UserCircleGear weight="duotone" {...props} />,
+      icon: (props) => <UserCheck weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.howItWorks.step2.title"),
       description: t("becomeTutor.howItWorks.step2.description"),
     },
     {
-      icon: (props) => <MonitorPlay weight="duotone" {...props} />,
+      icon: (props) => <VideocameraAdd weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.howItWorks.step3.title"),
       description: t("becomeTutor.howItWorks.step3.description"),
     },
     {
-      icon: (props) => <Handshake weight="duotone" {...props} />,
+      icon: (props) => <MonitorCamera weight="BoldDuotone" {...props} />,
       title: t("becomeTutor.howItWorks.step4.title"),
       description: t("becomeTutor.howItWorks.step4.description"),
     },
@@ -180,7 +185,9 @@ const BecomeTutor = () => {
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,
                   }}
-                  endContent={<ArrowRight className="w-5 h-5" />}
+                  endContent={
+                    <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                  }
                   onPress={handleApply}
                 >
                   {t("becomeTutor.cta.button")}
@@ -337,11 +344,7 @@ const BecomeTutor = () => {
                         backgroundColor: colors.background.primaryLight,
                       }}
                     >
-                      <Check
-                        size={14}
-                        weight="bold"
-                        style={{ color: colors.primary.main }}
-                      />
+                      <Check size={14} style={{ color: colors.primary.main }} />
                     </div>
                     <span style={{ color: colors.text.secondary }}>
                       {requirement}
@@ -468,7 +471,9 @@ const BecomeTutor = () => {
                   backgroundColor: colors.background.light,
                   color: colors.primary.main,
                 }}
-                endContent={<ArrowRight className="w-5 h-5" />}
+                endContent={
+                  <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                }
                 onPress={handleApply}
               >
                 {t("becomeTutor.cta.button")}

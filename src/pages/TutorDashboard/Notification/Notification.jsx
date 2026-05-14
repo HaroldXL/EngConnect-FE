@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Bell, BellOff, BookBookmark, CalendarMark, ChatDots, CheckCircle, ClockCircle, DangerTriangle, Dollar, Eye, MenuDots, SquareAcademicCap, Star, TrashBinMinimalistic, VolumeSmall } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -15,24 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Bell,
-  CalendarCheck,
-  BookOpen,
-  ChatCircle,
-  Warning,
-  CheckCircle,
-  Clock,
-  DotsThree,
-  Trash,
-  Eye,
-  Check,
-  BellSlash,
-  Megaphone,
-  CurrencyDollar,
-  Student,
-  Star,
-} from "@phosphor-icons/react";
+
 import ChillImage from "../../../assets/illustrations/chill.avif";
 
 const Notification = () => {
@@ -50,7 +34,7 @@ const Notification = () => {
       }),
       time: "5 min ago",
       read: false,
-      icon: CalendarCheck,
+      icon: CalendarMark,
       color: colors.primary.main,
       avatar: "https://i.pravatar.cc/150?u=student1",
     },
@@ -64,7 +48,7 @@ const Notification = () => {
       }),
       time: "30 min ago",
       read: false,
-      icon: BookOpen,
+      icon: BookBookmark,
       color: colors.state.warning,
       avatar: "https://i.pravatar.cc/150?u=student2",
     },
@@ -77,7 +61,7 @@ const Notification = () => {
       }),
       time: "2 hours ago",
       read: false,
-      icon: CurrencyDollar,
+      icon: Dollar,
       color: colors.state.success,
       avatar: null,
     },
@@ -104,7 +88,7 @@ const Notification = () => {
       }),
       time: "Yesterday",
       read: true,
-      icon: ChatCircle,
+      icon: ChatDots,
       color: "#8B5CF6",
       avatar: null,
     },
@@ -118,7 +102,7 @@ const Notification = () => {
       }),
       time: "Yesterday",
       read: true,
-      icon: Student,
+      icon: SquareAcademicCap,
       color: colors.primary.main,
       avatar: "https://i.pravatar.cc/150?u=student4",
     },
@@ -132,7 +116,7 @@ const Notification = () => {
       }),
       time: "2 days ago",
       read: true,
-      icon: CalendarCheck,
+      icon: CalendarMark,
       color: colors.state.error,
       avatar: "https://i.pravatar.cc/150?u=student5",
     },
@@ -143,7 +127,7 @@ const Notification = () => {
       message: t("tutorDashboard.notifications.systemUpdateMsg"),
       time: "3 days ago",
       read: true,
-      icon: Megaphone,
+      icon: VolumeSmall,
       color: colors.text.secondary,
       avatar: null,
     },
@@ -226,7 +210,7 @@ const Notification = () => {
                 backgroundColor: colors.button.primaryLight.background,
                 color: colors.button.primaryLight.text,
               }}
-              startContent={<Check size={18} />}
+              startContent={<CheckCircle weight="BoldDuotone" size={18} />}
               onPress={markAllAsRead}
             >
               {t("tutorDashboard.notifications.markAllRead")}
@@ -235,13 +219,13 @@ const Notification = () => {
           <Dropdown>
             <DropdownTrigger>
               <Button isIconOnly variant="flat">
-                <DotsThree size={20} weight="bold" />
+                <MenuDots size={20} weight="BoldDuotone" />
               </Button>
             </DropdownTrigger>
             <DropdownMenu aria-label="Notification actions">
               <DropdownItem
                 key="clear"
-                startContent={<Trash size={18} />}
+                startContent={<TrashBinMinimalistic weight="BoldDuotone" size={18} />}
                 className="text-danger"
                 color="danger"
                 onPress={clearAll}
@@ -250,7 +234,7 @@ const Notification = () => {
               </DropdownItem>
               <DropdownItem
                 key="settings"
-                startContent={<BellSlash size={18} />}
+                startContent={<BellOff weight="BoldDuotone" size={18} />}
               >
                 {t("tutorDashboard.notifications.settings")}
               </DropdownItem>
@@ -276,7 +260,7 @@ const Notification = () => {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: colors.background.primaryLight }}
             >
-              <Bell size={20} style={{ color: colors.primary.main }} />
+              <Bell weight="BoldDuotone" size={20} style={{ color: colors.primary.main }} />
             </div>
             <div>
               <p
@@ -302,7 +286,7 @@ const Notification = () => {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: `${colors.state.error}20` }}
             >
-              <Clock size={20} style={{ color: colors.state.error }} />
+              <ClockCircle weight="BoldDuotone" size={20} style={{ color: colors.state.error }} />
             </div>
             <div>
               <p
@@ -328,7 +312,7 @@ const Notification = () => {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: `${colors.state.success}20` }}
             >
-              <CalendarCheck
+              <CalendarMark weight="BoldDuotone"
                 size={20}
                 style={{ color: colors.state.success }}
               />
@@ -357,7 +341,7 @@ const Notification = () => {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: `${colors.state.warning}20` }}
             >
-              <BookOpen size={20} style={{ color: colors.state.warning }} />
+              <BookBookmark weight="BoldDuotone" size={20} style={{ color: colors.state.warning }} />
             </div>
             <div>
               <p
@@ -534,7 +518,7 @@ const Notification = () => {
                             >
                               <notification.icon
                                 size={20}
-                                weight="duotone"
+                                weight="BoldDuotone"
                                 style={{ color: notification.color }}
                               />
                             </div>
@@ -562,7 +546,7 @@ const Notification = () => {
                                   className="text-xs mt-2 flex items-center gap-1"
                                   style={{ color: colors.text.tertiary }}
                                 >
-                                  <Clock size={12} />
+                                  <ClockCircle weight="BoldDuotone" size={12} />
                                   {notification.time}
                                 </p>
                               </div>
@@ -585,14 +569,14 @@ const Notification = () => {
                                       variant="light"
                                       onClick={(e) => e.stopPropagation()}
                                     >
-                                      <DotsThree size={18} weight="bold" />
+                                      <MenuDots size={18} weight="BoldDuotone" />
                                     </Button>
                                   </DropdownTrigger>
                                   <DropdownMenu aria-label="Actions">
                                     {!notification.read && (
                                       <DropdownItem
                                         key="read"
-                                        startContent={<Eye size={16} />}
+                                        startContent={<Eye weight="BoldDuotone" size={16} />}
                                         onPress={() =>
                                           markAsRead(notification.id)
                                         }
@@ -604,7 +588,7 @@ const Notification = () => {
                                     )}
                                     <DropdownItem
                                       key="delete"
-                                      startContent={<Trash size={16} />}
+                                      startContent={<TrashBinMinimalistic weight="BoldDuotone" size={16} />}
                                       className="text-danger"
                                       color="danger"
                                       onPress={() =>

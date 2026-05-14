@@ -202,4 +202,10 @@ export const tutorApi = {
     const response = await axiosInstance.get("/tutors/my-courses/session-time", { params });
     return response.data;
   },
+
+  // Get my course sales / enrollments
+  getMyCourseSales: async (params = {}) => {
+    const response = await axiosInstance.get("/tutors/my-course-sales", { params });
+    return response.data;
+  },
 };

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Global, AltArrowDown } from "@solar-icons/react";
 import {
   Button,
   Dropdown,
@@ -6,7 +7,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
-import { Globe, CaretDown } from "@phosphor-icons/react";
+
 import { useThemeColors } from "../../hooks/useThemeColors";
 import useDropdownStyles from "../../hooks/useDropdownStyles";
 
@@ -37,8 +38,8 @@ const LanguageSwitcher = () => {
           variant="flat"
           size="sm"
           className="font-medium"
-          startContent={<Globe className="w-4 h-4" />}
-          endContent={<CaretDown className="w-3.5 h-3.5" />}
+          startContent={<Global weight="BoldDuotone" className="w-4 h-4" />}
+          endContent={<AltArrowDown weight="BoldDuotone" className="w-3.5 h-3.5" />}
           style={{
             color: colors.text.secondary,
             backgroundColor: colors.background.gray,

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { CheckCircle, CloseCircle } from "@solar-icons/react"
 import { Button, Spinner } from "@heroui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle, XCircle } from "lucide-react";
+
 import BrandLogo from "../../../components/Authentication/BrandLogo";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { googleLoginVerify, selectUser } from "../../../store";
@@ -89,7 +90,7 @@ const GoogleAuthVerify = () => {
 
         {status === "success" && (
           <div className="google-verify-status">
-            <CheckCircle className="w-16 h-16" style={{ color: "#22c55e" }} />
+            <CheckCircle weight="BoldDuotone" className="w-16 h-16" style={{ color: "#22c55e" }} />
             <h2
               className="text-xl font-semibold mt-4"
               style={{ color: colors.text.primary }}
@@ -107,7 +108,7 @@ const GoogleAuthVerify = () => {
 
         {status === "error" && (
           <div className="google-verify-status">
-            <XCircle className="w-16 h-16" style={{ color: "#ef4444" }} />
+            <CloseCircle weight="BoldDuotone" className="w-16 h-16" style={{ color: "#ef4444" }} />
             <h2
               className="text-xl font-semibold mt-4"
               style={{ color: colors.text.primary }}

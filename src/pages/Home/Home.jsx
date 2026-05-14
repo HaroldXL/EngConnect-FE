@@ -3,7 +3,7 @@ import { Button, Card, CardBody, Image, Skeleton } from "@heroui/react";
 import CourseCardSkeleton from "../../components/CourseCardSkeleton/CourseCardSkeleton";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, ArrowRight, Sparkles } from "lucide-react";
+
 import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
@@ -11,18 +11,7 @@ import CourseCard from "../../components/CourseCard/CourseCard";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
 import { coursesApi } from "../../api";
-import {
-  IdentificationBadge,
-  CalendarDots,
-  BookOpenUser,
-  Tag,
-  UserList,
-  Clock,
-  Laptop,
-  SpeakerHigh,
-  Ear,
-  PencilSimple,
-} from "@phosphor-icons/react";
+import { AltArrowRight, BookBookmark, CalendarMark, ClockCircle, HeadphonesRound, Laptop, Notes, Star, Stars, TagPrice, UserId, UserSpeak, UsersGroupRounded } from "@solar-icons/react"
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -95,39 +84,14 @@ const Home = () => {
   const getSkillStyle = (name = "") => {
     const n = name.toLowerCase();
     if (n.includes("speak"))
-      return {
-        Icon: SpeakerHigh,
-        color: "#F97316",
-        iconBg: "rgba(249,115,22,0.15)",
-        cardBg: "rgba(249,115,22,0.07)",
-      };
+      return { Icon: UserSpeak, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
     if (n.includes("listen"))
-      return {
-        Icon: Ear,
-        color: "#06B6D4",
-        iconBg: "rgba(6,182,212,0.15)",
-        cardBg: "rgba(6,182,212,0.07)",
-      };
+      return { Icon: HeadphonesRound, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
     if (n.includes("read"))
-      return {
-        Icon: BookOpenUser,
-        color: "#10B981",
-        iconBg: "rgba(16,185,129,0.15)",
-        cardBg: "rgba(16,185,129,0.07)",
-      };
+      return { Icon: BookBookmark, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
     if (n.includes("writ"))
-      return {
-        Icon: PencilSimple,
-        color: "#3B82F6",
-        iconBg: "rgba(59,130,246,0.15)",
-        cardBg: "rgba(59,130,246,0.07)",
-      };
-    return {
-      Icon: Tag,
-      color: colors.primary.main,
-      iconBg: "rgba(59,130,246,0.15)",
-      cardBg: "rgba(59,130,246,0.07)",
-    };
+      return { Icon: Notes, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+    return { Icon: TagPrice, color: colors.primary.main, iconBg: "rgba(59,130,246,0.15)" };
   };
 
   const testimonials = [
@@ -189,28 +153,28 @@ const Home = () => {
 
   const features = [
     {
-      icon: (props) => <IdentificationBadge weight="duotone" {...props} />,
+      icon: (props) => <UserId weight="BoldDuotone" {...props} />,
       title: t("home.features.expertTutors.title"),
       description: t("home.features.expertTutors.description"),
       color: "#F97316",
       bgColor: "rgba(249, 115, 22, 0.1)",
     },
     {
-      icon: (props) => <CalendarDots weight="duotone" {...props} />,
+      icon: (props) => <CalendarMark weight="BoldDuotone" {...props} />,
       title: t("home.features.flexibleSchedule.title"),
       description: t("home.features.flexibleSchedule.description"),
       color: "#06B6D4",
       bgColor: "rgba(6, 182, 212, 0.1)",
     },
     {
-      icon: (props) => <BookOpenUser weight="duotone" {...props} />,
+      icon: (props) => <BookBookmark weight="BoldDuotone" {...props} />,
       title: t("home.features.customCurriculum.title"),
       description: t("home.features.customCurriculum.description"),
       color: "#10B981",
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     {
-      icon: (props) => <Tag weight="duotone" {...props} />,
+      icon: (props) => <TagPrice weight="BoldDuotone" {...props} />,
       title: t("home.features.affordablePricing.title"),
       description: t("home.features.affordablePricing.description"),
       color: "#3B82F6",
@@ -258,7 +222,7 @@ const Home = () => {
                   color: colors.primary.main,
                 }}
               >
-                <Sparkles className="inline-block mr-2 w-4 h-4" />
+                <Stars weight="BoldDuotone" className="inline-block mr-2 w-4 h-4" />
                 {t("home.hero.badge")}
               </span>
 
@@ -289,7 +253,7 @@ const Home = () => {
                     color: colors.text.white,
                   }}
                   onPress={() => navigate("/register")}
-                  endContent={<ArrowRight className="w-5 h-5" />}
+                  endContent={<AltArrowRight weight="BoldDuotone" className="w-5 h-5" />}
                 >
                   {t("home.hero.startLearning")}
                 </Button>
@@ -423,17 +387,17 @@ const Home = () => {
               <ul className="space-y-4">
                 {[
                   {
-                    icon: (props) => <Laptop weight="duotone" {...props} />,
+                    icon: (props) => <Laptop weight="BoldDuotone" {...props} />,
                     text: t("home.videoSection.feature1"),
                     color: "#3B82F6",
                   },
                   {
-                    icon: (props) => <Clock weight="duotone" {...props} />,
+                    icon: (props) => <ClockCircle weight="BoldDuotone" {...props} />,
                     text: t("home.videoSection.feature2"),
                     color: "#10B981",
                   },
                   {
-                    icon: (props) => <UserList weight="duotone" {...props} />,
+                    icon: (props) => <UsersGroupRounded weight="BoldDuotone" {...props} />,
                     text: t("home.videoSection.feature3"),
                     color: "#F59E0B",
                   },
@@ -536,7 +500,7 @@ const Home = () => {
                         backgroundColor: colors.background.primaryLight,
                       }}
                     >
-                      <Sparkles
+                      <Stars weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.primary.main }}
                       />
@@ -679,8 +643,8 @@ const Home = () => {
                             >
                               <Icon
                                 size={28}
-                                weight="duotone"
-                                style={{ color }}
+                                weight="BoldDuotone"
+                                color={color}
                               />
                             </div>
                             <div className="min-w-0">
@@ -799,7 +763,7 @@ const Home = () => {
                   style={{ color: colors.primary.main }}
                   onClick={() => navigate("/courses")}
                 >
-                  {t("home.categories.browseAll")} <ArrowRight size={14} />
+                  {t("home.categories.browseAll")} <AltArrowRight weight="BoldDuotone" size={14} />
                 </button>
               </div>
             )}
@@ -873,7 +837,7 @@ const Home = () => {
                 backgroundColor: colors.primary.main,
                 color: colors.text.white,
               }}
-              endContent={<ArrowRight className="w-5 h-5" />}
+              endContent={<AltArrowRight weight="BoldDuotone" className="w-5 h-5" />}
               onPress={() => navigate("/courses")}
             >
               {t("home.courses.viewAll")}
@@ -934,7 +898,7 @@ const Home = () => {
                     <CardBody className="p-6">
                       <div className="flex items-center gap-1 mb-4">
                         {Array.from({ length: testimonial.rating }, (_, i) => (
-                          <Star
+                          <Star weight="BoldDuotone"
                             key={`rating-star-${testimonial.id}-${i}`}
                             className="w-4 h-4"
                             fill={colors.state.warning}

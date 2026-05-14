@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { CheckCircle, CloseCircle, MenuDots } from "@solar-icons/react"
 import { Button, Image, addToast } from "@heroui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+
 import BrandLogo from "../../../components/Authentication/BrandLogo";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { useTheme } from "../../../contexts/ThemeContext";
@@ -74,7 +75,7 @@ const VerifyEmail = () => {
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ backgroundColor: `${colors.warning}20` }}
           >
-            <XCircle className="w-8 h-8" style={{ color: colors.warning }} />
+            <CloseCircle weight="BoldDuotone" className="w-8 h-8" style={{ color: colors.warning }} />
           </div>
           <h2
             className="text-2xl font-bold"
@@ -109,7 +110,7 @@ const VerifyEmail = () => {
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ backgroundColor: `${colors.primary.main}15` }}
           >
-            <Loader2
+            <MenuDots weight="BoldDuotone"
               className="w-8 h-8 animate-spin"
               style={{ color: colors.primary.main }}
             />
@@ -135,7 +136,7 @@ const VerifyEmail = () => {
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ backgroundColor: "#ECFDF5" }}
           >
-            <CheckCircle className="w-8 h-8" style={{ color: "#10B981" }} />
+            <CheckCircle weight="BoldDuotone" className="w-8 h-8" style={{ color: "#10B981" }} />
           </div>
           <h2
             className="text-2xl font-bold"
@@ -170,7 +171,7 @@ const VerifyEmail = () => {
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ backgroundColor: "#FEF2F2" }}
           >
-            <XCircle className="w-8 h-8" style={{ color: "#EF4444" }} />
+            <CloseCircle weight="BoldDuotone" className="w-8 h-8" style={{ color: "#EF4444" }} />
           </div>
           <h2
             className="text-2xl font-bold"

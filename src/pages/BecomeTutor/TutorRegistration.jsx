@@ -1,10 +1,11 @@
 ﻿import React, { useState, useRef } from "react";
+import { CloseSquare, DocumentText, Stars, Suitcase, Videocamera } from "@solar-icons/react"
 import { Input, Button, Textarea, Image, Alert, addToast } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Briefcase, Sparkles, FileText, Video, X } from "lucide-react";
+
 import BrandLogo from "../../components/Authentication/BrandLogo";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -167,7 +168,7 @@ const TutorRegistration = () => {
                   color: colors.primary.main,
                 }}
               >
-                <Sparkles className="w-4 h-4" />
+                <Stars weight="BoldDuotone" className="w-4 h-4" />
                 {t("tutorRegistration.badge")}
               </span>
             </div>
@@ -214,7 +215,7 @@ const TutorRegistration = () => {
                   errorMessage={validationErrors.headline}
                   classNames={inputClassNames}
                   startContent={
-                    <Briefcase
+                    <Suitcase weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0"
                       style={{ color: colors.text.tertiary }}
                     />
@@ -274,7 +275,7 @@ const TutorRegistration = () => {
                   errorMessage={validationErrors.MonthExperience}
                   classNames={inputClassNames}
                   startContent={
-                    <Briefcase
+                    <Suitcase weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0"
                       style={{ color: colors.text.tertiary }}
                     />
@@ -298,7 +299,7 @@ const TutorRegistration = () => {
                   }}
                   onClick={() => cvInputRef.current?.click()}
                 >
-                  <FileText
+                  <DocumentText weight="BoldDuotone"
                     className="w-5 h-5 flex-shrink-0"
                     style={{ color: colors.primary.main }}
                   />
@@ -324,7 +325,7 @@ const TutorRegistration = () => {
                         if (cvInputRef.current) cvInputRef.current.value = "";
                       }}
                     >
-                      <X
+                      <CloseSquare weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -346,7 +347,7 @@ const TutorRegistration = () => {
                 />
               </div>
 
-              {/* Intro Video Upload (optional) */}
+              {/* Intro Videocamera Upload (optional) */}
               <div>
                 <label
                   className="block text-sm font-medium mb-2"
@@ -362,7 +363,7 @@ const TutorRegistration = () => {
                   }}
                   onClick={() => videoInputRef.current?.click()}
                 >
-                  <Video
+                  <Videocamera weight="BoldDuotone"
                     className="w-5 h-5 flex-shrink-0"
                     style={{ color: colors.primary.main }}
                   />
@@ -389,7 +390,7 @@ const TutorRegistration = () => {
                           videoInputRef.current.value = "";
                       }}
                     >
-                      <X
+                      <CloseSquare weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.tertiary }}
                       />

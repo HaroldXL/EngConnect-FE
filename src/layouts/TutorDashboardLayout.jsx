@@ -1,4 +1,23 @@
 import { useState, useEffect } from "react";
+import {
+  AltArrowDown,
+  Bell,
+  BookBookmark,
+  CalendarMark,
+  ChecklistMinimalistic,
+  CloseSquare,
+  Dollar,
+  HomeSmile,
+  Logout,
+  Magnifer,
+  PenNewRound,
+  PenNewSquare,
+  PresentationGraph,
+  QuestionCircle,
+  SquareAcademicCap,
+  UserCircle,
+  VerifiedCheck,
+} from "@solar-icons/react";
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import {
   Button,
@@ -24,24 +43,6 @@ import logoImage from "../assets/images/logo.png";
 import { tutorApi } from "../api/tutorApi";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, selectTutorAvatarUrl, updateTutorAvatar } from "../store";
-import {
-  House,
-  MagnifyingGlass,
-  BookOpen,
-  CalendarDots,
-  UserCircle,
-  SignOut,
-  List,
-  X,
-  Bell,
-  CaretDown,
-  CurrencyDollar,
-  Student,
-  ChalkboardTeacher,
-  SealCheck,
-  Question,
-  NotePencil,
-} from "@phosphor-icons/react";
 
 const TutorDashboardLayout = () => {
   const { t } = useTranslation();
@@ -92,32 +93,32 @@ const TutorDashboardLayout = () => {
     {
       path: "/tutor/dashboard",
       label: t("tutorDashboard.nav.dashboard"),
-      icon: House,
+      icon: (props) => <HomeSmile weight="BoldDuotone" {...props} />,
     },
     {
       path: "/tutor/my-courses",
       label: t("tutorDashboard.nav.myCourses"),
-      icon: BookOpen,
+      icon: (props) => <BookBookmark weight="BoldDuotone" {...props} />,
     },
     {
       path: "/tutor/schedule",
       label: t("tutorDashboard.nav.schedule"),
-      icon: CalendarDots,
+      icon: (props) => <CalendarMark weight="BoldDuotone" {...props} />,
     },
     {
       path: "/tutor/students",
       label: t("tutorDashboard.nav.students"),
-      icon: Student,
+      icon: (props) => <SquareAcademicCap weight="BoldDuotone" {...props} />,
     },
     {
       path: "/tutor/homework",
       label: t("tutorDashboard.nav.homework"),
-      icon: NotePencil,
+      icon: (props) => <PenNewSquare weight="BoldDuotone" {...props} />,
     },
     {
       path: "/tutor/earnings",
       label: t("tutorDashboard.nav.earnings"),
-      icon: CurrencyDollar,
+      icon: (props) => <Dollar weight="BoldDuotone" {...props} />,
     },
   ];
 
@@ -155,7 +156,10 @@ const TutorDashboardLayout = () => {
             <Chip
               size="lg"
               startContent={
-                <ChalkboardTeacher weight="fill" className="w-3.5 h-3.5" />
+                <PresentationGraph
+                  weight="BoldDuotone"
+                  className="w-3.5 h-3.5"
+                />
               }
               style={{
                 backgroundColor: "#0d948818",
@@ -175,7 +179,8 @@ const TutorDashboardLayout = () => {
               type="text"
               placeholder={t("tutorDashboard.search.placeholder")}
               startContent={
-                <MagnifyingGlass
+                <Magnifer
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -200,7 +205,7 @@ const TutorDashboardLayout = () => {
                 radius="full"
                 onPress={() => navigate("/tutor/notifications")}
               >
-                <Bell
+                <Bell weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -226,7 +231,8 @@ const TutorDashboardLayout = () => {
                   >
                     {displayName}
                   </span>
-                  <CaretDown
+                  <AltArrowDown
+                    weight="BoldDuotone"
                     className="w-4 h-4 hidden sm:block"
                     style={{ color: colors.text.secondary }}
                   />
@@ -236,7 +242,11 @@ const TutorDashboardLayout = () => {
                 <DropdownItem
                   key="profile"
                   startContent={
-                    <UserCircle weight="duotone" className="w-5 h-5" />
+                    <UserCircle
+                      style={{ color: colors.text.secondary }}
+                      weight="BoldDuotone"
+                      className="w-6 h-6"
+                    />
                   }
                   onPress={() => navigate("/tutor/profile")}
                 >
@@ -245,7 +255,11 @@ const TutorDashboardLayout = () => {
                 <DropdownItem
                   key="help-support"
                   startContent={
-                    <Question weight="duotone" className="w-5 h-5" />
+                    <QuestionCircle
+                      style={{ color: colors.text.secondary }}
+                      weight="BoldDuotone"
+                      className="w-6 h-6"
+                    />
                   }
                   onPress={() => navigate("/help-support")}
                 >
@@ -256,7 +270,7 @@ const TutorDashboardLayout = () => {
                   className="text-danger"
                   color="danger"
                   startContent={
-                    <SignOut weight="duotone" className="w-5 h-5" />
+                    <Logout weight="BoldDuotone" className="w-6 h-6" />
                   }
                   onPress={() => setLogoutModalOpen(true)}
                 >
@@ -273,9 +287,14 @@ const TutorDashboardLayout = () => {
               onPress={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6" style={{ color: colors.text.primary }} />
+                <CloseSquare
+                  weight="BoldDuotone"
+                  className="w-6 h-6"
+                  style={{ color: colors.text.primary }}
+                />
               ) : (
-                <List
+                <ChecklistMinimalistic
+                  weight="BoldDuotone"
                   className="w-6 h-6"
                   style={{ color: colors.text.primary }}
                 />
@@ -317,7 +336,7 @@ const TutorDashboardLayout = () => {
                     }
                   }}
                 >
-                  <item.icon className="w-4 h-4" />
+                  <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
                 </Link>
               </li>
@@ -424,7 +443,7 @@ const TutorDashboardLayout = () => {
                       }
                     }}
                   >
-                    <UserCircle weight="duotone" className="w-5 h-5" />
+                    <UserCircle weight="BoldDuotone" className="w-5 h-5" />
                     <span>{t("tutorDashboard.nav.profile")}</span>
                   </Link>
                 </motion.li>
@@ -470,8 +489,8 @@ const TutorDashboardLayout = () => {
               border: `1px solid ${colors.state.info}40`,
             }}
           >
-            <SealCheck
-              weight="duotone"
+            <VerifiedCheck
+              weight="BoldDuotone"
               className="w-6 h-6 flex-shrink-0"
               style={{ color: colors.state.info }}
             />

@@ -1,23 +1,14 @@
 import { Button, Card, CardBody } from "@heroui/react";
+import { AltArrowRight, CupFirst, Eye, Global, HandShake, HeartShine, Lightbulb, Rocket, Target, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Star } from "lucide-react";
+
 import * as MotionLib from "framer-motion";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  Target,
-  Eye,
-  Heart,
-  Lightbulb,
-  Users,
-  GlobeHemisphereWest,
-  Rocket,
-  Handshake,
-  Trophy,
-} from "@phosphor-icons/react";
+
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -55,28 +46,28 @@ const About = () => {
 
   const values = [
     {
-      icon: (props) => <Heart weight="duotone" {...props} />,
+      icon: (props) => <HeartShine weight="BoldDuotone" {...props} />,
       title: t("about.values.passion.title"),
       description: t("about.values.passion.description"),
       color: "#EF4444",
       bgColor: "rgba(239, 68, 68, 0.1)",
     },
     {
-      icon: (props) => <Lightbulb weight="duotone" {...props} />,
+      icon: (props) => <Lightbulb weight="BoldDuotone" {...props} />,
       title: t("about.values.innovation.title"),
       description: t("about.values.innovation.description"),
       color: "#F59E0B",
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     {
-      icon: (props) => <Users weight="duotone" {...props} />,
+      icon: (props) => <UsersGroupRounded weight="BoldDuotone" {...props} />,
       title: t("about.values.community.title"),
       description: t("about.values.community.description"),
       color: "#3B82F6",
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     {
-      icon: (props) => <Trophy weight="duotone" {...props} />,
+      icon: (props) => <CupFirst weight="BoldDuotone" {...props} />,
       title: t("about.values.excellence.title"),
       description: t("about.values.excellence.description"),
       color: "#10B981",
@@ -191,7 +182,7 @@ const About = () => {
                     style={{ backgroundColor: "rgba(59, 130, 246, 0.1)" }}
                   >
                     <Target
-                      weight="duotone"
+                      weight="BoldDuotone"
                       className="w-7 h-7"
                       style={{ color: "#3B82F6" }}
                     />
@@ -224,7 +215,7 @@ const About = () => {
                     style={{ backgroundColor: "rgba(139, 92, 246, 0.1)" }}
                   >
                     <Eye
-                      weight="duotone"
+                      weight="BoldDuotone"
                       className="w-7 h-7"
                       style={{ color: "#8B5CF6" }}
                     />
@@ -322,7 +313,7 @@ const About = () => {
           >
             {[
               {
-                icon: (props) => <Rocket weight="duotone" {...props} />,
+                icon: (props) => <Rocket weight="BoldDuotone" {...props} />,
                 title: t("about.story.founded"),
                 value: "2025",
                 color: "#3B82F6",
@@ -330,7 +321,7 @@ const About = () => {
               },
               {
                 icon: (props) => (
-                  <GlobeHemisphereWest weight="duotone" {...props} />
+                  <Global weight="BoldDuotone" {...props} />
                 ),
                 title: t("about.story.headquarters"),
                 value: "Ho Chi Minh City, Vietnam",
@@ -338,14 +329,14 @@ const About = () => {
                 bgColor: "rgba(16, 185, 129, 0.1)",
               },
               {
-                icon: (props) => <Users weight="duotone" {...props} />,
+                icon: (props) => <UsersGroupRounded weight="BoldDuotone" {...props} />,
                 title: t("about.story.teamSize"),
                 value: "5",
                 color: "#F59E0B",
                 bgColor: "rgba(245, 158, 11, 0.1)",
               },
               {
-                icon: (props) => <Handshake weight="duotone" {...props} />,
+                icon: (props) => <HandShake weight="BoldDuotone" {...props} />,
                 title: t("about.story.partnerships"),
                 value: "5+",
                 color: "#8B5CF6",
@@ -559,7 +550,7 @@ const About = () => {
                 color: colors.primary.main,
               }}
               onPress={() => navigate("/register")}
-              endContent={<ArrowRight className="w-5 h-5" />}
+              endContent={<AltArrowRight weight="BoldDuotone" className="w-5 h-5" />}
             >
               {t("about.cta.button")}
             </Button>

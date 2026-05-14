@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import { AddCircle, DocumentAdd, Magnifer } from "@solar-icons/react";
 import { Button, Input, Tabs, Tab } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import { Plus, MagnifyingGlass } from "@phosphor-icons/react";
+
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../../components/CourseCardSkeleton/CourseCardSkeleton";
 import { coursesApi } from "../../../api";
@@ -96,7 +97,9 @@ const MyCourses = () => {
         </div>
         <Button
           color="primary"
-          startContent={<Plus weight="bold" className="w-5 h-5" />}
+          startContent={
+            <DocumentAdd weight="BoldDuotone" className="w-5 h-5" />
+          }
           style={{
             backgroundColor: colors.primary.main,
             color: colors.text.white,
@@ -119,7 +122,8 @@ const MyCourses = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <MagnifyingGlass
+            <Magnifer
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />
@@ -182,7 +186,9 @@ const MyCourses = () => {
           </p>
           <Button
             color="primary"
-            startContent={<Plus weight="bold" className="w-5 h-5" />}
+            startContent={
+              <DocumentAdd weight="BoldDuotone" className="w-5 h-5" />
+            }
             style={{
               backgroundColor: colors.primary.main,
               color: colors.text.white,

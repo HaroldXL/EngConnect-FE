@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AddCircle, Folder2, Magnifer, Pen, TagPrice, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -27,14 +28,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { coursesApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  PencilSimple,
-  Trash,
-  Plus,
-  Tag,
-  Folders,
-} from "@phosphor-icons/react";
+
 
 const CategoryManagement = () => {
   const { t, i18n } = useTranslation();
@@ -213,7 +207,7 @@ const CategoryManagement = () => {
         </div>
         <div className="flex gap-2">
           <Button
-            startContent={<Plus className="w-4 h-4" />}
+            startContent={<AddCircle weight="BoldDuotone" className="w-4 h-4" />}
             style={{
               backgroundColor: colors.primary.main,
               color: colors.text.white,
@@ -243,9 +237,9 @@ const CategoryManagement = () => {
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
                   style={{ backgroundColor: colors.background.primaryLight }}
                 >
-                  <Folders
+                  <Folder2
                     className="w-5 h-5"
-                    weight="duotone"
+                    weight="BoldDuotone"
                     style={{ color: colors.primary.main }}
                   />
                 </div>
@@ -287,7 +281,7 @@ const CategoryManagement = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               startContent={
-                <MagnifyingGlass
+                <Magnifer weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -367,7 +361,7 @@ const CategoryManagement = () => {
                     <TableRow key={cat.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Tag
+                          <TagPrice weight="BoldDuotone"
                             className="w-4 h-4 flex-shrink-0"
                             style={{ color: colors.primary.main }}
                           />
@@ -414,7 +408,7 @@ const CategoryManagement = () => {
                             size="sm"
                             onPress={() => handleEdit(cat)}
                           >
-                            <PencilSimple
+                            <Pen weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.primary.main }}
                             />
@@ -425,7 +419,7 @@ const CategoryManagement = () => {
                             size="sm"
                             onPress={() => handleDeleteClick(cat)}
                           >
-                            <Trash
+                            <TrashBinMinimalistic weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.state.error }}
                             />

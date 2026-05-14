@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
+import { AltArrowRight, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Gallery, Hourglass, Magnifer, Plain, Star } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -16,20 +17,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../store";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import {
-  MagnifyingGlass,
-  Clock,
-  CheckCircle,
-  Star,
-  PaperPlaneTilt,
-  FilePdf,
-  FileImage,
-  FileZip,
-  FileDoc,
-  File as FileIcon,
-  CaretRight,
-  Hourglass,
-} from "@phosphor-icons/react";
+
 import { lessonHomeworkApi } from "../../../api";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
@@ -81,14 +69,14 @@ const getFileBaseName = (url) => {
 const getFileTypeIcon = (url, className, style) => {
   const name = getFileBaseName(url || "");
   if (IMAGE_EXT_RE.test(name))
-    return <FileImage weight="duotone" className={className} style={style} />;
+    return <Gallery weight="BoldDuotone" className={className} style={style} />;
   if (PDF_EXT_RE.test(name))
-    return <FilePdf weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
   if (DOC_EXT_RE.test(name))
-    return <FileDoc weight="duotone" className={className} style={style} />;
+    return <DocumentText weight="BoldDuotone" className={className} style={style} />;
   if (ZIP_EXT_RE.test(name))
-    return <FileZip weight="duotone" className={className} style={style} />;
-  return <FileIcon weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
+  return <File weight="BoldDuotone" className={className} style={style} />;
 };
 
 const computeDueInfo = (dueAt, t) => {
@@ -263,7 +251,7 @@ const Homework = () => {
             style={{ backgroundColor: `${accent}15` }}
           >
             <Icon
-              weight="duotone"
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: accent }}
             />
@@ -290,8 +278,8 @@ const Homework = () => {
             className="flex items-center gap-1 min-w-0"
           >
             {idx > 0 && (
-              <CaretRight
-                weight="bold"
+              <AltArrowRight
+                weight="BoldDuotone"
                 className="w-3 h-3 shrink-0 opacity-50"
               />
             )}
@@ -358,7 +346,7 @@ const Homework = () => {
           accent={colors.state.warning}
         />
         <StatCard
-          icon={PaperPlaneTilt}
+          icon={Plain}
           label={t("studentDashboard.homework.stats.submitted")}
           value={stats.submitted}
           accent={colors.primary.main}
@@ -370,7 +358,7 @@ const Homework = () => {
           accent={colors.state.success}
         />
         <StatCard
-          icon={Warning}
+          icon={DangerTriangle}
           label={t("studentDashboard.homework.stats.overdue")}
           value={stats.overdue}
           accent={colors.state.error}
@@ -390,7 +378,7 @@ const Homework = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <MagnifyingGlass
+            <Magnifer weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />
@@ -497,8 +485,8 @@ const Homework = () => {
                     </Chip>
                     {hw.status === "Assigned" && (
                       <div className="flex items-center gap-1.5">
-                        <Clock
-                          weight="bold"
+                        <ClockCircle
+                          weight="BoldDuotone"
                           className="w-3.5 h-3.5"
                           style={{ color: dueColor }}
                         />
@@ -559,7 +547,7 @@ const Homework = () => {
                       <Button
                         size="sm"
                         startContent={
-                          <PaperPlaneTilt weight="bold" className="w-4 h-4" />
+                          <Plain weight="BoldDuotone" className="w-4 h-4" />
                         }
                         onPress={(e) => {
                           e?.stopPropagation?.();

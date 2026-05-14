@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Card as CardIcon, DangerTriangle, Ticket, Wallet } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -7,7 +8,7 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import { Wallet, Warning, Bank, Ticket } from "@phosphor-icons/react";
+
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { supportApi } from "../../api";
@@ -93,7 +94,7 @@ export default function TutorWithdrawTicketModal({
           style={{ color: colors.text.primary }}
         >
           <Ticket
-            weight="duotone"
+            weight="BoldDuotone"
             className="w-5 h-5"
             style={{ color: colors.primary.main }}
           />
@@ -111,7 +112,7 @@ export default function TutorWithdrawTicketModal({
             >
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Wallet
-                  weight="duotone"
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.primary.main }}
                 />
@@ -130,14 +131,13 @@ export default function TutorWithdrawTicketModal({
               </p>
             </div>
 
-            {/* Bank info */}
+            {/* Card info */}
             {hasBank ? (
               <div
                 className="p-3 rounded-xl flex items-center gap-3"
                 style={{ backgroundColor: colors.background.gray }}
               >
-                <Bank
-                  weight="duotone"
+                <CardIcon weight="BoldDuotone"
                   className="w-5 h-5 flex-shrink-0"
                   style={{ color: colors.text.secondary }}
                 />
@@ -165,7 +165,7 @@ export default function TutorWithdrawTicketModal({
                   color: colors.state.warning,
                 }}
               >
-                <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+                <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
                 {t("tutorDashboard.earnings.noBankInfo")}
               </div>
             )}
@@ -228,7 +228,7 @@ export default function TutorWithdrawTicketModal({
                 border: `1px solid ${colors.state.error}30`,
               }}
             >
-              <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+              <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}

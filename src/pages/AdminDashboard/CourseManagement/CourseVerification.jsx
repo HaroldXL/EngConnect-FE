@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { BookBookmark, CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, Magnifer, MenuDots, TrashBinMinimalistic } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -34,20 +35,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { coursesApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  DotsThree,
-  Eye,
-  CheckCircle,
-  XCircle,
-  Trash,
-  Export,
-  Funnel,
-  ClipboardText,
-  HourglassMedium,
-  Prohibit,
-  BookOpen,
-} from "@phosphor-icons/react";
+
 
 const CourseVerification = () => {
   const { t, i18n } = useTranslation();
@@ -186,14 +174,14 @@ const CourseVerification = () => {
 
   const stats = [
     {
-      icon: ClipboardText,
+      icon: ClipboardList,
       label: t("adminDashboard.courseVerification.stats.totalRequests"),
       value: totalCount.toLocaleString(),
       color: colors.primary.main,
       bg: colors.background.primaryLight,
     },
     {
-      icon: HourglassMedium,
+      icon: Hourglass,
       label: t("adminDashboard.courseVerification.stats.pending"),
       value: pendingCount.toLocaleString(),
       color: colors.state.warning,
@@ -207,7 +195,7 @@ const CourseVerification = () => {
       bg: `${colors.state.success}20`,
     },
     {
-      icon: Prohibit,
+      icon: ForbiddenCircle,
       label: t("adminDashboard.courseVerification.stats.rejected"),
       value: rejectedCount.toLocaleString(),
       color: colors.state.error,
@@ -379,7 +367,7 @@ const CourseVerification = () => {
                   >
                     <stat.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -425,7 +413,7 @@ const CourseVerification = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />
@@ -438,7 +426,7 @@ const CourseVerification = () => {
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      startContent={<Funnel className="w-4 h-4" />}
+                      startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                     >
                       {t("adminDashboard.courseVerification.statusLabel")}:{" "}
                       {selectedStatus === "all"
@@ -559,7 +547,7 @@ const CourseVerification = () => {
                                   backgroundColor: colors.background.gray,
                                 }}
                               >
-                                <BookOpen
+                                <BookBookmark weight="BoldDuotone"
                                   className="w-4 h-4"
                                   style={{ color: colors.text.secondary }}
                                 />
@@ -622,7 +610,7 @@ const CourseVerification = () => {
                               >
                                 <CheckCircle
                                   className="w-5 h-5"
-                                  weight="fill"
+                                  weight="BoldDuotone"
                                 />
                               </Button>
                               <Button
@@ -634,16 +622,16 @@ const CourseVerification = () => {
                                   handleReviewClick(req.id, "reject")
                                 }
                               >
-                                <XCircle className="w-5 h-5" weight="fill" />
+                                <CloseCircle className="w-5 h-5" weight="BoldDuotone" />
                               </Button>
                             </>
                           )}
                           <Dropdown>
                             <DropdownTrigger>
                               <Button isIconOnly variant="light" size="sm">
-                                <DotsThree
+                                <MenuDots
                                   className="w-5 h-5"
-                                  weight="bold"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.text.secondary }}
                                 />
                               </Button>
@@ -651,7 +639,7 @@ const CourseVerification = () => {
                             <DropdownMenu aria-label="Request actions">
                               <DropdownItem
                                 key="view"
-                                startContent={<Eye className="w-4 h-4" />}
+                                startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                                 onPress={() => handleViewRequest(req)}
                               >
                                 {t("adminDashboard.courseVerification.view")}
@@ -659,7 +647,7 @@ const CourseVerification = () => {
                               <DropdownItem
                                 key="delete"
                                 color="danger"
-                                startContent={<Trash className="w-4 h-4" />}
+                                startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
                                 onPress={() => handleDeleteClick(req)}
                               >
                                 {t("adminDashboard.courseVerification.delete")}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Eye, EyeClosed } from "@solar-icons/react";
 import {
   Input,
   Button,
@@ -8,7 +9,7 @@ import {
   Alert,
   addToast,
 } from "@heroui/react";
-import { Eye, EyeOff } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as MotionLib from "framer-motion";
@@ -281,12 +282,14 @@ const Register = () => {
                         onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                       >
                         {isPasswordVisible ? (
-                          <EyeOff
+                          <EyeClosed
+                            weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
                         ) : (
                           <Eye
+                            weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -323,12 +326,14 @@ const Register = () => {
                         }
                       >
                         {isConfirmPasswordVisible ? (
-                          <EyeOff
+                          <EyeClosed
+                            weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
                         ) : (
                           <Eye
+                            weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />

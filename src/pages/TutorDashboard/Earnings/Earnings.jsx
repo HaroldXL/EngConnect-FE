@@ -1,5 +1,19 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
+  Card as CardIcon,
+  CheckCircle,
+  ClipboardList,
+  CloseCircle,
+  CourseUp,
+  Dollar,
+  GraphUp,
+  Hourglass,
+  Lightning,
+  SquareAltArrowRight,
+  SquareBottomUp,
+  Wallet,
+} from "@solar-icons/react";
+import {
   Card,
   CardBody,
   Button,
@@ -23,24 +37,13 @@ import {
   Skeleton,
 } from "@heroui/react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
-import {
-  CurrencyDollar,
-  TrendUp,
-  Wallet,
-  ChartLine,
-  Bank,
-  Receipt,
-  ArrowSquareOut,
-  CheckCircle,
-  XCircle,
-  Hourglass,
-  Lightning,
-} from "@phosphor-icons/react";
+
 import { selectUser } from "../../../store";
 import { paymentApi, tutorApi } from "../../../api";
 import TutorWithdrawTicketModal from "../../../components/TutorWithdrawTicketModal/TutorWithdrawTicketModal";
@@ -56,6 +59,7 @@ const formatVND = (amount) => {
 
 const Earnings = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const colors = useThemeColors();
   const { selectClassNames } = useInputStyles();
   const { tableCardStyle, tableClassNames } = useTableStyles();
@@ -92,6 +96,15 @@ const Earnings = () => {
   const [payoutsTotalPages, setPayoutsTotalPages] = useState(1);
   const [payoutTypeFilter, setPayoutTypeFilter] = useState("");
   const [payoutStatusFilter, setPayoutStatusFilter] = useState("");
+
+  // Course sales table
+  const [sales, setSales] = useState([]);
+  const [salesLoading, setSalesLoading] = useState(false);
+  const [salesPage, setSalesPage] = useState(1);
+  const [salesTotalPages, setSalesTotalPages] = useState(1);
+  const [salesStatusFilter, setSalesStatusFilter] = useState("");
+  const [selectedSale, setSelectedSale] = useState(null);
+  const [saleDetailOpen, setSaleDetailOpen] = useState(false);
 
   // Payout detail modal
   const [selectedPayout, setSelectedPayout] = useState(null);
@@ -195,6 +208,25 @@ const Earnings = () => {
     if (activeTab === "payouts") fetchPayouts();
   }, [activeTab, fetchPayouts]);
 
+  const fetchSales = useCallback(async () => {
+    setSalesLoading(true);
+    try {
+      const params = { page: salesPage, "page-size": 10 };
+      if (salesStatusFilter) params.Status = salesStatusFilter;
+      const res = await tutorApi.getMyCourseSales(params);
+      setSales(res?.data?.items || []);
+      setSalesTotalPages(res?.data?.totalPages || 1);
+    } catch {
+      setSales([]);
+    } finally {
+      setSalesLoading(false);
+    }
+  }, [salesPage, salesStatusFilter]);
+
+  useEffect(() => {
+    if (activeTab === "course-sales") fetchSales();
+  }, [activeTab, fetchSales]);
+
   const openPayoutDetail = async (payout) => {
     setSelectedPayout(payout);
     setPayoutDetailOpen(true);
@@ -241,6 +273,19 @@ const Earnings = () => {
     }
   };
 
+  const getSaleStatusColor = (status) => {
+    switch (status) {
+      case "InProgress":
+        return colors.state.info;
+      case "Pending":
+        return colors.state.warning;
+      case "Cancelled":
+        return colors.state.error;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
   const getPayoutStatusIcon = (status) => {
     switch (status) {
       case "Paid":
@@ -251,7 +296,7 @@ const Earnings = () => {
         return Hourglass;
       case "Failed":
       case "Cancelled":
-        return XCircle;
+        return CloseCircle;
       default:
         return Hourglass;
     }
@@ -297,21 +342,21 @@ const Earnings = () => {
       bg: colors.background.primaryLight,
     },
     {
-      icon: CurrencyDollar,
+      icon: Dollar,
       label: t("tutorDashboard.earnings.totalNet"),
       value: formatVND(totalSummary?.totalNetAmount),
       color: colors.state.success,
       bg: `${colors.state.success}20`,
     },
     {
-      icon: TrendUp,
+      icon: CourseUp,
       label: t("tutorDashboard.earnings.totalGross"),
       value: formatVND(totalSummary?.totalGrossAmount),
       color: colors.state.info,
       bg: `${colors.state.info}20`,
     },
     {
-      icon: Receipt,
+      icon: ClipboardList,
       label: t("tutorDashboard.earnings.platformFee"),
       value: formatVND(totalSummary?.totalPlatformFee),
       color: colors.state.warning,
@@ -329,7 +374,10 @@ const Earnings = () => {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
       >
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: colors.text.primary }}>
+          <h1
+            className="text-2xl font-bold"
+            style={{ color: colors.text.primary }}
+          >
             {t("tutorDashboard.earnings.title")}
           </h1>
           <p style={{ color: colors.text.secondary }}>
@@ -337,7 +385,7 @@ const Earnings = () => {
           </p>
         </div>
         <Button
-          startContent={<Bank weight="duotone" className="w-5 h-5" />}
+          startContent={<CardIcon weight="BoldDuotone" className="w-5 h-5" />}
           isDisabled={!totalSummary?.availableBalance}
           style={{
             backgroundColor: totalSummary?.availableBalance
@@ -374,7 +422,7 @@ const Earnings = () => {
                   style={{ backgroundColor: stat.bg }}
                 >
                   <stat.icon
-                    weight="duotone"
+                    weight="BoldDuotone"
                     className="w-6 h-6"
                     style={{ color: stat.color }}
                   />
@@ -414,7 +462,7 @@ const Earnings = () => {
           key="earnings"
           title={
             <div className="flex items-center gap-2">
-              <ChartLine weight="duotone" className="w-5 h-5" />
+              <GraphUp weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("tutorDashboard.earnings.earningsTab")}</span>
             </div>
           }
@@ -423,8 +471,17 @@ const Earnings = () => {
           key="payouts"
           title={
             <div className="flex items-center gap-2">
-              <Receipt weight="duotone" className="w-5 h-5" />
+              <ClipboardList weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("tutorDashboard.earnings.payoutsTab")}</span>
+            </div>
+          }
+        />
+        <Tab
+          key="course-sales"
+          title={
+            <div className="flex items-center gap-2">
+              <CourseUp weight="BoldDuotone" className="w-5 h-5" />
+              <span>{t("tutorDashboard.earnings.courseSalesTab")}</span>
             </div>
           }
         />
@@ -444,8 +501,8 @@ const Earnings = () => {
                   className="text-lg font-semibold flex items-center gap-2"
                   style={{ color: colors.text.primary }}
                 >
-                  <ChartLine
-                    weight="duotone"
+                  <CourseUp
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.primary.main }}
                   />
@@ -487,7 +544,10 @@ const Earnings = () => {
                         >
                           {formatVND(d.totalNetAmount)}
                         </span>
-                        <div className="w-full flex items-end" style={{ height: "180px" }}>
+                        <div
+                          className="w-full flex items-end"
+                          style={{ height: "180px" }}
+                        >
                           <div
                             className="w-full rounded-t-lg transition-all"
                             style={{
@@ -527,7 +587,9 @@ const Earnings = () => {
                   size="sm"
                   className="w-40"
                   placeholder={t("tutorDashboard.earnings.allStatuses")}
-                  selectedKeys={earningsStatusFilter ? [earningsStatusFilter] : []}
+                  selectedKeys={
+                    earningsStatusFilter ? [earningsStatusFilter] : []
+                  }
                   classNames={selectClassNames}
                   onSelectionChange={(keys) => {
                     const v = [...keys][0] || "";
@@ -535,25 +597,44 @@ const Earnings = () => {
                     setEarningsPage(1);
                   }}
                 >
-                  <SelectItem key="Unpaid">{t("tutorDashboard.earnings.statuses.Unpaid")}</SelectItem>
-                  <SelectItem key="Paid">{t("tutorDashboard.earnings.statuses.Paid")}</SelectItem>
+                  <SelectItem key="Unpaid">
+                    {t("tutorDashboard.earnings.statuses.Unpaid")}
+                  </SelectItem>
+                  <SelectItem key="Paid">
+                    {t("tutorDashboard.earnings.statuses.Paid")}
+                  </SelectItem>
                 </Select>
               </div>
 
-              <Table aria-label="Earnings" classNames={tableClassNames} removeWrapper>
+              <Table
+                aria-label="Earnings"
+                classNames={tableClassNames}
+                removeWrapper
+              >
                 <TableHeader>
-                  <TableColumn>{t("tutorDashboard.earnings.workDate")}</TableColumn>
-                  <TableColumn>{t("tutorDashboard.earnings.source")}</TableColumn>
-                  <TableColumn>{t("tutorDashboard.earnings.gross")}</TableColumn>
+                  <TableColumn>
+                    {t("tutorDashboard.earnings.workDate")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("tutorDashboard.earnings.source")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("tutorDashboard.earnings.gross")}
+                  </TableColumn>
                   <TableColumn>{t("tutorDashboard.earnings.fee")}</TableColumn>
                   <TableColumn>{t("tutorDashboard.earnings.net")}</TableColumn>
-                  <TableColumn>{t("tutorDashboard.earnings.status")}</TableColumn>
+                  <TableColumn>
+                    {t("tutorDashboard.earnings.status")}
+                  </TableColumn>
                 </TableHeader>
                 <TableBody
                   isLoading={earningsLoading}
                   loadingContent={<Spinner />}
                   emptyContent={
-                    <p className="py-8 text-center" style={{ color: colors.text.tertiary }}>
+                    <p
+                      className="py-8 text-center"
+                      style={{ color: colors.text.tertiary }}
+                    >
                       {t("tutorDashboard.earnings.noEarnings")}
                     </p>
                   }
@@ -604,7 +685,8 @@ const Earnings = () => {
                             color: getEarningStatusColor(e.status),
                           }}
                         >
-                          {t(`tutorDashboard.earnings.statuses.${e.status}`) || e.status}
+                          {t(`tutorDashboard.earnings.statuses.${e.status}`) ||
+                            e.status}
                         </Chip>
                       </TableCell>
                     </TableRow>
@@ -651,8 +733,12 @@ const Earnings = () => {
                     setPayoutsPage(1);
                   }}
                 >
-                  <SelectItem key="Payroll">{t("tutorDashboard.earnings.payoutTypes.Payroll")}</SelectItem>
-                  <SelectItem key="Manual">{t("tutorDashboard.earnings.payoutTypes.Manual")}</SelectItem>
+                  <SelectItem key="Payroll">
+                    {t("tutorDashboard.earnings.payoutTypes.Payroll")}
+                  </SelectItem>
+                  <SelectItem key="Manual">
+                    {t("tutorDashboard.earnings.payoutTypes.Manual")}
+                  </SelectItem>
                 </Select>
                 <Select
                   size="sm"
@@ -666,30 +752,43 @@ const Earnings = () => {
                     setPayoutsPage(1);
                   }}
                 >
-                  {["Pending", "Processing", "Paid", "Failed", "Cancelled"].map((s) => (
-                    <SelectItem key={s}>
-                      {t(`tutorDashboard.earnings.payoutStatuses.${s}`)}
-                    </SelectItem>
-                  ))}
+                  {["Pending", "Processing", "Paid", "Failed", "Cancelled"].map(
+                    (s) => (
+                      <SelectItem key={s}>
+                        {t(`tutorDashboard.earnings.payoutStatuses.${s}`)}
+                      </SelectItem>
+                    ),
+                  )}
                 </Select>
               </div>
             </div>
 
-            <Table aria-label="Payouts" classNames={tableClassNames} removeWrapper>
+            <Table
+              aria-label="Payouts"
+              classNames={tableClassNames}
+              removeWrapper
+            >
               <TableHeader>
-                <TableColumn>{t("tutorDashboard.earnings.requestedAt")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.requestedAt")}
+                </TableColumn>
                 <TableColumn>{t("tutorDashboard.earnings.type")}</TableColumn>
                 <TableColumn>{t("tutorDashboard.earnings.amount")}</TableColumn>
                 <TableColumn>{t("tutorDashboard.earnings.bank")}</TableColumn>
                 <TableColumn>{t("tutorDashboard.earnings.status")}</TableColumn>
                 <TableColumn>{t("tutorDashboard.earnings.paidAt")}</TableColumn>
-                <TableColumn>{t("tutorDashboard.earnings.actions")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.actions")}
+                </TableColumn>
               </TableHeader>
               <TableBody
                 isLoading={payoutsLoading}
                 loadingContent={<Spinner />}
                 emptyContent={
-                  <p className="py-8 text-center" style={{ color: colors.text.tertiary }}>
+                  <p
+                    className="py-8 text-center"
+                    style={{ color: colors.text.tertiary }}
+                  >
                     {t("tutorDashboard.earnings.noPayouts")}
                   </p>
                 }
@@ -718,7 +817,9 @@ const Earnings = () => {
                                 : colors.primary.main,
                           }}
                         >
-                          {t(`tutorDashboard.earnings.payoutTypes.${p.payoutType}`)}
+                          {t(
+                            `tutorDashboard.earnings.payoutTypes.${p.payoutType}`,
+                          )}
                         </Chip>
                       </TableCell>
                       <TableCell>
@@ -731,7 +832,9 @@ const Earnings = () => {
                       </TableCell>
                       <TableCell>
                         <div className="text-xs">
-                          <p style={{ color: colors.text.primary }}>{p.bankCode}</p>
+                          <p style={{ color: colors.text.primary }}>
+                            {p.bankCode}
+                          </p>
                           <p style={{ color: colors.text.tertiary }}>
                             {p.bankAccountNumber}
                           </p>
@@ -741,13 +844,20 @@ const Earnings = () => {
                         <Chip
                           size="sm"
                           variant="flat"
-                          startContent={<StatusIcon weight="duotone" className="w-3.5 h-3.5" />}
+                          startContent={
+                            <StatusIcon
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
+                          }
                           style={{
                             backgroundColor: `${getPayoutStatusColor(p.status)}15`,
                             color: getPayoutStatusColor(p.status),
                           }}
                         >
-                          {t(`tutorDashboard.earnings.payoutStatuses.${p.status}`)}
+                          {t(
+                            `tutorDashboard.earnings.payoutStatuses.${p.status}`,
+                          )}
                         </Chip>
                       </TableCell>
                       <TableCell>
@@ -759,7 +869,12 @@ const Earnings = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<ArrowSquareOut className="w-4 h-4" />}
+                          startContent={
+                            <SquareBottomUp
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
+                          }
                           onPress={() => openPayoutDetail(p)}
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
@@ -781,6 +896,164 @@ const Earnings = () => {
                   total={payoutsTotalPages}
                   page={payoutsPage}
                   onChange={setPayoutsPage}
+                  showControls
+                  color="primary"
+                />
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      )}
+
+      {activeTab === "course-sales" && (
+        <Card shadow="none" className="border-none" style={tableCardStyle}>
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <h2
+                className="text-lg font-semibold"
+                style={{ color: colors.text.primary }}
+              >
+                {t("tutorDashboard.earnings.courseSalesList")}
+              </h2>
+              <Select
+                size="sm"
+                className="w-44"
+                placeholder={t("tutorDashboard.earnings.allStatuses")}
+                selectedKeys={salesStatusFilter ? [salesStatusFilter] : []}
+                classNames={selectClassNames}
+                onSelectionChange={(keys) => {
+                  const v = [...keys][0] || "";
+                  setSalesStatusFilter(v);
+                  setSalesPage(1);
+                }}
+              >
+                {["InProgress", "Pending", "Cancelled"].map((s) => (
+                  <SelectItem key={s}>
+                    {t(`tutorDashboard.earnings.saleStatuses.${s}`)}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+
+            <Table
+              aria-label="Course Sales"
+              classNames={tableClassNames}
+              removeWrapper
+            >
+              <TableHeader>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.purchaseDate")}
+                </TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.student")}
+                </TableColumn>
+                <TableColumn>{t("tutorDashboard.earnings.course")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.tutorEarning")}
+                </TableColumn>
+                <TableColumn>{t("tutorDashboard.earnings.status")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.actions")}
+                </TableColumn>
+              </TableHeader>
+              <TableBody
+                isLoading={salesLoading}
+                loadingContent={<Spinner />}
+                emptyContent={
+                  <p
+                    className="py-8 text-center"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {t("tutorDashboard.earnings.noSales")}
+                  </p>
+                }
+              >
+                {sales.map((s) => (
+                  <TableRow key={s.enrollmentId}>
+                    <TableCell>
+                      <span style={{ color: colors.text.secondary }}>
+                        {formatDate(s.purchaseDate)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p
+                          className="text-sm font-medium"
+                          style={{ color: colors.text.primary }}
+                        >
+                          {s.studentName}
+                        </p>
+                        <p
+                          className="text-xs"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {s.studentEmail}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className="text-sm"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {s.courseName}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className="font-semibold"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {formatVND(s.tutorEarning)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        style={{
+                          backgroundColor: `${getSaleStatusColor(s.status)}15`,
+                          color: getSaleStatusColor(s.status),
+                        }}
+                      >
+                        {t(`tutorDashboard.earnings.saleStatuses.${s.status}`, {
+                          defaultValue: s.status,
+                        })}
+                      </Chip>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        startContent={
+                          <SquareBottomUp
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
+                        }
+                        onPress={() => {
+                          setSelectedSale(s);
+                          setSaleDetailOpen(true);
+                        }}
+                        style={{
+                          backgroundColor: `${colors.primary.main}15`,
+                          color: colors.primary.main,
+                        }}
+                      >
+                        {t("tutorDashboard.earnings.viewItems")}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {salesTotalPages > 1 && (
+              <div className="flex justify-center mt-4">
+                <Pagination
+                  total={salesTotalPages}
+                  page={salesPage}
+                  onChange={setSalesPage}
                   showControls
                   color="primary"
                 />
@@ -818,8 +1091,8 @@ const Earnings = () => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <Receipt
-              weight="duotone"
+            <ClipboardList
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.primary.main }}
             />
@@ -834,7 +1107,10 @@ const Earnings = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("tutorDashboard.earnings.amount")}
                     </p>
                     <p
@@ -848,7 +1124,10 @@ const Earnings = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("tutorDashboard.earnings.status")}
                     </p>
                     <Chip
@@ -860,17 +1139,25 @@ const Earnings = () => {
                         color: getPayoutStatusColor(selectedPayout.status),
                       }}
                     >
-                      {t(`tutorDashboard.earnings.payoutStatuses.${selectedPayout.status}`)}
+                      {t(
+                        `tutorDashboard.earnings.payoutStatuses.${selectedPayout.status}`,
+                      )}
                     </Chip>
                   </div>
                   <div
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("tutorDashboard.earnings.requestedAt")}
                     </p>
-                    <p className="text-sm mt-0.5" style={{ color: colors.text.primary }}>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
                       {formatDateTime(selectedPayout.requestedAt)}
                     </p>
                   </div>
@@ -878,10 +1165,16 @@ const Earnings = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("tutorDashboard.earnings.paidAt")}
                     </p>
-                    <p className="text-sm mt-0.5" style={{ color: colors.text.primary }}>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
                       {formatDateTime(selectedPayout.paidAt)}
                     </p>
                   </div>
@@ -938,12 +1231,249 @@ const Earnings = () => {
                               color: getPayoutStatusColor(item.status),
                             }}
                           >
-                            {t(`tutorDashboard.earnings.payoutStatuses.${item.status}`)}
+                            {t(
+                              `tutorDashboard.earnings.payoutStatuses.${item.status}`,
+                            )}
                           </Chip>
                         </div>
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Sale Detail Modal */}
+      <Modal
+        isOpen={saleDetailOpen}
+        onOpenChange={setSaleDetailOpen}
+        size="lg"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          <ModalHeader
+            className="flex items-center gap-2"
+            style={{ color: colors.text.primary }}
+          >
+            <CourseUp
+              weight="BoldDuotone"
+              className="w-5 h-5"
+              style={{ color: colors.primary.main }}
+            />
+            {t("tutorDashboard.earnings.saleDetail")}
+          </ModalHeader>
+          <ModalBody className="pb-6">
+            {selectedSale && (
+              <div className="space-y-4">
+                {/* Course + student info */}
+                <div
+                  className="p-3 rounded-xl"
+                  style={{ backgroundColor: colors.background.gray }}
+                >
+                  <p
+                    className="text-base font-semibold cursor-pointer hover:underline"
+                    style={{ color: colors.primary.main }}
+                    onClick={() => {
+                      setSaleDetailOpen(false);
+                      navigate(`/tutor/courses/${selectedSale.courseId}`);
+                    }}
+                  >
+                    {selectedSale.courseName}
+                  </p>
+                  <p
+                    className="text-sm mt-0.5 cursor-pointer hover:underline"
+                    style={{ color: colors.text.secondary }}
+                    onClick={() => {
+                      setSaleDetailOpen(false);
+                      navigate(`/tutor/students/${selectedSale.studentId}`);
+                    }}
+                  >
+                    {selectedSale.studentName}
+                  </p>
+                  <p
+                    className="text-xs"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {selectedSale.studentEmail}
+                  </p>
+                </div>
+
+                {/* Schedule slots */}
+                {selectedSale.enrollmentSlots?.length > 0 && (
+                  <div>
+                    <p
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t("tutorDashboard.earnings.schedule")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSale.enrollmentSlots.map((slot, i) => {
+                        const dayLabel =
+                          typeof slot.weekday === "number"
+                            ? ([
+                                t("common.days.sun"),
+                                t("common.days.mon"),
+                                t("common.days.tue"),
+                                t("common.days.wed"),
+                                t("common.days.thu"),
+                                t("common.days.fri"),
+                                t("common.days.sat"),
+                              ][slot.weekday] ?? slot.weekday)
+                            : slot.weekday;
+                        const timeLabel =
+                          slot.startTime && slot.endTime
+                            ? `${slot.startTime}–${slot.endTime}`
+                            : slot.startTime || slot.time || "";
+                        return (
+                          <Chip
+                            key={i}
+                            size="sm"
+                            variant="flat"
+                            style={{
+                              backgroundColor: colors.background.primaryLight,
+                              color: colors.primary.main,
+                            }}
+                          >
+                            {dayLabel} {timeLabel}
+                          </Chip>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Summary grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.purchaseDate")}
+                    </p>
+                    <p
+                      className="text-sm font-medium mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {formatDate(selectedSale.purchaseDate)}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.status")}
+                    </p>
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      className="mt-1"
+                      style={{
+                        backgroundColor: `${getSaleStatusColor(selectedSale.status)}15`,
+                        color: getSaleStatusColor(selectedSale.status),
+                      }}
+                    >
+                      {t(
+                        `tutorDashboard.earnings.saleStatuses.${selectedSale.status}`,
+                        { defaultValue: selectedSale.status },
+                      )}
+                    </Chip>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.sessionProgress")}
+                    </p>
+                    <p
+                      className="text-sm font-medium mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {selectedSale.completedSessions}/
+                      {selectedSale.totalSessions}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.tutorEarning")}
+                    </p>
+                    <p
+                      className="text-base font-semibold mt-0.5"
+                      style={{ color: colors.state.success }}
+                    >
+                      {formatVND(selectedSale.tutorEarning)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Financial breakdown */}
+                <div>
+                  <p
+                    className="text-sm font-semibold mb-2"
+                    style={{ color: colors.text.primary }}
+                  >
+                    {t("tutorDashboard.earnings.breakdown")}
+                  </p>
+                  <div className="space-y-2">
+                    {[
+                      {
+                        label: t("tutorDashboard.earnings.subtotal"),
+                        value: formatVND(selectedSale.subTotal),
+                        color: colors.text.primary,
+                      },
+                      {
+                        label: t("tutorDashboard.earnings.fee"),
+                        value: `-${formatVND(selectedSale.appFee)}`,
+                        color: colors.state.error,
+                      },
+                      {
+                        label: t("tutorDashboard.earnings.tutorEarning"),
+                        value: formatVND(selectedSale.tutorEarning),
+                        color: colors.state.success,
+                        bold: true,
+                      },
+                    ].map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex items-center justify-between px-3 py-2 rounded-xl"
+                        style={{ backgroundColor: colors.background.gray }}
+                      >
+                        <span
+                          className="text-sm"
+                          style={{ color: colors.text.secondary }}
+                        >
+                          {row.label}
+                        </span>
+                        <span
+                          className={row.bold ? "font-semibold" : ""}
+                          style={{ color: row.color }}
+                        >
+                          {row.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

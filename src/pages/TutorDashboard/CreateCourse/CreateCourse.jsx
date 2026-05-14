@@ -1,5 +1,30 @@
 ﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import {
+  AddCircle,
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  AltArrowUp,
+  BookBookmark,
+  CheckCircle,
+  CloseSquare,
+  Diskette,
+  Eye,
+  File,
+  Gallery,
+  HeadphonesRound,
+  History,
+  Magnifer,
+  Pen,
+  Restart,
+  Plain,
+  SquareAltArrowRight,
+  TagPrice,
+  TrashBinMinimalistic,
+  Videocamera,
+  VolumeLoud,
+} from "@solar-icons/react";
+import {
   Input,
   Button,
   Textarea,
@@ -19,37 +44,14 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
+import { Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Plus,
-  Trash,
-  Image as ImageIcon,
-  VideoCamera,
-  CheckCircle,
-  MagnifyingGlass,
-  ArrowRight,
-  PaperPlaneTilt,
-  File as FileIcon,
-  ClockCounterClockwise,
-  ArrowCounterClockwise,
-  CaretUp,
-  CaretDown,
-  PencilSimple,
-  FloppyDisk,
-  X,
-  Eye,
-  ArrowSquareOut,
-  SpeakerHigh,
-  Ear,
-  BookOpenUser,
-  Tag,
-} from "@phosphor-icons/react";
+
 import { coursesApi } from "../../../api";
 import { selectUser } from "../../../store";
 
@@ -66,25 +68,29 @@ const getSkillStyle = (name = "") => {
   const n = name.toLowerCase();
   if (n.includes("speak"))
     return {
-      Icon: SpeakerHigh,
+      Icon: VolumeLoud,
       color: "#F97316",
       iconBg: "rgba(249,115,22,0.15)",
     };
   if (n.includes("listen"))
-    return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+    return {
+      Icon: HeadphonesRound,
+      color: "#06B6D4",
+      iconBg: "rgba(6,182,212,0.15)",
+    };
   if (n.includes("read"))
     return {
-      Icon: BookOpenUser,
+      Icon: BookBookmark,
       color: "#10B981",
       iconBg: "rgba(16,185,129,0.15)",
     };
   if (n.includes("writ"))
     return {
-      Icon: PencilSimple,
+      Icon: Pen,
       color: "#3B82F6",
       iconBg: "rgba(59,130,246,0.15)",
     };
-  return { Icon: Tag, color: "#6B7280", iconBg: "rgba(107,114,128,0.15)" };
+  return { Icon: TagPrice, color: "#6B7280", iconBg: "rgba(107,114,128,0.15)" };
 };
 
 const LEVELS = [
@@ -2255,7 +2261,7 @@ const CreateCourse = () => {
               }}
             >
               {step > s.num ? (
-                <CheckCircle weight="bold" className="w-5 h-5" />
+                <Check weight="BoldDuotone" className="w-5 h-5" />
               ) : (
                 s.num
               )}
@@ -2315,7 +2321,8 @@ const CreateCourse = () => {
           value={searchValue}
           onValueChange={onSearchChange}
           startContent={
-            <MagnifyingGlass
+            <Magnifer
+              weight="BoldDuotone"
               className="w-4 h-4"
               style={{ color: colors.text.tertiary }}
             />
@@ -2379,7 +2386,7 @@ const CreateCourse = () => {
                       title={t("tutorDashboard.createCourse.viewDetail")}
                       className="shrink-0"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Eye weight="BoldDuotone" className="w-4 h-4" />
                     </Button>
                   )}
                 </div>
@@ -2429,7 +2436,9 @@ const CreateCourse = () => {
       >
         <Button
           variant="light"
-          startContent={<ArrowLeft className="w-5 h-5" />}
+          startContent={
+            <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+          }
           onPress={() => navigate("/tutor/my-courses")}
           className="mb-4"
           style={{ color: colors.text.secondary }}
@@ -2738,7 +2747,7 @@ const CreateCourse = () => {
                               >
                                 <Icon
                                   size={18}
-                                  weight="duotone"
+                                  weight="BoldDuotone"
                                   style={{ color }}
                                 />
                               </div>
@@ -2753,9 +2762,9 @@ const CreateCourse = () => {
                                 {cat.name}
                               </span>
                               {isSelected && (
-                                <CheckCircle
+                                <Check
                                   size={16}
-                                  weight="fill"
+                                  weight="BoldDuotone"
                                   style={{
                                     color,
                                     position: "absolute",
@@ -2863,7 +2872,8 @@ const CreateCourse = () => {
                   className="flex items-center gap-3 p-3 rounded-xl border-2 border-dashed cursor-pointer"
                   style={{ borderColor: colors.border.light }}
                 >
-                  <ImageIcon
+                  <Gallery
+                    weight="BoldDuotone"
                     className="w-6 h-6"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -2902,7 +2912,10 @@ const CreateCourse = () => {
                       className="absolute top-1 right-1 min-w-6 w-6 h-6"
                       onPress={() => setThumbnailFile(null)}
                     >
-                      <Trash className="w-3 h-3" />
+                      <TrashBinMinimalistic
+                        weight="BoldDuotone"
+                        className="w-3 h-3"
+                      />
                     </Button>
                   </div>
                 ) : existingThumbnailUrl ? (
@@ -2920,7 +2933,10 @@ const CreateCourse = () => {
                       className="absolute top-1 right-1 min-w-6 w-6 h-6"
                       onPress={() => setExistingThumbnailUrl(null)}
                     >
-                      <Trash className="w-3 h-3" />
+                      <TrashBinMinimalistic
+                        weight="BoldDuotone"
+                        className="w-3 h-3"
+                      />
                     </Button>
                   </div>
                 ) : null}
@@ -2936,7 +2952,8 @@ const CreateCourse = () => {
                   className="flex items-center gap-3 p-3 rounded-xl border-2 border-dashed cursor-pointer"
                   style={{ borderColor: colors.border.light }}
                 >
-                  <VideoCamera
+                  <Videocamera
+                    weight="BoldDuotone"
                     className="w-6 h-6"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -2975,7 +2992,10 @@ const CreateCourse = () => {
                       className="absolute top-1 right-1 min-w-6 w-6 h-6"
                       onPress={() => setDemoVideoFile(null)}
                     >
-                      <Trash className="w-3 h-3" />
+                      <TrashBinMinimalistic
+                        weight="BoldDuotone"
+                        className="w-3 h-3"
+                      />
                     </Button>
                   </div>
                 ) : existingDemoVideoUrl ? (
@@ -2993,7 +3013,10 @@ const CreateCourse = () => {
                       className="absolute top-1 right-1 min-w-6 w-6 h-6"
                       onPress={() => setExistingDemoVideoUrl(null)}
                     >
-                      <Trash className="w-3 h-3" />
+                      <TrashBinMinimalistic
+                        weight="BoldDuotone"
+                        className="w-3 h-3"
+                      />
                     </Button>
                   </div>
                 ) : null}
@@ -3013,7 +3036,9 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               endContent={
-                !loading && <ArrowRight weight="bold" className="w-5 h-5" />
+                !loading && (
+                  <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                )
               }
             >
               {loading
@@ -3075,7 +3100,7 @@ const CreateCourse = () => {
                               onPress={() => startEditCreatedModule(mod.id)}
                               title={t("tutorDashboard.createCourse.editItem")}
                             >
-                              <PencilSimple className="w-4 h-4" />
+                              <Pen weight="BoldDuotone" className="w-4 h-4" />
                             </Button>
                           )}
                           {isEditingThis && (
@@ -3085,7 +3110,12 @@ const CreateCourse = () => {
                                 variant="flat"
                                 color="danger"
                                 onPress={cancelEditCreatedModule}
-                                startContent={<X className="w-4 h-4" />}
+                                startContent={
+                                  <CloseSquare
+                                    weight="BoldDuotone"
+                                    className="w-4 h-4"
+                                  />
+                                }
                               >
                                 {t("tutorDashboard.createCourse.cancel")}
                               </Button>
@@ -3096,7 +3126,10 @@ const CreateCourse = () => {
                                 isLoading={savingModule}
                                 startContent={
                                   !savingModule && (
-                                    <FloppyDisk className="w-4 h-4" />
+                                    <Diskette
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   )
                                 }
                               >
@@ -3113,7 +3146,7 @@ const CreateCourse = () => {
                               "tutorDashboard.createCourse.versionHistory.title",
                             )}
                           >
-                            <ClockCounterClockwise className="w-4 h-4" />
+                            <History weight="BoldDuotone" className="w-4 h-4" />
                           </Button>
                           <Button
                             isIconOnly
@@ -3128,7 +3161,10 @@ const CreateCourse = () => {
                               })
                             }
                           >
-                            <Trash className="w-4 h-4" />
+                            <TrashBinMinimalistic
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
                           </Button>
                         </div>
                       </div>
@@ -3254,7 +3290,10 @@ const CreateCourse = () => {
                         setDeleteConfirm({ type: "module", index })
                       }
                     >
-                      <Trash className="w-4 h-4" />
+                      <TrashBinMinimalistic
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                      />
                     </Button>
                   )}
                 </div>
@@ -3305,7 +3344,9 @@ const CreateCourse = () => {
 
           <Button
             variant="flat"
-            startContent={<Plus weight="bold" className="w-5 h-5" />}
+            startContent={
+              <AddCircle weight="BoldDuotone" className="w-5 h-5" />
+            }
             onPress={addModule}
             className="w-full"
             style={{
@@ -3435,7 +3476,10 @@ const CreateCourse = () => {
                             onPress={() => moveModuleOrder(index, -1)}
                             className="w-6 h-6 min-w-6"
                           >
-                            <CaretUp weight="bold" className="w-3.5 h-3.5" />
+                            <AltArrowUp
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
                           </Button>
                           <Button
                             isIconOnly
@@ -3445,7 +3489,10 @@ const CreateCourse = () => {
                             onPress={() => moveModuleOrder(index, 1)}
                             className="w-6 h-6 min-w-6"
                           >
-                            <CaretDown weight="bold" className="w-3.5 h-3.5" />
+                            <AltArrowDown
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
                           </Button>
                         </div>
                       </div>
@@ -3467,7 +3514,9 @@ const CreateCourse = () => {
                 isLoading={savingNewModules}
                 isDisabled={savingNewModules}
                 startContent={
-                  !savingNewModules && <FloppyDisk className="w-5 h-5" />
+                  !savingNewModules && (
+                    <Diskette weight="BoldDuotone" className="w-5 h-5" />
+                  )
                 }
               >
                 {t("tutorDashboard.createCourse.saveNewModules")}
@@ -3480,7 +3529,9 @@ const CreateCourse = () => {
               variant="flat"
               size="lg"
               onPress={() => goBackToStep(1)}
-              startContent={<ArrowLeft className="w-5 h-5" />}
+              startContent={
+                <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+              }
               style={{ color: colors.text.secondary }}
             >
               {t("tutorDashboard.createCourse.back")}
@@ -3501,7 +3552,9 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               endContent={
-                !loading && <ArrowRight weight="bold" className="w-5 h-5" />
+                !loading && (
+                  <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                )
               }
             >
               {loading
@@ -3624,7 +3677,10 @@ const CreateCourse = () => {
                                       "tutorDashboard.createCourse.editItem",
                                     )}
                                   >
-                                    <PencilSimple className="w-4 h-4" />
+                                    <Pen
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   </Button>
                                 )}
                                 {isEditingSess && (
@@ -3634,7 +3690,12 @@ const CreateCourse = () => {
                                       variant="flat"
                                       color="danger"
                                       onPress={cancelEditCreatedSession}
-                                      startContent={<X className="w-4 h-4" />}
+                                      startContent={
+                                        <CloseSquare
+                                          weight="BoldDuotone"
+                                          className="w-4 h-4"
+                                        />
+                                      }
                                     >
                                       {t("tutorDashboard.createCourse.cancel")}
                                     </Button>
@@ -3650,7 +3711,10 @@ const CreateCourse = () => {
                                       isLoading={savingSession}
                                       startContent={
                                         !savingSession && (
-                                          <FloppyDisk className="w-4 h-4" />
+                                          <Diskette
+                                            weight="BoldDuotone"
+                                            className="w-4 h-4"
+                                          />
                                         )
                                       }
                                     >
@@ -3671,7 +3735,10 @@ const CreateCourse = () => {
                                     "tutorDashboard.createCourse.versionHistory.title",
                                   )}
                                 >
-                                  <ClockCounterClockwise className="w-4 h-4" />
+                                  <History
+                                    weight="BoldDuotone"
+                                    className="w-4 h-4"
+                                  />
                                 </Button>
                                 <Button
                                   isIconOnly
@@ -3687,7 +3754,10 @@ const CreateCourse = () => {
                                     })
                                   }
                                 >
-                                  <Trash className="w-4 h-4" />
+                                  <TrashBinMinimalistic
+                                    weight="BoldDuotone"
+                                    className="w-4 h-4"
+                                  />
                                 </Button>
                               </div>
                             </div>
@@ -3836,7 +3906,10 @@ const CreateCourse = () => {
                                 })
                               }
                             >
-                              <Trash className="w-4 h-4" />
+                              <TrashBinMinimalistic
+                                weight="BoldDuotone"
+                                className="w-4 h-4"
+                              />
                             </Button>
                           </div>
                           <Input
@@ -3908,7 +3981,9 @@ const CreateCourse = () => {
 
                   <Button
                     variant="flat"
-                    startContent={<Plus weight="bold" className="w-5 h-5" />}
+                    startContent={
+                      <AddCircle weight="BoldDuotone" className="w-5 h-5" />
+                    }
                     onPress={() => addSession(activeModuleForSessions)}
                     className="w-full"
                     style={{
@@ -4066,8 +4141,8 @@ const CreateCourse = () => {
                                       }
                                       className="w-6 h-6 min-w-6"
                                     >
-                                      <CaretUp
-                                        weight="bold"
+                                      <AltArrowUp
+                                        weight="BoldDuotone"
                                         className="w-3.5 h-3.5"
                                       />
                                     </Button>
@@ -4093,8 +4168,8 @@ const CreateCourse = () => {
                                       }
                                       className="w-6 h-6 min-w-6"
                                     >
-                                      <CaretDown
-                                        weight="bold"
+                                      <AltArrowDown
+                                        weight="BoldDuotone"
                                         className="w-3.5 h-3.5"
                                       />
                                     </Button>
@@ -4122,7 +4197,10 @@ const CreateCourse = () => {
                         isDisabled={savingNewSessions}
                         startContent={
                           !savingNewSessions && (
-                            <FloppyDisk className="w-5 h-5" />
+                            <Diskette
+                              weight="BoldDuotone"
+                              className="w-5 h-5"
+                            />
                           )
                         }
                       >
@@ -4140,7 +4218,9 @@ const CreateCourse = () => {
               variant="flat"
               size="lg"
               onPress={() => goBackToStep(2)}
-              startContent={<ArrowLeft className="w-5 h-5" />}
+              startContent={
+                <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+              }
               style={{ color: colors.text.secondary }}
             >
               {t("tutorDashboard.createCourse.back")}
@@ -4156,7 +4236,9 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               endContent={
-                !loading && <ArrowRight weight="bold" className="w-5 h-5" />
+                !loading && (
+                  <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                )
               }
             >
               {loading
@@ -4332,7 +4414,10 @@ const CreateCourse = () => {
                                       })
                                     }
                                   >
-                                    <Trash className="w-4 h-4" />
+                                    <TrashBinMinimalistic
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   </Button>
                                 )}
                                 {isEditingRes && (
@@ -4342,7 +4427,12 @@ const CreateCourse = () => {
                                       variant="flat"
                                       color="danger"
                                       onPress={cancelEditResource}
-                                      startContent={<X className="w-4 h-4" />}
+                                      startContent={
+                                        <CloseSquare
+                                          weight="BoldDuotone"
+                                          className="w-4 h-4"
+                                        />
+                                      }
                                     >
                                       {t("tutorDashboard.createCourse.cancel")}
                                     </Button>
@@ -4358,7 +4448,10 @@ const CreateCourse = () => {
                                       isLoading={savingResource}
                                       startContent={
                                         !savingResource && (
-                                          <FloppyDisk className="w-4 h-4" />
+                                          <Diskette
+                                            weight="BoldDuotone"
+                                            className="w-4 h-4"
+                                          />
                                         )
                                       }
                                     >
@@ -4381,7 +4474,10 @@ const CreateCourse = () => {
                                       )
                                     }
                                   >
-                                    <Trash className="w-4 h-4" />
+                                    <TrashBinMinimalistic
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   </Button>
                                 )}
                               </div>
@@ -4456,7 +4552,8 @@ const CreateCourse = () => {
                                 className={`flex items-center gap-3 p-3 rounded-xl border-2 border-dashed ${isLocked ? "cursor-default opacity-70" : "cursor-pointer"}`}
                                 style={{ borderColor: colors.border.light }}
                               >
-                                <FileIcon
+                                <File
+                                  weight="BoldDuotone"
                                   className="w-5 h-5"
                                   style={{ color: colors.text.tertiary }}
                                 />
@@ -4484,7 +4581,8 @@ const CreateCourse = () => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="flex-shrink-0"
                                   >
-                                    <ArrowSquareOut
+                                    <SquareAltArrowRight
+                                      weight="BoldDuotone"
                                       size={16}
                                       style={{ color: colors.primary.main }}
                                     />
@@ -4514,7 +4612,9 @@ const CreateCourse = () => {
 
                   <Button
                     variant="flat"
-                    startContent={<Plus weight="bold" className="w-5 h-5" />}
+                    startContent={
+                      <AddCircle weight="BoldDuotone" className="w-5 h-5" />
+                    }
                     onPress={() => addResource(activeSessionForResources)}
                     className="w-full"
                     style={{
@@ -4543,7 +4643,10 @@ const CreateCourse = () => {
                         isDisabled={savingNewResources}
                         startContent={
                           !savingNewResources && (
-                            <FloppyDisk className="w-5 h-5" />
+                            <Diskette
+                              weight="BoldDuotone"
+                              className="w-5 h-5"
+                            />
                           )
                         }
                       >
@@ -4561,7 +4664,9 @@ const CreateCourse = () => {
               variant="flat"
               size="lg"
               onPress={() => goBackToStep(3)}
-              startContent={<ArrowLeft className="w-5 h-5" />}
+              startContent={
+                <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+              }
               style={{ color: colors.text.secondary }}
             >
               {t("tutorDashboard.createCourse.back")}
@@ -4577,7 +4682,9 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               endContent={
-                !loading && <ArrowRight weight="bold" className="w-5 h-5" />
+                !loading && (
+                  <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                )
               }
             >
               {loading
@@ -4761,7 +4868,10 @@ const CreateCourse = () => {
                                       className="text-xs flex items-center gap-1"
                                       style={{ color: colors.text.secondary }}
                                     >
-                                      <FileIcon className="w-3 h-3" />
+                                      <File
+                                        weight="BoldDuotone"
+                                        className="w-3 h-3"
+                                      />
                                       {r.title} ({r.resourceType})
                                     </p>
                                   ))}
@@ -4784,7 +4894,9 @@ const CreateCourse = () => {
               variant="flat"
               size="lg"
               onPress={() => goBackToStep(4)}
-              startContent={<ArrowLeft className="w-5 h-5" />}
+              startContent={
+                <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+              }
               style={{ color: colors.text.secondary }}
             >
               {t("tutorDashboard.createCourse.back")}
@@ -4799,7 +4911,9 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               startContent={
-                !loading && <PaperPlaneTilt weight="bold" className="w-5 h-5" />
+                !loading && (
+                  <Plain weight="BoldDuotone" className="w-5 h-5" />
+                )
               }
             >
               {loading
@@ -4822,7 +4936,7 @@ const CreateCourse = () => {
             <>
               <ModalHeader className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <ClockCounterClockwise className="w-5 h-5" />
+                  <History weight="BoldDuotone" className="w-5 h-5" />
                   <span>
                     {t("tutorDashboard.createCourse.versionHistory.title")}
                   </span>
@@ -4959,7 +5073,10 @@ const CreateCourse = () => {
                                       size="sm"
                                       variant="flat"
                                       startContent={
-                                        <ArrowCounterClockwise className="w-4 h-4" />
+                                        <Restart
+                                          weight="BoldDuotone"
+                                          className="w-4 h-4"
+                                        />
                                       }
                                       onPress={() => {
                                         if (historyType === "module") {
@@ -5045,7 +5162,7 @@ const CreateCourse = () => {
                   }}
                   startContent={
                     !loading && (
-                      <PaperPlaneTilt weight="bold" className="w-4 h-4" />
+                      <Plain weight="BoldDuotone" className="w-4 h-4" />
                     )
                   }
                 >
@@ -5181,7 +5298,7 @@ const CreateCourse = () => {
                           className="flex items-center gap-1.5 text-sm"
                           style={{ color: colors.primary.main }}
                         >
-                          <ArrowSquareOut size={16} />
+                          <SquareAltArrowRight weight="BoldDuotone" size={16} />
                           <span className="break-all">
                             {normalizeResourceUrl(resourceDetailData.url)}
                           </span>

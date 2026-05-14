@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AltArrowDown, BookBookmark, Calendar, Dollar, Export, GraphDown, GraphUp, UsersGroupRounded } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -13,17 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { motion } from "framer-motion";
-import {
-  ChartLine,
-  Users,
-  BookOpen,
-  CurrencyDollar,
-  TrendUp,
-  TrendDown,
-  CalendarBlank,
-  CaretDown,
-  Export,
-} from "@phosphor-icons/react";
+
 
 const AnalyticsReports = () => {
   const { t } = useTranslation();
@@ -33,7 +24,7 @@ const AnalyticsReports = () => {
 
   const stats = [
     {
-      icon: Users,
+      icon: UsersGroupRounded,
       label: t("adminDashboard.analytics.stats.newStudents"),
       value: "1,247",
       change: "+12.5%",
@@ -42,7 +33,7 @@ const AnalyticsReports = () => {
       bg: colors.background.primaryLight,
     },
     {
-      icon: BookOpen,
+      icon: BookBookmark,
       label: t("adminDashboard.analytics.stats.courseEnrollments"),
       value: "3,456",
       change: "+8.2%",
@@ -51,7 +42,7 @@ const AnalyticsReports = () => {
       bg: `${colors.state.success}20`,
     },
     {
-      icon: CurrencyDollar,
+      icon: Dollar,
       label: t("adminDashboard.analytics.stats.revenue"),
       value: "$48,560",
       change: "+22.4%",
@@ -60,7 +51,7 @@ const AnalyticsReports = () => {
       bg: `${colors.state.warning}20`,
     },
     {
-      icon: ChartLine,
+      icon: GraphUp,
       label: t("adminDashboard.analytics.stats.completionRate"),
       value: "78.5%",
       change: "-2.1%",
@@ -134,8 +125,8 @@ const AnalyticsReports = () => {
             <DropdownTrigger>
               <Button
                 variant="flat"
-                startContent={<CalendarBlank className="w-4 h-4" />}
-                endContent={<CaretDown className="w-4 h-4" />}
+                startContent={<Calendar weight="BoldDuotone" className="w-4 h-4" />}
+                endContent={<AltArrowDown weight="BoldDuotone" className="w-4 h-4" />}
               >
                 {selectedPeriod === "week"
                   ? t("adminDashboard.analytics.thisWeek")
@@ -163,7 +154,7 @@ const AnalyticsReports = () => {
           </Dropdown>
           <Button
             variant="flat"
-            startContent={<Export className="w-4 h-4" />}
+            startContent={<Export weight="BoldDuotone" className="w-4 h-4" />}
             style={{ color: colors.text.primary }}
           >
             {t("adminDashboard.analytics.export")}
@@ -193,7 +184,7 @@ const AnalyticsReports = () => {
                   >
                     <stat.icon
                       className="w-6 h-6"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -203,9 +194,9 @@ const AnalyticsReports = () => {
                     }`}
                   >
                     {stat.trend === "up" ? (
-                      <TrendUp className="w-4 h-4" />
+                      <GraphUp weight="BoldDuotone" className="w-4 h-4" />
                     ) : (
-                      <TrendDown className="w-4 h-4" />
+                      <GraphDown weight="BoldDuotone" className="w-4 h-4" />
                     )}
                     {stat.change}
                   </div>

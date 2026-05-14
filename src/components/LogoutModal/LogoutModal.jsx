@@ -7,12 +7,13 @@ import {
   Button,
   Image,
 } from "@heroui/react";
+import { CloseCircle, Logout, UndoLeftRound } from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { SignOut, X } from "@phosphor-icons/react";
+
 import { logout } from "../../store";
 import ExitImage from "../../assets/illustrations/exit.avif";
 
@@ -83,8 +84,9 @@ const LogoutModal = ({ isOpen, onClose }) => {
               <Button
                 variant="flat"
                 onPress={onCloseModal}
-                startContent={<X className="w-5 h-5" />}
-                style={{ color: colors.text.primary }}
+                startContent={
+                  <UndoLeftRound weight="BoldDuotone" className="w-5 h-5" />
+                }
                 className="flex-1"
               >
                 {t("logoutModal.cancel")}
@@ -92,7 +94,9 @@ const LogoutModal = ({ isOpen, onClose }) => {
               <Button
                 color="danger"
                 onPress={handleLogout}
-                startContent={<SignOut className="w-5 h-5" />}
+                startContent={
+                  <Logout weight="BoldDuotone" className="w-5 h-5" />
+                }
                 className="flex-1"
               >
                 {t("logoutModal.confirm")}

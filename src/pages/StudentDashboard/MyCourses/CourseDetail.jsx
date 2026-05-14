@@ -1,4 +1,39 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import {
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  AltArrowUp,
+  BookBookmark,
+  CalendarMark,
+  ChatDots,
+  CheckCircle,
+  CircleBottomUp,
+  ClockCircle,
+  DangerTriangle,
+  Diploma,
+  DocumentText,
+  File,
+  FolderWithFiles,
+  Lightning,
+  LinkMinimalistic,
+  Paperclip,
+  Pen,
+  PenNewRound,
+  PlayCircle,
+  Record,
+  SquareAltArrowRight,
+  Star,
+  Stopwatch,
+  Target,
+  TrashBinMinimalistic,
+  UsersGroupRounded,
+  Videocamera,
+  Play,
+  SquareBottomUp,
+  PenNewSquare,
+} from "@solar-icons/react";
+import { Check } from "lucide-react";
 import { useNotifications } from "../../../contexts/NotificationContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -33,37 +68,7 @@ import LessonSummaryModal from "../../../components/LessonSummaryModal/LessonSum
 import LessonQuizModal from "../../../components/LessonQuizModal/LessonQuizModal";
 import StudentHomeworkDetailModal from "../../../components/StudentHomeworkDetailModal/StudentHomeworkDetailModal";
 import StudentHomeworkSubmitModal from "../../../components/StudentHomeworkSubmitModal/StudentHomeworkSubmitModal";
-import {
-  Star,
-  Clock,
-  Users,
-  BookOpen,
-  Check,
-  ArrowLeft,
-  CaretDown,
-  CaretUp,
-  Play,
-  Certificate,
-  FileText,
-  FilePdf,
-  VideoCamera,
-  Link as LinkIcon,
-  ArrowSquareOut,
-  CalendarDots,
-  ArrowRightIcon,
-  Exam,
-  PencilSimple,
-  Trash,
-  ChatTeardropText,
-  CheckCircle,
-  Circle,
-  Lightning,
-  ClockCountdown,
-  Paperclip,
-  NotePencil,
-  Target,
-  Warning,
-} from "@phosphor-icons/react";
+
 import {
   coursesApi,
   tutorApi,
@@ -89,15 +94,33 @@ const formatDuration = (timeStr) => {
 const getResourceIcon = (type) => {
   switch (type?.toLowerCase()) {
     case "pdf":
-      return <FilePdf size={14} weight="fill" style={{ color: "#EF4444" }} />;
+      return (
+        <File size={14} weight="BoldDuotone" style={{ color: "#EF4444" }} />
+      );
     case "video":
       return (
-        <VideoCamera size={14} weight="fill" style={{ color: "#8B5CF6" }} />
+        <Videocamera
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#8B5CF6" }}
+        />
       );
     case "link":
-      return <LinkIcon size={14} weight="fill" style={{ color: "#3B82F6" }} />;
+      return (
+        <LinkMinimalistic
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#3B82F6" }}
+        />
+      );
     default:
-      return <FileText size={14} weight="fill" style={{ color: "#6B7280" }} />;
+      return (
+        <DocumentText
+          size={14}
+          weight="BoldDuotone"
+          style={{ color: "#6B7280" }}
+        />
+      );
   }
 };
 
@@ -811,7 +834,7 @@ const StudentMyCourseDetail = () => {
         <Button
           color="primary"
           variant="flat"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/student/my-courses")}
         >
           {t("studentDashboard.myCourses.backToMyCourses")}
@@ -868,7 +891,7 @@ const StudentMyCourseDetail = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Play weight="fill" className="w-3.5 h-3.5" />
+            <Play weight="BoldDuotone" className="w-3.5 h-3.5" />
           </Button>
         </Tooltip>,
       );
@@ -897,7 +920,7 @@ const StudentMyCourseDetail = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <FileText weight="duotone" className="w-3.5 h-3.5" />
+            <DocumentText weight="BoldDuotone" className="w-3.5 h-3.5" />
           </Button>
         </Tooltip>,
       );
@@ -926,7 +949,7 @@ const StudentMyCourseDetail = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Exam weight="duotone" className="w-3.5 h-3.5" />
+            <Diploma weight="BoldDuotone" className="w-3.5 h-3.5" />
           </Button>
         </Tooltip>,
       );
@@ -954,7 +977,7 @@ const StudentMyCourseDetail = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <ArrowSquareOut weight="bold" className="w-3.5 h-3.5" />
+            <SquareBottomUp weight="BoldDuotone" className="w-4 h-4" />
           </Button>
         </Tooltip>,
       );
@@ -1016,7 +1039,8 @@ const StudentMyCourseDetail = () => {
               rel="noreferrer"
               title={t("courses.detail.resources.open")}
             >
-              <ArrowSquareOut
+              <SquareAltArrowRight
+                weight="BoldDuotone"
                 size={14}
                 style={{ color: colors.primary.main }}
               />
@@ -1038,7 +1062,7 @@ const StudentMyCourseDetail = () => {
       >
         <Button
           variant="light"
-          startContent={<ArrowLeft size={18} />}
+          startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
           onPress={() => navigate("/student/my-courses")}
           style={{ color: colors.text.secondary }}
         >
@@ -1117,7 +1141,7 @@ const StudentMyCourseDetail = () => {
                         <Star
                           key={i}
                           size={16}
-                          weight="fill"
+                          weight="BoldDuotone"
                           style={{
                             color:
                               i < Math.floor(course.ratingAverage || 0)
@@ -1145,7 +1169,7 @@ const StudentMyCourseDetail = () => {
                     className="text-sm flex items-center gap-1.5"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Users size={16} weight="duotone" />
+                    <UsersGroupRounded size={16} weight="BoldDuotone" />
                     {course.numberOfEnrollment?.toLocaleString() || 0}{" "}
                     {t("courses.detail.students")}
                   </span>
@@ -1220,13 +1244,13 @@ const StudentMyCourseDetail = () => {
                             >
                               {isLive ? (
                                 <Lightning
-                                  weight="fill"
+                                  weight="BoldDuotone"
                                   className="w-6 h-6"
                                   style={{ color: accent }}
                                 />
                               ) : (
-                                <ClockCountdown
-                                  weight="duotone"
+                                <Stopwatch
+                                  weight="BoldDuotone"
                                   className="w-6 h-6"
                                   style={{ color: accent }}
                                 />
@@ -1281,7 +1305,7 @@ const StudentMyCourseDetail = () => {
                                 className="flex items-center gap-2 text-sm mt-0.5 flex-wrap"
                                 style={{ color: colors.text.secondary }}
                               >
-                                <CalendarDots size={14} weight="duotone" />
+                                <CalendarMark size={14} weight="BoldDuotone" />
                                 <span>
                                   {formatRelativeDate(nextLesson.startTime)}
                                 </span>
@@ -1313,8 +1337,8 @@ const StudentMyCourseDetail = () => {
                                 <Button
                                   size="md"
                                   startContent={
-                                    <VideoCamera
-                                      weight="fill"
+                                    <Videocamera
+                                      weight="BoldDuotone"
                                       className="w-4 h-4"
                                     />
                                   }
@@ -1350,7 +1374,7 @@ const StudentMyCourseDetail = () => {
                         }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-6 h-6"
                           style={{ color: colors.state.success }}
                         />
@@ -1439,7 +1463,7 @@ const StudentMyCourseDetail = () => {
                       >
                         <Check
                           size={14}
-                          weight="bold"
+                          weight="BoldDuotone"
                           style={{ color: colors.primary.main }}
                         />
                       </div>
@@ -1543,15 +1567,15 @@ const StudentMyCourseDetail = () => {
                               </div>
                             </div>
                             {isExpanded ? (
-                              <CaretUp
+                              <AltArrowUp
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             ) : (
-                              <CaretDown
+                              <AltArrowDown
                                 size={18}
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             )}
@@ -1635,25 +1659,25 @@ const StudentMyCourseDetail = () => {
                                           >
                                             {state.key === "completed" ? (
                                               <CheckCircle
-                                                weight="fill"
+                                                weight="BoldDuotone"
                                                 className="w-5 h-5"
                                                 style={{ color: state.color }}
                                               />
                                             ) : state.key === "live" ? (
                                               <Lightning
-                                                weight="fill"
+                                                weight="BoldDuotone"
                                                 className="w-5 h-5"
                                                 style={{ color: state.color }}
                                               />
                                             ) : state.key === "upcoming" ? (
-                                              <ClockCountdown
-                                                weight="duotone"
+                                              <Stopwatch
+                                                weight="BoldDuotone"
                                                 className="w-5 h-5"
                                                 style={{ color: state.color }}
                                               />
                                             ) : (
-                                              <Circle
-                                                weight="regular"
+                                              <Record
+                                                weight="BoldDuotone"
                                                 className="w-5 h-5"
                                                 style={{
                                                   color: colors.text.tertiary,
@@ -1707,9 +1731,9 @@ const StudentMyCourseDetail = () => {
                                                 }}
                                               >
                                                 <div className="flex items-center gap-2 text-xs flex-wrap">
-                                                  <CalendarDots
+                                                  <CalendarMark
                                                     size={13}
-                                                    weight="duotone"
+                                                    weight="BoldDuotone"
                                                     style={{
                                                       color: state.color,
                                                     }}
@@ -1782,8 +1806,8 @@ const StudentMyCourseDetail = () => {
                                                       <Button
                                                         size="sm"
                                                         startContent={
-                                                          <VideoCamera
-                                                            weight="fill"
+                                                          <Videocamera
+                                                            weight="BoldDuotone"
                                                             className="w-3.5 h-3.5"
                                                           />
                                                         }
@@ -1857,9 +1881,9 @@ const StudentMyCourseDetail = () => {
                                                             .gray,
                                                       }}
                                                     >
-                                                      <CalendarDots
+                                                      <CalendarMark
                                                         size={12}
-                                                        weight="duotone"
+                                                        weight="BoldDuotone"
                                                         style={{
                                                           color:
                                                             colors.text
@@ -1907,9 +1931,9 @@ const StudentMyCourseDetail = () => {
                                                       key={i}
                                                       className="flex items-start gap-1.5"
                                                     >
-                                                      <ArrowRightIcon
+                                                      <AltArrowRight
                                                         size={11}
-                                                        weight="fill"
+                                                        weight="BoldDuotone"
                                                         className="flex-shrink-0 mt-0.5"
                                                         style={{
                                                           color:
@@ -1942,8 +1966,8 @@ const StudentMyCourseDetail = () => {
                                                     color: colors.text.tertiary,
                                                   }}
                                                 >
-                                                  <NotePencil
-                                                    weight="duotone"
+                                                  <PenNewSquare
+                                                    weight="BoldDuotone"
                                                     className="w-3.5 h-3.5"
                                                     style={{
                                                       color:
@@ -2005,8 +2029,8 @@ const StudentMyCourseDetail = () => {
                                                         openHwDetail(hw)
                                                       }
                                                     >
-                                                      <NotePencil
-                                                        weight="duotone"
+                                                      <PenNewSquare
+                                                        weight="BoldDuotone"
                                                         className="w-4 h-4 flex-shrink-0"
                                                         style={{
                                                           color: statusColor,
@@ -2038,8 +2062,8 @@ const StudentMyCourseDetail = () => {
                                                                 fontSize: "9px",
                                                               }}
                                                               startContent={
-                                                                <Warning
-                                                                  weight="fill"
+                                                                <DangerTriangle
+                                                                  weight="BoldDuotone"
                                                                   className="w-2.5 h-2.5 ml-0.5"
                                                                 />
                                                               }
@@ -2074,7 +2098,10 @@ const StudentMyCourseDetail = () => {
                                                         >
                                                           {hw.dueAt ? (
                                                             <span className="flex items-center gap-1">
-                                                              <Clock className="w-3 h-3" />
+                                                              <ClockCircle
+                                                                weight="BoldDuotone"
+                                                                className="w-3 h-3"
+                                                              />
                                                               {formatLessonDate(
                                                                 hw.dueAt,
                                                               )}
@@ -2087,7 +2114,10 @@ const StudentMyCourseDetail = () => {
                                                             </span>
                                                           )}
                                                           <span className="flex items-center gap-1">
-                                                            <Target className="w-3 h-3" />
+                                                            <Target
+                                                              weight="BoldDuotone"
+                                                              className="w-3 h-3"
+                                                            />
                                                             {t(
                                                               "studentDashboard.homework.maxScore",
                                                             )}
@@ -2124,7 +2154,8 @@ const StudentMyCourseDetail = () => {
                                                           )}
                                                         </span>
                                                       ) : null}
-                                                      <ArrowSquareOut
+                                                      <SquareAltArrowRight
+                                                        weight="BoldDuotone"
                                                         className="w-3.5 h-3.5 flex-shrink-0"
                                                         style={{
                                                           color:
@@ -2154,22 +2185,22 @@ const StudentMyCourseDetail = () => {
                                                     toggleResources(sessId)
                                                   }
                                                 >
-                                                  <FileText
+                                                  <FolderWithFiles
                                                     size={13}
-                                                    weight="fill"
+                                                    weight="BoldDuotone"
                                                   />
                                                   {t(
                                                     "courses.detail.resources.label",
                                                   )}
                                                   {isResOpen ? (
-                                                    <CaretUp
+                                                    <AltArrowUp
                                                       size={11}
-                                                      weight="bold"
+                                                      weight="BoldDuotone"
                                                     />
                                                   ) : (
-                                                    <CaretDown
+                                                    <AltArrowDown
                                                       size={11}
-                                                      weight="bold"
+                                                      weight="BoldDuotone"
                                                     />
                                                   )}
                                                 </button>
@@ -2252,7 +2283,7 @@ const StudentMyCourseDetail = () => {
                     <div className="flex items-center gap-1">
                       <Star
                         size={18}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{ color: "#f59e0b" }}
                       />
                       <span
@@ -2271,7 +2302,8 @@ const StudentMyCourseDetail = () => {
                     </div>
                     {tutorInfo.monthExperience > 0 && (
                       <div className="flex items-center gap-1">
-                        <Clock
+                        <ClockCircle
+                          weight="BoldDuotone"
                           size={18}
                           style={{ color: colors.primary.main }}
                         />
@@ -2326,7 +2358,7 @@ const StudentMyCourseDetail = () => {
                       }}
                     >
                       <Star
-                        weight="duotone"
+                        weight="BoldDuotone"
                         className="w-5 h-5 flex-shrink-0"
                         style={{ color: colors.state.warning }}
                       />
@@ -2356,7 +2388,7 @@ const StudentMyCourseDetail = () => {
                               <Star
                                 key={star}
                                 size={20}
-                                weight="fill"
+                                weight="BoldDuotone"
                                 style={{
                                   color:
                                     star <= existingReview.rating
@@ -2400,10 +2432,7 @@ const StudentMyCourseDetail = () => {
                           size="sm"
                           variant="flat"
                           startContent={
-                            <PencilSimple
-                              weight="bold"
-                              className="w-3.5 h-3.5"
-                            />
+                            <Pen weight="BoldDuotone" className="w-3.5 h-3.5" />
                           }
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
@@ -2417,7 +2446,10 @@ const StudentMyCourseDetail = () => {
                           size="sm"
                           variant="flat"
                           startContent={
-                            <Trash weight="bold" className="w-3.5 h-3.5" />
+                            <TrashBinMinimalistic
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
                           }
                           style={{
                             backgroundColor: `${colors.state.error}15`,
@@ -2450,7 +2482,7 @@ const StudentMyCourseDetail = () => {
                             >
                               <Star
                                 size={28}
-                                weight="fill"
+                                weight="BoldDuotone"
                                 style={{
                                   color:
                                     star <= (reviewHover || reviewRating)
@@ -2557,8 +2589,8 @@ const StudentMyCourseDetail = () => {
                   >
                     <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
                       <Play
+                        weight="BoldDuotone"
                         size={24}
-                        weight="fill"
                         style={{ color: colors.primary.main }}
                       />
                     </div>
@@ -2620,7 +2652,7 @@ const StudentMyCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock size={16} weight="duotone" />
+                      <ClockCircle size={16} weight="BoldDuotone" />
                       {t("courses.detail.totalDuration")}
                     </span>
                     <span
@@ -2635,7 +2667,7 @@ const StudentMyCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <BookOpen size={16} weight="duotone" />
+                      <BookBookmark size={16} weight="BoldDuotone" />
                       {t("courses.detail.level")}
                     </span>
                     <span
@@ -2651,7 +2683,7 @@ const StudentMyCourseDetail = () => {
                         className="flex items-center gap-2"
                         style={{ color: colors.text.secondary }}
                       >
-                        <Clock size={16} weight="duotone" />
+                        <ClockCircle size={16} weight="BoldDuotone" />
                         {t("courses.detail.timePerLesson")}
                       </span>
                       <span
@@ -2667,7 +2699,7 @@ const StudentMyCourseDetail = () => {
                       className="flex items-center gap-2"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Certificate size={16} weight="duotone" />
+                      <Diploma size={16} weight="BoldDuotone" />
                       {t("courses.detail.certificate")}
                     </span>
                     <span
@@ -2735,8 +2767,8 @@ const StudentMyCourseDetail = () => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <CalendarDots
-              weight="duotone"
+            <CalendarMark
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.primary.main }}
             />
@@ -2951,7 +2983,7 @@ const StudentMyCourseDetail = () => {
         onSubmit={handleSubmitRefundTicket}
       />
 
-      {/* No Bank Account Warning Modal */}
+      {/* No Bank Account DangerTriangle Modal */}
       <Modal
         isOpen={noBankModalOpen}
         onOpenChange={setNoBankModalOpen}
@@ -2964,8 +2996,8 @@ const StudentMyCourseDetail = () => {
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <Warning
-                  weight="duotone"
+                <DangerTriangle
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />

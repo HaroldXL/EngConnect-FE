@@ -1,4 +1,28 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  AddCircle,
+  AltArrowRight,
+  Calendar,
+  CheckCircle,
+  ClipboardAdd,
+  ClipboardList,
+  ClockCircle,
+  DangerTriangle,
+  DocumentText,
+  File,
+  Gallery,
+  Hourglass,
+  Magnifer,
+  MenuDots,
+  Pen,
+  Plain,
+  SquareAcademicCap,
+  SquareAltArrowRight,
+  SquareBottomUp,
+  Star,
+  Target,
+  TrashBinMinimalistic,
+} from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -29,30 +53,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../store";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import {
-  MagnifyingGlass,
-  Plus,
-  DotsThree,
-  PencilSimple,
-  Trash,
-  Clock,
-  CheckCircle,
-  ArrowSquareOut,
-  Star,
-  Warning,
-  PaperPlaneTilt,
-  FilePdf,
-  FileImage,
-  FileZip,
-  FileDoc,
-  File as FileIcon,
-  CaretRight,
-  GraduationCap,
-  Calendar,
-  Target,
-  Hourglass,
-  ClipboardText,
-} from "@phosphor-icons/react";
+
 import { lessonHomeworkApi, studentApi, coursesApi } from "../../../api";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
@@ -92,14 +93,16 @@ const getFileBaseName = (url) => {
 const getFileTypeIcon = (url, className, style) => {
   const name = getFileBaseName(url || "");
   if (IMAGE_EXT_RE.test(name))
-    return <FileImage weight="duotone" className={className} style={style} />;
+    return <Gallery weight="BoldDuotone" className={className} style={style} />;
   if (PDF_EXT_RE.test(name))
-    return <FilePdf weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
   if (DOC_EXT_RE.test(name))
-    return <FileDoc weight="duotone" className={className} style={style} />;
+    return (
+      <DocumentText weight="BoldDuotone" className={className} style={style} />
+    );
   if (ZIP_EXT_RE.test(name))
-    return <FileZip weight="duotone" className={className} style={style} />;
-  return <FileIcon weight="duotone" className={className} style={style} />;
+    return <File weight="BoldDuotone" className={className} style={style} />;
+  return <File weight="BoldDuotone" className={className} style={style} />;
 };
 
 const Homework = () => {
@@ -542,7 +545,7 @@ const Homework = () => {
             style={{ backgroundColor: `${accent}15` }}
           >
             <Icon
-              weight="duotone"
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: accent }}
             />
@@ -569,8 +572,8 @@ const Homework = () => {
             className="flex items-center gap-1 min-w-0"
           >
             {idx > 0 && (
-              <CaretRight
-                weight="bold"
+              <AltArrowRight
+                weight="BoldDuotone"
                 className="w-3 h-3 shrink-0 opacity-50"
               />
             )}
@@ -627,7 +630,8 @@ const Homework = () => {
             >
               {getFileBaseName(url)}
             </span>
-            <ArrowSquareOut
+            <SquareAltArrowRight
+              weight="BoldDuotone"
               className="w-4 h-4 shrink-0"
               style={{ color: colors.primary.main }}
             />
@@ -657,7 +661,8 @@ const Homework = () => {
             {t("tutorDashboard.homework.viewSubmission")}
           </p>
         </div>
-        <ArrowSquareOut
+        <SquareAltArrowRight
+          weight="BoldDuotone"
           className="w-4 h-4 shrink-0"
           style={{ color: colors.primary.main }}
         />
@@ -687,7 +692,9 @@ const Homework = () => {
           </p>
         </div>
         <Button
-          startContent={<Plus weight="bold" className="w-5 h-5" />}
+          startContent={
+            <ClipboardAdd weight="BoldDuotone" className="w-5 h-5" />
+          }
           style={{
             backgroundColor: colors.primary.main,
             color: colors.text.white,
@@ -706,7 +713,7 @@ const Homework = () => {
         className="grid grid-cols-2 md:grid-cols-4 gap-3"
       >
         <StatCard
-          icon={ClipboardText}
+          icon={ClipboardList}
           label={t("tutorDashboard.homework.stats.drafts")}
           value={stats.drafts}
           accent={colors.text.tertiary}
@@ -718,7 +725,7 @@ const Homework = () => {
           accent={colors.state.warning}
         />
         <StatCard
-          icon={PaperPlaneTilt}
+          icon={Plain}
           label={t("tutorDashboard.homework.stats.awaitingGrade")}
           value={stats.awaitingGrade}
           accent={colors.primary.main}
@@ -743,7 +750,8 @@ const Homework = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <MagnifyingGlass
+            <Magnifer
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />
@@ -866,7 +874,10 @@ const Homework = () => {
                       <Button
                         size="sm"
                         startContent={
-                          <PaperPlaneTilt weight="bold" className="w-4 h-4" />
+                          <Plain
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
                         }
                         isLoading={assigningId === hw.id}
                         onPress={() => handleAssign(hw)}
@@ -890,8 +901,8 @@ const Homework = () => {
                             rel="noreferrer"
                             size="sm"
                             startContent={
-                              <ArrowSquareOut
-                                weight="bold"
+                              <SquareBottomUp
+                                weight="BoldDuotone"
                                 className="w-4 h-4"
                               />
                             }
@@ -907,7 +918,7 @@ const Homework = () => {
                         <Button
                           size="sm"
                           startContent={
-                            <Star weight="bold" className="w-4 h-4" />
+                            <Star weight="BoldDuotone" className="w-4 h-4" />
                           }
                           onPress={() => openGrade(hw)}
                           style={{
@@ -944,8 +955,8 @@ const Homework = () => {
                                 color: colors.state.error,
                               }}
                               startContent={
-                                <Warning
-                                  weight="fill"
+                                <DangerTriangle
+                                  weight="BoldDuotone"
                                   className="w-3 h-3 ml-1"
                                 />
                               }
@@ -980,7 +991,10 @@ const Homework = () => {
                           className="flex items-center gap-1.5"
                           style={{ color: colors.text.tertiary }}
                         >
-                          <Clock className="w-3.5 h-3.5" />
+                          <ClockCircle
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
                           <span>
                             {t("tutorDashboard.homework.dueDate")}:{" "}
                             <strong style={{ color: colors.text.primary }}>
@@ -993,7 +1007,10 @@ const Homework = () => {
                           className="flex items-center gap-1.5"
                           style={{ color: colors.text.tertiary }}
                         >
-                          <Target className="w-3.5 h-3.5" />
+                          <Target
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
                           <span>
                             {t("tutorDashboard.homework.maxScore")}:{" "}
                             <strong style={{ color: colors.text.primary }}>
@@ -1012,7 +1029,7 @@ const Homework = () => {
                           }}
                         >
                           <Star
-                            weight="fill"
+                            weight="BoldDuotone"
                             className="w-4 h-4 shrink-0"
                             style={{ color: colors.state.warning }}
                           />
@@ -1049,13 +1066,18 @@ const Homework = () => {
                       <Dropdown>
                         <DropdownTrigger>
                           <Button isIconOnly variant="light" size="sm">
-                            <DotsThree weight="bold" className="w-5 h-5" />
+                            <MenuDots
+                              weight="BoldDuotone"
+                              className="w-5 h-5"
+                            />
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu>
                           <DropdownItem
                             key="edit"
-                            startContent={<PencilSimple className="w-4 h-4" />}
+                            startContent={
+                              <Pen weight="BoldDuotone" className="w-4 h-4" />
+                            }
                             onPress={() => openEdit(hw)}
                           >
                             {t("tutorDashboard.homework.edit")}
@@ -1064,7 +1086,12 @@ const Homework = () => {
                             key="delete"
                             className="text-danger"
                             color="danger"
-                            startContent={<Trash className="w-4 h-4" />}
+                            startContent={
+                              <TrashBinMinimalistic
+                                weight="BoldDuotone"
+                                className="w-4 h-4"
+                              />
+                            }
                             onPress={() => openDelete(hw)}
                           >
                             {t("tutorDashboard.homework.delete")}
@@ -1411,7 +1438,8 @@ const Homework = () => {
                       }}
                     />
                   </div>
-                  <ArrowSquareOut
+                  <SquareAltArrowRight
+                    weight="BoldDuotone"
                     className="w-4 h-4 shrink-0"
                     style={{ color: colors.primary.main }}
                   />
@@ -1504,7 +1532,7 @@ const Homework = () => {
               onPress={handleGrade}
               isLoading={grading}
               startContent={
-                !grading && <Star weight="bold" className="w-4 h-4" />
+                !grading && <Star weight="BoldDuotone" className="w-4 h-4" />
               }
               style={{
                 backgroundColor: colors.primary.main,
@@ -1589,7 +1617,8 @@ const Homework = () => {
                         {`${selectedHw.student.firstName || ""} ${selectedHw.student.lastName || ""}`.trim()}
                       </p>
                     </div>
-                    <ArrowSquareOut
+                    <SquareAltArrowRight
+                      weight="BoldDuotone"
                       className="w-4 h-4 shrink-0"
                       style={{ color: colors.primary.main }}
                     />
@@ -1620,6 +1649,7 @@ const Homework = () => {
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <Calendar
+                        weight="BoldDuotone"
                         className="w-3.5 h-3.5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -1644,6 +1674,7 @@ const Homework = () => {
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <Target
+                        weight="BoldDuotone"
                         className="w-3.5 h-3.5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -1730,7 +1761,8 @@ const Homework = () => {
                           {getFileBaseName(selectedHw.resourceUrl)}
                         </p>
                       </div>
-                      <ArrowSquareOut
+                      <SquareAltArrowRight
+                        weight="BoldDuotone"
                         className="w-4 h-4 shrink-0"
                         style={{ color: colors.primary.main }}
                       />
@@ -1775,8 +1807,8 @@ const Homework = () => {
                             backgroundColor: `${colors.state.success}25`,
                           }}
                         >
-                          <GraduationCap
-                            weight="fill"
+                          <SquareAcademicCap
+                            weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.state.success }}
                           />
@@ -1840,7 +1872,7 @@ const Homework = () => {
             {selectedHw?.status === "NotStarted" && (
               <Button
                 startContent={
-                  <PaperPlaneTilt weight="bold" className="w-4 h-4" />
+                  <Plain weight="BoldDuotone" className="w-4 h-4" />
                 }
                 onPress={() => {
                   detailDisclosure.onClose();
@@ -1856,7 +1888,7 @@ const Homework = () => {
             )}
             {selectedHw?.status === "Submitted" && (
               <Button
-                startContent={<Star weight="bold" className="w-4 h-4" />}
+                startContent={<Star weight="BoldDuotone" className="w-4 h-4" />}
                 onPress={() => {
                   detailDisclosure.onClose();
                   openGrade(selectedHw);
@@ -1890,8 +1922,8 @@ const Homework = () => {
                 className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                 style={{ backgroundColor: `${colors.state.error}20` }}
               >
-                <Warning
-                  weight="fill"
+                <DangerTriangle
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.error }}
                 />

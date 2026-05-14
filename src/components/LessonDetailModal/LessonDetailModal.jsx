@@ -1,4 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
+import {
+  AltArrowRight,
+  CalendarMark,
+  CircleBottomUp,
+  ClockCircle,
+  DangerTriangle,
+  Diploma,
+  DocumentText,
+  Dollar,
+  Eye,
+  LinkMinimalistic,
+  MenuDots,
+  Play,
+  PlayCircle,
+  Record,
+  RecordAudioCircle,
+  Restart,
+  Videocamera,
+} from "@solar-icons/react";
 import { useSelector } from "react-redux";
 import {
   Modal,
@@ -14,23 +33,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import {
-  CalendarDots,
-  Clock,
-  VideoCamera,
-  Circle,
-  Record,
-  Play,
-  FileText,
-  LinkSimple,
-  SpinnerGap,
-  Exam,
-  ArrowRight,
-  ArrowCounterClockwise,
-  Warning,
-  Eye,
-  CurrencyDollar,
-} from "@phosphor-icons/react";
+
 import { coursesApi, rescheduleApi, studentApi } from "../../api";
 import { selectUser } from "../../store";
 import VideoModal from "../VideoModal/VideoModal";
@@ -209,9 +212,7 @@ const LessonDetailModal = ({
           });
           const allLessons = lessonsRes?.data?.items || [];
           const next = allLessons
-            .filter(
-              (l) => new Date(l.startTime) > new Date(lesson.startTime),
-            )
+            .filter((l) => new Date(l.startTime) > new Date(lesson.startTime))
             .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
           setComputedDeadline(
             next
@@ -532,7 +533,7 @@ const LessonDetailModal = ({
                   </p>
                 </div>
                 {personProfileLink && (
-                  <ArrowRight
+                  <AltArrowRight weight="BoldDuotone"
                     className="w-4 h-4 flex-shrink-0"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -555,8 +556,8 @@ const LessonDetailModal = ({
                     className="text-sm font-semibold flex items-center gap-1.5"
                     style={{ color: colors.text.primary }}
                   >
-                    <CalendarDots
-                      weight="duotone"
+                    <CalendarMark
+                      weight="BoldDuotone"
                       className="w-4 h-4"
                       style={{ color: colors.primary.main }}
                     />
@@ -582,8 +583,8 @@ const LessonDetailModal = ({
                     className="text-sm font-semibold flex items-center gap-1.5"
                     style={{ color: colors.text.primary }}
                   >
-                    <Clock
-                      weight="duotone"
+                    <ClockCircle
+                      weight="BoldDuotone"
                       className="w-4 h-4"
                       style={{ color: colors.primary.main }}
                     />
@@ -607,7 +608,7 @@ const LessonDetailModal = ({
               {/* Session Description & Resources */}
               {lessonExtraLoading ? (
                 <div className="flex items-center justify-center gap-2 py-2">
-                  <SpinnerGap
+                  <MenuDots weight="BoldDuotone"
                     className="w-4 h-4 animate-spin"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -630,7 +631,10 @@ const LessonDetailModal = ({
                           className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"
                           style={{ color: colors.text.tertiary }}
                         >
-                          <FileText weight="duotone" className="w-3.5 h-3.5" />
+                          <DocumentText
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
                           {t("tutorDashboard.schedule.sessionDescription")}
                         </p>
                         <p
@@ -652,8 +656,8 @@ const LessonDetailModal = ({
                             className="text-xs font-semibold mb-2 flex items-center gap-1.5"
                             style={{ color: colors.text.tertiary }}
                           >
-                            <LinkSimple
-                              weight="duotone"
+                            <LinkMinimalistic
+                              weight="BoldDuotone"
                               className="w-3.5 h-3.5"
                             />
                             {t("tutorDashboard.schedule.resources")}
@@ -672,7 +676,7 @@ const LessonDetailModal = ({
                                 className="flex items-center gap-2 text-sm hover:underline"
                                 style={{ color: colors.primary.main }}
                               >
-                                <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                                <DocumentText weight="BoldDuotone" className="w-3.5 h-3.5 flex-shrink-0" />
                                 {r.title || r.resourceTitle || r.resourceUrl}
                               </a>
                             ))}
@@ -692,8 +696,8 @@ const LessonDetailModal = ({
                     border: `1px solid ${meetingInfo.color}30`,
                   }}
                 >
-                  <Circle
-                    weight="fill"
+                  <Record
+                    weight="BoldDuotone"
                     className="w-2.5 h-2.5"
                     style={{ color: meetingInfo.color }}
                   />
@@ -740,8 +744,8 @@ const LessonDetailModal = ({
                     className="w-9 h-9 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: `${colors.state.success}20` }}
                   >
-                    <Record
-                      weight="fill"
+                    <RecordAudioCircle
+                      weight="BoldDuotone"
                       className="w-4 h-4"
                       style={{ color: colors.state.success }}
                     />
@@ -767,7 +771,7 @@ const LessonDetailModal = ({
                       color: "#fff",
                     }}
                     startContent={
-                      <Play weight="fill" className="w-3.5 h-3.5" />
+                      <Play weight="BoldDuotone" className="w-3.5 h-3.5" />
                     }
                     onPress={() => {
                       setVideoUrl(lesson.lessonRecord.recordUrl);
@@ -801,8 +805,8 @@ const LessonDetailModal = ({
                         className="w-9 h-9 rounded-lg flex items-center justify-center"
                         style={{ backgroundColor: `${colors.primary.main}20` }}
                       >
-                        <FileText
-                          weight="duotone"
+                        <DocumentText
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.primary.main }}
                         />
@@ -834,8 +838,8 @@ const LessonDetailModal = ({
                           backgroundColor: `${colors.state.warning}20`,
                         }}
                       >
-                        <Exam
-                          weight="duotone"
+                        <Diploma
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.state.warning }}
                         />
@@ -860,14 +864,14 @@ const LessonDetailModal = ({
                   }}
                 >
                   {effectiveDeadline < new Date() ? (
-                    <Warning
-                      weight="fill"
+                    <DangerTriangle
+                      weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0"
                       style={{ color: colors.state.error }}
                     />
                   ) : (
-                    <Clock
-                      weight="duotone"
+                    <ClockCircle
+                      weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0"
                       style={{ color: colors.state.warning }}
                     />
@@ -906,10 +910,7 @@ const LessonDetailModal = ({
                   <Button
                     variant="flat"
                     startContent={
-                      <ArrowCounterClockwise
-                        weight="bold"
-                        className="w-4 h-4"
-                      />
+                      <Restart weight="BoldDuotone" className="w-4 h-4" />
                     }
                     onPress={onViewOfferOpen}
                     style={{
@@ -923,10 +924,7 @@ const LessonDetailModal = ({
                   <Button
                     variant="flat"
                     startContent={
-                      <ArrowCounterClockwise
-                        weight="bold"
-                        className="w-4 h-4"
-                      />
+                      <Restart weight="BoldDuotone" className="w-4 h-4" />
                     }
                     onPress={handleInternalReschedule}
                     style={{ color: colors.primary.main }}
@@ -939,7 +937,7 @@ const LessonDetailModal = ({
                 <Button
                   variant="flat"
                   startContent={
-                    <ArrowCounterClockwise weight="bold" className="w-4 h-4" />
+                    <Restart weight="BoldDuotone" className="w-4 h-4" />
                   }
                   onPress={onStudentReqOpen}
                   style={{
@@ -955,7 +953,7 @@ const LessonDetailModal = ({
                 <Button
                   variant="flat"
                   startContent={
-                    <ArrowCounterClockwise weight="bold" className="w-4 h-4" />
+                    <Restart weight="BoldDuotone" className="w-4 h-4" />
                   }
                   onPress={onAcceptOpen}
                   style={{ color: colors.state.warning }}
@@ -970,10 +968,7 @@ const LessonDetailModal = ({
                   <Button
                     variant="flat"
                     startContent={
-                      <ArrowCounterClockwise
-                        weight="bold"
-                        className="w-4 h-4"
-                      />
+                      <Restart weight="BoldDuotone" className="w-4 h-4" />
                     }
                     onPress={onViewReqOpen}
                     style={{
@@ -989,10 +984,7 @@ const LessonDetailModal = ({
                   <Button
                     variant="flat"
                     startContent={
-                      <ArrowCounterClockwise
-                        weight="bold"
-                        className="w-4 h-4"
-                      />
+                      <Restart weight="BoldDuotone" className="w-4 h-4" />
                     }
                     onPress={onRequestOpen}
                     style={{ color: colors.primary.main }}
@@ -1004,7 +996,7 @@ const LessonDetailModal = ({
               {isStudentView && lesson?.status === "NoTutor" && (
                 <Button
                   startContent={
-                    <CurrencyDollar weight="bold" className="w-4 h-4" />
+                    <Dollar weight="BoldDuotone" className="w-4 h-4" />
                   }
                   onPress={() => {
                     onRefundRequest?.(lesson);
@@ -1025,7 +1017,7 @@ const LessonDetailModal = ({
                     color: colors.text.white,
                   }}
                   startContent={
-                    <VideoCamera weight="fill" className="w-4 h-4" />
+                    <Videocamera weight="BoldDuotone" className="w-4 h-4" />
                   }
                   onPress={() => {
                     onClose();
@@ -1126,8 +1118,8 @@ const LessonDetailModal = ({
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <ArrowCounterClockwise
-                  weight="duotone"
+                <Restart
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />
@@ -1237,8 +1229,8 @@ const LessonDetailModal = ({
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <ArrowCounterClockwise
-                  weight="duotone"
+                <Restart
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.primary.main }}
                 />
@@ -1463,8 +1455,8 @@ const LessonDetailModal = ({
                 className="flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
-                <ArrowCounterClockwise
-                  weight="duotone"
+                <Restart
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.warning }}
                 />
@@ -1509,7 +1501,7 @@ const LessonDetailModal = ({
                     className="text-xs mt-1 flex items-center gap-1"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Clock weight="duotone" className="w-3 h-3" />
+                    <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                     {new Date(lesson.startTime).toLocaleString(dateLocale, {
                       weekday: "short",
                       month: "short",

@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import { CalendarMark, ClockCircle, Eye, Magnifer } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -39,12 +40,7 @@ const itemVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
-import {
-  MagnifyingGlass,
-  Eye,
-  CalendarCheck,
-  Clock,
-} from "@phosphor-icons/react";
+
 
 const Students = () => {
   const { t, i18n } = useTranslation();
@@ -274,7 +270,7 @@ const Students = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <MagnifyingGlass
+            <Magnifer weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />
@@ -421,7 +417,7 @@ const Students = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Eye className="w-4 h-4" />}
+                          startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
                             color: colors.primary.main,
@@ -435,7 +431,7 @@ const Students = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<CalendarCheck className="w-4 h-4" />}
+                          startContent={<CalendarMark weight="BoldDuotone" className="w-4 h-4" />}
                           style={{
                             backgroundColor: `${colors.state.success}15`,
                             color: colors.state.success,
@@ -502,9 +498,9 @@ const Students = () => {
                                 backgroundColor: colors.background.primaryLight,
                               }}
                             >
-                              <Clock
+                              <ClockCircle
                                 size={18}
-                                weight="duotone"
+                                weight="BoldDuotone"
                                 style={{ color: colors.primary.main }}
                               />
                             </div>

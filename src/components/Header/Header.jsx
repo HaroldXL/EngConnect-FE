@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
+  AltArrowRight,
+  BookBookmark,
+  CloseSquare,
+  HamburgerMenu,
+  Logout,
+  Magnifer,
+  NotebookMinimalistic,
+  QuestionCircle,
+  SquareAcademicCap,
+} from "@solar-icons/react";
+import {
   Button,
   Dropdown,
   DropdownTrigger,
@@ -12,16 +23,7 @@ import {
   PopoverContent,
   Input,
 } from "@heroui/react";
-import {
-  Menu,
-  X,
-  ChevronRight,
-  LogOut,
-  GraduationCap,
-  BookOpen,
-  HelpCircle,
-  Search,
-} from "lucide-react";
+
 import logoImage from "../../assets/images/logo.png";
 import defaultAvatar from "../../assets/images/null-avatar.jpg";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -167,7 +169,7 @@ const Header = () => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
-              {/* Search */}
+              {/* Magnifer */}
               <Popover
                 isOpen={searchOpen}
                 onOpenChange={setSearchOpen}
@@ -180,9 +182,10 @@ const Header = () => {
                     variant="light"
                     size="sm"
                     radius="full"
-                    aria-label="Search"
+                    aria-label="Magnifer"
                   >
-                    <Search
+                    <Magnifer
+                      weight="BoldDuotone"
                       className="w-[18px] h-[18px]"
                       style={{ color: colors.text.secondary }}
                     />
@@ -207,7 +210,8 @@ const Header = () => {
                       }
                     }}
                     startContent={
-                      <Search
+                      <Magnifer
+                        weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.secondary }}
                       />
@@ -241,7 +245,12 @@ const Header = () => {
                         size="sm"
                         radius="full"
                         className="font-semibold px-4 transition-all duration-300 text-sm"
-                        startContent={<BookOpen className="w-4 h-4" />}
+                        startContent={
+                          <NotebookMinimalistic
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
+                        }
                         style={{
                           backgroundColor:
                             colors.button.primaryLight.background,
@@ -258,7 +267,12 @@ const Header = () => {
                         size="sm"
                         radius="full"
                         className="font-semibold px-4 transition-all duration-300 text-sm"
-                        startContent={<GraduationCap className="w-4 h-4" />}
+                        startContent={
+                          <SquareAcademicCap
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
+                        }
                         style={{
                           backgroundColor:
                             colors.button.primaryLight.background,
@@ -337,7 +351,13 @@ const Header = () => {
                         <DropdownSection>
                           <DropdownItem
                             key="help-support"
-                            startContent={<HelpCircle className="w-4 h-4" />}
+                            startContent={
+                              <QuestionCircle
+                                weight="BoldDuotone"
+                                className="w-6 h-6"
+                                style={{ color: colors.text.secondary }}
+                              />
+                            }
                             onPress={() => navigate("/help-support")}
                           >
                             {t("nav.helpSupport")}
@@ -346,7 +366,12 @@ const Header = () => {
                             key="logout"
                             className="text-danger"
                             color="danger"
-                            startContent={<LogOut className="w-4 h-4" />}
+                            startContent={
+                              <Logout
+                                weight="BoldDuotone"
+                                className="w-6 h-6"
+                              />
+                            }
                           >
                             {t("nav.logout")}
                           </DropdownItem>
@@ -378,7 +403,12 @@ const Header = () => {
                         color: colors.text.white,
                       }}
                       onPress={() => navigate("/register")}
-                      endContent={<ChevronRight className="w-4 h-4" />}
+                      endContent={
+                        <AltArrowRight
+                          weight="BoldDuotone"
+                          className="w-4 h-4"
+                        />
+                      }
                     >
                       {t("nav.getStarted")}
                     </Button>
@@ -386,7 +416,7 @@ const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile HamburgerMenu Button */}
               <Button
                 isIconOnly
                 variant="light"
@@ -397,12 +427,14 @@ const Header = () => {
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? (
-                  <X
+                  <CloseSquare
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.primary }}
                   />
                 ) : (
-                  <Menu
+                  <HamburgerMenu
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.primary }}
                   />
@@ -412,7 +444,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile HamburgerMenu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
@@ -452,7 +484,8 @@ const Header = () => {
                       onPress={() => setIsMobileMenuOpen(false)}
                     >
                       <span className="text-base">{item.name}</span>
-                      <ChevronRight
+                      <AltArrowRight
+                        weight="BoldDuotone"
                         className="w-5 h-5 transition-transform duration-200"
                         style={{
                           color: isActiveRoute(item.href)
@@ -527,7 +560,12 @@ const Header = () => {
                           size="lg"
                           variant="flat"
                           className="font-semibold w-full"
-                          startContent={<BookOpen className="w-5 h-5" />}
+                          startContent={
+                            <NotebookMinimalistic
+                              weight="BoldDuotone"
+                              className="w-5 h-5"
+                            />
+                          }
                           style={{ color: colors.primary.main }}
                           onPress={() => {
                             navigate("/student/dashboard");
@@ -543,7 +581,12 @@ const Header = () => {
                           size="lg"
                           variant="flat"
                           className="font-semibold w-full"
-                          startContent={<GraduationCap className="w-5 h-5" />}
+                          startContent={
+                            <SquareAcademicCap
+                              weight="BoldDuotone"
+                              className="w-5 h-5"
+                            />
+                          }
                           style={{ color: colors.primary.main }}
                           onPress={() => {
                             navigate(
@@ -567,7 +610,9 @@ const Header = () => {
                         color="danger"
                         variant="flat"
                         className="font-semibold w-full"
-                        startContent={<LogOut className="w-5 h-5" />}
+                        startContent={
+                          <Logout weight="BoldDuotone" className="w-5 h-5" />
+                        }
                         onPress={() => {
                           setIsMobileMenuOpen(false);
                           setIsLogoutModalOpen(true);
@@ -618,7 +663,7 @@ const Header = () => {
         </AnimatePresence>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile HamburgerMenu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div

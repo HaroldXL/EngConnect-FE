@@ -1,13 +1,8 @@
 import { Card, CardBody, Button, Chip } from "@heroui/react";
+import { DocumentText, Magnifer, PlayCircle, TrashBinMinimalistic } from "@solar-icons/react"
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  FileText,
-  Trash,
-  PlayCircle,
-  MagnifyingGlass,
-} from "@phosphor-icons/react";
 
 const DOC_TYPE_COLOR = {
   Degree: "primary",
@@ -94,7 +89,7 @@ const DocumentCard = ({
                 color: colors.state.error,
               }}
             >
-              <Trash weight="bold" className="w-4 h-4" />
+              <TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />
             </Button>
           )}
         </div>
@@ -126,8 +121,8 @@ const DocumentCard = ({
               className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-200 flex items-center justify-center rounded-xl">
-              <MagnifyingGlass
-                weight="bold"
+              <Magnifer
+                weight="BoldDuotone"
                 size={26}
                 className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               />
@@ -140,7 +135,7 @@ const DocumentCard = ({
             onClick={handlePreviewClick}
           >
             <PlayCircle
-              weight="duotone"
+              weight="BoldDuotone"
               size={42}
               className="transition-transform duration-200 group-hover:scale-110"
               style={{ color: FILE_ICON_COLOR.video }}
@@ -161,8 +156,8 @@ const DocumentCard = ({
             }}
             onClick={handlePreviewClick}
           >
-            <FileText
-              weight="duotone"
+            <DocumentText
+              weight="BoldDuotone"
               size={42}
               className="transition-transform duration-200 group-hover:scale-110"
               style={{

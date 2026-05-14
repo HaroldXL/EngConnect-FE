@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Eye, EyeClosed } from "@solar-icons/react";
 import {
   Input,
   Button,
@@ -8,7 +9,7 @@ import {
   Alert,
   addToast,
 } from "@heroui/react";
-import { Eye, EyeOff } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -224,12 +225,14 @@ const Login = () => {
                       onClick={toggleVisibility}
                     >
                       {isVisible ? (
-                        <EyeOff
+                        <EyeClosed
+                          weight="BoldDuotone"
                           style={{ color: colors.text.tertiary }}
                           className="w-5 h-5"
                         />
                       ) : (
                         <Eye
+                          weight="BoldDuotone"
                           style={{ color: colors.text.tertiary }}
                           className="w-5 h-5"
                         />

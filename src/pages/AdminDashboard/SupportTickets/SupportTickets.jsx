@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { AltArrowLeft, Card as CardIcon, ChatRoundDots, CheckCircle, Dollar, Eye, Letter, Magnifer, Restart, Plain, ShieldCheck, TrashBinMinimalistic, UserCircle, Wallet } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -39,22 +40,7 @@ import { paymentApi } from "../../../api/paymentApi";
 import AdminLessonDetailModal from "../../../components/AdminLessonDetailModal/AdminLessonDetailModal";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  PaperPlaneTilt,
-  MagnifyingGlass,
-  ChatCircleDots,
-  Eye,
-  Trash,
-  UserCircle,
-  ShieldCheck,
-  EnvelopeSimple,
-  ArrowCounterClockwise,
-  CheckCircle,
-  Wallet,
-  Bank,
-  CurrencyDollar,
-} from "@phosphor-icons/react";
+
 
 const TICKET_TYPES = [
   "Error",
@@ -523,7 +509,7 @@ const SupportTickets = () => {
         >
           <Button
             variant="light"
-            startContent={<ArrowLeft className="w-5 h-5" />}
+            startContent={<AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />}
             onPress={() => {
               setView("list");
               setSelectedTicket(null);
@@ -645,8 +631,8 @@ const SupportTickets = () => {
                   <CardBody className="p-6 space-y-4">
                     {/* Header */}
                     <div className="flex items-center gap-2">
-                      <ArrowCounterClockwise
-                        weight="duotone"
+                      <Restart
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.state.warning }}
                       />
@@ -745,7 +731,7 @@ const SupportTickets = () => {
                         }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.state.success }}
                         />
@@ -767,7 +753,7 @@ const SupportTickets = () => {
                         }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.state.success }}
                         />
@@ -788,8 +774,8 @@ const SupportTickets = () => {
                           onPress={handleApproveReschedule}
                           startContent={
                             !approvingReschedule && (
-                              <ArrowCounterClockwise
-                                weight="bold"
+                              <Restart
+                                weight="BoldDuotone"
                                 className="w-4 h-4"
                               />
                             )
@@ -839,7 +825,7 @@ const SupportTickets = () => {
                   <CardBody className="p-6 space-y-4">
                     <div className="flex items-center gap-2">
                       <Wallet
-                        weight="duotone"
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.state.success }}
                       />
@@ -870,7 +856,7 @@ const SupportTickets = () => {
                             className="text-xs flex items-center gap-1"
                             style={{ color: colors.text.secondary }}
                           >
-                            <Wallet weight="duotone" className="w-3.5 h-3.5" />
+                            <Wallet weight="BoldDuotone" className="w-3.5 h-3.5" />
                             {t(
                               "adminDashboard.supportTickets.payout.availableBalance",
                             )}
@@ -937,7 +923,7 @@ const SupportTickets = () => {
                         }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.state.success }}
                         />
@@ -953,7 +939,7 @@ const SupportTickets = () => {
                     ) : (
                       <Button
                         startContent={
-                          <Bank weight="duotone" className="w-4 h-4" />
+                          <CardIcon weight="BoldDuotone" className="w-4 h-4" />
                         }
                         isDisabled={
                           !payoutTutorId || !payoutSummary?.availableBalance
@@ -990,8 +976,8 @@ const SupportTickets = () => {
                 >
                   <CardBody className="p-6 space-y-4">
                     <div className="flex items-center gap-2">
-                      <CurrencyDollar
-                        weight="duotone"
+                      <Dollar
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.state.error }}
                       />
@@ -1091,7 +1077,7 @@ const SupportTickets = () => {
                         }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.state.success }}
                         />
@@ -1107,7 +1093,7 @@ const SupportTickets = () => {
                     ) : (
                       <Button
                         startContent={
-                          <CurrencyDollar weight="bold" className="w-4 h-4" />
+                          <Dollar weight="BoldDuotone" className="w-4 h-4" />
                         }
                         isDisabled={!refundLessonId}
                         onPress={() => {
@@ -1182,8 +1168,8 @@ const SupportTickets = () => {
                             )}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          <EnvelopeSimple
-                            weight="duotone"
+                          <Letter
+                            weight="BoldDuotone"
                             className="w-3.5 h-3.5 shrink-0"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -1238,8 +1224,8 @@ const SupportTickets = () => {
                     className="text-lg font-semibold mb-6"
                     style={{ color: colors.text.primary }}
                   >
-                    <ChatCircleDots
-                      weight="duotone"
+                    <ChatRoundDots
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                     />
                     {t("adminDashboard.supportTickets.detail.activity")}
@@ -1251,8 +1237,8 @@ const SupportTickets = () => {
                       className="text-center py-10 rounded-xl mb-6"
                       style={{ backgroundColor: colors.background.gray }}
                     >
-                      <ChatCircleDots
-                        weight="duotone"
+                      <ChatRoundDots
+                        weight="BoldDuotone"
                         className="w-10 h-10 mx-auto mb-2"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -1294,7 +1280,7 @@ const SupportTickets = () => {
                               >
                                 {isAdmin ? (
                                   <ShieldCheck
-                                    weight="duotone"
+                                    weight="BoldDuotone"
                                     className="w-5 h-5"
                                     style={{
                                       color: colors.primary.main,
@@ -1302,7 +1288,7 @@ const SupportTickets = () => {
                                   />
                                 ) : (
                                   <UserCircle
-                                    weight="duotone"
+                                    weight="BoldDuotone"
                                     className="w-5 h-5"
                                     style={{
                                       color: colors.text.tertiary,
@@ -1396,8 +1382,8 @@ const SupportTickets = () => {
                             isDisabled={!messageText.trim()}
                             startContent={
                               !sending && (
-                                <PaperPlaneTilt
-                                  weight="fill"
+                                <Plain
+                                  weight="BoldDuotone"
                                   className="w-4 h-4"
                                 />
                               )
@@ -1444,7 +1430,7 @@ const SupportTickets = () => {
               style={{ color: colors.text.primary }}
             >
               <Wallet
-                weight="duotone"
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.state.success }}
               />
@@ -1539,8 +1525,8 @@ const SupportTickets = () => {
               className="flex items-center gap-2"
               style={{ color: colors.text.primary }}
             >
-              <CurrencyDollar
-                weight="duotone"
+              <Dollar
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.state.error }}
               />
@@ -1647,7 +1633,7 @@ const SupportTickets = () => {
                   "adminDashboard.supportTickets.searchPlaceholder",
                 )}
                 startContent={
-                  <MagnifyingGlass className="w-4 h-4 text-gray-400" />
+                  <Magnifer weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
                 }
                 classNames={inputClassNames}
                 className="flex-1"
@@ -1788,7 +1774,7 @@ const SupportTickets = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Eye className="w-4 h-4" />}
+                          startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                           onPress={() => openDetail(ticket)}
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
@@ -1800,7 +1786,7 @@ const SupportTickets = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Trash className="w-4 h-4" />}
+                          startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
                           onPress={() => {
                             setDeleteId(ticket.id);
                             setDeleteOpen(true);

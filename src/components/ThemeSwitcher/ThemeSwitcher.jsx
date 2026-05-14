@@ -1,6 +1,7 @@
 import { useTheme } from "../../contexts/ThemeContext";
+import { Sun, Moon } from "@solar-icons/react";
 import { Button } from "@heroui/react";
-import { Sun, Moon } from "@phosphor-icons/react";
+
 import { useThemeColors } from "../../hooks/useThemeColors";
 
 const ThemeSwitcher = () => {
@@ -17,9 +18,17 @@ const ThemeSwitcher = () => {
       className="hover:bg-opacity-10"
     >
       {theme === "light" ? (
-        <Moon className="w-5 h-5" style={{ color: colors.text.secondary }} />
+        <Moon
+          className="w-5 h-5"
+          weight="BoldDuotone"
+          style={{ color: colors.text.secondary }}
+        />
       ) : (
-        <Sun className="w-5 h-5" style={{ color: colors.text.secondary }} />
+        <Sun
+          className="w-5 h-5"
+          weight="BoldDuotone"
+          style={{ color: colors.text.secondary }}
+        />
       )}
     </Button>
   );

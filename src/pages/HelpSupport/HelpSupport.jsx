@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { AddCircle, AltArrowDown, AltArrowLeft, ChatRoundDots, ClockCircle, Magnifer, PresentationGraph, QuestionCircle, Plain, ShieldCheck, SquareAcademicCap, Ticket, UserCircle, UsersGroupRounded } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -34,22 +35,7 @@ import Footer from "../../components/Footer/Footer";
 import hybridWorkImage from "../../assets/illustrations/hybrid-work.avif";
 import chill from "../../assets/illustrations/chill.avif";
 
-import {
-  Plus,
-  ArrowLeft,
-  PaperPlaneTilt,
-  Ticket,
-  MagnifyingGlass,
-  ChatCircleDots,
-  Clock,
-  Student,
-  ChalkboardTeacher,
-  UsersThree,
-  CaretDown,
-  Question,
-  UserCircle,
-  ShieldCheck,
-} from "@phosphor-icons/react";
+
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -57,7 +43,7 @@ const { motion } = MotionLib;
 const TICKET_TYPES = [
   "Error",
   "TechnicalIssue",
-  "Question",
+  "QuestionCircle",
   "FeatureRequest",
   "Billing",
   "Payout",
@@ -75,7 +61,7 @@ const STATUS_COLORS = {
 const TYPE_COLORS = {
   Error: "danger",
   TechnicalIssue: "warning",
-  Question: "primary",
+  QuestionCircle: "primary",
   FeatureRequest: "secondary",
   Billing: "success",
   Payout: "success",
@@ -243,21 +229,21 @@ const HelpSupport = () => {
 
   const faqCategories = {
     general: {
-      icon: <UsersThree weight="duotone" className="w-5 h-5" />,
+      icon: <UsersGroupRounded weight="BoldDuotone" className="w-5 h-5" />,
       items: Array.from({ length: 5 }, (_, i) => ({
         q: t(`helpSupport.faq.general.q${i + 1}`),
         a: t(`helpSupport.faq.general.a${i + 1}`),
       })),
     },
     student: {
-      icon: <Student weight="duotone" className="w-5 h-5" />,
+      icon: <SquareAcademicCap weight="BoldDuotone" className="w-5 h-5" />,
       items: Array.from({ length: 5 }, (_, i) => ({
         q: t(`helpSupport.faq.student.q${i + 1}`),
         a: t(`helpSupport.faq.student.a${i + 1}`),
       })),
     },
     tutor: {
-      icon: <ChalkboardTeacher weight="duotone" className="w-5 h-5" />,
+      icon: <PresentationGraph weight="BoldDuotone" className="w-5 h-5" />,
       items: Array.from({ length: 5 }, (_, i) => ({
         q: t(`helpSupport.faq.tutor.q${i + 1}`),
         a: t(`helpSupport.faq.tutor.a${i + 1}`),
@@ -275,7 +261,7 @@ const HelpSupport = () => {
       >
         <Button
           variant="light"
-          startContent={<ArrowLeft className="w-5 h-5" />}
+          startContent={<AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />}
           onPress={() => {
             setView("list");
             setSelectedTicket(null);
@@ -379,8 +365,8 @@ const HelpSupport = () => {
                   className="text-lg font-semibold mb-6"
                   style={{ color: colors.text.primary }}
                 >
-                  <ChatCircleDots
-                    weight="duotone"
+                  <ChatRoundDots
+                    weight="BoldDuotone"
                     className="w-5 h-5 inline-block mr-2"
                   />
                   {t("helpSupport.detail.activity")}
@@ -392,8 +378,8 @@ const HelpSupport = () => {
                     className="text-center py-10 rounded-xl mb-6"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <ChatCircleDots
-                      weight="duotone"
+                    <ChatRoundDots
+                      weight="BoldDuotone"
                       className="w-10 h-10 mx-auto mb-2"
                       style={{ color: colors.text.tertiary }}
                     />
@@ -434,7 +420,7 @@ const HelpSupport = () => {
                             >
                               {isMe ? (
                                 <UserCircle
-                                  weight="duotone"
+                                  weight="BoldDuotone"
                                   className="w-5 h-5"
                                   style={{
                                     color: colors.primary.main,
@@ -442,7 +428,7 @@ const HelpSupport = () => {
                                 />
                               ) : (
                                 <ShieldCheck
-                                  weight="duotone"
+                                  weight="BoldDuotone"
                                   className="w-5 h-5"
                                   style={{
                                     color: colors.text.tertiary,
@@ -529,8 +515,8 @@ const HelpSupport = () => {
                           isDisabled={!messageText.trim()}
                           startContent={
                             !sending && (
-                              <PaperPlaneTilt
-                                weight="fill"
+                              <Plain
+                                weight="BoldDuotone"
                                 className="w-4 h-4"
                               />
                             )
@@ -611,7 +597,7 @@ const HelpSupport = () => {
                       size="lg"
                       radius="full"
                       className="font-semibold"
-                      startContent={<CaretDown className="w-5 h-5" />}
+                      startContent={<AltArrowDown weight="BoldDuotone" className="w-5 h-5" />}
                       style={{
                         backgroundColor: colors.primary.main,
                         color: colors.text.white,
@@ -631,7 +617,7 @@ const HelpSupport = () => {
                         variant="flat"
                         className="font-semibold"
                         startContent={
-                          <Plus weight="bold" className="w-5 h-5" />
+                          <AddCircle weight="BoldDuotone" className="w-5 h-5" />
                         }
                         style={{
                           backgroundColor:
@@ -700,7 +686,7 @@ const HelpSupport = () => {
                     key="general"
                     title={
                       <div className="flex items-center gap-2">
-                        <UsersThree weight="duotone" className="w-5 h-5" />
+                        <UsersGroupRounded weight="BoldDuotone" className="w-5 h-5" />
                         <span>{t("helpSupport.faq.tabs.general")}</span>
                       </div>
                     }
@@ -709,7 +695,7 @@ const HelpSupport = () => {
                     key="student"
                     title={
                       <div className="flex items-center gap-2">
-                        <Student weight="duotone" className="w-5 h-5" />
+                        <SquareAcademicCap weight="BoldDuotone" className="w-5 h-5" />
                         <span>{t("helpSupport.faq.tabs.student")}</span>
                       </div>
                     }
@@ -718,8 +704,8 @@ const HelpSupport = () => {
                     key="tutor"
                     title={
                       <div className="flex items-center gap-2">
-                        <ChalkboardTeacher
-                          weight="duotone"
+                        <PresentationGraph
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                         />
                         <span>{t("helpSupport.faq.tabs.tutor")}</span>
@@ -808,7 +794,7 @@ const HelpSupport = () => {
                       </div>
                     </div>
                     <Button
-                      startContent={<Plus weight="bold" className="w-5 h-5" />}
+                      startContent={<AddCircle weight="BoldDuotone" className="w-5 h-5" />}
                       onPress={() => setCreateOpen(true)}
                       style={{
                         backgroundColor: colors.primary.main,
@@ -832,7 +818,7 @@ const HelpSupport = () => {
                           onValueChange={setSearchTerm}
                           placeholder={t("helpSupport.searchPlaceholder")}
                           startContent={
-                            <MagnifyingGlass className="w-4 h-4 text-gray-400" />
+                            <Magnifer weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
                           }
                           classNames={inputClassNames}
                           className="flex-1"
@@ -911,7 +897,7 @@ const HelpSupport = () => {
                     >
                       <CardBody className="p-4 mb-10 flex flex-col items-center justify-center">
                         {/* <Ticket
-                          weight="duotone"
+                          weight="BoldDuotone"
                           className="w-16 h-16 mx-auto mb-4"
                           style={{ color: colors.text.tertiary }}
                         /> */}
@@ -960,7 +946,7 @@ const HelpSupport = () => {
                                   {ticket.description}
                                 </p>
                                 <div className="flex items-center gap-2 mt-2 text-xs">
-                                  <Clock
+                                  <ClockCircle weight="BoldDuotone"
                                     className="w-3 h-3"
                                     style={{ color: colors.text.tertiary }}
                                   />
@@ -969,7 +955,7 @@ const HelpSupport = () => {
                                   </span>
                                   {ticket.supportTicketMessages?.length > 0 && (
                                     <>
-                                      <ChatCircleDots
+                                      <ChatRoundDots weight="BoldDuotone"
                                         className="w-3 h-3 ml-2"
                                         style={{
                                           color: colors.text.tertiary,

@@ -1,4 +1,29 @@
 import { useState, useEffect, useCallback } from "react";
+import {
+  AddCircle,
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowUp,
+  ArrowRightUp,
+  BookBookmark,
+  CalendarMark,
+  CheckCircle,
+  CircleBottomUp,
+  ClipboardList,
+  ClockCircle,
+  CloseCircle,
+  DocumentText,
+  GraphUp,
+  Letter,
+  Lightning,
+  PenNewRound,
+  Play,
+  PlayCircle,
+  Record,
+  SquareAltArrowRight,
+  Star,
+  Videocamera,
+} from "@solar-icons/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -26,28 +51,7 @@ import {
 import { motion } from "framer-motion";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import CourseCard from "../../../components/CourseCard/CourseCard";
-import {
-  ArrowLeft,
-  EnvelopeSimple,
-  BookOpen,
-  CalendarDots,
-  TrendUp,
-  CaretDown,
-  CaretUp,
-  CheckCircle,
-  Circle,
-  Lightning,
-  Clock,
-  XCircle,
-  ArrowSquareOut,
-  NotePencil,
-  VideoCamera,
-  Play,
-  FileText,
-  Plus,
-  Star,
-  ClipboardText,
-} from "@phosphor-icons/react";
+
 import { selectUser } from "../../../store";
 import { studentApi, coursesApi, lessonHomeworkApi } from "../../../api";
 import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
@@ -498,7 +502,7 @@ const StudentDetail = () => {
     <div className="space-y-6">
       <Button
         variant="light"
-        startContent={<ArrowLeft size={18} />}
+        startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
         onPress={() => navigate(-1)}
         style={{ color: colors.text.secondary }}
       >
@@ -554,7 +558,7 @@ const StudentDetail = () => {
                   </h1>
                   {student.user?.email && (
                     <div className="flex items-center gap-1.5 mb-4">
-                      <EnvelopeSimple
+                      <Letter weight="BoldDuotone"
                         size={18}
                         style={{ color: colors.primary.main }}
                       />
@@ -568,7 +572,7 @@ const StudentDetail = () => {
                   )}
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-1.5">
-                      <BookOpen
+                      <BookBookmark weight="BoldDuotone"
                         size={18}
                         style={{ color: colors.primary.main }}
                       />
@@ -580,7 +584,7 @@ const StudentDetail = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <TrendUp
+                      <GraphUp weight="BoldDuotone"
                         size={18}
                         style={{ color: colors.state.warning }}
                       />
@@ -592,7 +596,7 @@ const StudentDetail = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <CalendarDots
+                      <CalendarMark weight="BoldDuotone"
                         size={18}
                         style={{ color: colors.state.success }}
                       />
@@ -633,9 +637,9 @@ const StudentDetail = () => {
           className="text-xl font-bold mb-1"
           style={{ color: colors.text.primary }}
         >
-          <BookOpen
+          <BookBookmark
             size={22}
-            weight="duotone"
+            weight="BoldDuotone"
             className="inline-block mr-2 -mt-0.5"
             style={{ color: colors.primary.main }}
           />
@@ -795,16 +799,16 @@ const StudentDetail = () => {
                                 navigate(`/tutor/courses/${courseId}`);
                               }}
                             >
-                              <ArrowSquareOut size={16} />
+                              <SquareAltArrowRight weight="BoldDuotone" size={16} />
                             </button>
                           </Tooltip>
                           {isExpanded ? (
-                            <CaretUp
+                            <AltArrowUp weight="BoldDuotone"
                               size={18}
                               style={{ color: colors.text.secondary }}
                             />
                           ) : (
-                            <CaretDown
+                            <AltArrowDown weight="BoldDuotone"
                               size={18}
                               style={{ color: colors.text.secondary }}
                             />
@@ -906,7 +910,8 @@ const StudentDetail = () => {
                                           }}
                                         >
                                           {!primary ? (
-                                            <Circle
+                                            <Record
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{
                                                 color: colors.text.tertiary,
@@ -914,7 +919,7 @@ const StudentDetail = () => {
                                             />
                                           ) : primary.status === "Completed" ? (
                                             <CheckCircle
-                                              weight="fill"
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{ color: statusColor }}
                                             />
@@ -922,21 +927,21 @@ const StudentDetail = () => {
                                             primary.meetingStatus ===
                                               "Waiting" ? (
                                             <Lightning
-                                              weight="fill"
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{ color: statusColor }}
                                             />
                                           ) : primary.status === "Cancelled" ||
                                             primary.status === "NoStudent" ||
                                             primary.status === "NoTutor" ? (
-                                            <XCircle
-                                              weight="fill"
+                                            <CloseCircle
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{ color: statusColor }}
                                             />
                                           ) : (
-                                            <Clock
-                                              weight="duotone"
+                                            <ClockCircle
+                                              weight="BoldDuotone"
                                               className="w-4 h-4"
                                               style={{ color: statusColor }}
                                             />
@@ -974,9 +979,9 @@ const StudentDetail = () => {
                                           {/* Date/time row */}
                                           {primary?.startTime && (
                                             <div className="flex items-center gap-1.5 mt-1">
-                                              <CalendarDots
+                                              <CalendarMark
                                                 size={12}
-                                                weight="duotone"
+                                                weight="BoldDuotone"
                                                 style={{ color: statusColor }}
                                               />
                                               <span
@@ -1031,8 +1036,8 @@ const StudentDetail = () => {
                                             openHomework(primary);
                                           }}
                                         >
-                                          <NotePencil
-                                            weight="duotone"
+                                          <PenNewRound
+                                            weight="BoldDuotone"
                                             className="w-3 h-3"
                                           />
                                           {hwList.length > 0
@@ -1046,8 +1051,8 @@ const StudentDetail = () => {
                                             <Button
                                               size="sm"
                                               startContent={
-                                                <VideoCamera
-                                                  weight="fill"
+                                                <Videocamera
+                                                  weight="BoldDuotone"
                                                   className="w-3.5 h-3.5"
                                                 />
                                               }
@@ -1090,7 +1095,7 @@ const StudentDetail = () => {
                                                 }
                                               >
                                                 <Play
-                                                  weight="fill"
+                                                  weight="BoldDuotone"
                                                   className="w-3.5 h-3.5"
                                                 />
                                               </Button>
@@ -1119,8 +1124,8 @@ const StudentDetail = () => {
                                                   openSummary(primary)
                                                 }
                                               >
-                                                <FileText
-                                                  weight="duotone"
+                                                <DocumentText
+                                                  weight="BoldDuotone"
                                                   className="w-3.5 h-3.5"
                                                 />
                                               </Button>
@@ -1149,7 +1154,10 @@ const StudentDetail = () => {
                                                   openDetail(primary)
                                                 }
                                               >
-                                                <ArrowSquareOut className="w-3.5 h-3.5" />
+                                                <ArrowRightUp
+                                                  weight="BoldDuotone"
+                                                  className="w-3.5 h-3.5"
+                                                />
                                               </Button>
                                             </Tooltip>
                                           )}
@@ -1183,9 +1191,9 @@ const StudentDetail = () => {
             className="text-xl font-bold mb-1"
             style={{ color: colors.text.primary }}
           >
-            <BookOpen
+            <BookBookmark
               size={22}
-              weight="duotone"
+              weight="BoldDuotone"
               className="inline-block mr-2 -mt-0.5"
               style={{ color: colors.text.tertiary }}
             />
@@ -1252,8 +1260,8 @@ const StudentDetail = () => {
         <ModalContent style={{ backgroundColor: colors.background.light }}>
           <ModalHeader style={{ color: colors.text.primary }}>
             <div className="flex items-center gap-2">
-              <ClipboardText
-                weight="duotone"
+              <ClipboardList
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
               />
@@ -1329,7 +1337,8 @@ const StudentDetail = () => {
                           className="text-xs flex items-center gap-1 hover:underline"
                           style={{ color: colors.primary.main }}
                         >
-                          <ArrowSquareOut className="w-3 h-3" /> View submission
+                          <SquareAltArrowRight weight="BoldDuotone" className="w-3 h-3" /> View
+                          submission
                         </a>
                       )}
                       {hw.tutorFeedback && (
@@ -1360,7 +1369,10 @@ const StudentDetail = () => {
                               color: colors.state.success,
                             }}
                             startContent={
-                              <Star weight="fill" className="w-3.5 h-3.5" />
+                              <Star
+                                weight="BoldDuotone"
+                                className="w-3.5 h-3.5"
+                              />
                             }
                             onPress={() => {
                               setGradingId(hw.id);
@@ -1584,7 +1596,7 @@ const StudentDetail = () => {
                 navigate("/tutor/homework");
               }}
             >
-              <ArrowSquareOut className="w-3 h-3" />
+              <SquareAltArrowRight weight="BoldDuotone" className="w-3 h-3" />
               View all in Homework page
             </button>
             <div className="flex gap-2">
@@ -1593,7 +1605,7 @@ const StudentDetail = () => {
                   size="sm"
                   variant="flat"
                   color="primary"
-                  startContent={<Plus className="w-3.5 h-3.5" />}
+                  startContent={<AddCircle weight="BoldDuotone" className="w-3.5 h-3.5" />}
                   onPress={() => setShowCreateHw(true)}
                 >
                   Add Homework

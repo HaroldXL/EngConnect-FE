@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AltArrowRight, CheckCircle, CloseCircle, DangerCircle, Diploma, MenuDots, Restart } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -12,15 +13,7 @@ import {
 } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import {
-  Exam,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
-  ArrowCounterClockwise,
-  SpinnerGap,
-  WarningCircle,
-} from "@phosphor-icons/react";
+
 import { coursesApi } from "../../api";
 
 const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
@@ -117,8 +110,8 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
       <Modal isOpen={isOpen} onClose={onClose} size="2xl" hideCloseButton>
         <ModalContent style={{ backgroundColor: colors.background.light }}>
           <ModalBody className="py-16 flex flex-col items-center justify-center gap-4">
-            <SpinnerGap
-              weight="bold"
+            <MenuDots
+              weight="BoldDuotone"
               className="w-10 h-10 animate-spin"
               style={{ color: colors.primary.main }}
             />
@@ -137,8 +130,8 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalContent style={{ backgroundColor: colors.background.light }}>
           <ModalBody className="py-16 flex flex-col items-center justify-center gap-4">
-            <WarningCircle
-              weight="duotone"
+            <DangerCircle
+              weight="BoldDuotone"
               className="w-10 h-10"
               style={{ color: colors.state.error }}
             />
@@ -156,7 +149,7 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
                 color: colors.text.white,
               }}
               onPress={handleRetry}
-              startContent={<ArrowCounterClockwise className="w-4 h-4" />}
+              startContent={<Restart weight="BoldDuotone" className="w-4 h-4" />}
             >
               {t("tutorDashboard.schedule.retryQuiz")}
             </Button>
@@ -181,8 +174,8 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
               className="flex items-center gap-2"
               style={{ color: colors.text.primary }}
             >
-              <Exam
-                weight="duotone"
+              <Diploma
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
               />
@@ -288,7 +281,7 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
                   color: colors.text.white,
                 }}
                 onPress={handleRetry}
-                startContent={<ArrowCounterClockwise className="w-4 h-4" />}
+                startContent={<Restart weight="BoldDuotone" className="w-4 h-4" />}
               >
                 {t("tutorDashboard.schedule.retryQuiz")}
               </Button>
@@ -313,8 +306,8 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
               className="flex items-center gap-2"
               style={{ color: colors.text.primary }}
             >
-              <Exam
-                weight="duotone"
+              <Diploma
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
               />
@@ -405,13 +398,13 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
               >
                 {isCorrect ? (
                   <CheckCircle
-                    weight="fill"
+                    weight="BoldDuotone"
                     className="w-5 h-5 flex-shrink-0 mt-0.5"
                     style={{ color: colors.state.success }}
                   />
                 ) : (
-                  <XCircle
-                    weight="fill"
+                  <CloseCircle
+                    weight="BoldDuotone"
                     className="w-5 h-5 flex-shrink-0 mt-0.5"
                     style={{ color: colors.state.error }}
                   />
@@ -472,7 +465,7 @@ const LessonQuizModal = ({ isOpen, onClose, lessonScriptId }) => {
                   backgroundColor: colors.primary.main,
                   color: colors.text.white,
                 }}
-                endContent={<ArrowRight className="w-4 h-4" />}
+                endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
                 onPress={handleNext}
               >
                 {isLast

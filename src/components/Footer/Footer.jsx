@@ -1,18 +1,14 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
+import {
+  AltArrowRight,
+  Letter,
+  MapPointFavourite,
+  PhoneRounded,
+  Plain,
+} from "@solar-icons/react";
 import { Link, Button, Input } from "@heroui/react";
 import logoImage from "../../assets/images/logo.png";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  Mail,
-  Send,
-  MoveRight,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import useInputStyles from "../../hooks/useInputStyles";
@@ -58,7 +54,7 @@ const Footer = () => {
       className="group text-base inline-flex items-center gap-1.5 transition-all duration-200"
       style={{ color: colors.text.secondary }}
     >
-      <MoveRight
+      <AltArrowRight weight="BoldDuotone"
         className="w-0 h-4 opacity-0 -ml-1 group-hover:w-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200"
         style={{ color: colors.primary.main }}
       />
@@ -130,7 +126,8 @@ const Footer = () => {
                       inputWrapper: `h-10 ${inputClassNames.inputWrapper}`,
                     }}
                     startContent={
-                      <Mail
+                      <Letter
+                        weight="BoldDuotone"
                         className="w-5 h-5 ml-2"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -147,7 +144,7 @@ const Footer = () => {
                       color: colors.text.white,
                     }}
                   >
-                    <Send className="w-4 h-4" />
+                    <Plain weight="BoldDuotone" className="w-4 h-4" />
                   </Button>
                 </form>
               </div>
@@ -203,7 +200,8 @@ const Footer = () => {
                     className="flex items-center gap-2 text-sm hover:underline transition-colors"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Mail
+                    <Letter
+                      weight="BoldDuotone"
                       className="w-4 h-4"
                       style={{ color: colors.primary.main }}
                     />
@@ -216,7 +214,8 @@ const Footer = () => {
                     className="flex items-center gap-2 text-sm hover:underline transition-colors"
                     style={{ color: colors.text.secondary }}
                   >
-                    <Phone
+                    <PhoneRounded
+                      weight="BoldDuotone"
                       className="w-4 h-4"
                       style={{ color: colors.primary.main }}
                     />
@@ -228,7 +227,8 @@ const Footer = () => {
                     className="flex items-center gap-2 text-sm"
                     style={{ color: colors.text.secondary }}
                   >
-                    <MapPin
+                    <MapPointFavourite
+                      weight="BoldDuotone"
                       className="w-4 h-4 flex-shrink-0"
                       style={{ color: colors.primary.main }}
                     />

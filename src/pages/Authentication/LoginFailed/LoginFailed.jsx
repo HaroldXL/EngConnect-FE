@@ -1,8 +1,9 @@
 import { useEffect } from "react";
+import { CloseCircle } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { XCircle } from "lucide-react";
+
 import BrandLogo from "../../../components/Authentication/BrandLogo";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import "./LoginFailed.css";
@@ -35,7 +36,7 @@ const LoginFailed = () => {
         <BrandLogo />
 
         <div className="login-failed-status">
-          <XCircle className="w-16 h-16" style={{ color: "#ef4444" }} />
+          <CloseCircle weight="BoldDuotone" className="w-16 h-16" style={{ color: "#ef4444" }} />
           <h2
             className="text-xl font-semibold mt-4"
             style={{ color: colors.text.primary }}

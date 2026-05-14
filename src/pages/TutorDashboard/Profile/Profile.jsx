@@ -1,5 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import {
+  AltArrowDown,
+  Camera,
+  Card as CardIcon,
+  CheckCircle,
+  ClockCircle,
+  Diploma,
+  Documents,
+  DocumentText,
+  File,
+  Letter,
+  LockKeyhole,
+  Logout,
+  Pen,
+  SquareAcademicCap,
+  Star,
+  TrashBinMinimalistic,
+  UploadMinimalistic,
+  UserRounded,
+  VerifiedCheck,
+  Videocamera,
+} from "@solar-icons/react";
+import {
   Card,
   CardBody,
   Button,
@@ -27,27 +49,7 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import {
-  User,
-  Envelope,
-  Camera,
-  PencilSimple,
-  Lock,
-  SignOut,
-  CheckCircle,
-  Star,
-  Clock,
-  Student,
-  Certificate,
-  FileText,
-  VideoCamera,
-  Upload,
-  SealCheck,
-  Bank,
-  CaretDown,
-  Files,
-  Trash,
-} from "@phosphor-icons/react";
+
 import BankSelectModal, {
   BANK_LIST,
 } from "../../../components/BankSelectModal/BankSelectModal";
@@ -400,7 +402,7 @@ const Profile = () => {
       }
     } catch (err) {
       const errorCode = err.response?.data?.error?.code;
-      if (errorCode === "User.InvalidPassword") {
+      if (errorCode === "UserRounded.InvalidPassword") {
         setBankError(t("tutorOnboarding.bankInvalidPassword"));
       } else if (errorCode === "Validation.Failed") {
         setBankError(t("tutorOnboarding.bankValidationFailed"));
@@ -440,19 +442,19 @@ const Profile = () => {
 
   const stats = [
     {
-      icon: Student,
+      icon: SquareAcademicCap,
       label: t("tutorDashboard.profile.totalStudents"),
       value: "0",
       color: colors.primary.main,
     },
     {
-      icon: Clock,
+      icon: ClockCircle,
       label: t("tutorDashboard.profile.hoursTeached"),
       value: `${tutorProfile?.monthExperience || 0}m`,
       color: colors.state.warning,
     },
     {
-      icon: Certificate,
+      icon: Diploma,
       label: t("tutorDashboard.profile.coursesCreated"),
       value: `${tutorProfile?.slotsCount || 0}`,
       color: colors.state.success,
@@ -475,7 +477,7 @@ const Profile = () => {
     },
     {
       id: 2,
-      title: "TESOL Certificate",
+      title: "TESOL Diploma",
       issuer: "Arizona State University",
       icon: "📜",
       date: "2018",
@@ -576,7 +578,7 @@ const Profile = () => {
                     color: colors.text.white,
                   }}
                 >
-                  <Camera weight="fill" className="w-4 h-4" />
+                  <Camera weight="BoldDuotone" className="w-4 h-4" />
                 </Button>
                 <input
                   ref={avatarInputRef}
@@ -666,7 +668,7 @@ const Profile = () => {
                 key="profile"
                 title={
                   <div className="flex items-center gap-2">
-                    <User className="w-5 h-5" />
+                    <UserRounded weight="BoldDuotone" className="w-5 h-5" />
                     <span className="font-medium">
                       {t("tutorDashboard.profile.tabs.profile")}
                     </span>
@@ -677,7 +679,7 @@ const Profile = () => {
                 key="documents"
                 title={
                   <div className="flex items-center gap-2">
-                    <Files className="w-5 h-5" />
+                    <Documents weight="BoldDuotone" className="w-5 h-5" />
                     <span className="font-medium">
                       {t("tutorDashboard.profile.tabs.documents")}
                     </span>
@@ -688,7 +690,7 @@ const Profile = () => {
                 key="bankAccount"
                 title={
                   <div className="flex items-center gap-2">
-                    <Bank className="w-5 h-5" />
+                    <CardIcon weight="BoldDuotone" className="w-5 h-5" />
                     <span className="font-medium">
                       {t("tutorDashboard.profile.tabs.bankAccount")}
                     </span>
@@ -699,7 +701,7 @@ const Profile = () => {
                 key="verification"
                 title={
                   <div className="flex items-center gap-2">
-                    <SealCheck className="w-5 h-5" />
+                    <VerifiedCheck weight="BoldDuotone" className="w-5 h-5" />
                     <span className="font-medium">
                       {t("tutorDashboard.profile.tabs.verification")}
                     </span>
@@ -739,7 +741,10 @@ const Profile = () => {
                       isLoading={saving}
                       startContent={
                         !saving && (
-                          <CheckCircle weight="duotone" className="w-4 h-4" />
+                          <CheckCircle
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
                         )
                       }
                       style={{
@@ -771,7 +776,7 @@ const Profile = () => {
                     variant="outline"
                     size="sm"
                     startContent={
-                      <PencilSimple weight="duotone" className="w-4 h-4" />
+                      <Pen weight="BoldDuotone" className="w-4 h-4" />
                     }
                     style={{
                       backgroundColor: colors.button.primaryLight.background,
@@ -793,7 +798,8 @@ const Profile = () => {
                     setEditData((prev) => ({ ...prev, firstName: v }))
                   }
                   startContent={
-                    <User
+                    <UserRounded
+                      weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.text.secondary }}
                     />
@@ -808,7 +814,8 @@ const Profile = () => {
                     setEditData((prev) => ({ ...prev, lastName: v }))
                   }
                   startContent={
-                    <User
+                    <UserRounded
+                      weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.text.secondary }}
                     />
@@ -820,7 +827,8 @@ const Profile = () => {
                   value={tutorProfile?.user?.email || ""}
                   isDisabled
                   startContent={
-                    <Envelope
+                    <Letter
+                      weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.text.secondary }}
                     />
@@ -879,8 +887,8 @@ const Profile = () => {
                     className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                     style={{ backgroundColor: colors.background.primaryLight }}
                   >
-                    <Bank
-                      weight="duotone"
+                    <CardIcon
+                      weight="BoldDuotone"
                       className="w-4.5 h-4.5"
                       style={{ color: colors.primary.main }}
                     />
@@ -896,7 +904,7 @@ const Profile = () => {
                     tutorProfile?.bankAccountNumber &&
                     tutorProfile?.bankAccountName && (
                       <CheckCircle
-                        weight="fill"
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.state.success }}
                       />
@@ -916,7 +924,10 @@ const Profile = () => {
                       }
                       startContent={
                         !bankSaving && (
-                          <CheckCircle weight="duotone" className="w-4 h-4" />
+                          <CheckCircle
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
                         )
                       }
                       style={{
@@ -949,7 +960,7 @@ const Profile = () => {
                     variant="outline"
                     size="sm"
                     startContent={
-                      <PencilSimple weight="duotone" className="w-4 h-4" />
+                      <Pen weight="BoldDuotone" className="w-4 h-4" />
                     }
                     style={{
                       backgroundColor: colors.button.primaryLight.background,
@@ -970,7 +981,7 @@ const Profile = () => {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Bank selector */}
+                {/* Card selector */}
                 <div className="sm:col-span-2">
                   <label
                     className="block text-sm font-medium mb-1.5"
@@ -1013,7 +1024,10 @@ const Profile = () => {
                       </span>
                     )}
                     {isBankEditing && (
-                      <CaretDown className="w-4 h-4 shrink-0" />
+                      <AltArrowDown
+                        weight="BoldDuotone"
+                        className="w-4 h-4 shrink-0"
+                      />
                     )}
                   </button>
                 </div>
@@ -1283,8 +1297,8 @@ const Profile = () => {
                     type="password"
                     label={t("tutorDashboard.profile.currentPassword")}
                     startContent={
-                      <Lock
-                        weight="duotone"
+                      <LockKeyhole
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.secondary }}
                       />
@@ -1295,8 +1309,8 @@ const Profile = () => {
                     type="password"
                     label={t("tutorDashboard.profile.newPassword")}
                     startContent={
-                      <Lock
-                        weight="duotone"
+                      <LockKeyhole
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.secondary }}
                       />
@@ -1307,8 +1321,8 @@ const Profile = () => {
                     type="password"
                     label={t("tutorDashboard.profile.confirmPassword")}
                     startContent={
-                      <Lock
-                        weight="duotone"
+                      <LockKeyhole
+                        weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.secondary }}
                       />
@@ -1338,7 +1352,9 @@ const Profile = () => {
                 <Button
                   variant="bordered"
                   color="danger"
-                  startContent={<SignOut weight="bold" className="w-5 h-5" />}
+                  startContent={
+                    <Logout weight="BoldDuotone" className="w-5 h-5" />
+                  }
                 >
                   {t("tutorDashboard.profile.deleteAccount")}
                 </Button>
@@ -1374,7 +1390,7 @@ const Profile = () => {
                         style={{ backgroundColor: `${colors.state.success}20` }}
                       >
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.state.success }}
                         />
@@ -1424,8 +1440,8 @@ const Profile = () => {
                         backgroundColor: colors.background.primaryLight,
                       }}
                     >
-                      <Files
-                        weight="duotone"
+                      <Documents
+                        weight="BoldDuotone"
                         className="w-4.5 h-4.5"
                         style={{ color: colors.primary.main }}
                       />
@@ -1438,7 +1454,12 @@ const Profile = () => {
                     </h3>
                   </div>
                   <Button
-                    startContent={<Upload weight="bold" className="w-4 h-4" />}
+                    startContent={
+                      <UploadMinimalistic
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                      />
+                    }
                     onPress={() => setDocModalOpen(true)}
                     style={{
                       backgroundColor: colors.primary.main,
@@ -1459,7 +1480,10 @@ const Profile = () => {
                     className="flex flex-col items-center py-12"
                     style={{ color: colors.text.tertiary }}
                   >
-                    <Files weight="duotone" className="w-12 h-12 mb-3" />
+                    <Documents
+                      weight="BoldDuotone"
+                      className="w-12 h-12 mb-3"
+                    />
                     <p className="text-sm">
                       {t("tutorDashboard.profile.documents.noDocuments")}
                     </p>
@@ -1536,7 +1560,7 @@ const Profile = () => {
                           }
                           classNames={selectClassNames}
                         >
-                          {["Degree", "Certificate", "License", "Other"].map(
+                          {["Degree", "Diploma", "License", "Other"].map(
                             (type) => (
                               <SelectItem key={type}>
                                 {t(
@@ -1611,7 +1635,7 @@ const Profile = () => {
                         {docForm.file ? (
                           <>
                             <CheckCircle
-                              weight="fill"
+                              weight="BoldDuotone"
                               className="w-5 h-5 shrink-0"
                               style={{ color: colors.state.success }}
                             />
@@ -1624,8 +1648,8 @@ const Profile = () => {
                           </>
                         ) : (
                           <>
-                            <Upload
-                              weight="duotone"
+                            <UploadMinimalistic
+                              weight="BoldDuotone"
                               className="w-5 h-5 shrink-0"
                               style={{ color: colors.text.tertiary }}
                             />
@@ -1674,7 +1698,10 @@ const Profile = () => {
                         onPress={handleDocUpload}
                         startContent={
                           !docUploading && (
-                            <Upload weight="bold" className="w-4 h-4" />
+                            <UploadMinimalistic
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
                           )
                         }
                         style={{
@@ -1725,7 +1752,10 @@ const Profile = () => {
                         onPress={() => handleDocDelete(docToDelete.id)}
                         startContent={
                           !deletingDocId && (
-                            <Trash weight="bold" className="w-4 h-4" />
+                            <TrashBinMinimalistic
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
                           )
                         }
                       >
@@ -1765,8 +1795,8 @@ const Profile = () => {
                             : colors.background.gray,
                     }}
                   >
-                    <SealCheck
-                      weight="duotone"
+                    <VerifiedCheck
+                      weight="BoldDuotone"
                       className="w-6 h-6"
                       style={{
                         color:
@@ -1791,14 +1821,14 @@ const Profile = () => {
                   </div>
                 )}
 
-                {/* CV Upload */}
+                {/* CV UploadMinimalistic */}
                 <div>
                   <h3
                     className="text-lg font-semibold mb-3"
                     style={{ color: colors.text.primary }}
                   >
-                    <FileText
-                      weight="duotone"
+                    <DocumentText
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                     />
                     {t("tutorDashboard.profile.verification.cvTitle")}
@@ -1810,7 +1840,7 @@ const Profile = () => {
                     >
                       <div className="flex items-center gap-3">
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.state.success }}
                         />
@@ -1856,8 +1886,8 @@ const Profile = () => {
                       }}
                       onClick={() => cvInputRef.current?.click()}
                     >
-                      <Upload
-                        weight="duotone"
+                      <UploadMinimalistic
+                        weight="BoldDuotone"
                         className="w-10 h-10 mb-3"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -1889,14 +1919,14 @@ const Profile = () => {
 
                 <Divider />
 
-                {/* Intro Video Upload */}
+                {/* Intro Video UploadMinimalistic */}
                 <div>
                   <h3
                     className="text-lg font-semibold mb-3"
                     style={{ color: colors.text.primary }}
                   >
-                    <VideoCamera
-                      weight="duotone"
+                    <Videocamera
+                      weight="BoldDuotone"
                       className="w-5 h-5 inline-block mr-2"
                     />
                     {t("tutorDashboard.profile.verification.videoTitle")}
@@ -1908,7 +1938,7 @@ const Profile = () => {
                     >
                       <div className="flex items-center gap-3">
                         <CheckCircle
-                          weight="fill"
+                          weight="BoldDuotone"
                           className="w-5 h-5"
                           style={{ color: colors.state.success }}
                         />
@@ -1956,8 +1986,8 @@ const Profile = () => {
                       }}
                       onClick={() => videoInputRef.current?.click()}
                     >
-                      <Upload
-                        weight="duotone"
+                      <UploadMinimalistic
+                        weight="BoldDuotone"
                         className="w-10 h-10 mb-3"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -2017,7 +2047,7 @@ const Profile = () => {
                     isLoading={verificationSubmitting}
                     onPress={handleSubmitVerification}
                     startContent={
-                      <SealCheck weight="bold" className="w-5 h-5" />
+                      <VerifiedCheck weight="BoldDuotone" className="w-5 h-5" />
                     }
                     style={{
                       backgroundColor: canSubmitVerification

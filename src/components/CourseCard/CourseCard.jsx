@@ -1,14 +1,15 @@
 import { Card, CardBody, Chip, Avatar, Progress } from "@heroui/react";
+import { BookBookmark, HeadphonesRound, Pen, Star, UsersGroupRounded, VolumeLoud } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import { Star, Users, SpeakerHigh, Ear, BookOpenUser, PencilSimple } from "@phosphor-icons/react";
+
 
 const getSkillStyle = (name = "") => {
   const n = name.toLowerCase();
-  if (n.includes("speak")) return { Icon: SpeakerHigh, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
-  if (n.includes("listen")) return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
-  if (n.includes("read")) return { Icon: BookOpenUser, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
-  if (n.includes("writ")) return { Icon: PencilSimple, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+  if (n.includes("speak")) return { Icon: VolumeLoud, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
+  if (n.includes("listen")) return { Icon: HeadphonesRound, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+  if (n.includes("read")) return { Icon: BookBookmark, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
+  if (n.includes("writ")) return { Icon: Pen, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
   return null;
 };
 
@@ -90,7 +91,7 @@ const CourseCard = ({
               <Chip
                 size="sm"
                 variant="flat"
-                startContent={<Icon size={12} weight="duotone" style={{ color }} />}
+                startContent={<Icon size={12} weight="BoldDuotone" style={{ color }} />}
                 style={{ backgroundColor: iconBg, color }}
               >
                 {skillCat.categoryName}
@@ -166,12 +167,12 @@ const CourseCard = ({
               style={{ color: colors.text.secondary }}
             >
               <span className="flex items-center gap-1">
-                <Star size={14} weight="fill" style={{ color: "#F59E0B" }} />
+                <Star size={14} weight="BoldDuotone" style={{ color: "#F59E0B" }} />
                 {course.ratingAverage}
                 {course.ratingCount > 0 && ` (${course.ratingCount})`}
               </span>
               <span className="flex items-center gap-1">
-                <Users size={14} weight="duotone" />
+                <UsersGroupRounded size={14} weight="BoldDuotone" />
                 {course.numberOfEnrollment?.toLocaleString()}
               </span>
             </div>

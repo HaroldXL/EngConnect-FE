@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AltArrowDown, AltArrowLeft, AltArrowRight, Bell, BookBookmark, CalendarMark, ChecklistMinimalistic, CloseSquare, Dollar, DollarMinimalistic, HomeSmile, Logout, Magnifer, PresentationGraph, ShieldCheck, SquareAcademicCap, TagPrice, Ticket, Wallet } from "@solar-icons/react"
 import { useSelector } from "react-redux";
 import { selectUser } from "../store";
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
@@ -25,27 +26,7 @@ import LanguageSwitcher from "../components/LanguageSwitcher/LanguageSwitcher";
 import logoImage from "../assets/images/logo.png";
 import logoNoTextImage from "../assets/images/logo-no-text.png";
 import defaultAvatar from "../assets/images/null-avatar.jpg";
-import {
-  House,
-  MagnifyingGlass,
-  BookOpen,
-  SignOut,
-  List,
-  X,
-  Bell,
-  CaretDown,
-  CurrencyDollar,
-  GraduationCap,
-  ChalkboardTeacher,
-  CaretLeft,
-  CaretRight,
-  ShieldCheck,
-  Tag,
-  Ticket,
-  CalendarDots,
-  Wallet,
-  Percent,
-} from "@phosphor-icons/react";
+
 
 const AdminDashboardLayout = () => {
   const { t } = useTranslation();
@@ -67,22 +48,22 @@ const AdminDashboardLayout = () => {
     {
       path: "/admin/dashboard",
       label: t("adminDashboard.nav.dashboard"),
-      icon: House,
+      icon: HomeSmile,
     },
     {
       path: "/admin/students",
       label: t("adminDashboard.nav.students"),
-      icon: GraduationCap,
+      icon: SquareAcademicCap,
     },
     {
       submenuKey: "tutors",
       label: t("adminDashboard.nav.tutors"),
-      icon: ChalkboardTeacher,
+      icon: PresentationGraph,
       children: [
         {
           path: "/admin/tutors",
           label: t("adminDashboard.nav.tutorList"),
-          icon: ChalkboardTeacher,
+          icon: PresentationGraph,
         },
         {
           path: "/admin/verification",
@@ -94,12 +75,12 @@ const AdminDashboardLayout = () => {
     {
       submenuKey: "courses",
       label: t("adminDashboard.nav.courses"),
-      icon: BookOpen,
+      icon: BookBookmark,
       children: [
         {
           path: "/admin/courses",
           label: t("adminDashboard.nav.courseList"),
-          icon: BookOpen,
+          icon: BookBookmark,
         },
         {
           path: "/admin/course-verification",
@@ -109,24 +90,24 @@ const AdminDashboardLayout = () => {
         {
           path: "/admin/categories",
           label: t("adminDashboard.nav.categories"),
-          icon: Tag,
+          icon: TagPrice,
         },
       ],
     },
     {
       path: "/admin/schedule",
       label: t("adminDashboard.nav.schedule"),
-      icon: CalendarDots,
+      icon: CalendarMark,
     },
     {
       submenuKey: "finance",
       label: t("adminDashboard.nav.finance"),
-      icon: CurrencyDollar,
+      icon: Dollar,
       children: [
         {
           path: "/admin/finance",
           label: t("adminDashboard.nav.ordersTransactions"),
-          icon: CurrencyDollar,
+          icon: Dollar,
         },
         {
           path: "/admin/payroll",
@@ -136,7 +117,7 @@ const AdminDashboardLayout = () => {
         {
           path: "/admin/commission",
           label: t("adminDashboard.nav.commission"),
-          icon: Percent,
+          icon: DollarMinimalistic,
         },
       ],
     },
@@ -192,12 +173,12 @@ const AdminDashboardLayout = () => {
             className="hidden lg:flex"
           >
             {sidebarCollapsed ? (
-              <CaretRight
+              <AltArrowRight weight="BoldDuotone"
                 className="w-4 h-4"
                 style={{ color: colors.text.secondary }}
               />
             ) : (
-              <CaretLeft
+              <AltArrowLeft weight="BoldDuotone"
                 className="w-4 h-4"
                 style={{ color: colors.text.secondary }}
               />
@@ -251,7 +232,7 @@ const AdminDashboardLayout = () => {
                       >
                         <Icon
                           className="w-5 h-5 flex-shrink-0"
-                          weight={submenuActive ? "fill" : "regular"}
+                          weight="BoldDuotone"
                         />
                         {!sidebarCollapsed && (
                           <>
@@ -260,7 +241,7 @@ const AdminDashboardLayout = () => {
                             >
                               {item.label}
                             </span>
-                            <CaretDown
+                            <AltArrowDown weight="BoldDuotone"
                               className={`w-4 h-4 transition-transform duration-200 ${submenuOpen ? "rotate-180" : ""}`}
                             />
                           </>
@@ -300,7 +281,7 @@ const AdminDashboardLayout = () => {
                                 >
                                   <ChildIcon
                                     className="w-4 h-4 flex-shrink-0"
-                                    weight={childActive ? "fill" : "regular"}
+                                    weight="BoldDuotone"
                                   />
                                   <span
                                     className={`text-sm ${
@@ -347,7 +328,7 @@ const AdminDashboardLayout = () => {
                   >
                     <Icon
                       className="w-5 h-5 flex-shrink-0"
-                      weight={active ? "fill" : "regular"}
+                      weight="BoldDuotone"
                     />
                     {!sidebarCollapsed && (
                       <span
@@ -377,7 +358,7 @@ const AdminDashboardLayout = () => {
               variant="light"
               className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start"}`}
               startContent={
-                <SignOut
+                <Logout weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.error }}
                 />
@@ -433,7 +414,7 @@ const AdminDashboardLayout = () => {
                   size="sm"
                   onPress={() => setMobileMenuOpen(false)}
                 >
-                  <X
+                  <CloseSquare weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -469,14 +450,14 @@ const AdminDashboardLayout = () => {
                           >
                             <Icon
                               className="w-5 h-5 flex-shrink-0"
-                              weight={submenuActive ? "fill" : "regular"}
+                              weight="BoldDuotone"
                             />
                             <span
                               className={`text-sm flex-1 text-left ${submenuActive ? "font-semibold" : "font-medium"}`}
                             >
                               {item.label}
                             </span>
-                            <CaretDown
+                            <AltArrowDown weight="BoldDuotone"
                               className={`w-4 h-4 transition-transform duration-200 ${submenuOpen ? "rotate-180" : ""}`}
                             />
                           </button>
@@ -519,9 +500,7 @@ const AdminDashboardLayout = () => {
                                       >
                                         <ChildIcon
                                           className="w-4 h-4 flex-shrink-0"
-                                          weight={
-                                            childActive ? "fill" : "regular"
-                                          }
+                                          weight="BoldDuotone"
                                         />
                                         <span
                                           className={`text-sm ${
@@ -562,7 +541,7 @@ const AdminDashboardLayout = () => {
                       >
                         <Icon
                           className="w-5 h-5 flex-shrink-0"
-                          weight={active ? "fill" : "regular"}
+                          weight="BoldDuotone"
                         />
                         <span
                           className={`text-sm ${active ? "font-semibold" : "font-medium"}`}
@@ -584,7 +563,7 @@ const AdminDashboardLayout = () => {
                   variant="light"
                   className="w-full justify-start"
                   startContent={
-                    <SignOut
+                    <Logout weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.state.error }}
                     />
@@ -624,7 +603,7 @@ const AdminDashboardLayout = () => {
             className="lg:hidden"
             onPress={() => setMobileMenuOpen(true)}
           >
-            <List className="w-6 h-6" style={{ color: colors.text.primary }} />
+            <ChecklistMinimalistic weight="BoldDuotone" className="w-6 h-6" style={{ color: colors.text.primary }} />
           </Button>
 
           {/* Search Bar */}
@@ -633,7 +612,7 @@ const AdminDashboardLayout = () => {
               type="text"
               placeholder={t("adminDashboard.search.placeholder")}
               startContent={
-                <MagnifyingGlass
+                <Magnifer weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -656,7 +635,7 @@ const AdminDashboardLayout = () => {
                 radius="full"
                 onPress={() => navigate("/admin/notifications")}
               >
-                <Bell
+                <Bell weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -692,7 +671,7 @@ const AdminDashboardLayout = () => {
                       {t("adminDashboard.role")}
                     </span>
                   </div>
-                  <CaretDown
+                  <AltArrowDown weight="BoldDuotone"
                     className="w-4 h-4 hidden sm:block"
                     style={{ color: colors.text.secondary }}
                   />
@@ -702,7 +681,7 @@ const AdminDashboardLayout = () => {
                 <DropdownItem
                   key="logout"
                   color="danger"
-                  startContent={<SignOut className="w-4 h-4" />}
+                  startContent={<Logout weight="BoldDuotone" className="w-4 h-4" />}
                   onPress={() => setLogoutModalOpen(true)}
                 >
                   {t("adminDashboard.nav.logout")}

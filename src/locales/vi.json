@@ -1619,7 +1619,24 @@
       "previewLabel": "Admin sẽ nhận",
       "sendRequest": "Gửi yêu cầu",
       "withdrawError": "Gửi yêu cầu rút tiền thất bại",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "courseSalesTab": "Doanh số khóa học",
+      "courseSalesList": "Học viên đã đăng ký",
+      "noSales": "Chưa có học viên đăng ký",
+      "purchaseDate": "Ngày mua",
+      "student": "Học viên",
+      "course": "Khóa học",
+      "tutorEarning": "Thu nhập của bạn",
+      "saleDetail": "Chi tiết đăng ký",
+      "breakdown": "Phân tích tài chính",
+      "subtotal": "Tạm tính",
+      "sessionProgress": "Tiến độ buổi học",
+      "schedule": "Lịch học",
+      "saleStatuses": {
+        "InProgress": "Đang học",
+        "Pending": "Chờ xác nhận",
+        "Cancelled": "Đã hủy"
+      }
     },
     "community": {
       "title": "Cộng đồng",
@@ -2903,7 +2920,9 @@
         "NoStudent": "Vắng học viên",
         "NoTutor": "Vắng gia sư",
         "Refund": "Đã hoàn tiền",
-        "Reschedule": "Đổi lịch"
+        "Reschedule": "Đổi lịch",
+        "Rescheduled": "Đã đổi lịch",
+        "MadeUp": "Đã bù giờ"
       },
       "scheduleStatuses": {
         "Open": "Mở",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AltArrowDown, Card as CardIcon, CheckCircle, ClipboardList, ClockCircle, CloseCircle, Eye, Filter, Restart, SquareAltArrowRight } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -31,18 +32,6 @@ import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { studentApi, coursesApi, paymentApi } from "../../../api";
 import { selectUser } from "../../../store";
-import {
-  Eye,
-  ArrowSquareOut,
-  Receipt,
-  CheckCircle,
-  Clock,
-  XCircle,
-  CaretDown,
-  Funnel,
-  ArrowCounterClockwise,
-  Bank,
-} from "@phosphor-icons/react";
 
 const PAGE_SIZE = 10;
 
@@ -83,10 +72,10 @@ const statusColor = (s) => {
 };
 
 const statusIcon = (s) => {
-  if (s === "Paid") return <CheckCircle className="w-4 h-4" weight="fill" />;
-  if (s === "Pending") return <Clock className="w-4 h-4" weight="fill" />;
-  if (s === "Failed") return <XCircle className="w-4 h-4" weight="fill" />;
-  if (s === "Cancelled") return <XCircle className="w-4 h-4" weight="fill" />;
+  if (s === "Paid") return <CheckCircle className="w-4 h-4" weight="BoldDuotone" />;
+  if (s === "Pending") return <ClockCircle className="w-4 h-4" weight="BoldDuotone" />;
+  if (s === "Failed") return <CloseCircle className="w-4 h-4" weight="BoldDuotone" />;
+  if (s === "Cancelled") return <CloseCircle className="w-4 h-4" weight="BoldDuotone" />;
   return null;
 };
 
@@ -257,14 +246,14 @@ const Orders = () => {
           {
             label: "Pending",
             value: pendingCount,
-            icon: Clock,
+            icon: ClockCircle,
             color: colors.state.warning,
             bg: `${colors.state.warning}20`,
           },
           {
             label: "Cancelled",
             value: cancelledCount,
-            icon: XCircle,
+            icon: CloseCircle,
             color: colors.state.error,
             bg: `${colors.state.error}20`,
           },
@@ -287,7 +276,7 @@ const Orders = () => {
                 >
                   <s.icon
                     className="w-5 h-5"
-                    weight="duotone"
+                    weight="BoldDuotone"
                     style={{ color: s.color }}
                   />
                 </div>
@@ -322,7 +311,7 @@ const Orders = () => {
           key="orders"
           title={
             <div className="flex items-center gap-2">
-              <Receipt className="w-4 h-4" />
+              <ClipboardList weight="BoldDuotone" className="w-4 h-4" />
               Orders
             </div>
           }
@@ -334,8 +323,8 @@ const Orders = () => {
                 <DropdownTrigger>
                   <Button
                     variant="flat"
-                    startContent={<Funnel className="w-4 h-4" />}
-                    endContent={<CaretDown className="w-4 h-4" />}
+                    startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
+                    endContent={<AltArrowDown weight="BoldDuotone" className="w-4 h-4" />}
                     style={{ color: colors.text.primary }}
                   >
                     Status: {statusFilter}
@@ -402,7 +391,7 @@ const Orders = () => {
                       emptyContent={
                         !loading && (
                           <div className="flex flex-col items-center gap-2 py-8">
-                            <Receipt
+                            <ClipboardList weight="BoldDuotone"
                               className="w-10 h-10"
                               style={{ color: colors.text.tertiary }}
                             />
@@ -490,7 +479,7 @@ const Orders = () => {
                                   onOpen();
                                 }}
                               >
-                                <Eye
+                                <Eye weight="BoldDuotone"
                                   className="w-4 h-4"
                                   style={{ color: colors.text.secondary }}
                                 />
@@ -512,7 +501,7 @@ const Orders = () => {
           key="refunds"
           title={
             <div className="flex items-center gap-2">
-              <ArrowCounterClockwise className="w-4 h-4" />
+              <Restart weight="BoldDuotone" className="w-4 h-4" />
               Refunds
             </div>
           }
@@ -547,7 +536,7 @@ const Orders = () => {
                   <TableHeader>
                     <TableColumn>Type</TableColumn>
                     <TableColumn>Amount</TableColumn>
-                    <TableColumn>Bank</TableColumn>
+                    <TableColumn>Card</TableColumn>
                     <TableColumn>Account</TableColumn>
                     <TableColumn>Paid On</TableColumn>
                     <TableColumn> </TableColumn>
@@ -558,7 +547,7 @@ const Orders = () => {
                     emptyContent={
                       !refundsLoading && (
                         <div className="flex flex-col items-center gap-2 py-8">
-                          <ArrowCounterClockwise
+                          <Restart weight="BoldDuotone"
                             className="w-10 h-10"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -619,7 +608,7 @@ const Orders = () => {
                               onRefundOpen();
                             }}
                           >
-                            <Eye
+                            <Eye weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.text.secondary }}
                             />
@@ -672,7 +661,7 @@ const Orders = () => {
                     >
                       {courseMap[selectedMeta.courseId] ||
                         selectedMeta.courseId}
-                      <ArrowSquareOut className="w-3.5 h-3.5" />
+                      <SquareAltArrowRight weight="BoldDuotone" className="w-3.5 h-3.5" />
                     </button>
                   </DetailRow>
                 )}
@@ -731,7 +720,7 @@ const Orders = () => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <ArrowCounterClockwise
+            <Restart weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.state.success }}
             />
@@ -753,7 +742,7 @@ const Orders = () => {
                     variant="flat"
                     color="success"
                     startContent={
-                      <CheckCircle className="w-4 h-4" weight="fill" />
+                      <CheckCircle className="w-4 h-4" weight="BoldDuotone" />
                     }
                   >
                     {selectedRefund.status}
@@ -773,9 +762,9 @@ const Orders = () => {
                   </span>
                 </DetailRow>
 
-                <DetailRow label="Bank">
+                <DetailRow label="Card">
                   <div className="flex items-center gap-1.5">
-                    <Bank
+                    <Card
                       className="w-4 h-4"
                       style={{ color: colors.text.secondary }}
                     />

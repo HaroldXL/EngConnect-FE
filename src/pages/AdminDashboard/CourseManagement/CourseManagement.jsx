@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { BookBookmark, CheckCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, Magnifer, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -33,19 +34,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { coursesApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  DotsThree,
-  Eye,
-  Trash,
-  Export,
-  Funnel,
-  BookOpen,
-  Star,
-  HourglassMedium,
-  CheckCircle,
-  Prohibit,
-} from "@phosphor-icons/react";
+
 
 const CourseManagement = () => {
   const { t, i18n } = useTranslation();
@@ -171,7 +160,7 @@ const CourseManagement = () => {
 
   const stats = [
     {
-      icon: BookOpen,
+      icon: BookBookmark,
       label: t("adminDashboard.courses.stats.totalCourses"),
       value: totalCount.toLocaleString(),
       color: colors.primary.main,
@@ -185,14 +174,14 @@ const CourseManagement = () => {
       bg: `${colors.state.success}20`,
     },
     {
-      icon: HourglassMedium,
+      icon: Hourglass,
       label: t("adminDashboard.courses.stats.pending"),
       value: pendingCount.toLocaleString(),
       color: colors.state.warning,
       bg: `${colors.state.warning}20`,
     },
     {
-      icon: Prohibit,
+      icon: ForbiddenCircle,
       label: t("adminDashboard.courses.stats.draft"),
       value: draftCount.toLocaleString(),
       color: colors.state.error,
@@ -322,7 +311,7 @@ const CourseManagement = () => {
                   >
                     <stat.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -366,7 +355,7 @@ const CourseManagement = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />
@@ -379,7 +368,7 @@ const CourseManagement = () => {
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      startContent={<Funnel className="w-4 h-4" />}
+                      startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                     >
                       {t("adminDashboard.courses.status")}:{" "}
                       {selectedStatus === "all"
@@ -570,7 +559,7 @@ const CourseManagement = () => {
                                   backgroundColor: colors.background.gray,
                                 }}
                               >
-                                <BookOpen
+                                <BookBookmark weight="BoldDuotone"
                                   className="w-5 h-5"
                                   style={{ color: colors.text.secondary }}
                                 />
@@ -647,9 +636,9 @@ const CourseManagement = () => {
                           <Dropdown>
                             <DropdownTrigger>
                               <Button isIconOnly variant="light" size="sm">
-                                <DotsThree
+                                <MenuDots
                                   className="w-5 h-5"
-                                  weight="bold"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.text.secondary }}
                                 />
                               </Button>
@@ -657,7 +646,7 @@ const CourseManagement = () => {
                             <DropdownMenu aria-label="Course actions">
                               <DropdownItem
                                 key="view"
-                                startContent={<Eye className="w-4 h-4" />}
+                                startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                                 onPress={() => handleViewCourse(course)}
                               >
                                 {t("adminDashboard.courses.view")}
@@ -665,7 +654,7 @@ const CourseManagement = () => {
                               <DropdownItem
                                 key="delete"
                                 color="danger"
-                                startContent={<Trash className="w-4 h-4" />}
+                                startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
                                 onPress={() => handleDeleteClick(course)}
                               >
                                 {t("adminDashboard.courses.delete")}

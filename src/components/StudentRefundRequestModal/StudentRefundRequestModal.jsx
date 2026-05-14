@@ -8,14 +8,10 @@ import {
   Textarea,
   Avatar,
 } from "@heroui/react";
+import { BookBookmark, ClockCircle, Dollar, UserCircle } from "@solar-icons/react"
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
-import {
-  CurrencyDollar,
-  Clock,
-  BookOpen,
-  UserCircle,
-} from "@phosphor-icons/react";
+
 import useInputStyles from "../../hooks/useInputStyles";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
@@ -63,8 +59,8 @@ const StudentRefundRequestModal = ({
               className="flex items-center gap-2"
               style={{ color: colors.text.primary }}
             >
-              <CurrencyDollar
-                weight="duotone"
+              <Dollar
+                weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.state.error }}
               />
@@ -99,8 +95,8 @@ const StudentRefundRequestModal = ({
                         className="text-xs flex items-center gap-1.5"
                         style={{ color: colors.text.secondary }}
                       >
-                        <BookOpen
-                          weight="duotone"
+                        <BookBookmark
+                          weight="BoldDuotone"
                           className="w-3 h-3 flex-shrink-0"
                         />
                         {t(
@@ -125,8 +121,8 @@ const StudentRefundRequestModal = ({
                       className="text-xs flex items-center gap-1.5"
                       style={{ color: colors.text.secondary }}
                     >
-                      <Clock
-                        weight="duotone"
+                      <ClockCircle
+                        weight="BoldDuotone"
                         className="w-3 h-3 flex-shrink-0"
                       />
                       {formatTime(lesson.startTime, {
@@ -162,7 +158,7 @@ const StudentRefundRequestModal = ({
                           />
                         ) : (
                           <UserCircle
-                            weight="duotone"
+                            weight="BoldDuotone"
                             className="w-3 h-3 flex-shrink-0"
                           />
                         )}
@@ -275,7 +271,7 @@ const StudentRefundRequestModal = ({
                 onPress={onSubmit}
                 startContent={
                   !isSubmitting && (
-                    <CurrencyDollar weight="bold" className="w-4 h-4" />
+                    <Dollar weight="BoldDuotone" className="w-4 h-4" />
                   )
                 }
                 style={{ backgroundColor: colors.state.error, color: "#fff" }}

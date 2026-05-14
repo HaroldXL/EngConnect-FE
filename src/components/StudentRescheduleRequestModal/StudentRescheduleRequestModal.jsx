@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { ClockCircle, DangerTriangle, Restart } from "@solar-icons/react"
 import {
   Modal,
   ModalContent,
@@ -8,7 +9,7 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import { ArrowCounterClockwise, Clock, Warning } from "@phosphor-icons/react";
+
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { overlapsApi, rescheduleApi } from "../../api";
@@ -189,8 +190,8 @@ export default function StudentRescheduleRequestModal({
           className="flex items-center gap-2"
           style={{ color: colors.text.primary }}
         >
-          <ArrowCounterClockwise
-            weight="duotone"
+          <Restart
+            weight="BoldDuotone"
             className="w-5 h-5"
             style={{ color: colors.primary.main }}
           />
@@ -211,7 +212,7 @@ export default function StudentRescheduleRequestModal({
                 className="text-xs mt-0.5 flex items-center gap-1"
                 style={{ color: colors.text.secondary }}
               >
-                <Clock weight="duotone" className="w-3 h-3" />
+                <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                 {new Date(lesson.startTime).toLocaleString(dateLocale, {
                   weekday: "short",
                   month: "short",
@@ -297,7 +298,7 @@ export default function StudentRescheduleRequestModal({
               </div>
             )}
 
-            {/* Warning if already has pending */}
+            {/* DangerTriangle if already has pending */}
             {hasPending && (
               <div
                 className="flex items-center gap-2 p-3 rounded-lg text-xs"
@@ -307,7 +308,7 @@ export default function StudentRescheduleRequestModal({
                   border: `1px solid ${colors.state.warning}30`,
                 }}
               >
-                <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+                <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
                 {t("studentDashboard.schedule.reschedule.requestHasPending")}
               </div>
             )}
@@ -468,7 +469,7 @@ export default function StudentRescheduleRequestModal({
                 border: `1px solid ${colors.state.error}30`,
               }}
             >
-              <Warning weight="fill" className="w-4 h-4 flex-shrink-0" />
+              <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { AltArrowLeft, CheckCircle, Eye, EyeClosed, LockKeyhole } from "@solar-icons/react"
 import { Input, Button, Link, Image, addToast } from "@heroui/react";
-import { Eye, EyeOff, ArrowLeft, CheckCircle, Lock } from "lucide-react";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -173,7 +174,7 @@ const ResetPassword = () => {
                     errorMessage={validationErrors.newPassword}
                     classNames={inputClassNames}
                     startContent={
-                      <Lock
+                      <LockKeyhole weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -185,12 +186,12 @@ const ResetPassword = () => {
                         className="focus:outline-none"
                       >
                         {isVisible ? (
-                          <EyeOff
+                          <EyeClosed weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
                         ) : (
-                          <Eye
+                          <Eye weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -229,7 +230,7 @@ const ResetPassword = () => {
                     errorMessage={validationErrors.confirmPassword}
                     classNames={inputClassNames}
                     startContent={
-                      <Lock
+                      <LockKeyhole weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -241,12 +242,12 @@ const ResetPassword = () => {
                         className="focus:outline-none"
                       >
                         {isConfirmVisible ? (
-                          <EyeOff
+                          <EyeClosed weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
                         ) : (
-                          <Eye
+                          <Eye weight="BoldDuotone"
                             className="w-5 h-5"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -284,7 +285,7 @@ const ResetPassword = () => {
                   className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                   style={{ backgroundColor: colors.background.primaryLight }}
                 >
-                  <CheckCircle
+                  <CheckCircle weight="BoldDuotone"
                     className="w-8 h-8"
                     style={{ color: colors.state.success }}
                   />
@@ -323,7 +324,7 @@ const ResetPassword = () => {
               className="cursor-pointer text-lg font-semibold inline-flex items-center gap-2"
               style={{ color: colors.primary.main }}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
               {t("auth.resetPassword.backToLoginLink")}
             </Link>
           </div>

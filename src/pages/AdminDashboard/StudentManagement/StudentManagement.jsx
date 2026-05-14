@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { CheckCircle, Export, Eye, Filter, Magnifer, MenuDots, Pen, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -33,16 +34,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { adminApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  DotsThree,
-  Eye,
-  PencilSimple,
-  Export,
-  Funnel,
-  Users,
-  CheckCircle,
-} from "@phosphor-icons/react";
+
 
 const StudentManagement = () => {
   const { t, i18n } = useTranslation();
@@ -145,7 +137,7 @@ const StudentManagement = () => {
 
   const stats = [
     {
-      icon: Users,
+      icon: UsersGroupRounded,
       label: t("adminDashboard.students.stats.totalStudents"),
       value: totalStudentsCount.toLocaleString(),
       color: colors.primary.main,
@@ -288,7 +280,7 @@ const StudentManagement = () => {
         {/* <div className="flex gap-2">
           <Button
             variant="flat"
-            startContent={<Export className="w-4 h-4" />}
+            startContent={<Export weight="BoldDuotone" className="w-4 h-4" />}
             style={{ color: colors.text.primary }}
           >
             {t("adminDashboard.students.export")}
@@ -318,7 +310,7 @@ const StudentManagement = () => {
                   >
                     <stat.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: stat.color }}
                     />
                   </div>
@@ -362,7 +354,7 @@ const StudentManagement = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <MagnifyingGlass
+                  <Magnifer weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />
@@ -375,7 +367,7 @@ const StudentManagement = () => {
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      startContent={<Funnel className="w-4 h-4" />}
+                      startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
                     >
                       {t("adminDashboard.students.status")}:{" "}
                       {selectedStatus === "all"
@@ -525,9 +517,9 @@ const StudentManagement = () => {
                         <Dropdown>
                           <DropdownTrigger>
                             <Button isIconOnly variant="light" size="sm">
-                              <DotsThree
+                              <MenuDots
                                 className="w-5 h-5"
-                                weight="bold"
+                                weight="BoldDuotone"
                                 style={{ color: colors.text.secondary }}
                               />
                             </Button>
@@ -535,7 +527,7 @@ const StudentManagement = () => {
                           <DropdownMenu aria-label="Student actions">
                             <DropdownItem
                               key="view"
-                              startContent={<Eye className="w-4 h-4" />}
+                              startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleViewStudent(student)}
                             >
                               {t("adminDashboard.students.view")}
@@ -543,7 +535,7 @@ const StudentManagement = () => {
                             <DropdownItem
                               key="edit"
                               startContent={
-                                <PencilSimple className="w-4 h-4" />
+                                <Pen weight="BoldDuotone" className="w-4 h-4" />
                               }
                               onPress={() => handleEditClick(student)}
                             >
@@ -551,7 +543,7 @@ const StudentManagement = () => {
                             </DropdownItem>
                             <DropdownItem
                               key="status"
-                              startContent={<CheckCircle className="w-4 h-4" />}
+                              startContent={<CheckCircle weight="BoldDuotone" className="w-4 h-4" />}
                               onPress={() => handleStatusClick(student)}
                             >
                               {t("adminDashboard.students.changeStatus")}

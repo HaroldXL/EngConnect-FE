@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { AltArrowLeft, Letter, CheckCircle } from "@solar-icons/react"
 import { Input, Button, Link, Image, addToast } from "@heroui/react";
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -126,7 +127,7 @@ const ForgotPass = () => {
                     size="lg"
                     classNames={inputClassNames}
                     startContent={
-                      <Mail
+                      <Letter weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -175,7 +176,7 @@ const ForgotPass = () => {
                     size="lg"
                     classNames={inputClassNames}
                     startContent={
-                      <Mail
+                      <Letter weight="BoldDuotone"
                         className="w-5 h-5"
                         style={{ color: colors.text.tertiary }}
                       />
@@ -193,7 +194,7 @@ const ForgotPass = () => {
                     backgroundColor: colors.background.primaryLight,
                   }}
                 >
-                  <CheckCircle
+                  <CheckCircle weight="BoldDuotone"
                     className="w-5 h-5 flex-shrink-0"
                     style={{ color: colors.state.success }}
                   />
@@ -234,7 +235,7 @@ const ForgotPass = () => {
               className="cursor-pointer text-lg font-semibold inline-flex items-center gap-2"
               style={{ color: colors.primary.main }}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
               {t("auth.forgotPassword.backToLoginLink")}
             </Link>
           </div>

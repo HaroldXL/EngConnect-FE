@@ -1,4 +1,22 @@
 import { useState, useEffect, useRef } from "react";
+import {
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  AltArrowUp,
+  BookBookmark,
+  CheckCircle,
+  ClockCircle,
+  Diploma,
+  HeadphonesRound,
+  Pen,
+  Play,
+  PlayCircle,
+  Star,
+  UsersGroupRounded,
+  VolumeLoud,
+} from "@solar-icons/react";
+import { Check } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store";
@@ -18,43 +36,30 @@ import Footer from "../../components/Footer/Footer";
 import CourseDetailSkeleton from "../../components/CourseDetailSkeleton/CourseDetailSkeleton";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  Star,
-  Clock,
-  Users,
-  BookOpen,
-  Check,
-  ArrowLeft,
-  ArrowRight,
-  CaretDown,
-  CaretUp,
-  Play,
-  Certificate,
-  SpeakerHigh,
-  Ear,
-  BookOpenUser,
-  PencilSimple,
-} from "@phosphor-icons/react";
 
 const getSkillStyle = (name = "") => {
   const n = name.toLowerCase();
   if (n.includes("speak"))
     return {
-      Icon: SpeakerHigh,
+      Icon: VolumeLoud,
       color: "#F97316",
       iconBg: "rgba(249,115,22,0.15)",
     };
   if (n.includes("listen"))
-    return { Icon: Ear, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+    return {
+      Icon: HeadphonesRound,
+      color: "#06B6D4",
+      iconBg: "rgba(6,182,212,0.15)",
+    };
   if (n.includes("read"))
     return {
-      Icon: BookOpenUser,
+      Icon: BookBookmark,
       color: "#10B981",
       iconBg: "rgba(16,185,129,0.15)",
     };
   if (n.includes("writ"))
     return {
-      Icon: PencilSimple,
+      Icon: Pen,
       color: "#3B82F6",
       iconBg: "rgba(59,130,246,0.15)",
     };
@@ -264,7 +269,7 @@ const CourseDetail = () => {
           <Button
             color="primary"
             variant="flat"
-            startContent={<ArrowLeft size={18} />}
+            startContent={<AltArrowLeft weight="BoldDuotone" size={18} />}
             onPress={() => navigate("/courses")}
           >
             {t("courses.detail.backToCourses")}
@@ -341,7 +346,11 @@ const CourseDetail = () => {
                       size="sm"
                       variant="flat"
                       startContent={
-                        <Icon size={13} weight="duotone" style={{ color }} />
+                        <Icon
+                          size={13}
+                          weight="BoldDuotone"
+                          style={{ color }}
+                        />
                       }
                       style={{ backgroundColor: iconBg, color }}
                     >
@@ -405,7 +414,7 @@ const CourseDetail = () => {
                       <Star
                         key={i}
                         size={16}
-                        weight="fill"
+                        weight="BoldDuotone"
                         style={{
                           color:
                             i < Math.floor(course.ratingAverage || 0)
@@ -447,7 +456,7 @@ const CourseDetail = () => {
                         : colors.text.secondary,
                   }}
                 >
-                  <Users size={16} weight="duotone" />
+                  <UsersGroupRounded size={16} weight="BoldDuotone" />
                   {course.numberOfEnrollment?.toLocaleString() || 0}{" "}
                   {t("courses.detail.students")}
                 </span>
@@ -558,7 +567,7 @@ const CourseDetail = () => {
                               >
                                 <Check
                                   size={14}
-                                  weight="bold"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.primary.main }}
                                 />
                               </div>
@@ -583,7 +592,7 @@ const CourseDetail = () => {
                               >
                                 <Check
                                   size={14}
-                                  weight="bold"
+                                  weight="BoldDuotone"
                                   style={{ color: colors.primary.main }}
                                 />
                               </div>
@@ -673,15 +682,15 @@ const CourseDetail = () => {
                                   </div>
                                 </div>
                                 {isExpanded ? (
-                                  <CaretUp
+                                  <AltArrowUp
                                     size={18}
-                                    weight="bold"
+                                    weight="BoldDuotone"
                                     style={{ color: colors.text.secondary }}
                                   />
                                 ) : (
-                                  <CaretDown
+                                  <AltArrowDown
                                     size={18}
-                                    weight="bold"
+                                    weight="BoldDuotone"
                                     style={{ color: colors.text.secondary }}
                                   />
                                 )}
@@ -730,7 +739,7 @@ const CourseDetail = () => {
                                             >
                                               <Play
                                                 size={12}
-                                                weight="fill"
+                                                weight="BoldDuotone"
                                                 style={{
                                                   color: colors.primary.main,
                                                 }}
@@ -817,7 +826,8 @@ const CourseDetail = () => {
                           >
                             {tutorInfo.user?.firstName}{" "}
                             {tutorInfo.user?.lastName}
-                            <ArrowRight
+                            <AltArrowRight
+                              weight="BoldDuotone"
                               size={16}
                               className="inline-block ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                             />
@@ -836,7 +846,7 @@ const CourseDetail = () => {
                         <div className="flex items-center gap-1">
                           <Star
                             size={18}
-                            weight="fill"
+                            weight="BoldDuotone"
                             style={{ color: "#f59e0b" }}
                           />
                           <span
@@ -855,7 +865,8 @@ const CourseDetail = () => {
                         </div>
                         {tutorInfo.monthExperience > 0 && (
                           <div className="flex items-center gap-1">
-                            <Clock
+                            <ClockCircle
+                              weight="BoldDuotone"
                               size={18}
                               style={{ color: colors.primary.main }}
                             />
@@ -973,9 +984,7 @@ const CourseDetail = () => {
                                   <Star
                                     key={s}
                                     size={14}
-                                    weight={
-                                      s <= review.rating ? "fill" : "regular"
-                                    }
+                                    weight="BoldDuotone"
                                     color={
                                       s <= review.rating
                                         ? "#FBBF24"
@@ -1051,7 +1060,7 @@ const CourseDetail = () => {
                         <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
                           <Play
                             size={24}
-                            weight="fill"
+                            weight="BoldDuotone"
                             style={{ color: colors.primary.main }}
                           />
                         </div>
@@ -1125,7 +1134,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                           style={{ color: colors.text.secondary }}
                         >
-                          <Clock size={16} weight="duotone" />
+                          <ClockCircle size={16} weight="BoldDuotone" />
                           {t("courses.detail.totalDuration")}
                         </span>
                         <span
@@ -1140,7 +1149,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                           style={{ color: colors.text.secondary }}
                         >
-                          <Clock size={16} weight="duotone" />
+                          <ClockCircle size={16} weight="BoldDuotone" />
                           {t("courses.detail.timePerLesson")}
                         </span>
                         <span
@@ -1155,7 +1164,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                           style={{ color: colors.text.secondary }}
                         >
-                          <BookOpen size={16} weight="duotone" />
+                          <BookBookmark size={16} weight="BoldDuotone" />
                           {t("courses.detail.level")}
                         </span>
                         <span
@@ -1171,7 +1180,7 @@ const CourseDetail = () => {
                             className="flex items-center gap-2"
                             style={{ color: colors.text.secondary }}
                           >
-                            <Clock size={16} weight="duotone" />
+                            <ClockCircle size={16} weight="BoldDuotone" />
                             {t("courses.detail.sessionsPerWeek")}
                           </span>
                           <span
@@ -1187,7 +1196,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                           style={{ color: colors.text.secondary }}
                         >
-                          <Users size={16} weight="duotone" />
+                          <UsersGroupRounded size={16} weight="BoldDuotone" />
                           {t("courses.detail.studentsEnrolled")}
                         </span>
                         <span
@@ -1202,7 +1211,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                           style={{ color: colors.text.secondary }}
                         >
-                          <Certificate size={16} weight="duotone" />
+                          <Diploma size={16} weight="BoldDuotone" />
                           {t("courses.detail.certificate")}
                         </span>
                         <span

@@ -1,4 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
+import {
+  AltArrowDown,
+  CheckCircle,
+  ClipboardList,
+  CloseCircle,
+  Eye,
+  Filter,
+  Magnifer,
+  SortHorizontal,
+  SquareAltArrowRight,
+  SquareBottomUp,
+} from "@solar-icons/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -32,17 +44,6 @@ import useTableStyles from "../../../hooks/useTableStyles";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
 import { adminApi, coursesApi } from "../../../api";
-import {
-  MagnifyingGlass,
-  Receipt,
-  ArrowsLeftRight,
-  CheckCircle,
-  XCircle,
-  CaretDown,
-  Funnel,
-  Eye,
-  ArrowSquareOut,
-} from "@phosphor-icons/react";
 
 const PAGE_SIZE = 10;
 
@@ -341,7 +342,7 @@ const FinancialManagement = () => {
     {
       label: "Total Orders",
       value: stats.totalOrders,
-      icon: Receipt,
+      icon: ClipboardList,
       color: colors.primary.main,
       bg: colors.background.primaryLight,
     },
@@ -355,14 +356,14 @@ const FinancialManagement = () => {
     {
       label: "Total Transactions",
       value: stats.totalTxns,
-      icon: ArrowsLeftRight,
+      icon: SortHorizontal,
       color: "#8B5CF6",
       bg: "#8B5CF620",
     },
     {
       label: "Failed Transactions",
       value: stats.failedTxns,
-      icon: XCircle,
+      icon: CloseCircle,
       color: colors.state.error,
       bg: `${colors.state.error}20`,
     },
@@ -416,7 +417,7 @@ const FinancialManagement = () => {
                   >
                     <s.icon
                       className="w-5 h-5"
-                      weight="duotone"
+                      weight="BoldDuotone"
                       style={{ color: s.color }}
                     />
                   </div>
@@ -450,7 +451,7 @@ const FinancialManagement = () => {
         <Tabs
           selectedKey={activeTab}
           onSelectionChange={setActiveTab}
-          variant="underlined"
+          color="primary"
           classNames={{ tabList: "gap-6", cursor: "w-full" }}
         >
           <Tab key="orders" title="Orders" />
@@ -472,7 +473,8 @@ const FinancialManagement = () => {
               value={ordersSearch}
               onValueChange={setOrdersSearch}
               startContent={
-                <MagnifyingGlass
+                <Magnifer
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.tertiary }}
                 />
@@ -484,8 +486,12 @@ const FinancialManagement = () => {
               <DropdownTrigger>
                 <Button
                   variant="flat"
-                  startContent={<Funnel className="w-4 h-4" />}
-                  endContent={<CaretDown className="w-4 h-4" />}
+                  startContent={
+                    <Filter weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  endContent={
+                    <AltArrowDown weight="BoldDuotone" className="w-4 h-4" />
+                  }
                   style={{ color: colors.text.primary }}
                 >
                   Status: {ordersStatus}
@@ -622,6 +628,7 @@ const FinancialManagement = () => {
                             onPress={() => handleViewOrder(order)}
                           >
                             <Eye
+                              weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.text.secondary }}
                             />
@@ -651,7 +658,8 @@ const FinancialManagement = () => {
               value={txnsSearch}
               onValueChange={setTxnsSearch}
               startContent={
-                <MagnifyingGlass
+                <Magnifer
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.tertiary }}
                 />
@@ -663,8 +671,12 @@ const FinancialManagement = () => {
               <DropdownTrigger>
                 <Button
                   variant="flat"
-                  startContent={<Funnel className="w-4 h-4" />}
-                  endContent={<CaretDown className="w-4 h-4" />}
+                  startContent={
+                    <Filter weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  endContent={
+                    <AltArrowDown weight="BoldDuotone" className="w-4 h-4" />
+                  }
                   style={{ color: colors.text.primary }}
                 >
                   Status: {txnsStatus}
@@ -792,6 +804,7 @@ const FinancialManagement = () => {
                           onPress={() => handleViewTxn(txn)}
                         >
                           <Eye
+                            weight="BoldDuotone"
                             className="w-4 h-4"
                             style={{ color: colors.text.secondary }}
                           />
@@ -841,7 +854,10 @@ const FinancialManagement = () => {
                   >
                     {studentMap[selectedOrder.studentId] ||
                       selectedOrder.studentId}
-                    <ArrowSquareOut className="w-3.5 h-3.5" />
+                    <SquareBottomUp
+                      weight="BoldDuotone"
+                      className="w-3.5 h-3.5"
+                    />
                   </button>
                 </DetailRow>
 
@@ -856,7 +872,10 @@ const FinancialManagement = () => {
                       }}
                     >
                       {courseMap[orderMeta.courseId] || orderMeta.courseId}
-                      <ArrowSquareOut className="w-3.5 h-3.5" />
+                      <SquareBottomUp
+                        weight="BoldDuotone"
+                        className="w-3.5 h-3.5"
+                      />
                     </button>
                   </DetailRow>
                 )}
@@ -937,7 +956,10 @@ const FinancialManagement = () => {
                     }}
                   >
                     {studentMap[selectedTxn.studentId] || selectedTxn.studentId}
-                    <ArrowSquareOut className="w-3.5 h-3.5" />
+                    <SquareBottomUp
+                      weight="BoldDuotone"
+                      className="w-3.5 h-3.5"
+                    />
                   </button>
                 </DetailRow>
 
@@ -953,7 +975,10 @@ const FinancialManagement = () => {
                     >
                       {courseMap[txnOrderMeta.courseId] ||
                         txnOrderMeta.courseId}
-                      <ArrowSquareOut className="w-3.5 h-3.5" />
+                      <SquareBottomUp
+                        weight="BoldDuotone"
+                        className="w-3.5 h-3.5"
+                      />
                     </button>
                   </DetailRow>
                 )}

@@ -1,4 +1,19 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  Calendar,
+  CheckCircle,
+  ClipboardList,
+  CloseCircle,
+  Dollar,
+  Eye,
+  GraphUp,
+  Hourglass,
+  Lightning,
+  PresentationGraph,
+  SquareAltArrowRight,
+  SquareBottomUp,
+  Wallet,
+} from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -29,20 +44,7 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
-import {
-  Wallet,
-  CurrencyDollar,
-  TrendUp,
-  Receipt,
-  CalendarBlank,
-  CheckCircle,
-  Hourglass,
-  Lightning,
-  XCircle,
-  ChalkboardTeacher,
-  ArrowSquareOut,
-  Eye,
-} from "@phosphor-icons/react";
+
 import { paymentApi, tutorApi } from "../../../api";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
@@ -254,7 +256,7 @@ const PayrollManagement = () => {
         return Hourglass;
       case "Failed":
       case "Cancelled":
-        return XCircle;
+        return CloseCircle;
       default:
         return Hourglass;
     }
@@ -324,7 +326,7 @@ const PayrollManagement = () => {
           key="periods"
           title={
             <div className="flex items-center gap-2">
-              <CalendarBlank weight="duotone" className="w-5 h-5" />
+              <Calendar weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("adminDashboard.payroll.tabs.periods")}</span>
             </div>
           }
@@ -333,7 +335,7 @@ const PayrollManagement = () => {
           key="payouts"
           title={
             <div className="flex items-center gap-2">
-              <Receipt weight="duotone" className="w-5 h-5" />
+              <ClipboardList weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("adminDashboard.payroll.tabs.payouts")}</span>
             </div>
           }
@@ -342,7 +344,7 @@ const PayrollManagement = () => {
           key="overview"
           title={
             <div className="flex items-center gap-2">
-              <TrendUp weight="duotone" className="w-5 h-5" />
+              <GraphUp weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("adminDashboard.payroll.tabs.overview")}</span>
             </div>
           }
@@ -354,7 +356,10 @@ const PayrollManagement = () => {
         <Card shadow="none" className="border-none" style={tableCardStyle}>
           <CardBody className="p-4">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h2 className="text-lg font-semibold" style={{ color: colors.text.primary }}>
+              <h2
+                className="text-lg font-semibold"
+                style={{ color: colors.text.primary }}
+              >
                 {t("adminDashboard.payroll.periods.title")}
               </h2>
               <Select
@@ -377,20 +382,39 @@ const PayrollManagement = () => {
               </Select>
             </div>
 
-            <Table aria-label="Payroll periods" classNames={tableClassNames} removeWrapper>
+            <Table
+              aria-label="Payroll periods"
+              classNames={tableClassNames}
+              removeWrapper
+            >
               <TableHeader>
-                <TableColumn>{t("adminDashboard.payroll.periods.code")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.periods.dateRange")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.periods.cutoff")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.periods.note")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.periods.status")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.periods.actions")}</TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.code")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.dateRange")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.cutoff")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.note")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.status")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.periods.actions")}
+                </TableColumn>
               </TableHeader>
               <TableBody
                 isLoading={periodsLoading}
                 loadingContent={<Spinner />}
                 emptyContent={
-                  <p className="py-8 text-center" style={{ color: colors.text.tertiary }}>
+                  <p
+                    className="py-8 text-center"
+                    style={{ color: colors.text.tertiary }}
+                  >
                     {t("adminDashboard.payroll.periods.empty")}
                   </p>
                 }
@@ -398,7 +422,10 @@ const PayrollManagement = () => {
                 {periods.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell>
-                      <span className="font-semibold" style={{ color: colors.text.primary }}>
+                      <span
+                        className="font-semibold"
+                        style={{ color: colors.text.primary }}
+                      >
                         {p.code}
                       </span>
                     </TableCell>
@@ -413,7 +440,10 @@ const PayrollManagement = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm truncate max-w-xs" style={{ color: colors.text.tertiary }}>
+                      <span
+                        className="text-sm truncate max-w-xs"
+                        style={{ color: colors.text.tertiary }}
+                      >
                         {p.note || "—"}
                       </span>
                     </TableCell>
@@ -433,7 +463,12 @@ const PayrollManagement = () => {
                       <Button
                         size="sm"
                         variant="flat"
-                        startContent={<ArrowSquareOut className="w-4 h-4" />}
+                        startContent={
+                          <SquareBottomUp
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
+                        }
                         onPress={() => openPeriodPayouts(p)}
                         style={{
                           backgroundColor: `${colors.primary.main}15`,
@@ -468,7 +503,10 @@ const PayrollManagement = () => {
         <Card shadow="none" className="border-none" style={tableCardStyle}>
           <CardBody className="p-4">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h2 className="text-lg font-semibold" style={{ color: colors.text.primary }}>
+              <h2
+                className="text-lg font-semibold"
+                style={{ color: colors.text.primary }}
+              >
                 {t("adminDashboard.payroll.payouts.title")}
               </h2>
               <div className="flex items-center gap-2 flex-wrap">
@@ -519,11 +557,13 @@ const PayrollManagement = () => {
                     setPayoutsPage(1);
                   }}
                 >
-                  {["Pending", "Processing", "Paid", "Failed", "Cancelled"].map((s) => (
-                    <SelectItem key={s}>
-                      {t(`adminDashboard.payroll.payoutStatuses.${s}`)}
-                    </SelectItem>
-                  ))}
+                  {["Pending", "Processing", "Paid", "Failed", "Cancelled"].map(
+                    (s) => (
+                      <SelectItem key={s}>
+                        {t(`adminDashboard.payroll.payoutStatuses.${s}`)}
+                      </SelectItem>
+                    ),
+                  )}
                 </Select>
               </div>
             </div>
@@ -544,8 +584,8 @@ const PayrollManagement = () => {
                       color: colors.primary.main,
                     }}
                   >
-                    {allPeriods.find((p) => p.id === payoutPeriodFilter)?.code ||
-                      payoutPeriodFilter.slice(0, 8)}
+                    {allPeriods.find((p) => p.id === payoutPeriodFilter)
+                      ?.code || payoutPeriodFilter.slice(0, 8)}
                   </Chip>
                 )}
                 {payoutTypeFilter && (
@@ -554,7 +594,9 @@ const PayrollManagement = () => {
                     variant="flat"
                     onClose={() => setPayoutTypeFilter("")}
                   >
-                    {t(`adminDashboard.payroll.payoutTypes.${payoutTypeFilter}`)}
+                    {t(
+                      `adminDashboard.payroll.payoutTypes.${payoutTypeFilter}`,
+                    )}
                   </Chip>
                 )}
                 {payoutStatusFilter && (
@@ -563,28 +605,53 @@ const PayrollManagement = () => {
                     variant="flat"
                     onClose={() => setPayoutStatusFilter("")}
                   >
-                    {t(`adminDashboard.payroll.payoutStatuses.${payoutStatusFilter}`)}
+                    {t(
+                      `adminDashboard.payroll.payoutStatuses.${payoutStatusFilter}`,
+                    )}
                   </Chip>
                 )}
               </div>
             )}
 
-            <Table aria-label="Payouts" classNames={tableClassNames} removeWrapper>
+            <Table
+              aria-label="Payouts"
+              classNames={tableClassNames}
+              removeWrapper
+            >
               <TableHeader>
-                <TableColumn>{t("adminDashboard.payroll.payouts.tutor")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.type")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.amount")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.bank")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.status")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.requestedAt")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.paidAt")}</TableColumn>
-                <TableColumn>{t("adminDashboard.payroll.payouts.actions")}</TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.tutor")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.type")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.amount")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.bank")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.status")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.requestedAt")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.paidAt")}
+                </TableColumn>
+                <TableColumn>
+                  {t("adminDashboard.payroll.payouts.actions")}
+                </TableColumn>
               </TableHeader>
               <TableBody
                 isLoading={payoutsLoading}
                 loadingContent={<Spinner />}
                 emptyContent={
-                  <p className="py-8 text-center" style={{ color: colors.text.tertiary }}>
+                  <p
+                    className="py-8 text-center"
+                    style={{ color: colors.text.tertiary }}
+                  >
                     {t("adminDashboard.payroll.payouts.empty")}
                   </p>
                 }
@@ -646,7 +713,9 @@ const PayrollManagement = () => {
                             fontWeight: isPendingManual ? 600 : 400,
                           }}
                         >
-                          {t(`adminDashboard.payroll.payoutTypes.${p.payoutType}`)}
+                          {t(
+                            `adminDashboard.payroll.payoutTypes.${p.payoutType}`,
+                          )}
                           {isPendingManual && " ★"}
                         </Chip>
                       </TableCell>
@@ -660,7 +729,9 @@ const PayrollManagement = () => {
                       </TableCell>
                       <TableCell>
                         <div className="text-xs">
-                          <p style={{ color: colors.text.primary }}>{p.bankCode}</p>
+                          <p style={{ color: colors.text.primary }}>
+                            {p.bankCode}
+                          </p>
                           <p style={{ color: colors.text.tertiary }}>
                             {p.bankAccountNumber}
                           </p>
@@ -671,14 +742,19 @@ const PayrollManagement = () => {
                           size="sm"
                           variant="flat"
                           startContent={
-                            <StatusIcon weight="duotone" className="w-3.5 h-3.5" />
+                            <StatusIcon
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
                           }
                           style={{
                             backgroundColor: `${payoutStatusColor(p.status)}15`,
                             color: payoutStatusColor(p.status),
                           }}
                         >
-                          {t(`adminDashboard.payroll.payoutStatuses.${p.status}`)}
+                          {t(
+                            `adminDashboard.payroll.payoutStatuses.${p.status}`,
+                          )}
                         </Chip>
                       </TableCell>
                       <TableCell>
@@ -695,7 +771,9 @@ const PayrollManagement = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Eye className="w-4 h-4" />}
+                          startContent={
+                            <Eye weight="BoldDuotone" className="w-4 h-4" />
+                          }
                           onPress={() => openPayoutDetail(p)}
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
@@ -740,21 +818,21 @@ const PayrollManagement = () => {
                 bg: colors.background.primaryLight,
               },
               {
-                icon: CurrencyDollar,
+                icon: Dollar,
                 label: t("adminDashboard.payroll.overview.totalNet"),
                 value: formatVND(topStats.net),
                 color: colors.state.success,
                 bg: `${colors.state.success}20`,
               },
               {
-                icon: TrendUp,
+                icon: GraphUp,
                 label: t("adminDashboard.payroll.overview.totalGross"),
                 value: formatVND(topStats.gross),
                 color: colors.state.info,
                 bg: `${colors.state.info}20`,
               },
               {
-                icon: Receipt,
+                icon: ClipboardList,
                 label: t("adminDashboard.payroll.overview.totalFee"),
                 value: formatVND(topStats.fee),
                 color: colors.state.warning,
@@ -774,7 +852,7 @@ const PayrollManagement = () => {
                       style={{ backgroundColor: stat.bg }}
                     >
                       <stat.icon
-                        weight="duotone"
+                        weight="BoldDuotone"
                         className="w-6 h-6"
                         style={{ color: stat.color }}
                       />
@@ -813,21 +891,42 @@ const PayrollManagement = () => {
                 {t("adminDashboard.payroll.overview.perTutorTitle")}
               </h2>
 
-              <Table aria-label="Tutor earnings" classNames={tableClassNames} removeWrapper>
+              <Table
+                aria-label="Tutor earnings"
+                classNames={tableClassNames}
+                removeWrapper
+              >
                 <TableHeader>
-                  <TableColumn>{t("adminDashboard.payroll.overview.tutor")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.balance")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.net")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.gross")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.fee")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.earningCount")}</TableColumn>
-                  <TableColumn>{t("adminDashboard.payroll.overview.actions")}</TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.tutor")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.balance")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.net")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.gross")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.fee")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.earningCount")}
+                  </TableColumn>
+                  <TableColumn>
+                    {t("adminDashboard.payroll.overview.actions")}
+                  </TableColumn>
                 </TableHeader>
                 <TableBody
                   isLoading={tutorsSummaryLoading}
                   loadingContent={<Spinner />}
                   emptyContent={
-                    <p className="py-8 text-center" style={{ color: colors.text.tertiary }}>
+                    <p
+                      className="py-8 text-center"
+                      style={{ color: colors.text.tertiary }}
+                    >
                       {t("adminDashboard.payroll.overview.empty")}
                     </p>
                   }
@@ -911,9 +1010,14 @@ const PayrollManagement = () => {
                               size="sm"
                               variant="flat"
                               startContent={
-                                <ChalkboardTeacher className="w-4 h-4" />
+                                <PresentationGraph
+                                  weight="BoldDuotone"
+                                  className="w-4 h-4"
+                                />
                               }
-                              onPress={() => navigate(`/admin/tutors/${s.tutorId}`)}
+                              onPress={() =>
+                                navigate(`/admin/tutors/${s.tutorId}`)
+                              }
                               style={{
                                 backgroundColor: `${colors.primary.main}15`,
                                 color: colors.primary.main,
@@ -945,8 +1049,8 @@ const PayrollManagement = () => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <Receipt
-              weight="duotone"
+            <ClipboardList
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.primary.main }}
             />
@@ -989,7 +1093,10 @@ const PayrollManagement = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("adminDashboard.payroll.payouts.amount")}
                     </p>
                     <p
@@ -1003,7 +1110,10 @@ const PayrollManagement = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("adminDashboard.payroll.payouts.status")}
                     </p>
                     <Chip
@@ -1015,20 +1125,32 @@ const PayrollManagement = () => {
                         color: payoutStatusColor(selectedPayout.status),
                       }}
                     >
-                      {t(`adminDashboard.payroll.payoutStatuses.${selectedPayout.status}`)}
+                      {t(
+                        `adminDashboard.payroll.payoutStatuses.${selectedPayout.status}`,
+                      )}
                     </Chip>
                   </div>
                   <div
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("adminDashboard.payroll.payouts.bank")}
                     </p>
-                    <p className="text-sm font-medium mt-0.5" style={{ color: colors.text.primary }}>
-                      {selectedPayout.bankCode} • {selectedPayout.bankAccountNumber}
+                    <p
+                      className="text-sm font-medium mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {selectedPayout.bankCode} •{" "}
+                      {selectedPayout.bankAccountNumber}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.text.tertiary }}>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: colors.text.tertiary }}
+                    >
                       {selectedPayout.bankAccountName}
                     </p>
                   </div>
@@ -1036,14 +1158,26 @@ const PayrollManagement = () => {
                     className="p-3 rounded-xl"
                     style={{ backgroundColor: colors.background.gray }}
                   >
-                    <p className="text-xs" style={{ color: colors.text.secondary }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {t("adminDashboard.payroll.payouts.type")}
                     </p>
-                    <p className="text-sm font-medium mt-0.5" style={{ color: colors.text.primary }}>
-                      {t(`adminDashboard.payroll.payoutTypes.${selectedPayout.payoutType}`)}
+                    <p
+                      className="text-sm font-medium mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t(
+                        `adminDashboard.payroll.payoutTypes.${selectedPayout.payoutType}`,
+                      )}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.text.tertiary }}>
-                      {formatDateTime(selectedPayout.requestedAt)} → {formatDateTime(selectedPayout.paidAt)}
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: colors.text.tertiary }}
+                    >
+                      {formatDateTime(selectedPayout.requestedAt)} →{" "}
+                      {formatDateTime(selectedPayout.paidAt)}
                     </p>
                   </div>
                 </div>
@@ -1054,7 +1188,8 @@ const PayrollManagement = () => {
                     className="text-sm font-semibold mb-2"
                     style={{ color: colors.text.primary }}
                   >
-                    {t("adminDashboard.payroll.payouts.items")} ({payoutItems.length})
+                    {t("adminDashboard.payroll.payouts.items")} (
+                    {payoutItems.length})
                   </p>
                   {payoutItemsLoading ? (
                     <div className="flex items-center justify-center py-4">
@@ -1099,7 +1234,9 @@ const PayrollManagement = () => {
                               color: payoutStatusColor(item.status),
                             }}
                           >
-                            {t(`adminDashboard.payroll.payoutStatuses.${item.status}`)}
+                            {t(
+                              `adminDashboard.payroll.payoutStatuses.${item.status}`,
+                            )}
                           </Chip>
                         </div>
                       ))}
