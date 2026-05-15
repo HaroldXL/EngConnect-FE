@@ -811,6 +811,24 @@
         "noBankTitle": "Chưa có tài khoản ngân hàng",
         "noBankMessage": "Bạn cần thêm tài khoản ngân hàng vào hồ sơ trước khi gửi yêu cầu hoàn tiền. Tiền hoàn sẽ được chuyển vào tài khoản ngân hàng của bạn.",
         "goToProfile": "Đến trang hồ sơ"
+      },
+      "makeup": {
+        "makeupBtn": "Bù vào cuối khoá",
+        "deadlineUntil": "Hạn học bù: {{date}}",
+        "deadlinePassed": "Đã hết hạn học bù",
+        "title": "Yêu cầu học bù",
+        "hint": "Một buổi học mới sẽ được thêm vào sau buổi học cuối cùng của khoá để bù cho buổi đã nghỉ.",
+        "notePlaceholder": "Thêm ghi chú cho gia sư (tùy chọn)...",
+        "submitBtn": "Gửi yêu cầu",
+        "submitFailed": "Gửi yêu cầu thất bại",
+        "pendingChip": "Chờ xác nhận học bù",
+        "reviewTitle": "Yêu cầu học bù",
+        "requestNote": "Ghi chú",
+        "accept": "Chấp nhận",
+        "reject": "Từ chối",
+        "rejectNotePlaceholder": "Lý do từ chối (tùy chọn)...",
+        "confirmReject": "Xác nhận từ chối",
+        "cancelAction": "Hủy"
       }
     },
     "homework": {
@@ -1427,6 +1445,24 @@
           "Resolved": "Đã giải quyết",
           "Closed": "Đã đóng"
         }
+      },
+      "makeup": {
+        "makeupBtn": "Bù vào cuối khoá",
+        "deadlineUntil": "Hạn dạy bù: {{date}}",
+        "deadlinePassed": "Đã hết hạn dạy bù",
+        "title": "Yêu cầu dạy bù",
+        "hint": "Một buổi học mới sẽ được thêm vào sau buổi học cuối cùng của khoá để bù cho buổi đã vắng.",
+        "notePlaceholder": "Thêm ghi chú cho học viên (tùy chọn)...",
+        "submitBtn": "Gửi yêu cầu",
+        "submitFailed": "Gửi yêu cầu thất bại",
+        "pendingChip": "Chờ xác nhận dạy bù",
+        "reviewTitle": "Yêu cầu học bù từ học viên",
+        "requestNote": "Ghi chú",
+        "accept": "Chấp nhận",
+        "reject": "Từ chối",
+        "rejectNotePlaceholder": "Lý do từ chối (tùy chọn)...",
+        "confirmReject": "Xác nhận từ chối",
+        "cancelAction": "Hủy"
       }
     },
     "students": {

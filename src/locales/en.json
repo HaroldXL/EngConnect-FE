@@ -813,6 +813,24 @@
         "noBankTitle": "Bank Account Required",
         "noBankMessage": "You need to add a bank account to your profile before submitting a refund request. The refund will be transferred to your bank account.",
         "goToProfile": "Go to Profile"
+      },
+      "makeup": {
+        "makeupBtn": "Add to end of course",
+        "deadlineUntil": "Makeup deadline: {{date}}",
+        "deadlinePassed": "Makeup deadline passed",
+        "title": "Request Makeup Lesson",
+        "hint": "A new session will be added after the last lesson of this course to make up for the missed one.",
+        "notePlaceholder": "Add a note for your tutor (optional)...",
+        "submitBtn": "Send Request",
+        "submitFailed": "Failed to send makeup request",
+        "pendingChip": "Makeup Pending",
+        "reviewTitle": "Makeup Request",
+        "requestNote": "Note",
+        "accept": "Accept",
+        "reject": "Decline",
+        "rejectNotePlaceholder": "Reason for declining (optional)...",
+        "confirmReject": "Confirm Decline",
+        "cancelAction": "Cancel"
       }
     },
     "homework": {
@@ -1429,6 +1447,24 @@
           "Resolved": "Resolved",
           "Closed": "Closed"
         }
+      },
+      "makeup": {
+        "makeupBtn": "Add to end of course",
+        "deadlineUntil": "Makeup deadline: {{date}}",
+        "deadlinePassed": "Makeup deadline passed",
+        "title": "Request Makeup Lesson",
+        "hint": "A new session will be added after the last lesson of this course to make up for the missed one.",
+        "notePlaceholder": "Add a note for your student (optional)...",
+        "submitBtn": "Send Request",
+        "submitFailed": "Failed to send makeup request",
+        "pendingChip": "Makeup Pending",
+        "reviewTitle": "Makeup Request from Student",
+        "requestNote": "Note",
+        "accept": "Accept",
+        "reject": "Decline",
+        "rejectNotePlaceholder": "Reason for declining (optional)...",
+        "confirmReject": "Confirm Decline",
+        "cancelAction": "Cancel"
       }
     },
     "students": {

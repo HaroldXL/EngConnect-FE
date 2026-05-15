@@ -8,11 +8,9 @@ import {
   Diploma,
   DocumentText,
   Dollar,
-  Eye,
   LinkMinimalistic,
   MenuDots,
   Play,
-  PlayCircle,
   Record,
   RecordAudioCircle,
   Restart,
@@ -34,7 +32,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useThemeColors } from "../../hooks/useThemeColors";
 
-import { coursesApi, rescheduleApi, studentApi } from "../../api";
+import { coursesApi, makeupApi, rescheduleApi, studentApi } from "../../api";
 import { selectUser } from "../../store";
 import VideoModal from "../VideoModal/VideoModal";
 import TutorRescheduleOfferModal from "../TutorRescheduleOfferModal/TutorRescheduleOfferModal";
@@ -43,6 +41,7 @@ import StudentRescheduleAcceptModal from "../StudentRescheduleAcceptModal/Studen
 import StudentRescheduleRequestModal from "../StudentRescheduleRequestModal/StudentRescheduleRequestModal";
 import LessonSummaryModal from "../LessonSummaryModal/LessonSummaryModal";
 import LessonQuizModal from "../LessonQuizModal/LessonQuizModal";
+import MakeupRequestModal from "../MakeupRequestModal/MakeupRequestModal";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
 const withCDN = (url) => {
@@ -135,9 +134,26 @@ const LessonDetailModal = ({
     onOpen: onStudentReqOpen,
     onClose: onStudentReqClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isMakeupOpen,
+    onOpen: onMakeupOpen,
+    onClose: onMakeupClose,
+  } = useDisclosure();
+  const {
+    isOpen: isMakeupReviewOpen,
+    onOpen: onMakeupReviewOpen,
+    onClose: onMakeupReviewClose,
+  } = useDisclosure();
   const [studentReqRejecting, setStudentReqRejecting] = useState(false);
   const [studentReqRejectNote, setStudentReqRejectNote] = useState("");
   const [studentReqProcessing, setStudentReqProcessing] = useState(false);
+
+  const [makeupRequests, setMakeupRequests] = useState([]);
+  const [makeupDeadline, setMakeupDeadline] = useState(null);
+  const [makeupReviewRejecting, setMakeupReviewRejecting] = useState(false);
+  const [makeupReviewRejectNote, setMakeupReviewRejectNote] = useState("");
+  const [makeupReviewProcessing, setMakeupReviewProcessing] = useState(false);
 
   const {
     isOpen: isVideoOpen,
@@ -199,33 +215,83 @@ const LessonDetailModal = ({
         );
       }
 
-      // Compute reschedule deadline internally when not provided via prop
-      if (
+      // Fetch makeup requests for this lesson
+      try {
+        const makeupRes = await makeupApi.getRequests({
+          LessonId: lesson.id,
+          "page-size": 20,
+        });
+        setMakeupRequests(makeupRes?.data?.items || []);
+      } catch {
+        setMakeupRequests([]);
+      }
+
+      const needRescheduleDeadline =
         !rescheduleDeadline &&
         (lesson.status === "NoTutor" || lesson.status === "Reschedule") &&
-        lesson.studentId
-      ) {
+        lesson.studentId;
+
+      const needMakeupDeadline =
+        ((isStudentView && lesson.status === "NoStudent") ||
+          (!isStudentView && lesson.status === "NoTutor")) &&
+        lesson.courseId &&
+        lesson.studentId;
+
+      if (needRescheduleDeadline || needMakeupDeadline) {
         try {
           const lessonsRes = await studentApi.getLessons({
             StudentId: lesson.studentId,
             "page-size": 200,
           });
           const allLessons = lessonsRes?.data?.items || [];
-          const next = allLessons
-            .filter((l) => new Date(l.startTime) > new Date(lesson.startTime))
-            .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
-          setComputedDeadline(
-            next
-              ? new Date(
-                  new Date(next.startTime).getTime() - 24 * 60 * 60 * 1000,
-                )
-              : null,
-          );
+
+          if (needRescheduleDeadline) {
+            const next = allLessons
+              .filter(
+                (l) =>
+                  l.courseId === lesson.courseId &&
+                  new Date(l.startTime) > new Date(lesson.startTime),
+              )
+              .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
+            setComputedDeadline(
+              next
+                ? new Date(
+                    new Date(next.startTime).getTime() - 24 * 60 * 60 * 1000,
+                  )
+                : null,
+            );
+          } else {
+            setComputedDeadline(null);
+          }
+
+          if (needMakeupDeadline) {
+            const nextCourse = allLessons
+              .filter(
+                (l) =>
+                  l.courseId === lesson.courseId &&
+                  new Date(l.startTime) > new Date(lesson.startTime),
+              )
+              .sort(
+                (a, b) => new Date(a.startTime) - new Date(b.startTime),
+              )[0];
+            setMakeupDeadline(
+              nextCourse
+                ? new Date(
+                    new Date(nextCourse.startTime).getTime() -
+                      24 * 60 * 60 * 1000,
+                  )
+                : null,
+            );
+          } else {
+            setMakeupDeadline(null);
+          }
         } catch {
           setComputedDeadline(null);
+          setMakeupDeadline(null);
         }
       } else {
         setComputedDeadline(null);
+        setMakeupDeadline(null);
       }
     } catch {
       // silently ignore
@@ -417,6 +483,39 @@ const LessonDetailModal = ({
     : null;
 
   const effectiveDeadline = rescheduleDeadline ?? computedDeadline;
+
+  const internalCanStudentMakeup =
+    isStudentView && lesson.status === "NoStudent";
+  const internalCanTutorMakeup =
+    !isStudentView && lesson.status === "NoTutor";
+  // For tutor+NoTutor, reuse effectiveDeadline (prop-aware) instead of computing separately
+  const resolvedMakeupDeadline =
+    internalCanTutorMakeup && effectiveDeadline
+      ? effectiveDeadline
+      : makeupDeadline;
+  const makeupDeadlinePassed =
+    resolvedMakeupDeadline !== null && resolvedMakeupDeadline < new Date();
+
+  const pendingMakeupReq =
+    makeupRequests.find((r) => r.status === "Pending") || null;
+  const internalStudentMakeupForTutor =
+    !isStudentView &&
+    lesson.status === "NoStudent" &&
+    pendingMakeupReq?.createdByRole === "Student"
+      ? pendingMakeupReq
+      : null;
+  const internalTutorMakeupForStudent =
+    isStudentView &&
+    lesson.status === "NoTutor" &&
+    pendingMakeupReq?.createdByRole === "Tutor"
+      ? pendingMakeupReq
+      : null;
+  const reviewMakeupReq =
+    internalStudentMakeupForTutor || internalTutorMakeupForStudent;
+
+  const makeupNs = isStudentView
+    ? "studentDashboard.schedule.makeup"
+    : "tutorDashboard.schedule.makeup";
 
   const handleInternalReschedule = () => {
     if (lesson.status === "NoTutor") onTicketOpen();
@@ -898,6 +997,51 @@ const LessonDetailModal = ({
                   </span>
                 </div>
               )}
+
+              {/* Makeup deadline banner */}
+              {resolvedMakeupDeadline &&
+                (internalCanStudentMakeup || internalCanTutorMakeup) && (
+                  <div
+                    className="flex items-center gap-2 p-3 rounded-xl"
+                    style={{
+                      backgroundColor: `${makeupDeadlinePassed ? colors.state.error : colors.state.warning}12`,
+                      border: `1px solid ${makeupDeadlinePassed ? colors.state.error : colors.state.warning}30`,
+                    }}
+                  >
+                    {makeupDeadlinePassed ? (
+                      <DangerTriangle
+                        weight="BoldDuotone"
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: colors.state.error }}
+                      />
+                    ) : (
+                      <ClockCircle
+                        weight="BoldDuotone"
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: colors.state.warning }}
+                      />
+                    )}
+                    <span
+                      className="text-sm"
+                      style={{
+                        color: makeupDeadlinePassed
+                          ? colors.state.error
+                          : colors.state.warning,
+                      }}
+                    >
+                      {makeupDeadlinePassed
+                        ? t(`${makeupNs}.deadlinePassed`)
+                        : t(`${makeupNs}.deadlineUntil`, {
+                            date: resolvedMakeupDeadline.toLocaleString(dateLocale, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }),
+                          })}
+                    </span>
+                  </div>
+                )}
             </ModalBody>
             <ModalFooter>
               <Button variant="light" onPress={onClose}>
@@ -992,6 +1136,39 @@ const LessonDetailModal = ({
                     {t("studentDashboard.schedule.reschedule.requestBtn")}
                   </Button>
                 ))}
+              {/* Makeup: create request button */}
+              {(internalCanStudentMakeup || internalCanTutorMakeup) &&
+                !makeupDeadlinePassed && (
+                  <Button
+                    variant="flat"
+                    startContent={
+                      <CircleBottomUp
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                      />
+                    }
+                    onPress={onMakeupOpen}
+                    style={{ color: colors.primary.main }}
+                  >
+                    {t(`${makeupNs}.makeupBtn`)}
+                  </Button>
+                )}
+              {/* Makeup: review pending request from the other party */}
+              {reviewMakeupReq && (
+                <Button
+                  variant="flat"
+                  startContent={
+                    <CircleBottomUp weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  onPress={onMakeupReviewOpen}
+                  style={{
+                    backgroundColor: `${colors.state.warning}20`,
+                    color: colors.state.warning,
+                  }}
+                >
+                  {t(`${makeupNs}.pendingChip`)}
+                </Button>
+              )}
               {/* Student: request refund for NoTutor lesson */}
               {isStudentView && lesson?.status === "NoTutor" && (
                 <Button
@@ -1103,6 +1280,193 @@ const LessonDetailModal = ({
           onRefresh?.();
         }}
       />
+
+      <MakeupRequestModal
+        lesson={lesson}
+        isOpen={isMakeupOpen}
+        onClose={onMakeupClose}
+        createdByRole={isStudentView ? "Student" : "Tutor"}
+        makeupDeadline={resolvedMakeupDeadline}
+        onSuccess={() => {
+          onMakeupClose();
+          fetchRescheduleData();
+          onRefresh?.();
+        }}
+      />
+
+      {/* Makeup review modal */}
+      <Modal
+        isOpen={isMakeupReviewOpen}
+        onClose={() => {
+          onMakeupReviewClose();
+          setMakeupReviewRejecting(false);
+          setMakeupReviewRejectNote("");
+        }}
+        size="sm"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <CircleBottomUp
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.state.warning }}
+                />
+                {t(`${makeupNs}.reviewTitle`)}
+              </ModalHeader>
+              <ModalBody className="pb-2">
+                {reviewMakeupReq && (
+                  <div className="space-y-2">
+                    <div
+                      className="p-3 rounded-xl"
+                      style={{ backgroundColor: colors.background.gray }}
+                    >
+                      <p
+                        className="font-medium text-sm"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {lesson.courseTitle || lesson.sessionTitle}
+                      </p>
+                      <p
+                        className="text-xs mt-0.5 flex items-center gap-1"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        <ClockCircle
+                          weight="BoldDuotone"
+                          className="w-3 h-3"
+                        />
+                        {new Date(lesson.startTime).toLocaleString(dateLocale, {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    {reviewMakeupReq.note && (
+                      <div
+                        className="px-3 py-2 rounded-xl"
+                        style={{ backgroundColor: colors.background.gray }}
+                      >
+                        <p
+                          className="text-xs font-medium mb-0.5"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t(`${makeupNs}.requestNote`)}
+                        </p>
+                        <p
+                          className="text-sm italic"
+                          style={{ color: colors.text.primary }}
+                        >
+                          "{reviewMakeupReq.note}"
+                        </p>
+                      </div>
+                    )}
+                    {makeupReviewRejecting && (
+                      <textarea
+                        rows={2}
+                        value={makeupReviewRejectNote}
+                        onChange={(e) =>
+                          setMakeupReviewRejectNote(e.target.value)
+                        }
+                        placeholder={t(`${makeupNs}.rejectNotePlaceholder`)}
+                        className="w-full px-2 py-1.5 rounded-lg text-xs resize-none outline-none"
+                        style={{
+                          backgroundColor: colors.background.light,
+                          color: colors.text.primary,
+                          border: `1px solid ${colors.state.error}40`,
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                {!makeupReviewRejecting ? (
+                  <>
+                    <Button
+                      variant="light"
+                      onPress={() => {
+                        setMakeupReviewRejecting(true);
+                        setMakeupReviewRejectNote("");
+                      }}
+                      style={{ color: colors.state.error }}
+                    >
+                      {t(`${makeupNs}.reject`)}
+                    </Button>
+                    <Button
+                      isLoading={makeupReviewProcessing}
+                      style={{
+                        backgroundColor: colors.state.success,
+                        color: "#fff",
+                      }}
+                      onPress={async () => {
+                        if (!reviewMakeupReq) return;
+                        setMakeupReviewProcessing(true);
+                        try {
+                          await makeupApi.acceptRequest(reviewMakeupReq.id, {
+                            note: "",
+                          });
+                          onClose();
+                          fetchRescheduleData();
+                          onRefresh?.();
+                        } finally {
+                          setMakeupReviewProcessing(false);
+                        }
+                      }}
+                    >
+                      {t(`${makeupNs}.accept`)}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="light"
+                      onPress={() => {
+                        setMakeupReviewRejecting(false);
+                        setMakeupReviewRejectNote("");
+                      }}
+                    >
+                      {t(`${makeupNs}.cancelAction`)}
+                    </Button>
+                    <Button
+                      isLoading={makeupReviewProcessing}
+                      style={{
+                        backgroundColor: colors.state.error,
+                        color: "#fff",
+                      }}
+                      onPress={async () => {
+                        if (!reviewMakeupReq) return;
+                        setMakeupReviewProcessing(true);
+                        try {
+                          await makeupApi.rejectRequest(reviewMakeupReq.id, {
+                            note: makeupReviewRejectNote,
+                          });
+                          onClose();
+                          setMakeupReviewRejecting(false);
+                          setMakeupReviewRejectNote("");
+                          fetchRescheduleData();
+                          onRefresh?.();
+                        } finally {
+                          setMakeupReviewProcessing(false);
+                        }
+                      }}
+                    >
+                      {t(`${makeupNs}.confirmReject`)}
+                    </Button>
+                  </>
+                )}
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       {/* Tutor: view pending offer detail */}
       <Modal
