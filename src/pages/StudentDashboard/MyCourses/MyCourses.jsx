@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import { Magnifer } from "@solar-icons/react"
+import { MinimalisticMagnifier } from "@solar-icons/react"
 
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../../components/CourseCardSkeleton/CourseCardSkeleton";
@@ -109,7 +109,7 @@ const MyCourses = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <Magnifer weight="BoldDuotone"
+            <MinimalisticMagnifier weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />

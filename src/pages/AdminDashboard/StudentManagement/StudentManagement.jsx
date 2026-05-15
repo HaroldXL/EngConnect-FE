@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { CheckCircle, Export, Eye, Filter, Magnifer, MenuDots, Pen, UsersGroupRounded } from "@solar-icons/react"
+import { CheckCircle, Export, Eye, Filter, MinimalisticMagnifier, MenuDots, Pen, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -354,7 +354,7 @@ const StudentManagement = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <Magnifer weight="BoldDuotone"
+                  <MinimalisticMagnifier weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />

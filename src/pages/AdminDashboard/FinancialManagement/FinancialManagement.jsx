@@ -6,7 +6,7 @@ import {
   CloseCircle,
   Eye,
   Filter,
-  Magnifer,
+  MinimalisticMagnifier,
   SortHorizontal,
   SquareAltArrowRight,
   SquareBottomUp,
@@ -473,7 +473,7 @@ const FinancialManagement = () => {
               value={ordersSearch}
               onValueChange={setOrdersSearch}
               startContent={
-                <Magnifer
+                <MinimalisticMagnifier
                   weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.tertiary }}
@@ -658,7 +658,7 @@ const FinancialManagement = () => {
               value={txnsSearch}
               onValueChange={setTxnsSearch}
               startContent={
-                <Magnifer
+                <MinimalisticMagnifier
                   weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.tertiary }}

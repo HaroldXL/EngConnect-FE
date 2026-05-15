@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { AddCircle, Folder2, Magnifer, Pen, TagPrice, TrashBinMinimalistic } from "@solar-icons/react"
+import { AddCircle, Folder2, MinimalisticMagnifier, Pen, TagPrice, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -281,7 +281,7 @@ const CategoryManagement = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               startContent={
-                <Magnifer weight="BoldDuotone"
+                <MinimalisticMagnifier weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />

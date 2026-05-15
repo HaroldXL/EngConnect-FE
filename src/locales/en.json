@@ -830,7 +830,13 @@
         "reject": "Decline",
         "rejectNotePlaceholder": "Reason for declining (optional)...",
         "confirmReject": "Confirm Decline",
-        "cancelAction": "Cancel"
+        "cancelAction": "Cancel",
+        "myRequestBtn": "Makeup Sent",
+        "myRequestTitle": "My Makeup Request",
+        "statusPending": "Awaiting confirmation",
+        "statusAccepted": "Accepted",
+        "statusRejected": "Declined",
+        "rejectionReason": "Reason for decline"
       }
     },
     "homework": {
@@ -1365,6 +1371,12 @@
       "quizError": "Failed to generate quiz. Please try again.",
       "wrongAnswers": "Review incorrect answers",
       "yourAnswer": "Your answer: {{answer}}",
+      "absenceActionBtn": "Handle Absence",
+      "absenceActionTitle": "How would you like to handle this?",
+      "rescheduleOption": "Move to another time",
+      "rescheduleOptionDesc": "Propose a new time slot — student must confirm",
+      "makeupOption": "Add to end of course",
+      "makeupOptionDesc": "Add a new makeup session after the last lesson of this course",
       "reschedule": {
         "title": "Propose Reschedule",
         "proposeBtn": "Propose Reschedule",
@@ -1425,10 +1437,13 @@
         "pendingBtn": "Student Request"
       },
       "panel": {
-        "offersBtn": "My Reschedule Offers",
+        "offersBtn": "My Schedule Requests",
+        "offersTab": "Reschedule",
+        "makeupTab": "Makeup",
         "studentRequestsBtn": "Reschedule Requests",
         "ticketsBtn": "Reschedule Tickets",
         "noOffers": "No reschedule offers sent",
+        "noMakeupRequests": "No makeup requests sent",
         "noTickets": "No reschedule tickets filed",
         "requestStatus": {
           "Pending": "Pending",
@@ -1464,7 +1479,13 @@
         "reject": "Decline",
         "rejectNotePlaceholder": "Reason for declining (optional)...",
         "confirmReject": "Confirm Decline",
-        "cancelAction": "Cancel"
+        "cancelAction": "Cancel",
+        "myRequestBtn": "Makeup Sent",
+        "myRequestTitle": "My Makeup Request",
+        "statusPending": "Awaiting confirmation",
+        "statusAccepted": "Accepted",
+        "statusRejected": "Declined",
+        "rejectionReason": "Reason for decline"
       }
     },
     "students": {

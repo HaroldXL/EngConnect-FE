@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from "react";
-import { CalendarMark, ClockCircle, Eye, Magnifer } from "@solar-icons/react"
+import { CalendarMark, ClockCircle, Eye, MinimalisticMagnifier } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -270,7 +270,7 @@ const Students = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <Magnifer weight="BoldDuotone"
+            <MinimalisticMagnifier weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, Magnifer, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
+import { CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -455,7 +455,7 @@ const TutorVerification = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <Magnifer weight="BoldDuotone"
+                  <MinimalisticMagnifier weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { AltArrowDown, AltArrowUp, CloseSquare, Diploma, Filter, GraphUp, Lightning, Magnifer, Target } from "@solar-icons/react"
+import { AltArrowDown, AltArrowUp, CloseSquare, Diploma, Filter, GraphUp, Lightning, MinimalisticMagnifier, Target } from "@solar-icons/react"
 import {
   Button,
   Card,
@@ -523,7 +523,7 @@ const Courses = () => {
                   if (e.key === "Enter") setSearchQuery(searchInput.trim());
                 }}
                 startContent={
-                  <Magnifer weight="BoldDuotone"
+                  <MinimalisticMagnifier weight="BoldDuotone"
                     size={18}
                     style={{ color: colors.text.secondary }}
                   />

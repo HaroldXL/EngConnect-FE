@@ -9,7 +9,7 @@ import {
   Dollar,
   HomeSmile,
   Logout,
-  Magnifer,
+  MinimalisticMagnifier,
   PenNewRound,
   PenNewSquare,
   PresentationGraph,
@@ -179,7 +179,7 @@ const TutorDashboardLayout = () => {
               type="text"
               placeholder={t("tutorDashboard.search.placeholder")}
               startContent={
-                <Magnifer
+                <MinimalisticMagnifier
                   weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}

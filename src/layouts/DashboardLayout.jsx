@@ -10,7 +10,7 @@ import {
   CloseSquare,
   HomeSmile,
   Logout,
-  Magnifer,
+  MinimalisticMagnifier,
   PenNewRound,
   PenNewSquare,
   QuestionCircle,
@@ -140,7 +140,7 @@ const DashboardLayout = () => {
               type="text"
               placeholder={t("studentDashboard.search.placeholder")}
               startContent={
-                <Magnifer
+                <MinimalisticMagnifier
                   weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}

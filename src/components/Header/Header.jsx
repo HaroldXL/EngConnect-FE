@@ -5,7 +5,7 @@ import {
   CloseSquare,
   HamburgerMenu,
   Logout,
-  Magnifer,
+  MinimalisticMagnifier,
   NotebookMinimalistic,
   QuestionCircle,
   SquareAcademicCap,
@@ -169,7 +169,7 @@ const Header = () => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
-              {/* Magnifer */}
+              {/* MinimalisticMagnifier */}
               <Popover
                 isOpen={searchOpen}
                 onOpenChange={setSearchOpen}
@@ -182,9 +182,9 @@ const Header = () => {
                     variant="light"
                     size="sm"
                     radius="full"
-                    aria-label="Magnifer"
+                    aria-label="MinimalisticMagnifier"
                   >
-                    <Magnifer
+                    <MinimalisticMagnifier
                       weight="BoldDuotone"
                       className="w-[18px] h-[18px]"
                       style={{ color: colors.text.secondary }}
@@ -210,7 +210,7 @@ const Header = () => {
                       }
                     }}
                     startContent={
-                      <Magnifer
+                      <MinimalisticMagnifier
                         weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.text.secondary }}

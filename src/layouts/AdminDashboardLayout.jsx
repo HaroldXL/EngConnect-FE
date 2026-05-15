@@ -1,5 +1,25 @@
-import { useState } from "react";
-import { AltArrowDown, AltArrowLeft, AltArrowRight, Bell, BookBookmark, CalendarMark, ChecklistMinimalistic, CloseSquare, Dollar, DollarMinimalistic, HomeSmile, Logout, Magnifer, PresentationGraph, ShieldCheck, SquareAcademicCap, TagPrice, Ticket, Wallet } from "@solar-icons/react"
+﻿import { useState } from "react";
+import {
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  Bell,
+  BookBookmark,
+  CalendarMark,
+  ChecklistMinimalistic,
+  CloseSquare,
+  Dollar,
+  DollarMinimalistic,
+  HomeSmile,
+  Logout,
+  MinimalisticMagnifier,
+  PresentationGraph,
+  ShieldCheck,
+  SquareAcademicCap,
+  TagPrice,
+  Ticket,
+  Wallet,
+} from "@solar-icons/react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../store";
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
@@ -26,7 +46,6 @@ import LanguageSwitcher from "../components/LanguageSwitcher/LanguageSwitcher";
 import logoImage from "../assets/images/logo.png";
 import logoNoTextImage from "../assets/images/logo-no-text.png";
 import defaultAvatar from "../assets/images/null-avatar.jpg";
-
 
 const AdminDashboardLayout = () => {
   const { t } = useTranslation();
@@ -173,12 +192,14 @@ const AdminDashboardLayout = () => {
             className="hidden lg:flex"
           >
             {sidebarCollapsed ? (
-              <AltArrowRight weight="BoldDuotone"
+              <AltArrowRight
+                weight="BoldDuotone"
                 className="w-4 h-4"
                 style={{ color: colors.text.secondary }}
               />
             ) : (
-              <AltArrowLeft weight="BoldDuotone"
+              <AltArrowLeft
+                weight="BoldDuotone"
                 className="w-4 h-4"
                 style={{ color: colors.text.secondary }}
               />
@@ -241,7 +262,8 @@ const AdminDashboardLayout = () => {
                             >
                               {item.label}
                             </span>
-                            <AltArrowDown weight="BoldDuotone"
+                            <AltArrowDown
+                              weight="BoldDuotone"
                               className={`w-4 h-4 transition-transform duration-200 ${submenuOpen ? "rotate-180" : ""}`}
                             />
                           </>
@@ -358,7 +380,8 @@ const AdminDashboardLayout = () => {
               variant="light"
               className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start"}`}
               startContent={
-                <Logout weight="BoldDuotone"
+                <Logout
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.state.error }}
                 />
@@ -414,7 +437,8 @@ const AdminDashboardLayout = () => {
                   size="sm"
                   onPress={() => setMobileMenuOpen(false)}
                 >
-                  <CloseSquare weight="BoldDuotone"
+                  <CloseSquare
+                    weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.text.secondary }}
                   />
@@ -457,7 +481,8 @@ const AdminDashboardLayout = () => {
                             >
                               {item.label}
                             </span>
-                            <AltArrowDown weight="BoldDuotone"
+                            <AltArrowDown
+                              weight="BoldDuotone"
                               className={`w-4 h-4 transition-transform duration-200 ${submenuOpen ? "rotate-180" : ""}`}
                             />
                           </button>
@@ -563,7 +588,8 @@ const AdminDashboardLayout = () => {
                   variant="light"
                   className="w-full justify-start"
                   startContent={
-                    <Logout weight="BoldDuotone"
+                    <Logout
+                      weight="BoldDuotone"
                       className="w-5 h-5"
                       style={{ color: colors.state.error }}
                     />
@@ -603,7 +629,11 @@ const AdminDashboardLayout = () => {
             className="lg:hidden"
             onPress={() => setMobileMenuOpen(true)}
           >
-            <ChecklistMinimalistic weight="BoldDuotone" className="w-6 h-6" style={{ color: colors.text.primary }} />
+            <ChecklistMinimalistic
+              weight="BoldDuotone"
+              className="w-6 h-6"
+              style={{ color: colors.text.primary }}
+            />
           </Button>
 
           {/* Search Bar */}
@@ -612,7 +642,8 @@ const AdminDashboardLayout = () => {
               type="text"
               placeholder={t("adminDashboard.search.placeholder")}
               startContent={
-                <Magnifer weight="BoldDuotone"
+                <MinimalisticMagnifier
+                  weight="BoldDuotone"
                   className="w-5 h-5"
                   style={{ color: colors.text.secondary }}
                 />
@@ -671,7 +702,8 @@ const AdminDashboardLayout = () => {
                       {t("adminDashboard.role")}
                     </span>
                   </div>
-                  <AltArrowDown weight="BoldDuotone"
+                  <AltArrowDown
+                    weight="BoldDuotone"
                     className="w-4 h-4 hidden sm:block"
                     style={{ color: colors.text.secondary }}
                   />
@@ -681,7 +713,9 @@ const AdminDashboardLayout = () => {
                 <DropdownItem
                   key="logout"
                   color="danger"
-                  startContent={<Logout weight="BoldDuotone" className="w-4 h-4" />}
+                  startContent={
+                    <Logout weight="BoldDuotone" className="w-4 h-4" />
+                  }
                   onPress={() => setLogoutModalOpen(true)}
                 >
                   {t("adminDashboard.nav.logout")}

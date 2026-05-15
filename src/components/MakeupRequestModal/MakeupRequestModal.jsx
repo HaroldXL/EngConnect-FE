@@ -51,9 +51,13 @@ export default function MakeupRequestModal({
     setError(null);
     try {
       await makeupApi.createRequest({
-        lessonId: lesson.id,
-        note: note.trim(),
-        createdByRole,
+        request: {
+          lessonId: lesson.id,
+          studentId: lesson.studentId,
+          tutorId: lesson.tutorId,
+          createdByRole,
+          note: note.trim(),
+        },
       });
       onSuccess?.();
       handleClose();

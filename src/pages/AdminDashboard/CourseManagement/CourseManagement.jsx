@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { BookBookmark, CheckCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, Magnifer, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
+import { BookBookmark, CheckCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -355,7 +355,7 @@ const CourseManagement = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <Magnifer weight="BoldDuotone"
+                  <MinimalisticMagnifier weight="BoldDuotone"
                     className="w-4 h-4"
                     style={{ color: colors.text.secondary }}
                   />

@@ -145,6 +145,16 @@ const LessonDetailModal = ({
     onOpen: onMakeupReviewOpen,
     onClose: onMakeupReviewClose,
   } = useDisclosure();
+  const {
+    isOpen: isMyMakeupOpen,
+    onOpen: onMyMakeupOpen,
+    onClose: onMyMakeupClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAbsenceActionOpen,
+    onOpen: onAbsenceActionOpen,
+    onClose: onAbsenceActionClose,
+  } = useDisclosure();
   const [studentReqRejecting, setStudentReqRejecting] = useState(false);
   const [studentReqRejectNote, setStudentReqRejectNote] = useState("");
   const [studentReqProcessing, setStudentReqProcessing] = useState(false);
@@ -516,6 +526,25 @@ const LessonDetailModal = ({
   const makeupNs = isStudentView
     ? "studentDashboard.schedule.makeup"
     : "tutorDashboard.schedule.makeup";
+
+  const myMakeupRequest = (() => {
+    if (!makeupRequests.length) return null;
+    if (!internalCanStudentMakeup && !internalCanTutorMakeup) return null;
+    const myRole = isStudentView ? "Student" : "Tutor";
+    return (
+      [...makeupRequests]
+        .filter((r) => r.createdByRole === myRole)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0] ||
+      null
+    );
+  })();
+
+  const myMakeupStatusColor = (() => {
+    if (!myMakeupRequest) return colors.text.tertiary;
+    if (myMakeupRequest.status === "Accepted") return colors.state.success;
+    if (myMakeupRequest.status === "Rejected") return colors.state.error;
+    return colors.state.warning;
+  })();
 
   const handleInternalReschedule = () => {
     if (lesson.status === "NoTutor") onTicketOpen();
@@ -998,9 +1027,9 @@ const LessonDetailModal = ({
                 </div>
               )}
 
-              {/* Makeup deadline banner */}
+              {/* Makeup deadline banner — hide for tutor+NoTutor since reschedule banner already shows */}
               {resolvedMakeupDeadline &&
-                (internalCanStudentMakeup || internalCanTutorMakeup) && (
+                internalCanStudentMakeup && (
                   <div
                     className="flex items-center gap-2 p-3 rounded-xl"
                     style={{
@@ -1047,10 +1076,39 @@ const LessonDetailModal = ({
               <Button variant="light" onPress={onClose}>
                 {t("tutorDashboard.schedule.cancel")}
               </Button>
-              {/* Tutor: propose reschedule or view pending offer */}
+              {/* Tutor: reschedule buttons */}
               {internalShowTutorReschedule &&
                 (!effectiveDeadline || effectiveDeadline >= new Date()) &&
-                (internalHasPendingOffer ? (
+                (lesson.status === "NoTutor" ? (
+                  // NoTutor: merged "handle absence" button (unless already has pending offer)
+                  internalHasPendingOffer ? (
+                    <Button
+                      variant="flat"
+                      startContent={
+                        <Restart weight="BoldDuotone" className="w-4 h-4" />
+                      }
+                      onPress={onViewOfferOpen}
+                      style={{
+                        backgroundColor: `${colors.state.warning}20`,
+                        color: colors.state.warning,
+                      }}
+                    >
+                      {t("tutorDashboard.schedule.reschedule.pendingChip")}
+                    </Button>
+                  ) : !myMakeupRequest || myMakeupRequest.status === "Rejected" ? (
+                    <Button
+                      variant="flat"
+                      startContent={
+                        <Restart weight="BoldDuotone" className="w-4 h-4" />
+                      }
+                      onPress={onAbsenceActionOpen}
+                      style={{ color: colors.primary.main }}
+                    >
+                      {t("tutorDashboard.schedule.absenceActionBtn")}
+                    </Button>
+                  ) : null
+                ) : // Other statuses (Reschedule, Scheduled): keep separate reschedule button
+                internalHasPendingOffer ? (
                   <Button
                     variant="flat"
                     startContent={
@@ -1136,8 +1194,29 @@ const LessonDetailModal = ({
                     {t("studentDashboard.schedule.reschedule.requestBtn")}
                   </Button>
                 ))}
-              {/* Makeup: create request button */}
+              {/* Makeup: status chip (always show when a request exists) */}
               {(internalCanStudentMakeup || internalCanTutorMakeup) &&
+                myMakeupRequest && (
+                  <Button
+                    variant="flat"
+                    startContent={
+                      <CircleBottomUp
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                      />
+                    }
+                    onPress={onMyMakeupOpen}
+                    style={{
+                      backgroundColor: `${myMakeupStatusColor}20`,
+                      color: myMakeupStatusColor,
+                    }}
+                  >
+                    {t(`${makeupNs}.myRequestBtn`)}
+                  </Button>
+                )}
+              {/* Makeup: create button — student only; tutor re-sends via Handle Absence */}
+              {internalCanStudentMakeup &&
+                (!myMakeupRequest || myMakeupRequest.status === "Rejected") &&
                 !makeupDeadlinePassed && (
                   <Button
                     variant="flat"
@@ -1411,7 +1490,11 @@ const LessonDetailModal = ({
                         setMakeupReviewProcessing(true);
                         try {
                           await makeupApi.acceptRequest(reviewMakeupReq.id, {
-                            note: "",
+                            request: {
+                              makeupRequestId: reviewMakeupReq.id,
+                              studentId: lesson.studentId,
+                              tutorId: lesson.tutorId,
+                            },
                           });
                           onClose();
                           fetchRescheduleData();
@@ -1446,7 +1529,12 @@ const LessonDetailModal = ({
                         setMakeupReviewProcessing(true);
                         try {
                           await makeupApi.rejectRequest(reviewMakeupReq.id, {
-                            note: makeupReviewRejectNote,
+                            request: {
+                              makeupRequestId: reviewMakeupReq.id,
+                              studentId: lesson.studentId,
+                              tutorId: lesson.tutorId,
+                              rejectionReason: makeupReviewRejectNote,
+                            },
                           });
                           onClose();
                           setMakeupReviewRejecting(false);
@@ -1462,6 +1550,236 @@ const LessonDetailModal = ({
                     </Button>
                   </>
                 )}
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* My makeup request detail */}
+      <Modal
+        isOpen={isMyMakeupOpen}
+        onClose={onMyMakeupClose}
+        size="sm"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <CircleBottomUp
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: myMakeupStatusColor }}
+                />
+                {t(`${makeupNs}.myRequestTitle`)}
+              </ModalHeader>
+              <ModalBody className="pb-2">
+                {myMakeupRequest && (
+                  <div className="space-y-3">
+                    {/* Status chip */}
+                    <div
+                      className="flex items-center justify-between p-3 rounded-xl"
+                      style={{ backgroundColor: colors.background.gray }}
+                    >
+                      <p
+                        className="text-xs font-medium"
+                        style={{ color: colors.text.tertiary }}
+                      >
+                        {new Date(myMakeupRequest.createdAt).toLocaleString(
+                          dateLocale,
+                          {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </p>
+                      <span
+                        className="text-xs font-semibold px-2 py-1 rounded-lg"
+                        style={{
+                          backgroundColor: `${myMakeupStatusColor}20`,
+                          color: myMakeupStatusColor,
+                        }}
+                      >
+                        {myMakeupRequest.status === "Pending"
+                          ? t(`${makeupNs}.statusPending`)
+                          : myMakeupRequest.status === "Accepted"
+                            ? t(`${makeupNs}.statusAccepted`)
+                            : t(`${makeupNs}.statusRejected`)}
+                      </span>
+                    </div>
+
+                    {/* Note sent */}
+                    {myMakeupRequest.note && (
+                      <div
+                        className="px-3 py-2 rounded-xl"
+                        style={{ backgroundColor: colors.background.gray }}
+                      >
+                        <p
+                          className="text-xs font-medium mb-0.5"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t(`${makeupNs}.requestNote`)}
+                        </p>
+                        <p
+                          className="text-sm italic"
+                          style={{ color: colors.text.primary }}
+                        >
+                          "{myMakeupRequest.note}"
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Rejection reason */}
+                    {myMakeupRequest.status === "Rejected" &&
+                      myMakeupRequest.rejectionReason && (
+                        <div
+                          className="px-3 py-2 rounded-xl"
+                          style={{
+                            backgroundColor: `${colors.state.error}10`,
+                            border: `1px solid ${colors.state.error}25`,
+                          }}
+                        >
+                          <p
+                            className="text-xs font-medium mb-0.5"
+                            style={{ color: colors.state.error }}
+                          >
+                            {t(`${makeupNs}.rejectionReason`)}
+                          </p>
+                          <p
+                            className="text-sm italic"
+                            style={{ color: colors.text.primary }}
+                          >
+                            "{myMakeupRequest.rejectionReason}"
+                          </p>
+                        </div>
+                      )}
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  {t(`${makeupNs}.cancelAction`)}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Tutor: absence action choice */}
+      <Modal
+        isOpen={isAbsenceActionOpen}
+        onClose={onAbsenceActionClose}
+        size="sm"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <Restart
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.primary.main }}
+                />
+                {t("tutorDashboard.schedule.absenceActionTitle")}
+              </ModalHeader>
+              <ModalBody className="space-y-3 pb-2">
+                {/* Option 1: Reschedule */}
+                <button
+                  type="button"
+                  className="w-full text-left p-3 rounded-xl flex items-start gap-3 transition-opacity hover:opacity-80"
+                  style={{
+                    backgroundColor: `${colors.primary.main}10`,
+                    border: `1px solid ${colors.primary.main}25`,
+                  }}
+                  onClick={() => {
+                    onClose();
+                    handleInternalReschedule();
+                  }}
+                >
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${colors.primary.main}20` }}
+                  >
+                    <Restart
+                      weight="BoldDuotone"
+                      className="w-4 h-4"
+                      style={{ color: colors.primary.main }}
+                    />
+                  </div>
+                  <div>
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t("tutorDashboard.schedule.rescheduleOption")}
+                    </p>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.schedule.rescheduleOptionDesc")}
+                    </p>
+                  </div>
+                </button>
+
+                {/* Option 2: Makeup */}
+                <button
+                  type="button"
+                  className="w-full text-left p-3 rounded-xl flex items-start gap-3 transition-opacity hover:opacity-80 disabled:opacity-40"
+                  disabled={makeupDeadlinePassed}
+                  style={{
+                    backgroundColor: `${colors.state.warning}10`,
+                    border: `1px solid ${colors.state.warning}25`,
+                    cursor: makeupDeadlinePassed ? "not-allowed" : "pointer",
+                  }}
+                  onClick={() => {
+                    if (makeupDeadlinePassed) return;
+                    onClose();
+                    onMakeupOpen();
+                  }}
+                >
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${colors.state.warning}20` }}
+                  >
+                    <CircleBottomUp
+                      weight="BoldDuotone"
+                      className="w-4 h-4"
+                      style={{ color: colors.state.warning }}
+                    />
+                  </div>
+                  <div>
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t("tutorDashboard.schedule.makeupOption")}
+                    </p>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {makeupDeadlinePassed
+                        ? t(`${makeupNs}.deadlinePassed`)
+                        : t("tutorDashboard.schedule.makeupOptionDesc")}
+                    </p>
+                  </div>
+                </button>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  {t(`${makeupNs}.cancelAction`)}
+                </Button>
               </ModalFooter>
             </>
           )}

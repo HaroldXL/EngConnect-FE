@@ -18,7 +18,7 @@ import { useNotifications } from "../../../contexts/NotificationContext";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { selectUser } from "../../../store";
-import { studentApi, rescheduleApi } from "../../../api";
+import { studentApi, rescheduleApi, makeupApi } from "../../../api";
 import { supportApi } from "../../../api/supportApi";
 import {
   Card,
@@ -133,9 +133,11 @@ const Schedule = () => {
   // Action panel modals
   const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
+  const [requestsModalTab, setRequestsModalTab] = useState("reschedule");
   const [isRefundTicketsModalOpen, setIsRefundTicketsModalOpen] =
     useState(false);
   const [refundTickets, setRefundTickets] = useState([]);
+  const [myStudentMakeupRequests, setMyStudentMakeupRequests] = useState([]);
 
   const fetchLessons = useCallback(async () => {
     if (!user?.studentId) return;
@@ -219,6 +221,26 @@ const Schedule = () => {
   useEffect(() => {
     fetchStudentRequests();
   }, [fetchStudentRequests]);
+
+  const fetchMyStudentMakeupRequests = useCallback(async () => {
+    if (!user?.studentId) return;
+    try {
+      const res = await makeupApi.getRequests({
+        StudentId: user.studentId,
+        "page-size": 200,
+      });
+      const items = res?.data?.items || [];
+      setMyStudentMakeupRequests(
+        items.filter((r) => r.createdByRole === "Student" && r.status === "Pending"),
+      );
+    } catch {
+      // silently ignore
+    }
+  }, [user?.studentId]);
+
+  useEffect(() => {
+    fetchMyStudentMakeupRequests();
+  }, [fetchMyStudentMakeupRequests]);
 
   const fetchRefundTickets = useCallback(async () => {
     if (!user?.userId) return;
@@ -585,8 +607,9 @@ const Schedule = () => {
               key: "requests",
               icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("studentDashboard.schedule.reschedule.myRequestBtn"),
-              badge: allStudentRequests.filter((r) => r.status === "Pending")
-                .length,
+              badge:
+                allStudentRequests.filter((r) => r.status === "Pending")
+                  .length + myStudentMakeupRequests.length,
               badgeColor: colors.primary.main,
               btnBg: `${colors.primary.main}18`,
               btnColor: colors.primary.main,
@@ -1785,7 +1808,10 @@ const Schedule = () => {
       {/* ==================== MY REQUESTS MODAL ==================== */}
       <Modal
         isOpen={isRequestsModalOpen}
-        onOpenChange={(open) => setIsRequestsModalOpen(open)}
+        onOpenChange={(open) => {
+          setIsRequestsModalOpen(open);
+          if (!open) setRequestsModalTab("reschedule");
+        }}
         size="lg"
         scrollBehavior="inside"
       >
@@ -1800,6 +1826,55 @@ const Schedule = () => {
                   {t("studentDashboard.schedule.reschedule.myRequestBtn")}
                 </ModalHeader>
                 <ModalBody className="pb-6">
+                  <Tabs
+                    selectedKey={requestsModalTab}
+                    onSelectionChange={setRequestsModalTab}
+                    size="sm"
+                    className="mb-3"
+                  >
+                    <Tab
+                      key="reschedule"
+                      title={
+                        <div className="flex items-center gap-1.5">
+                          <Restart weight="BoldDuotone" className="w-3.5 h-3.5" />
+                          <span>{t("tutorDashboard.schedule.panel.offersTab")}</span>
+                          {pendingRequests.length > 0 && (
+                            <span
+                              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${colors.primary.main}25`,
+                                color: colors.primary.main,
+                              }}
+                            >
+                              {pendingRequests.length}
+                            </span>
+                          )}
+                        </div>
+                      }
+                    />
+                    <Tab
+                      key="makeup"
+                      title={
+                        <div className="flex items-center gap-1.5">
+                          <CircleBottomUp weight="BoldDuotone" className="w-3.5 h-3.5" />
+                          <span>{t("tutorDashboard.schedule.panel.makeupTab")}</span>
+                          {myStudentMakeupRequests.length > 0 && (
+                            <span
+                              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${colors.state.warning}25`,
+                                color: colors.state.warning,
+                              }}
+                            >
+                              {myStudentMakeupRequests.length}
+                            </span>
+                          )}
+                        </div>
+                      }
+                    />
+                  </Tabs>
+
+                  {requestsModalTab === "reschedule" && (
                   <div className="space-y-3">
                     {pendingRequests.length === 0 ? (
                       <p
@@ -1970,6 +2045,104 @@ const Schedule = () => {
                       })
                     )}
                   </div>
+                  )}
+
+                  {/* Makeup tab */}
+                  {requestsModalTab === "makeup" && (
+                    <div className="space-y-3">
+                      {myStudentMakeupRequests.length === 0 ? (
+                        <p
+                          className="text-sm text-center py-6"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t("tutorDashboard.schedule.panel.noMakeupRequests")}
+                        </p>
+                      ) : (
+                        myStudentMakeupRequests.map((req) => {
+                          const reqLesson = lessons.find(
+                            (l) => l.id === req.lessonId,
+                          );
+                          return (
+                            <div
+                              key={req.id}
+                              className="p-3 rounded-xl space-y-2"
+                              style={{ backgroundColor: colors.background.gray }}
+                            >
+                              <p
+                                className="font-semibold text-sm"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {reqLesson?.courseTitle ||
+                                  reqLesson?.sessionTitle ||
+                                  `Lesson #${req.lessonId?.slice(0, 8)}`}
+                              </p>
+                              {reqLesson && (
+                                <div className="flex items-center justify-between gap-2">
+                                  <p
+                                    className="text-xs flex items-center gap-1"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    <ClockCircle
+                                      weight="BoldDuotone"
+                                      className="w-3.5 h-3.5 flex-shrink-0"
+                                    />
+                                    {new Date(reqLesson.startTime).toLocaleString(
+                                      dateLocale,
+                                      {
+                                        weekday: "short",
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      },
+                                    )}
+                                  </p>
+                                  <Button
+                                    size="sm"
+                                    variant="light"
+                                    className="h-6 px-2 text-xs flex-shrink-0"
+                                    startContent={
+                                      <Eye
+                                        weight="BoldDuotone"
+                                        className="w-3 h-3"
+                                      />
+                                    }
+                                    onPress={() => {
+                                      setIsRequestsModalOpen(false);
+                                      handleOpenLessonDetail(reqLesson);
+                                    }}
+                                  >
+                                    {t("studentDashboard.schedule.viewDetail")}
+                                  </Button>
+                                </div>
+                              )}
+                              {req.note && (
+                                <div
+                                  className="px-2.5 py-1.5 rounded-lg"
+                                  style={{
+                                    backgroundColor: colors.background.light,
+                                  }}
+                                >
+                                  <p
+                                    className="text-[10px] font-medium mb-0.5"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    {t("studentDashboard.schedule.makeup.requestNote")}
+                                  </p>
+                                  <p
+                                    className="text-xs italic"
+                                    style={{ color: colors.text.secondary }}
+                                  >
+                                    "{req.note}"
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
                 </ModalBody>
               </>
             );

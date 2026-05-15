@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
-import { AltArrowLeft, Card as CardIcon, ChatRoundDots, CheckCircle, Dollar, Eye, Letter, Magnifer, Restart, Plain, ShieldCheck, TrashBinMinimalistic, UserCircle, Wallet } from "@solar-icons/react"
+import { AltArrowLeft, Card as CardIcon, ChatRoundDots, CheckCircle, Dollar, Eye, Letter, MinimalisticMagnifier, Restart, Plain, ShieldCheck, TrashBinMinimalistic, UserCircle, Wallet } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -1633,7 +1633,7 @@ const SupportTickets = () => {
                   "adminDashboard.supportTickets.searchPlaceholder",
                 )}
                 startContent={
-                  <Magnifer weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
+                  <MinimalisticMagnifier weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
                 }
                 classNames={inputClassNames}
                 className="flex-1"

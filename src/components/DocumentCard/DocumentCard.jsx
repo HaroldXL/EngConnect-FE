@@ -1,5 +1,5 @@
 import { Card, CardBody, Button, Chip } from "@heroui/react";
-import { DocumentText, Magnifer, PlayCircle, TrashBinMinimalistic } from "@solar-icons/react"
+import { DocumentText, MinimalisticMagnifier, PlayCircle, TrashBinMinimalistic } from "@solar-icons/react"
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -121,7 +121,7 @@ const DocumentCard = ({
               className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-200 flex items-center justify-center rounded-xl">
-              <Magnifer
+              <MinimalisticMagnifier
                 weight="BoldDuotone"
                 size={26}
                 className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"

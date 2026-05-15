@@ -14,7 +14,7 @@ import {
   Gallery,
   HeadphonesRound,
   History,
-  Magnifer,
+  MinimalisticMagnifier,
   Pen,
   Restart,
   Plain,
@@ -2321,7 +2321,7 @@ const CreateCourse = () => {
           value={searchValue}
           onValueChange={onSearchChange}
           startContent={
-            <Magnifer
+            <MinimalisticMagnifier
               weight="BoldDuotone"
               className="w-4 h-4"
               style={{ color: colors.text.tertiary }}

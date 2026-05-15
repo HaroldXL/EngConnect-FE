@@ -12,7 +12,7 @@ import {
   File,
   Gallery,
   Hourglass,
-  Magnifer,
+  MinimalisticMagnifier,
   MenuDots,
   Pen,
   Plain,
@@ -750,7 +750,7 @@ const Homework = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <Magnifer
+            <MinimalisticMagnifier
               weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}

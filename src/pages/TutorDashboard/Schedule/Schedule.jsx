@@ -30,6 +30,7 @@ import {
   tutorApi,
   studentApi,
   coursesApi,
+  makeupApi,
   rescheduleApi,
   supportApi,
 } from "../../../api";
@@ -170,9 +171,11 @@ const Schedule = () => {
   // Reschedule modals
   const [rescheduleTickets, setRescheduleTickets] = useState([]);
   const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
+  const [offersModalTab, setOffersModalTab] = useState("reschedule");
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
   const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
   const [lessonExtras, setLessonExtras] = useState({});
+  const [myMakeupRequests, setMyMakeupRequests] = useState([]);
 
   // Student filter
   const [enrolledStudents, setEnrolledStudents] = useState([]);
@@ -291,6 +294,24 @@ const Schedule = () => {
   useEffect(() => {
     fetchRescheduleOffers();
   }, [fetchRescheduleOffers]);
+
+  const fetchMyMakeupRequests = useCallback(async () => {
+    if (!user?.tutorId) return;
+    try {
+      const res = await makeupApi.getRequests({
+        TutorId: user.tutorId,
+        "page-size": 200,
+      });
+      const items = res?.data?.items || [];
+      setMyMakeupRequests(items.filter((r) => r.createdByRole === "Tutor"));
+    } catch {
+      // silently ignore
+    }
+  }, [user?.tutorId]);
+
+  useEffect(() => {
+    fetchMyMakeupRequests();
+  }, [fetchMyMakeupRequests]);
 
   const fetchStudentRequests = useCallback(async () => {
     if (!user?.tutorId) return;
@@ -843,9 +864,11 @@ const Schedule = () => {
               key: "offers",
               icon: <Restart weight="BoldDuotone" className="w-4 h-4" />,
               label: t("tutorDashboard.schedule.panel.offersBtn"),
-              badge: rescheduleOffers.filter(
-                (o) => o.status === "PendingStudentChoice",
-              ).length,
+              badge:
+                rescheduleOffers.filter(
+                  (o) => o.status === "PendingStudentChoice",
+                ).length +
+                myMakeupRequests.filter((r) => r.status === "Pending").length,
               badgeColor: colors.state.warning,
               btnBg: `${colors.state.warning}22`,
               btnColor: colors.state.warning,
@@ -2363,10 +2386,13 @@ const Schedule = () => {
         onSuccess={fetchLessons}
       />
 
-      {/* Reschedule Offers Modal — pending only */}
+      {/* Reschedule Offers + Makeup Requests Modal */}
       <Modal
         isOpen={isOffersModalOpen}
-        onOpenChange={(open) => setIsOffersModalOpen(open)}
+        onOpenChange={(open) => {
+          setIsOffersModalOpen(open);
+          if (!open) setOffersModalTab("reschedule");
+        }}
         size="lg"
         scrollBehavior="inside"
       >
@@ -2375,190 +2401,343 @@ const Schedule = () => {
             const pendingOffers = rescheduleOffers.filter(
               (o) => o.status === "PendingStudentChoice",
             );
+            const pendingMakeups = myMakeupRequests.filter(
+              (r) => r.status === "Pending",
+            );
             return (
               <>
                 <ModalHeader style={{ color: colors.text.primary }}>
                   {t("tutorDashboard.schedule.panel.offersBtn")}
                 </ModalHeader>
                 <ModalBody className="pb-6">
-                  <div className="space-y-3">
-                    {pendingOffers.length === 0 ? (
-                      <p
-                        className="text-sm text-center py-6"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.schedule.panel.noOffers")}
-                      </p>
-                    ) : (
-                      pendingOffers.map((offer) => {
-                        const lesson =
-                          lessons.find((l) => l.id === offer.lessonId) ||
-                          lessonExtras[offer.lessonId];
-                        const sortedOptions = [...(offer.options || [])].sort(
-                          (a, b) => a.optionOrder - b.optionOrder,
-                        );
-                        return (
-                          <div
-                            key={offer.id}
-                            className="p-3 rounded-xl space-y-2"
-                            style={{ backgroundColor: colors.background.gray }}
-                          >
-                            <p
-                              className="font-semibold text-sm"
-                              style={{ color: colors.text.primary }}
+                  <Tabs
+                    selectedKey={offersModalTab}
+                    onSelectionChange={setOffersModalTab}
+                    size="sm"
+                    className="mb-3"
+                  >
+                    <Tab
+                      key="reschedule"
+                      title={
+                        <div className="flex items-center gap-1.5">
+                          <Restart weight="BoldDuotone" className="w-3.5 h-3.5" />
+                          <span>{t("tutorDashboard.schedule.panel.offersTab")}</span>
+                          {pendingOffers.length > 0 && (
+                            <span
+                              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${colors.state.warning}25`,
+                                color: colors.state.warning,
+                              }}
                             >
-                              {lesson?.courseTitle ||
-                                lesson?.sessionTitle ||
-                                `Lesson #${offer.lessonId?.slice(0, 8)}`}
-                            </p>
-                            {(lesson?.studentFirstName ||
-                              lesson?.studentLastName) && (
-                              <div className="flex items-center gap-1.5 mt-0.5">
-                                <Avatar
-                                  src={withCDN(lesson?.studentAvatar)}
-                                  name={[
-                                    lesson?.studentFirstName,
-                                    lesson?.studentLastName,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" ")}
-                                  size="sm"
-                                  className="w-4 h-4 text-[8px] flex-shrink-0"
-                                />
-                                <p
-                                  className="text-xs"
-                                  style={{ color: colors.text.secondary }}
-                                >
-                                  {[
-                                    lesson?.studentFirstName,
-                                    lesson?.studentLastName,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" ")}
-                                </p>
-                              </div>
-                            )}
-                            {lesson && (
-                              <div className="flex items-center justify-between gap-2">
-                                <p
-                                  className="text-xs flex items-center gap-1"
-                                  style={{ color: colors.text.tertiary }}
-                                >
-                                  <ClockCircle
-                                    weight="BoldDuotone"
-                                    className="w-3.5 h-3.5 flex-shrink-0"
+                              {pendingOffers.length}
+                            </span>
+                          )}
+                        </div>
+                      }
+                    />
+                    <Tab
+                      key="makeup"
+                      title={
+                        <div className="flex items-center gap-1.5">
+                          <CircleBottomUp weight="BoldDuotone" className="w-3.5 h-3.5" />
+                          <span>{t("tutorDashboard.schedule.panel.makeupTab")}</span>
+                          {pendingMakeups.length > 0 && (
+                            <span
+                              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${colors.state.warning}25`,
+                                color: colors.state.warning,
+                              }}
+                            >
+                              {pendingMakeups.length}
+                            </span>
+                          )}
+                        </div>
+                      }
+                    />
+                  </Tabs>
+
+                  {/* Reschedule tab */}
+                  {offersModalTab === "reschedule" && (
+                    <div className="space-y-3">
+                      {pendingOffers.length === 0 ? (
+                        <p
+                          className="text-sm text-center py-6"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t("tutorDashboard.schedule.panel.noOffers")}
+                        </p>
+                      ) : (
+                        pendingOffers.map((offer) => {
+                          const offerLesson =
+                            lessons.find((l) => l.id === offer.lessonId) ||
+                            lessonExtras[offer.lessonId];
+                          const sortedOptions = [
+                            ...(offer.options || []),
+                          ].sort((a, b) => a.optionOrder - b.optionOrder);
+                          return (
+                            <div
+                              key={offer.id}
+                              className="p-3 rounded-xl space-y-2"
+                              style={{
+                                backgroundColor: colors.background.gray,
+                              }}
+                            >
+                              <p
+                                className="font-semibold text-sm"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {offerLesson?.courseTitle ||
+                                  offerLesson?.sessionTitle ||
+                                  `Lesson #${offer.lessonId?.slice(0, 8)}`}
+                              </p>
+                              {(offerLesson?.studentFirstName ||
+                                offerLesson?.studentLastName) && (
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <Avatar
+                                    src={withCDN(offerLesson?.studentAvatar)}
+                                    name={[
+                                      offerLesson?.studentFirstName,
+                                      offerLesson?.studentLastName,
+                                    ]
+                                      .filter(Boolean)
+                                      .join(" ")}
+                                    size="sm"
+                                    className="w-4 h-4 text-[8px] flex-shrink-0"
                                   />
-                                  {new Date(lesson.startTime).toLocaleString(
-                                    dateLocale,
-                                    {
+                                  <p
+                                    className="text-xs"
+                                    style={{ color: colors.text.secondary }}
+                                  >
+                                    {[
+                                      offerLesson?.studentFirstName,
+                                      offerLesson?.studentLastName,
+                                    ]
+                                      .filter(Boolean)
+                                      .join(" ")}
+                                  </p>
+                                </div>
+                              )}
+                              {offerLesson && (
+                                <div className="flex items-center justify-between gap-2">
+                                  <p
+                                    className="text-xs flex items-center gap-1"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    <ClockCircle
+                                      weight="BoldDuotone"
+                                      className="w-3.5 h-3.5 flex-shrink-0"
+                                    />
+                                    {new Date(
+                                      offerLesson.startTime,
+                                    ).toLocaleString(dateLocale, {
                                       weekday: "short",
                                       month: "short",
                                       day: "numeric",
                                       hour: "2-digit",
                                       minute: "2-digit",
-                                    },
-                                  )}
-                                  {lesson.endTime && (
-                                    <>
-                                      {" — "}
-                                      {new Date(
-                                        lesson.endTime,
-                                      ).toLocaleTimeString(dateLocale, {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })}
-                                    </>
-                                  )}
-                                </p>
-                                <Button
-                                  size="sm"
-                                  variant="light"
-                                  className="h-6 px-2 text-xs flex-shrink-0"
-                                  startContent={
-                                    <Eye
-                                      weight="BoldDuotone"
-                                      className="w-3 h-3"
-                                    />
-                                  }
-                                  onPress={() => {
-                                    setIsOffersModalOpen(false);
-                                    handleOpenLessonDetail(lesson);
+                                    })}
+                                    {offerLesson.endTime && (
+                                      <>
+                                        {" — "}
+                                        {new Date(
+                                          offerLesson.endTime,
+                                        ).toLocaleTimeString(dateLocale, {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}
+                                      </>
+                                    )}
+                                  </p>
+                                  <Button
+                                    size="sm"
+                                    variant="light"
+                                    className="h-6 px-2 text-xs flex-shrink-0"
+                                    startContent={
+                                      <Eye
+                                        weight="BoldDuotone"
+                                        className="w-3 h-3"
+                                      />
+                                    }
+                                    onPress={() => {
+                                      setIsOffersModalOpen(false);
+                                      handleOpenLessonDetail(offerLesson);
+                                    }}
+                                  >
+                                    {t("studentDashboard.schedule.viewDetail")}
+                                  </Button>
+                                </div>
+                              )}
+                              {sortedOptions.map((opt, idx) => (
+                                <div
+                                  key={opt.id || idx}
+                                  className="px-2.5 py-2 rounded-lg"
+                                  style={{
+                                    backgroundColor: `${colors.state.warning}10`,
+                                    border: `1px solid ${colors.state.warning}30`,
                                   }}
                                 >
-                                  {t("studentDashboard.schedule.viewDetail")}
-                                </Button>
-                              </div>
-                            )}
-                            {sortedOptions.map((opt, idx) => (
-                              <div
-                                key={opt.id || idx}
-                                className="px-2.5 py-2 rounded-lg"
-                                style={{
-                                  backgroundColor: `${colors.state.warning}10`,
-                                  border: `1px solid ${colors.state.warning}30`,
-                                }}
+                                  <p
+                                    className="text-xs font-medium mb-0.5"
+                                    style={{ color: colors.state.warning }}
+                                  >
+                                    {sortedOptions.length > 1
+                                      ? `${t("tutorDashboard.schedule.studentRequest.proposedTime")} ${idx + 1}`
+                                      : t(
+                                          "tutorDashboard.schedule.studentRequest.proposedTime",
+                                        )}
+                                  </p>
+                                  <p
+                                    className="text-xs"
+                                    style={{ color: colors.text.primary }}
+                                  >
+                                    {new Date(
+                                      opt.proposedStartTime,
+                                    ).toLocaleString(dateLocale, {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                    {" – "}
+                                    {new Date(
+                                      opt.proposedEndTime,
+                                    ).toLocaleTimeString(dateLocale, {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </p>
+                                </div>
+                              ))}
+                              {offer.tutorNote && (
+                                <div
+                                  className="px-2.5 py-1.5 rounded-lg"
+                                  style={{
+                                    backgroundColor: colors.background.light,
+                                  }}
+                                >
+                                  <p
+                                    className="text-[10px] font-medium mb-0.5"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    {t(
+                                      "tutorDashboard.schedule.reschedule.tutorNote",
+                                    )}
+                                  </p>
+                                  <p
+                                    className="text-xs italic"
+                                    style={{ color: colors.text.secondary }}
+                                  >
+                                    "{offer.tutorNote}"
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+
+                  {/* Makeup tab */}
+                  {offersModalTab === "makeup" && (
+                    <div className="space-y-3">
+                      {pendingMakeups.length === 0 ? (
+                        <p
+                          className="text-sm text-center py-6"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t("tutorDashboard.schedule.panel.noMakeupRequests")}
+                        </p>
+                      ) : (
+                        pendingMakeups.map((req) => {
+                          const reqLesson = lessons.find(
+                            (l) => l.id === req.lessonId,
+                          );
+                          return (
+                            <div
+                              key={req.id}
+                              className="p-3 rounded-xl space-y-2"
+                              style={{
+                                backgroundColor: colors.background.gray,
+                              }}
+                            >
+                              <p
+                                className="font-semibold text-sm"
+                                style={{ color: colors.text.primary }}
                               >
-                                <p
-                                  className="text-xs font-medium mb-0.5"
-                                  style={{ color: colors.state.warning }}
+                                {reqLesson?.courseTitle ||
+                                  reqLesson?.sessionTitle ||
+                                  `Lesson #${req.lessonId?.slice(0, 8)}`}
+                              </p>
+                              {reqLesson && (
+                                <div className="flex items-center justify-between gap-2">
+                                  <p
+                                    className="text-xs flex items-center gap-1"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    <ClockCircle
+                                      weight="BoldDuotone"
+                                      className="w-3.5 h-3.5 flex-shrink-0"
+                                    />
+                                    {new Date(
+                                      reqLesson.startTime,
+                                    ).toLocaleString(dateLocale, {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </p>
+                                  <Button
+                                    size="sm"
+                                    variant="light"
+                                    className="h-6 px-2 text-xs flex-shrink-0"
+                                    startContent={
+                                      <Eye
+                                        weight="BoldDuotone"
+                                        className="w-3 h-3"
+                                      />
+                                    }
+                                    onPress={() => {
+                                      setIsOffersModalOpen(false);
+                                      handleOpenLessonDetail(reqLesson);
+                                    }}
+                                  >
+                                    {t("studentDashboard.schedule.viewDetail")}
+                                  </Button>
+                                </div>
+                              )}
+                              {req.note && (
+                                <div
+                                  className="px-2.5 py-1.5 rounded-lg"
+                                  style={{
+                                    backgroundColor: colors.background.light,
+                                  }}
                                 >
-                                  {sortedOptions.length > 1
-                                    ? `${t("tutorDashboard.schedule.studentRequest.proposedTime")} ${idx + 1}`
-                                    : t(
-                                        "tutorDashboard.schedule.studentRequest.proposedTime",
-                                      )}
-                                </p>
-                                <p
-                                  className="text-xs"
-                                  style={{ color: colors.text.primary }}
-                                >
-                                  {new Date(
-                                    opt.proposedStartTime,
-                                  ).toLocaleString(dateLocale, {
-                                    weekday: "short",
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })}
-                                  {" – "}
-                                  {new Date(
-                                    opt.proposedEndTime,
-                                  ).toLocaleTimeString(dateLocale, {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })}
-                                </p>
-                              </div>
-                            ))}
-                            {offer.tutorNote && (
-                              <div
-                                className="px-2.5 py-1.5 rounded-lg"
-                                style={{
-                                  backgroundColor: colors.background.light,
-                                }}
-                              >
-                                <p
-                                  className="text-[10px] font-medium mb-0.5"
-                                  style={{ color: colors.text.tertiary }}
-                                >
-                                  {t(
-                                    "tutorDashboard.schedule.reschedule.tutorNote",
-                                  )}
-                                </p>
-                                <p
-                                  className="text-xs italic"
-                                  style={{ color: colors.text.secondary }}
-                                >
-                                  "{offer.tutorNote}"
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
+                                  <p
+                                    className="text-[10px] font-medium mb-0.5"
+                                    style={{ color: colors.text.tertiary }}
+                                  >
+                                    {t("tutorDashboard.schedule.makeup.requestNote")}
+                                  </p>
+                                  <p
+                                    className="text-xs italic"
+                                    style={{ color: colors.text.secondary }}
+                                  >
+                                    "{req.note}"
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
                 </ModalBody>
               </>
             );

@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useCallback, useMemo } from "react";
-import { AltArrowRight, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Gallery, Hourglass, Magnifer, Plain, Star } from "@solar-icons/react"
+import { AltArrowRight, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Gallery, Hourglass, MinimalisticMagnifier, Plain, Star } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -378,7 +378,7 @@ const Homework = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <Magnifer weight="BoldDuotone"
+            <MinimalisticMagnifier weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />

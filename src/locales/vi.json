@@ -828,7 +828,13 @@
         "reject": "Từ chối",
         "rejectNotePlaceholder": "Lý do từ chối (tùy chọn)...",
         "confirmReject": "Xác nhận từ chối",
-        "cancelAction": "Hủy"
+        "cancelAction": "Hủy",
+        "myRequestBtn": "Đã gửi yêu cầu bù",
+        "myRequestTitle": "Yêu cầu học bù của tôi",
+        "statusPending": "Chờ xác nhận",
+        "statusAccepted": "Đã chấp nhận",
+        "statusRejected": "Đã từ chối",
+        "rejectionReason": "Lý do từ chối"
       }
     },
     "homework": {
@@ -1363,6 +1369,12 @@
       "quizError": "Không thể tạo bài kiểm tra. Vui lòng thử lại.",
       "wrongAnswers": "Xem lại câu trả lời sai",
       "yourAnswer": "Bạn chọn: {{answer}}",
+      "absenceActionBtn": "Xử lý buổi vắng",
+      "absenceActionTitle": "Bạn muốn xử lý thế nào?",
+      "rescheduleOption": "Dời sang giờ khác",
+      "rescheduleOptionDesc": "Đề xuất khung giờ mới — học viên cần xác nhận",
+      "makeupOption": "Bù vào cuối khoá",
+      "makeupOptionDesc": "Thêm buổi học bù vào sau buổi cuối cùng của khoá",
       "reschedule": {
         "title": "Đề xuất đổi lịch",
         "proposeBtn": "Đề xuất đổi lịch",
@@ -1423,10 +1435,13 @@
         "pendingBtn": "Yêu cầu học viên"
       },
       "panel": {
-        "offersBtn": "Đề xuất đổi lịch",
+        "offersBtn": "Yêu cầu lịch của tôi",
+        "offersTab": "Đổi lịch",
+        "makeupTab": "Học bù",
         "studentRequestsBtn": "Yêu cầu đổi lịch",
         "ticketsBtn": "Phiếu đổi lịch",
         "noOffers": "Chưa gửi đề xuất đổi lịch nào",
+        "noMakeupRequests": "Chưa gửi yêu cầu học bù nào",
         "noTickets": "Chưa tạo phiếu hỗ trợ nào",
         "requestStatus": {
           "Pending": "Chờ duyệt",
@@ -1462,7 +1477,13 @@
         "reject": "Từ chối",
         "rejectNotePlaceholder": "Lý do từ chối (tùy chọn)...",
         "confirmReject": "Xác nhận từ chối",
-        "cancelAction": "Hủy"
+        "cancelAction": "Hủy",
+        "myRequestBtn": "Đã gửi yêu cầu bù",
+        "myRequestTitle": "Yêu cầu dạy bù của tôi",
+        "statusPending": "Chờ xác nhận",
+        "statusAccepted": "Đã chấp nhận",
+        "statusRejected": "Đã từ chối",
+        "rejectionReason": "Lý do từ chối"
       }
     },
     "students": {

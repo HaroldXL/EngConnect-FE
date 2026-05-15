@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
-import { AddCircle, AltArrowDown, AltArrowLeft, ChatRoundDots, ClockCircle, Magnifer, PresentationGraph, QuestionCircle, Plain, ShieldCheck, SquareAcademicCap, Ticket, UserCircle, UsersGroupRounded } from "@solar-icons/react"
+import { AddCircle, AltArrowDown, AltArrowLeft, ChatRoundDots, ClockCircle, MinimalisticMagnifier, PresentationGraph, QuestionCircle, Plain, ShieldCheck, SquareAcademicCap, Ticket, UserCircle, UsersGroupRounded } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -818,7 +818,7 @@ const HelpSupport = () => {
                           onValueChange={setSearchTerm}
                           placeholder={t("helpSupport.searchPlaceholder")}
                           startContent={
-                            <Magnifer weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
+                            <MinimalisticMagnifier weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
                           }
                           classNames={inputClassNames}
                           className="flex-1"

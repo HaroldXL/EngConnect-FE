@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AddCircle, DocumentAdd, Magnifer } from "@solar-icons/react";
+import { AddCircle, DocumentAdd, MinimalisticMagnifier } from "@solar-icons/react";
 import { Button, Input, Tabs, Tab } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -122,7 +122,7 @@ const MyCourses = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <Magnifer
+            <MinimalisticMagnifier
               weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}

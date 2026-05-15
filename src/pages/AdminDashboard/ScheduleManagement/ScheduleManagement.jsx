@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, Magnifer, PresentationGraph, UsersGroupRounded } from "@solar-icons/react"
+import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -969,7 +969,7 @@ const ScheduleManagement = () => {
                       value={lessonSearch}
                       onChange={(e) => setLessonSearch(e.target.value)}
                       startContent={
-                        <Magnifer weight="BoldDuotone"
+                        <MinimalisticMagnifier weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.text.secondary }}
                         />
@@ -1491,7 +1491,7 @@ const ScheduleManagement = () => {
               value={tutorPickerSearch}
               onChange={(e) => setTutorPickerSearch(e.target.value)}
               startContent={
-                <Magnifer weight="BoldDuotone"
+                <MinimalisticMagnifier weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -1604,7 +1604,7 @@ const ScheduleManagement = () => {
               value={studentPickerSearch}
               onChange={(e) => setStudentPickerSearch(e.target.value)}
               startContent={
-                <Magnifer weight="BoldDuotone"
+                <MinimalisticMagnifier weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
