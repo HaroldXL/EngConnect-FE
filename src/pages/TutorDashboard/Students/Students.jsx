@@ -1,5 +1,10 @@
 ﻿import { useState, useEffect } from "react";
-import { CalendarMark, ClockCircle, Eye, MinimalisticMagnifier } from "@solar-icons/react"
+import {
+  CalendarMark,
+  ClockCircle,
+  Eye,
+  MinimalisticMagnifier,
+} from "@solar-icons/react";
 import {
   Card,
   CardBody,
@@ -20,8 +25,6 @@ import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../../store";
 import { motion } from "framer-motion";
 import { coursesApi, studentApi } from "../../../api";
 import message from "../../../assets/illustrations/message.avif";
@@ -41,18 +44,17 @@ const itemVariants = {
   visible: { opacity: 1 },
 };
 
-
 const Students = () => {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-US";
   const colors = useThemeColors();
   const { filterInputClassNames, filterTabsClassNames } = useInputStyles();
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
   const [selectedTab, setSelectedTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [enrollments, setEnrollments] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [courseThumbnails, setCourseThumbnails] = useState({});
 
   // Schedule modal
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
@@ -61,17 +63,16 @@ const Students = () => {
   const [lessonsLoading, setLessonsLoading] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState(null);
 
-  const openScheduleModal = async (enrollment) => {
+  const openScheduleModal = async (enrollment, studentName) => {
     setScheduleStudent({
-      studentId: enrollment.studentId,
-      studentName: enrollment.studentName,
+      studentName,
+      courseName: enrollment.courseName,
     });
     setScheduleModalOpen(true);
     setLessonsLoading(true);
     try {
       const res = await studentApi.getLessons({
-        TutorId: user?.tutorId,
-        StudentId: enrollment.studentId,
+        EnrollmentId: enrollment.id,
         "page-size": 200,
         "sort-params": "StartTime-asc",
       });
@@ -84,7 +85,7 @@ const Students = () => {
   };
 
   useEffect(() => {
-    const fetchEnrollments = async () => {
+    const fetchStudents = async () => {
       setLoading(true);
       try {
         const params = { "page-size": 50, page: 1 };
@@ -92,18 +93,49 @@ const Students = () => {
           selectedTab === "all" ? "InProgress,Completed" : selectedTab;
         if (searchQuery.trim()) params["search-term"] = searchQuery.trim();
         const data = await coursesApi.getMyStudentEnrollments(params);
-        setEnrollments(data?.data?.items ?? []);
+        setStudents(data?.data?.items ?? []);
       } catch {
-        setEnrollments([]);
+        setStudents([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchEnrollments();
+    fetchStudents();
   }, [selectedTab, searchQuery]);
 
+  // Fetch course thumbnails for unique courseIds across all students
+  useEffect(() => {
+    if (students.length === 0) return;
+    const uniqueIds = new Set();
+    students.forEach((s) =>
+      s.enrollments?.forEach((e) => {
+        if (e.courseId) uniqueIds.add(e.courseId);
+      }),
+    );
+    const toFetch = [...uniqueIds].filter((id) => !(id in courseThumbnails));
+    if (toFetch.length === 0) return;
+
+    Promise.all(
+      toFetch.map((id) =>
+        coursesApi
+          .getCourseById(id)
+          .then((res) => ({ id, thumbnail: res?.data?.thumbnailUrl || null }))
+          .catch(() => ({ id, thumbnail: null })),
+      ),
+    ).then((results) => {
+      setCourseThumbnails((prev) => {
+        const next = { ...prev };
+        results.forEach(({ id, thumbnail }) => {
+          next[id] = thumbnail;
+        });
+        return next;
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [students]);
+
   const getStatusColor = (status) => {
-    if (status === "InProgress") return colors.state.success;
+    if (status === "InProgress") return colors.state.warning;
     if (status === "Completed") return colors.primary.main;
     return colors.text.secondary;
   };
@@ -188,22 +220,25 @@ const Students = () => {
     });
   };
 
-  const totalInProgress = enrollments.filter(
-    (e) => e.status === "InProgress",
+  const activeStudents = students.filter((s) =>
+    s.enrollments?.some((e) => e.status === "InProgress"),
   ).length;
-  const totalCompleted = enrollments.filter(
-    (e) => e.status === "Completed",
-  ).length;
+  const totalCompleted = students.reduce(
+    (acc, s) =>
+      acc +
+      (s.enrollments?.filter((e) => e.status === "Completed").length || 0),
+    0,
+  );
 
   const stats = [
     {
       label: t("tutorDashboard.students.totalStudents"),
-      value: loading ? "..." : enrollments.length,
+      value: loading ? "..." : students.length,
       color: colors.primary.main,
     },
     {
       label: t("tutorDashboard.students.activeStudents"),
-      value: loading ? "..." : totalInProgress,
+      value: loading ? "..." : activeStudents,
       color: colors.state.success,
     },
     {
@@ -270,7 +305,8 @@ const Students = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
           startContent={
-            <MinimalisticMagnifier weight="BoldDuotone"
+            <MinimalisticMagnifier
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.text.tertiary }}
             />
@@ -298,7 +334,7 @@ const Students = () => {
       {/* Students List */}
       {loading ? (
         <StudentsSkeleton count={5} />
-      ) : enrollments.length === 0 ? (
+      ) : students.length === 0 ? (
         <div className="flex flex-col items-center py-12 gap-4">
           <img
             src={message}
@@ -319,129 +355,196 @@ const Students = () => {
           animate="visible"
           className="space-y-4"
         >
-          {enrollments.map((enrollment) => {
-            const progress =
-              enrollment.numsOfSession > 0
-                ? Math.round(
-                    (enrollment.numOfCompleteSession /
-                      enrollment.numsOfSession) *
-                      100,
-                  )
-                : 0;
-
+          {students.map((student) => {
+            const courseCount = student.enrollments?.length || 0;
             return (
-              <motion.div key={enrollment.id} variants={itemVariants}>
+              <motion.div key={student.studentId} variants={itemVariants}>
                 <Card
                   shadow="none"
                   className="border-none"
                   style={{ backgroundColor: colors.background.light }}
                 >
                   <CardBody className="p-4">
+                    {/* Student Header */}
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                      {/* Student Info */}
-                      <div className="flex items-center gap-4 flex-1">
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
                         <Avatar
-                          src={enrollment.studentAvatar}
+                          src={student.studentAvatar}
                           size="lg"
                           className="flex-shrink-0"
                         />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3
-                              className="font-semibold"
-                              style={{ color: colors.text.primary }}
-                            >
-                              {enrollment.studentName}
-                            </h3>
-                            <Chip
-                              size="sm"
-                              style={{
-                                backgroundColor: `${getStatusColor(enrollment.status)}20`,
-                                color: getStatusColor(enrollment.status),
-                              }}
-                            >
-                              {getStatusLabel(enrollment.status)}
-                            </Chip>
-                          </div>
-                          <p
-                            className="text-sm cursor-pointer hover:underline"
-                            style={{ color: colors.primary.main }}
-                            onClick={() =>
-                              navigate(`/tutor/courses/${enrollment.courseId}`)
-                            }
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className="font-semibold truncate"
+                            style={{ color: colors.text.primary }}
                           >
-                            {enrollment.courseName}
-                          </p>
+                            {student.studentName}
+                          </h3>
                           <p
                             className="text-xs mt-0.5"
                             style={{ color: colors.text.tertiary }}
                           >
-                            {t("tutorDashboard.students.enrolledAt")}:{" "}
-                            {formatDate(enrollment.enrolledAt)}
+                            {courseCount}{" "}
+                            {courseCount === 1
+                              ? t("tutorDashboard.students.course")
+                              : t("tutorDashboard.students.courses")}
+                            {" · "}
+                            {t("tutorDashboard.students.joinedAt")}:{" "}
+                            {formatDate(student.createdAt)}
                           </p>
                         </div>
                       </div>
 
-                      {/* Progress */}
-                      <div className="flex-1 lg:max-w-xs">
-                        <div className="flex items-center justify-between mb-2">
-                          <span
-                            className="text-sm"
-                            style={{ color: colors.text.secondary }}
-                          >
-                            {t("tutorDashboard.students.progress")}
-                          </span>
-                          <span
-                            className="text-sm font-medium"
-                            style={{ color: colors.text.primary }}
-                          >
-                            {enrollment.numOfCompleteSession}/
-                            {enrollment.numsOfSession}{" "}
-                            {t("tutorDashboard.students.lessons")}
-                          </span>
-                        </div>
-                        <Progress
-                          value={progress}
-                          size="sm"
-                          classNames={{
-                            indicator: "bg-primary",
-                          }}
-                          style={{
-                            backgroundColor: colors.background.gray,
-                          }}
-                        />
-                      </div>
-
-                      {/* Actions */}
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
+                          startContent={
+                            <Eye weight="BoldDuotone" className="w-4 h-4" />
+                          }
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
                             color: colors.primary.main,
                           }}
                           onPress={() =>
-                            navigate(`/tutor/students/${enrollment.studentId}`)
+                            navigate(`/tutor/students/${student.studentId}`)
                           }
                         >
                           {t("tutorDashboard.students.profile")}
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          startContent={<CalendarMark weight="BoldDuotone" className="w-4 h-4" />}
-                          style={{
-                            backgroundColor: `${colors.state.success}15`,
-                            color: colors.state.success,
-                          }}
-                          onPress={() => openScheduleModal(enrollment)}
-                        >
-                          {t("tutorDashboard.students.scheduleLesson")}
-                        </Button>
                       </div>
                     </div>
+
+                    {/* Divider */}
+                    {courseCount > 0 && (
+                      <div
+                        className="h-px my-4"
+                        style={{ backgroundColor: colors.border.medium }}
+                      />
+                    )}
+
+                    {/* Enrollments (courses purchased) */}
+                    {courseCount > 0 && (
+                      <div className="space-y-3">
+                        {student.enrollments.map((enrollment) => {
+                          const progress =
+                            enrollment.numsOfSession > 0
+                              ? Math.round(
+                                  (enrollment.numOfCompleteSession /
+                                    enrollment.numsOfSession) *
+                                    100,
+                                )
+                              : 0;
+                          const thumbnail =
+                            courseThumbnails[enrollment.courseId];
+                          return (
+                            <div
+                              key={enrollment.id}
+                              className="flex gap-3 p-3 rounded-xl"
+                              style={{
+                                backgroundColor: colors.background.gray,
+                              }}
+                            >
+                              {/* Course Thumbnail */}
+                              {thumbnail ? (
+                                <img
+                                  src={thumbnail}
+                                  alt={enrollment.courseName}
+                                  className="w-24 h-15 rounded-lg object-cover flex-shrink-0"
+                                  draggable={false}
+                                  onDragStart={(e) => e.preventDefault()}
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                              ) : (
+                                <div
+                                  className="w-24 h-15 rounded-lg flex-shrink-0"
+                                  style={{
+                                    backgroundColor:
+                                      colors.background.primaryLight,
+                                  }}
+                                />
+                              )}
+
+                              {/* Course Info */}
+                              <div className="flex-1 min-w-0 flex flex-col">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <button
+                                      type="button"
+                                      className="text-sm font-medium hover:underline text-left block truncate w-full"
+                                      style={{ color: colors.primary.main }}
+                                      onClick={() =>
+                                        navigate(
+                                          `/tutor/courses/${enrollment.courseId}`,
+                                        )
+                                      }
+                                    >
+                                      {enrollment.courseName}
+                                    </button>
+                                    <p
+                                      className="text-xs mt-0.5"
+                                      style={{ color: colors.text.tertiary }}
+                                    >
+                                      {t("tutorDashboard.students.enrolledAt")}:{" "}
+                                      {formatDate(enrollment.enrolledAt)}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    <Chip
+                                      size="sm"
+                                      style={{
+                                        backgroundColor: `${getStatusColor(enrollment.status)}20`,
+                                        color: getStatusColor(enrollment.status),
+                                      }}
+                                    >
+                                      {getStatusLabel(enrollment.status)}
+                                    </Chip>
+                                    <Button
+                                      size="sm"
+                                      variant="flat"
+                                      startContent={
+                                        <CalendarMark
+                                          weight="BoldDuotone"
+                                          className="w-4 h-4"
+                                        />
+                                      }
+                                      style={{
+                                        backgroundColor: `${colors.state.success}15`,
+                                        color: colors.state.success,
+                                      }}
+                                      onPress={() =>
+                                        openScheduleModal(
+                                          enrollment,
+                                          student.studentName,
+                                        )
+                                      }
+                                    >
+                                      {t("tutorDashboard.students.scheduleLesson")}
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-3 mt-1.5">
+                                  <Progress
+                                    value={progress}
+                                    size="sm"
+                                    classNames={{ indicator: "bg-primary" }}
+                                    className="flex-1"
+                                  />
+                                  <span
+                                    className="text-xs font-medium whitespace-nowrap"
+                                    style={{ color: colors.text.secondary }}
+                                  >
+                                    {enrollment.numOfCompleteSession}/
+                                    {enrollment.numsOfSession}{" "}
+                                    {t("tutorDashboard.students.lessons")}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </CardBody>
                 </Card>
               </motion.div>
@@ -461,9 +564,18 @@ const Students = () => {
           {() => (
             <>
               <ModalHeader style={{ color: colors.text.primary }}>
-                {scheduleStudent?.studentName
-                  ? `${t("tutorDashboard.students.scheduleModal.title")} — ${scheduleStudent.studentName}`
-                  : t("tutorDashboard.students.scheduleModal.title")}
+                <div className="flex flex-col gap-0.5">
+                  <span>
+                    {scheduleStudent?.studentName
+                      ? `${t("tutorDashboard.students.scheduleModal.title")} — ${scheduleStudent.studentName}`
+                      : t("tutorDashboard.students.scheduleModal.title")}
+                  </span>
+                  {scheduleStudent?.courseName && (
+                    <span className="text-sm font-normal" style={{ color: colors.text.secondary }}>
+                      {scheduleStudent.courseName}
+                    </span>
+                  )}
+                </div>
               </ModalHeader>
               <ModalBody className="pb-6">
                 {lessonsLoading ? (
