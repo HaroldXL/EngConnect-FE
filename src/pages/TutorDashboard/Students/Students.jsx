@@ -27,7 +27,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { coursesApi, studentApi } from "../../../api";
-import message from "../../../assets/illustrations/message.avif";
+import message from "../../../assets/illustrations/boy.avif";
 import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
 import StudentsSkeleton from "../../../components/StudentsSkeleton/StudentsSkeleton";
 
@@ -475,7 +475,13 @@ const Students = () => {
                                       style={{ color: colors.primary.main }}
                                       onClick={() =>
                                         navigate(
-                                          `/tutor/courses/${enrollment.courseId}`,
+                                          `/tutor/students/${student.studentId}`,
+                                          {
+                                            state: {
+                                              expandCourseId:
+                                                enrollment.courseId,
+                                            },
+                                          },
                                         )
                                       }
                                     >
@@ -494,7 +500,9 @@ const Students = () => {
                                       size="sm"
                                       style={{
                                         backgroundColor: `${getStatusColor(enrollment.status)}20`,
-                                        color: getStatusColor(enrollment.status),
+                                        color: getStatusColor(
+                                          enrollment.status,
+                                        ),
                                       }}
                                     >
                                       {getStatusLabel(enrollment.status)}
@@ -519,7 +527,9 @@ const Students = () => {
                                         )
                                       }
                                     >
-                                      {t("tutorDashboard.students.scheduleLesson")}
+                                      {t(
+                                        "tutorDashboard.students.scheduleLesson",
+                                      )}
                                     </Button>
                                   </div>
                                 </div>
@@ -571,7 +581,10 @@ const Students = () => {
                       : t("tutorDashboard.students.scheduleModal.title")}
                   </span>
                   {scheduleStudent?.courseName && (
-                    <span className="text-sm font-normal" style={{ color: colors.text.secondary }}>
+                    <span
+                      className="text-sm font-normal"
+                      style={{ color: colors.text.secondary }}
+                    >
                       {scheduleStudent.courseName}
                     </span>
                   )}

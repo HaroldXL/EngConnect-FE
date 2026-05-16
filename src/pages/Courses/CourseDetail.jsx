@@ -36,6 +36,7 @@ import Footer from "../../components/Footer/Footer";
 import CourseDetailSkeleton from "../../components/CourseDetailSkeleton/CourseDetailSkeleton";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
+import messageIllustration from "../../assets/illustrations/message.avif";
 
 const getSkillStyle = (name = "") => {
   const n = name.toLowerCase();
@@ -926,12 +927,20 @@ const CourseDetail = () => {
                         <Spinner size="sm" color="primary" />
                       </div>
                     ) : reviews.length === 0 ? (
-                      <p
-                        className="text-sm text-center py-4"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("courses.detail.noReviews")}
-                      </p>
+                      <div className="flex flex-col items-center py-4">
+                        <img
+                          src={messageIllustration}
+                          alt="No reviews"
+                          draggable={false}
+                          className="w-46 h-46 object-contain opacity-90"
+                        />
+                        <p
+                          className="text-sm"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {t("courses.detail.noReviews")}
+                        </p>
+                      </div>
                     ) : (
                       <div className="flex flex-col gap-4">
                         {reviews.map((review) => (

@@ -1,5 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import { AltArrowRight, BookBookmark, CalendarMark, ClockCircle, Dollar, GraphUp, Star, UsersGroupRounded, Videocamera } from "@solar-icons/react"
+import {
+  AltArrowRight,
+  BookBookmark,
+  CalendarMark,
+  ClockCircle,
+  Dollar,
+  GraphUp,
+  Star,
+  UsersGroupRounded,
+  Videocamera,
+} from "@solar-icons/react";
 import {
   Card,
   CardBody,
@@ -16,7 +26,7 @@ import { motion } from "framer-motion";
 
 import IllustrationImage from "../../../assets/illustrations/wait.avif";
 import calendarIllustration from "../../../assets/illustrations/calendar.avif";
-import message from "../../../assets/illustrations/message.avif";
+import message from "../../../assets/illustrations/boy.avif";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../store";
 import { useNavigate } from "react-router-dom";
@@ -188,7 +198,9 @@ const Dashboard = () => {
                 </p>
                 <Button
                   color="primary"
-                  endContent={<Videocamera weight="BoldDuotone" className="w-4 h-4" />}
+                  endContent={
+                    <Videocamera weight="BoldDuotone" className="w-4 h-4" />
+                  }
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,
@@ -244,7 +256,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/schedule")}
                   >
@@ -318,7 +332,10 @@ const Dashboard = () => {
                               color: colors.text.white,
                             }}
                             startContent={
-                              <Videocamera weight="BoldDuotone" className="w-4 h-4" />
+                              <Videocamera
+                                weight="BoldDuotone"
+                                className="w-4 h-4"
+                              />
                             }
                             onPress={() => navigate(`/meeting/${lesson.id}`)}
                           >
@@ -362,7 +379,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/students")}
                   >
@@ -481,7 +500,9 @@ const Dashboard = () => {
                   <Button
                     variant="light"
                     size="sm"
-                    endContent={<AltArrowRight weight="BoldDuotone" className="w-4 h-4" />}
+                    endContent={
+                      <AltArrowRight weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.primary.main }}
                     onPress={() => navigate("/tutor/earnings")}
                   >

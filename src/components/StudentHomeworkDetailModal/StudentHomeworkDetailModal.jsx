@@ -9,7 +9,19 @@
   Avatar,
   Progress,
 } from "@heroui/react";
-import { AltArrowRight, Calendar, ClockCircle, DocumentText, File, FileDownload, Gallery, Plain, SquareAcademicCap, SquareAltArrowRight, Target } from "@solar-icons/react"
+import {
+  AltArrowRight,
+  Calendar,
+  ClockCircle,
+  DocumentText,
+  File,
+  FileDownload,
+  Gallery,
+  Plain,
+  SquareAcademicCap,
+  SquareAltArrowRight,
+  Target,
+} from "@solar-icons/react";
 
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
@@ -42,7 +54,9 @@ const getFileTypeIcon = (url, className, style) => {
   if (PDF_EXT_RE.test(name))
     return <File weight="BoldDuotone" className={className} style={style} />;
   if (DOC_EXT_RE.test(name))
-    return <DocumentText weight="BoldDuotone" className={className} style={style} />;
+    return (
+      <DocumentText weight="BoldDuotone" className={className} style={style} />
+    );
   if (ZIP_EXT_RE.test(name))
     return <File weight="BoldDuotone" className={className} style={style} />;
   return <File weight="BoldDuotone" className={className} style={style} />;
@@ -102,7 +116,10 @@ function Breadcrumb({ hw, onCourseClick, colors }) {
           className="flex items-center gap-1 min-w-0"
         >
           {idx > 0 && (
-            <AltArrowRight weight="BoldDuotone" className="w-3 h-3 shrink-0 opacity-50" />
+            <AltArrowRight
+              weight="BoldDuotone"
+              className="w-3 h-3 shrink-0 opacity-50"
+            />
           )}
           {idx === 0 && onCourseClick ? (
             <button
@@ -286,7 +303,8 @@ export default function StudentHomeworkDetailModal({
                 </p>
               </div>
               {onTutorClick && (
-                <SquareAltArrowRight weight="BoldDuotone"
+                <SquareAltArrowRight
+                  weight="BoldDuotone"
                   className="w-4 h-4 shrink-0"
                   style={{ color: colors.primary.main }}
                 />
@@ -317,7 +335,8 @@ export default function StudentHomeworkDetailModal({
               style={{ backgroundColor: colors.background.gray }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Calendar weight="BoldDuotone"
+                <Calendar
+                  weight="BoldDuotone"
                   className="w-3.5 h-3.5"
                   style={{ color: colors.text.tertiary }}
                 />
@@ -341,7 +360,8 @@ export default function StudentHomeworkDetailModal({
               style={{ backgroundColor: colors.background.gray }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Target weight="BoldDuotone"
+                <Target
+                  weight="BoldDuotone"
                   className="w-3.5 h-3.5"
                   style={{ color: colors.text.tertiary }}
                 />
@@ -433,7 +453,8 @@ export default function StudentHomeworkDetailModal({
                     {t("studentDashboard.homework.downloadResource")}
                   </p>
                 </div>
-                <SquareAltArrowRight weight="BoldDuotone"
+                <SquareAltArrowRight
+                  weight="BoldDuotone"
                   className="w-4 h-4 shrink-0"
                   style={{ color: colors.primary.main }}
                 />
@@ -470,7 +491,8 @@ export default function StudentHomeworkDetailModal({
                     >
                       {getFileBaseName(hw.submissionUrl)}
                     </span>
-                    <FileDownload weight="BoldDuotone"
+                    <FileDownload
+                      weight="BoldDuotone"
                       className="w-4 h-4 shrink-0"
                       style={{ color: colors.primary.main }}
                     />
@@ -501,7 +523,8 @@ export default function StudentHomeworkDetailModal({
                       {t("studentDashboard.homework.viewSubmission")}
                     </p>
                   </div>
-                  <SquareAltArrowRight weight="BoldDuotone"
+                  <SquareAltArrowRight
+                    weight="BoldDuotone"
                     className="w-4 h-4 shrink-0"
                     style={{ color: colors.state.success }}
                   />
@@ -593,9 +616,7 @@ export default function StudentHomeworkDetailModal({
           </Button>
           {hw.status === "Assigned" && onSubmitClick && (
             <Button
-              startContent={
-                <Plain weight="BoldDuotone" className="w-4 h-4" />
-              }
+              startContent={<Plain weight="BoldDuotone" className="w-4 h-4" />}
               onPress={() => {
                 onClose();
                 onSubmitClick(hw);

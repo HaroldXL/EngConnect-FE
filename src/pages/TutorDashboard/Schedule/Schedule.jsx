@@ -354,14 +354,7 @@ const Schedule = () => {
         Status: "InProgress,Completed",
         "page-size": 200,
       });
-      const items = res?.data?.items || [];
-      const seen = new Set();
-      const unique = items.filter((e) => {
-        if (seen.has(e.studentId)) return false;
-        seen.add(e.studentId);
-        return true;
-      });
-      setEnrolledStudents(unique);
+      setEnrolledStudents(res?.data?.items || []);
     } catch {
       // silently ignore
     }

@@ -24,7 +24,7 @@ import {
   Star,
   Videocamera,
 } from "@solar-icons/react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -138,6 +138,7 @@ const canJoinLesson = (lesson) =>
 const StudentDetail = () => {
   const { studentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-US";
   const colors = useThemeColors();
@@ -284,6 +285,19 @@ const StudentDetail = () => {
     },
     [expandedCourse, courseLessonsMap, studentId],
   );
+
+  useEffect(() => {
+    const expandCourseId = location.state?.expandCourseId;
+    if (!expandCourseId || loadingEnrollments) return;
+    toggleCourse(expandCourseId);
+    setTimeout(() => {
+      document.getElementById(`course-${expandCourseId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 300);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingEnrollments]);
 
   const getLessonStatusColor = (status) => {
     switch (status) {
@@ -707,6 +721,7 @@ const StudentDetail = () => {
               return (
                 <Card
                   key={enrollment.id}
+                  id={`course-${courseId}`}
                   shadow="none"
                   className="border-none overflow-hidden"
                   style={{ backgroundColor: colors.background.light }}
