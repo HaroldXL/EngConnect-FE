@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import clockAndCat from "../../assets/illustrations/clock-and-cat.avif";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,7 @@ import {
   File,
   Gallery,
   Plain,
+  Plain2,
   SquareAcademicCap,
   SquareAltArrowRight,
   SquareBottomUp,
@@ -99,7 +101,9 @@ export default function HomeworkDetail({ role }) {
   const locale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
   const isTutor = role === "tutor";
-  const tnsRoot = isTutor ? "tutorDashboard.homework" : "studentDashboard.homework";
+  const tnsRoot = isTutor
+    ? "tutorDashboard.homework"
+    : "studentDashboard.homework";
 
   const [hw, setHw] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -266,7 +270,9 @@ export default function HomeworkDetail({ role }) {
         </p>
         <Button
           variant="light"
-          onPress={() => navigate(isTutor ? "/tutor/homework" : "/student/homework")}
+          onPress={() =>
+            navigate(isTutor ? "/tutor/homework" : "/student/homework")
+          }
         >
           {t("common.back")}
         </Button>
@@ -304,8 +310,13 @@ export default function HomeworkDetail({ role }) {
   const isWriting = hw.type === "Writing";
   const isReading = hw.type === "Reading";
   const showAIDetection = isTutor && isWriting;
-  const showWritingAnalysis = isWriting && (isTutor || hw.status === "Submitted" || hw.status === "Scored");
-  const showReadingAnalysis = !isTutor && isReading && (hw.status === "Submitted" || hw.status === "Scored");
+  const showWritingAnalysis =
+    isWriting &&
+    (isTutor || hw.status === "Submitted" || hw.status === "Scored");
+  const showReadingAnalysis =
+    !isTutor &&
+    isReading &&
+    (hw.status === "Submitted" || hw.status === "Scored");
 
   const canRunWritingAI = isTutor && !!hw.submissionUrl;
   const canRunReadingAI = !isTutor && !!hw.resourceUrl;
@@ -336,7 +347,10 @@ export default function HomeworkDetail({ role }) {
             {statusChip && (
               <Chip
                 size="sm"
-                style={{ backgroundColor: statusChip.bg, color: statusChip.color }}
+                style={{
+                  backgroundColor: statusChip.bg,
+                  color: statusChip.color,
+                }}
               >
                 {statusChip.label}
               </Chip>
@@ -417,7 +431,11 @@ export default function HomeworkDetail({ role }) {
                   onClick={() => navigate(personHref)}
                   className="flex items-center gap-3 w-full text-left transition-opacity hover:opacity-80"
                 >
-                  <Avatar src={withCDN(personAvatar)} name={personName} size="md" />
+                  <Avatar
+                    src={withCDN(personAvatar)}
+                    name={personName}
+                    size="md"
+                  />
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-[11px] uppercase tracking-wide font-semibold"
@@ -454,7 +472,8 @@ export default function HomeworkDetail({ role }) {
                   className="text-xs font-semibold uppercase tracking-wide mb-2"
                   style={{ color: colors.text.tertiary }}
                 >
-                  {t(`${tnsRoot}.descriptionLabel`) || t(`${tnsRoot}.description`)}
+                  {t(`${tnsRoot}.descriptionLabel`) ||
+                    t(`${tnsRoot}.description`)}
                 </p>
                 <p
                   className="text-sm whitespace-pre-wrap"
@@ -468,7 +487,10 @@ export default function HomeworkDetail({ role }) {
                 <MetaItem
                   icon={Calendar}
                   label={t(`${tnsRoot}.dueDate`)}
-                  value={formatDateTime(hw.dueAt, locale) || t(`${tnsRoot}.noDueDate`)}
+                  value={
+                    formatDateTime(hw.dueAt, locale) ||
+                    t(`${tnsRoot}.noDueDate`)
+                  }
                   colors={colors}
                 />
                 <MetaItem
@@ -509,9 +531,7 @@ export default function HomeworkDetail({ role }) {
           )}
 
           {/* Media (audio/video for Listening type) */}
-          {hw.mediaUrl && (
-            <MediaCard url={hw.mediaUrl} colors={colors} t={t} />
-          )}
+          {hw.mediaUrl && <MediaCard url={hw.mediaUrl} colors={colors} t={t} />}
 
           {/* Submission */}
           <FileCard
@@ -527,7 +547,8 @@ export default function HomeworkDetail({ role }) {
             emptyMsg={
               isTutor
                 ? t("tutorDashboard.homework.noSubmission")
-                : t("studentDashboard.homework.notSubmittedYet") || "Not submitted yet"
+                : t("studentDashboard.homework.notSubmittedYet") ||
+                  "Not submitted yet"
             }
           />
 
@@ -677,14 +698,19 @@ export default function HomeworkDetail({ role }) {
 
                   {hw.status === "Assigned" && (
                     <div
-                      className="p-3 rounded-xl text-sm text-center"
+                      className="rounded-xl text-sm text-center pb-6 flex flex-col items-center gap-2"
                       style={{
                         backgroundColor: colors.background.gray,
                         color: colors.text.tertiary,
                       }}
                     >
-                      {t("tutorDashboard.homework.waitingForSubmission") ||
-                        "Waiting for student submission..."}
+                      <img
+                        src={clockAndCat}
+                        alt=""
+                        draggable={false}
+                        className="w-40 h-40 object-contain opacity-90"
+                      />
+                      {t("tutorDashboard.homework.waitingForSubmission")}
                     </div>
                   )}
                 </CardBody>
@@ -734,31 +760,30 @@ export default function HomeworkDetail({ role }) {
                   )}
 
                   {hw.status === "Submitted" && (
-                    <div className="text-center py-3">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2"
-                        style={{
-                          backgroundColor: `${colors.primary.main}15`,
-                        }}
-                      >
-                        <Plain
-                          weight="BoldDuotone"
-                          className="w-6 h-6"
-                          style={{ color: colors.primary.main }}
-                        />
-                      </div>
+                    <div className="text-center pb-6 flex flex-col items-center gap-2">
+                      <img
+                        src={clockAndCat}
+                        alt=""
+                        draggable={false}
+                        className="w-40 h-40 object-contain opacity-90"
+                      />
                       <p
-                        className="text-sm font-semibold mb-1"
+                        className="text-sm font-semibold"
                         style={{ color: colors.text.primary }}
                       >
+                        <Plain2
+                          weight="BoldDuotone"
+                          className="w-4 h-4 inline-block mr-2"
+                          style={{ color: colors.primary.main }}
+                        />
+
                         {t("studentDashboard.homework.status.submitted")}
                       </p>
                       <p
                         className="text-xs"
                         style={{ color: colors.text.tertiary }}
                       >
-                        {t("studentDashboard.homework.awaitingGrade") ||
-                          "Waiting for tutor to grade..."}
+                        {t("studentDashboard.homework.awaitingGrade")}
                       </p>
                     </div>
                   )}
@@ -804,7 +829,9 @@ export default function HomeworkDetail({ role }) {
 
 // ────────────────────────────────────────────────────────────────────────
 function Breadcrumb({ hw, colors, onCourseClick }) {
-  const items = [hw.courseTitle, hw.moduleTitle, hw.sessionTitle].filter(Boolean);
+  const items = [hw.courseTitle, hw.moduleTitle, hw.sessionTitle].filter(
+    Boolean,
+  );
   if (items.length === 0) return null;
   return (
     <div
@@ -870,10 +897,7 @@ function MetaItem({ icon: Icon, label, value, colors }) {
           {label}
         </p>
       </div>
-      <p
-        className="text-sm font-medium"
-        style={{ color: colors.text.primary }}
-      >
+      <p className="text-sm font-medium" style={{ color: colors.text.primary }}>
         {value}
       </p>
     </div>
@@ -896,10 +920,7 @@ function FileCard({ title, url, accent, colors, t, emptyMsg }) {
           >
             {title}
           </p>
-          <p
-            className="text-sm italic"
-            style={{ color: colors.text.tertiary }}
-          >
+          <p className="text-sm italic" style={{ color: colors.text.tertiary }}>
             {emptyMsg}
           </p>
         </CardBody>
@@ -1040,12 +1061,7 @@ function ScoreBlock({ hw, colors, t, isTutor }) {
           </span>
         </span>
       </div>
-      <Progress
-        aria-label="Score"
-        value={pct}
-        size="md"
-        color="success"
-      />
+      <Progress aria-label="Score" value={pct} size="md" color="success" />
       <div>
         <p
           className="text-xs font-semibold uppercase tracking-wide mb-1"
@@ -1059,9 +1075,7 @@ function ScoreBlock({ hw, colors, t, isTutor }) {
           className="text-sm whitespace-pre-wrap"
           style={{ color: colors.text.primary }}
         >
-          {hw.tutorFeedback ||
-            t("tutorDashboard.homework.noFeedback") ||
-            "—"}
+          {hw.tutorFeedback || t("tutorDashboard.homework.noFeedback") || "—"}
         </p>
       </div>
     </div>
