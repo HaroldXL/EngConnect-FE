@@ -10,6 +10,7 @@ import {
   DangerTriangle,
   DocumentText,
   File,
+  Filter,
   Gallery,
   Hourglass,
   MinimalisticMagnifier,
@@ -22,6 +23,7 @@ import {
   Star,
   Target,
   TrashBinMinimalistic,
+  UserRounded,
 } from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -39,8 +41,6 @@ import {
   ModalFooter,
   useDisclosure,
   Textarea,
-  Select,
-  SelectItem,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -122,6 +122,8 @@ const Homework = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("all");
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [isStudentFilterOpen, setIsStudentFilterOpen] = useState(false);
 
   const [selectedHw, setSelectedHw] = useState(null);
   const [assigningId, setAssigningId] = useState(null);
@@ -185,17 +187,30 @@ const Homework = () => {
     return { drafts, assigned, awaitingGrade, graded };
   }, [homeworks]);
 
+  // Unique students derived from loaded homeworks
+  const studentOptions = useMemo(() => {
+    const map = new Map();
+    for (const hw of homeworks) {
+      if (hw.studentId && !map.has(hw.studentId)) {
+        map.set(hw.studentId, hw.student);
+      }
+    }
+    return Array.from(map.entries()).map(([id, student]) => ({ id, student }));
+  }, [homeworks]);
+
   // Filter
   const filtered = useMemo(() => {
-    const map = {
+    const statusMap = {
       notStarted: "NotStarted",
       assigned: "Assigned",
       submitted: "Submitted",
       scored: "Scored",
     };
-    if (selectedTab === "all") return homeworks;
-    return homeworks.filter((h) => h.status === map[selectedTab]);
-  }, [homeworks, selectedTab]);
+    let result = homeworks;
+    if (selectedTab !== "all") result = result.filter((h) => h.status === statusMap[selectedTab]);
+    if (selectedStudentId) result = result.filter((h) => h.studentId === selectedStudentId);
+    return result;
+  }, [homeworks, selectedTab, selectedStudentId]);
 
   const statusChipProps = useCallback(
     (status) => {
@@ -614,7 +629,7 @@ const Homework = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15 }}
-        className="flex flex-col sm:flex-row gap-4"
+        className="flex items-center gap-3 flex-wrap"
       >
         <Input
           placeholder={t("tutorDashboard.homework.searchPlaceholder")}
@@ -655,6 +670,54 @@ const Homework = () => {
             title={`${t("tutorDashboard.homework.filter.scored")} (${stats.graded})`}
           />
         </Tabs>
+
+        {/* Student filter — far right */}
+        <div className="ml-auto">
+          {selectedStudentId ? (
+            (() => {
+              const s = studentOptions.find((o) => o.id === selectedStudentId);
+              const name = `${s?.student?.firstName || ""} ${s?.student?.lastName || ""}`.trim() || "—";
+              return (
+                <Chip
+                  avatar={
+                    <Avatar
+                      src={withCDN(s?.student?.avatar)}
+                      name={name}
+                      size="sm"
+                    />
+                  }
+                  onClose={() => setSelectedStudentId(null)}
+                  style={{
+                    backgroundColor: `${colors.primary.main}18`,
+                    color: colors.primary.main,
+                    border: `1px solid ${colors.primary.main}40`,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setIsStudentFilterOpen(true)}
+                >
+                  {name}
+                </Chip>
+              );
+            })()
+          ) : (
+            <Button
+              size="sm"
+              variant="flat"
+              className="text-xs h-9 px-3"
+              startContent={
+                <Filter weight="BoldDuotone" className="w-4 h-4" />
+              }
+              style={{
+                backgroundColor: `${colors.primary.main}12`,
+                color: colors.primary.main,
+                border: `1px solid ${colors.primary.main}30`,
+              }}
+              onPress={() => setIsStudentFilterOpen(true)}
+            >
+              {t("tutorDashboard.homework.filterByStudent")}
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       {/* List */}
@@ -1240,7 +1303,129 @@ const Homework = () => {
         </ModalContent>
       </Modal>
 
-      {/* Detail view now lives at /tutor/homework/:id - see HomeworkDetail page */}
+      {/* ==================== STUDENT FILTER MODAL ==================== */}
+      <Modal
+        isOpen={isStudentFilterOpen}
+        onOpenChange={(open) => setIsStudentFilterOpen(open)}
+        size="sm"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader style={{ color: colors.text.primary }}>
+                <div className="flex items-center gap-2">
+                  <Filter weight="BoldDuotone" className="w-5 h-5" />
+                  {t("tutorDashboard.homework.filterByStudent") || "Filter student"}
+                </div>
+              </ModalHeader>
+              <ModalBody className="pb-4">
+                <div className="space-y-1.5">
+                  {/* All students */}
+                  <button
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left"
+                    style={{
+                      backgroundColor: !selectedStudentId
+                        ? `${colors.primary.main}18`
+                        : colors.background.gray,
+                      border: !selectedStudentId
+                        ? `1px solid ${colors.primary.main}40`
+                        : `1px solid transparent`,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedStudentId)
+                        e.currentTarget.style.backgroundColor = `${colors.primary.main}10`;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedStudentId)
+                        e.currentTarget.style.backgroundColor = colors.background.gray;
+                    }}
+                    onClick={() => {
+                      setSelectedStudentId(null);
+                      onClose();
+                    }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{
+                        backgroundColor: !selectedStudentId
+                          ? `${colors.primary.main}25`
+                          : colors.background.light,
+                      }}
+                    >
+                      <UserRounded
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                        style={{
+                          color: !selectedStudentId
+                            ? colors.primary.main
+                            : colors.text.secondary,
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="text-sm font-semibold"
+                      style={{
+                        color: !selectedStudentId
+                          ? colors.primary.main
+                          : colors.text.primary,
+                      }}
+                    >
+                      {t("tutorDashboard.homework.allStudents") || "All students"}
+                    </span>
+                  </button>
+
+                  {studentOptions.map(({ id, student }) => {
+                    const name = `${student?.firstName || ""} ${student?.lastName || ""}`.trim() || "—";
+                    const isSelected = selectedStudentId === id;
+                    return (
+                      <button
+                        key={id}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left"
+                        style={{
+                          backgroundColor: isSelected
+                            ? `${colors.primary.main}18`
+                            : colors.background.gray,
+                          border: isSelected
+                            ? `1px solid ${colors.primary.main}40`
+                            : `1px solid transparent`,
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected)
+                            e.currentTarget.style.backgroundColor = `${colors.primary.main}10`;
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected)
+                            e.currentTarget.style.backgroundColor = colors.background.gray;
+                        }}
+                        onClick={() => {
+                          setSelectedStudentId(id);
+                          onClose();
+                        }}
+                      >
+                        <Avatar
+                          src={withCDN(student?.avatar)}
+                          name={name}
+                          size="sm"
+                          className="w-8 h-8 flex-shrink-0"
+                        />
+                        <span
+                          className="text-sm font-medium truncate"
+                          style={{
+                            color: isSelected ? colors.primary.main : colors.text.primary,
+                          }}
+                        >
+                          {name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
 
       {/* ==================== DELETE MODAL ==================== */}

@@ -1614,6 +1614,8 @@
       "submitGradeBtn": "Submit grade",
       "cancel": "Cancel",
       "close": "Close",
+      "allStudents": "All students",
+      "filterByStudent": "Filter by Student",
       "waitingForSubmission": "Waiting for student to submit...",
       "scoreRangeError": "Score must be between 0 and {{max}}",
       "scoreRequired": "Score is required",

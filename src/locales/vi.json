@@ -1612,6 +1612,8 @@
       "submitGradeBtn": "Gửi điểm",
       "cancel": "Hủy",
       "close": "Đóng",
+      "allStudents": "Tất cả học sinh",
+      "filterByStudent": "Lọc theo Học sinh",
       "waitingForSubmission": "Đang chờ học sinh nộp bài...",
       "scoreRangeError": "Điểm phải nằm trong khoảng 0 - {{max}}",
       "scoreRequired": "Vui lòng nhập điểm",
