@@ -78,6 +78,7 @@ import TutorHomework from "../pages/TutorDashboard/Homework/Homework";
 import TutorCreateHomework from "../pages/TutorDashboard/Homework/CreateHomework";
 import StudentHomework from "../pages/StudentDashboard/Homework/Homework";
 import StudentOrders from "../pages/StudentDashboard/Orders/Orders";
+import HomeworkDetail from "../pages/HomeworkDetail/HomeworkDetail";
 
 export const router = createBrowserRouter([
   {
@@ -225,6 +226,10 @@ export const router = createBrowserRouter([
         element: <StudentHomework />,
       },
       {
+        path: "homework/:id",
+        element: <HomeworkDetail role="student" />,
+      },
+      {
         path: "orders",
         element: <StudentOrders />,
       },
@@ -287,6 +292,10 @@ export const router = createBrowserRouter([
       {
         path: "homework/create",
         element: <TutorCreateHomework />,
+      },
+      {
+        path: "homework/:id",
+        element: <HomeworkDetail role="tutor" />,
       },
       {
         path: "profile",

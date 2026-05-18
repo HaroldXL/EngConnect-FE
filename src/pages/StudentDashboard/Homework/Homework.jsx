@@ -24,7 +24,6 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import toDoIllustration from "../../../assets/illustrations/to-do.avif";
 import chillIllustration from "../../../assets/illustrations/chill.avif";
 import HomeworkSkeleton from "../../../components/HomeworkSkeleton/HomeworkSkeleton";
-import StudentHomeworkDetailModal from "../../../components/StudentHomeworkDetailModal/StudentHomeworkDetailModal";
 import StudentHomeworkSubmitModal from "../../../components/StudentHomeworkSubmitModal/StudentHomeworkSubmitModal";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
@@ -120,7 +119,6 @@ const Homework = () => {
   const [selectedHw, setSelectedHw] = useState(null);
 
   const submitDisclosure = useDisclosure();
-  const detailDisclosure = useDisclosure();
 
   const fetchHomeworks = useCallback(async () => {
     if (!user?.studentId) return;
@@ -214,8 +212,7 @@ const Homework = () => {
   );
 
   const openDetail = (hw) => {
-    setSelectedHw(hw);
-    detailDisclosure.onOpen();
+    navigate(`/student/homework/${hw.id}`);
   };
 
   const openSubmit = (hw) => {
@@ -477,12 +474,36 @@ const Homework = () => {
                 <CardBody className="p-4 space-y-2">
                   {/* chip + due */}
                   <div className="flex items-center justify-between">
-                    <Chip
-                      size="sm"
-                      style={{ backgroundColor: chip.bg, color: chip.color }}
-                    >
-                      {chip.label}
-                    </Chip>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Chip
+                        size="sm"
+                        style={{ backgroundColor: chip.bg, color: chip.color }}
+                      >
+                        {chip.label}
+                      </Chip>
+                      {hw.type && (
+                        <Chip
+                          size="sm"
+                          style={{
+                            backgroundColor: `${colors.primary.main}15`,
+                            color: colors.primary.main,
+                          }}
+                        >
+                          {hw.type}
+                        </Chip>
+                      )}
+                      {hw.aiAnalysisData && (
+                        <Chip
+                          size="sm"
+                          style={{
+                            backgroundColor: `${colors.primary.main}10`,
+                            color: colors.primary.main,
+                          }}
+                        >
+                          {t("homeworkAI.aiBadge")}
+                        </Chip>
+                      )}
+                    </div>
                     {hw.status === "Assigned" && (
                       <div className="flex items-center gap-1.5">
                         <ClockCircle
@@ -586,15 +607,7 @@ const Homework = () => {
         </motion.div>
       )}
 
-      {/* ==================== DETAIL MODAL ==================== */}
-      <StudentHomeworkDetailModal
-        isOpen={detailDisclosure.isOpen}
-        onClose={detailDisclosure.onClose}
-        hw={selectedHw}
-        onSubmitClick={openSubmit}
-        onCourseClick={(hw) => navigate(`/student/courses/${hw.courseId}`)}
-        onTutorClick={(hw) => navigate(`/tutor-profile/${hw.tutorId}`)}
-      />
+      {/* Detail view now lives at /student/homework/:id — see HomeworkDetail page */}
 
       {/* ==================== SUBMIT MODAL ==================== */}
       <StudentHomeworkSubmitModal
@@ -602,7 +615,6 @@ const Homework = () => {
         onClose={submitDisclosure.onClose}
         hw={selectedHw}
         onSubmitSuccess={() => {
-          detailDisclosure.onClose();
           fetchHomeworks();
         }}
       />

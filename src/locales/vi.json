@@ -873,6 +873,7 @@
       "submit": "Nộp bài",
       "resubmit": "Nộp lại bài",
       "description": "Mô tả",
+      "descriptionLabel": "Mô tả",
       "resource": "Tài liệu tham khảo",
       "downloadResource": "Tải tài liệu",
       "openResource": "Mở tài liệu",
@@ -909,7 +910,10 @@
       "submitError": "Nộp bài tập thất bại",
       "cancel": "Hủy",
       "close": "Đóng",
-      "scoreProgress": "{{score}} trên {{max}}"
+      "scoreProgress": "{{score}} trên {{max}}",
+      "submitHint": "Tải lên file bài tập đã hoàn thành của bạn.",
+      "awaitingGrade": "Đang chờ gia sư chấm điểm...",
+      "notSubmittedYet": "Chưa nộp bài"
     },
     "community": {
       "title": "Cộng đồng",
@@ -1608,6 +1612,7 @@
       "submitGradeBtn": "Gửi điểm",
       "cancel": "Hủy",
       "close": "Đóng",
+      "waitingForSubmission": "Đang chờ học sinh nộp bài...",
       "scoreRangeError": "Điểm phải nằm trong khoảng 0 - {{max}}",
       "scoreRequired": "Vui lòng nhập điểm",
       "lessonRequired": "Vui lòng chọn buổi học",
@@ -1658,6 +1663,7 @@
       },
       "uploadFile": "Tải tệp lên",
       "pasteUrl": "Dán URL",
+      "viewUrl": "Xem",
       "clickToUpload": "Bấm để chọn tệp",
       "resourceUrlPlaceholder": "https://...",
       "mediaUrlPlaceholder": "https://...",
@@ -3149,5 +3155,65 @@
       "title": "Tóm tắt AI đã sẵn sàng",
       "description": "Bản tóm tắt buổi học của bạn đã được tạo."
     }
+  },
+  "homeworkAI": {
+    "detectionTitle": "Phát hiện nội dung AI",
+    "detectionSubtitle": "Phát hiện nội dung do AI tạo ra trong bài nộp",
+    "detectionRun": "Chạy phát hiện AI",
+    "detectionRerun": "Chạy lại phát hiện",
+    "detectionScoreLabel": "Khả năng AI",
+    "detectionLow": "Khả năng thấp — có vẻ do con người viết",
+    "detectionMedium": "Khả năng vừa — cần xem xét kỹ",
+    "detectionHigh": "Khả năng cao — nhiều khả năng do AI tạo ra",
+    "writingAnalysisTitle": "Phân tích bài viết",
+    "writingAnalysisSubtitle": "Đánh giá của AI về bài viết của học sinh",
+    "writingAnalysisRun": "Phân tích bài viết bằng AI",
+    "writingAnalysisRerun": "Phân tích lại",
+    "readingAnalysisTitle": "Phân tích bài đọc",
+    "readingAnalysisSubtitle": "Thông tin AI về tài liệu đọc",
+    "readingAnalysisRun": "Phân tích bài đọc bằng AI",
+    "readingAnalysisRerun": "Phân tích lại",
+    "running": "Đang phân tích... có thể mất tới một phút",
+    "analyzeError": "Phân tích AI thất bại. Vui lòng thử lại.",
+    "needSubmission": "Khả dụng sau khi học sinh nộp bài",
+    "sections": {
+      "score": "Điểm",
+      "errors": "Lỗi ngữ pháp",
+      "vocabUpgrades": "Nâng cấp từ vựng",
+      "feedback": "Đánh giá tổng quan",
+      "keywords": "Từ khóa chủ đề",
+      "vocabulary": "Từ vựng",
+      "summary": "Tóm tắt"
+    },
+    "criteria": {
+      "taskResponse": "Đáp ứng đề bài",
+      "grammarAccuracy": "Ngữ pháp",
+      "lexicalResource": "Từ vựng",
+      "coherenceCohesion": "Tính mạch lạc"
+    },
+    "feedback": {
+      "strengths": "Điểm mạnh",
+      "weaknesses": "Cần cải thiện",
+      "tutorAdvice": "Lời khuyên cho giáo viên"
+    },
+    "errorsItem": {
+      "original": "Câu gốc",
+      "fixed": "Gợi ý sửa",
+      "explanation": "Giải thích"
+    },
+    "vocabItem": {
+      "from": "Thay vì",
+      "to": "Hãy dùng",
+      "reason": "Tại sao"
+    },
+    "readingVocab": {
+      "exampleInText": "Trong bài",
+      "noVocab": "Không có từ vựng được trích xuất"
+    },
+    "errorsEmpty": "Không phát hiện lỗi ngữ pháp",
+    "vocabUpgradesEmpty": "Không có gợi ý nâng cấp từ vựng",
+    "overallBand": "Điểm tổng",
+    "aiBadge": "Đã phân tích AI",
+    "openFullView": "Xem chi tiết"
   }
 }

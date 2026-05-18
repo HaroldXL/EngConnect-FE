@@ -875,6 +875,7 @@
       "submit": "Submit",
       "resubmit": "Replace submission",
       "description": "Description",
+      "descriptionLabel": "Description",
       "resource": "Reference material",
       "downloadResource": "Download reference",
       "openResource": "Open reference",
@@ -911,7 +912,10 @@
       "submitError": "Failed to submit homework",
       "cancel": "Cancel",
       "close": "Close",
-      "scoreProgress": "{{score}} out of {{max}}"
+      "scoreProgress": "{{score}} out of {{max}}",
+      "submitHint": "Upload your completed assignment file.",
+      "awaitingGrade": "Waiting for tutor to grade...",
+      "notSubmittedYet": "Not submitted yet"
     },
     "community": {
       "title": "Community",
@@ -1610,6 +1614,7 @@
       "submitGradeBtn": "Submit grade",
       "cancel": "Cancel",
       "close": "Close",
+      "waitingForSubmission": "Waiting for student to submit...",
       "scoreRangeError": "Score must be between 0 and {{max}}",
       "scoreRequired": "Score is required",
       "lessonRequired": "Lesson is required",
@@ -1660,6 +1665,7 @@
       },
       "uploadFile": "Upload file",
       "pasteUrl": "Paste URL",
+      "viewUrl": "View",
       "clickToUpload": "Click to upload a file",
       "resourceUrlPlaceholder": "https://...",
       "mediaUrlPlaceholder": "https://...",
@@ -3152,5 +3158,65 @@
       "title": "AI Summary ready",
       "description": "Your lesson summary has been generated."
     }
+  },
+  "homeworkAI": {
+    "detectionTitle": "AI Content Detection",
+    "detectionSubtitle": "Detect AI-generated content in the submission",
+    "detectionRun": "Run AI Detection",
+    "detectionRerun": "Re-run Detection",
+    "detectionScoreLabel": "AI probability",
+    "detectionLow": "Low likelihood — appears to be human-written",
+    "detectionMedium": "Moderate likelihood — review carefully",
+    "detectionHigh": "High likelihood — likely AI-generated",
+    "writingAnalysisTitle": "Writing Analysis",
+    "writingAnalysisSubtitle": "AI feedback on the student's writing",
+    "writingAnalysisRun": "Analyze Writing with AI",
+    "writingAnalysisRerun": "Re-analyze",
+    "readingAnalysisTitle": "Reading Analysis",
+    "readingAnalysisSubtitle": "AI insights on the reading material",
+    "readingAnalysisRun": "Analyze Reading with AI",
+    "readingAnalysisRerun": "Re-analyze",
+    "running": "Analyzing... this can take up to a minute",
+    "analyzeError": "AI analysis failed. Please try again.",
+    "needSubmission": "Available after the student submits",
+    "sections": {
+      "score": "Score",
+      "errors": "Grammar Errors",
+      "vocabUpgrades": "Vocabulary Upgrades",
+      "feedback": "Overall Feedback",
+      "keywords": "Topic Keywords",
+      "vocabulary": "Vocabulary",
+      "summary": "Summary"
+    },
+    "criteria": {
+      "taskResponse": "Task Response",
+      "grammarAccuracy": "Grammar",
+      "lexicalResource": "Lexical Resource",
+      "coherenceCohesion": "Coherence"
+    },
+    "feedback": {
+      "strengths": "Strengths",
+      "weaknesses": "Areas to Improve",
+      "tutorAdvice": "Advice for Tutor"
+    },
+    "errorsItem": {
+      "original": "Original",
+      "fixed": "Suggested fix",
+      "explanation": "Explanation"
+    },
+    "vocabItem": {
+      "from": "Instead of",
+      "to": "Try using",
+      "reason": "Why"
+    },
+    "readingVocab": {
+      "exampleInText": "In context",
+      "noVocab": "No vocabulary extracted"
+    },
+    "errorsEmpty": "No grammar errors detected",
+    "vocabUpgradesEmpty": "No vocabulary upgrades suggested",
+    "overallBand": "Overall Band",
+    "aiBadge": "AI analyzed",
+    "openFullView": "Open full view"
   }
 }

@@ -93,4 +93,38 @@ export const lessonHomeworkApi = {
     );
     return response.data;
   },
+
+  // ─── AI features ────────────────────────────────────────────────────────
+  // AI detection (Writing only). Reads file at submissionUrl, returns
+  // { lessonHomeworkId, aiDetectionScore, message }.
+  detectAI: async (id) => {
+    const response = await axiosInstance.post(
+      `/lesson-homeworks/${id}/ai/detect`,
+      null,
+      { timeout: 180000 },
+    );
+    return response.data;
+  },
+
+  // AI Writing analysis (Writing only). Reads file at submissionUrl,
+  // returns { lessonHomeworkId, analysisData: { assessment, grammar_and_context_errors, vocabulary_upgrades, overall_feedback }, message }.
+  analyzeWriting: async (id) => {
+    const response = await axiosInstance.post(
+      `/lesson-homeworks/${id}/writing/analyze`,
+      null,
+      { timeout: 180000 },
+    );
+    return response.data;
+  },
+
+  // AI Reading analysis (Reading only). Reads file at resourceUrl,
+  // returns { lessonHomeworkId, analysisData: { topic_keywords, vocabularies, summary_vn }, message }.
+  analyzeReading: async (id) => {
+    const response = await axiosInstance.post(
+      `/lesson-homeworks/${id}/reading/analyze`,
+      null,
+      { timeout: 180000 },
+    );
+    return response.data;
+  },
 };

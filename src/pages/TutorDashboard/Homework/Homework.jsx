@@ -143,8 +143,7 @@ const Homework = () => {
   const [gradeErrors, setGradeErrors] = useState({});
   const [grading, setGrading] = useState(false);
 
-  // Detail + delete
-  const detailDisclosure = useDisclosure();
+  // Delete
   const deleteDisclosure = useDisclosure();
   const [deleting, setDeleting] = useState(false);
 
@@ -390,14 +389,8 @@ const Homework = () => {
 
   // ==================== DETAIL ====================
   const openDetail = (hw) => {
-    setSelectedHw(hw);
-    detailDisclosure.onOpen();
+    navigate(`/tutor/homework/${hw.id}`);
   };
-
-  const chipPropsSelected = useMemo(
-    () => (selectedHw ? statusChipProps(selectedHw.status) : null),
-    [selectedHw, statusChipProps],
-  );
 
   // ── Sub-components ─────────────────────────────────────────────────────
   const StatCard = ({ icon: Icon, label, value, accent }) => (
@@ -825,6 +818,28 @@ const Homework = () => {
                           >
                             {chip.label}
                           </Chip>
+                          {hw.type && (
+                            <Chip
+                              size="sm"
+                              style={{
+                                backgroundColor: `${colors.primary.main}15`,
+                                color: colors.primary.main,
+                              }}
+                            >
+                              {hw.type}
+                            </Chip>
+                          )}
+                          {hw.aiAnalysisData && (
+                            <Chip
+                              size="sm"
+                              style={{
+                                backgroundColor: `${colors.primary.main}10`,
+                                color: colors.primary.main,
+                              }}
+                            >
+                              {t("homeworkAI.aiBadge")}
+                            </Chip>
+                          )}
                           {isOverdue && (
                             <Chip
                               size="sm"
@@ -1225,363 +1240,8 @@ const Homework = () => {
         </ModalContent>
       </Modal>
 
-      {/* ==================== DETAIL MODAL ==================== */}
-      <Modal
-        isOpen={detailDisclosure.isOpen}
-        onClose={detailDisclosure.onClose}
-        size="3xl"
-        scrollBehavior="inside"
-      >
-        <ModalContent style={{ backgroundColor: colors.background.light }}>
-          <ModalHeader className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              {chipPropsSelected && (
-                <Chip
-                  size="sm"
-                  style={{
-                    backgroundColor: chipPropsSelected.bg,
-                    color: chipPropsSelected.color,
-                  }}
-                >
-                  {chipPropsSelected.label}
-                </Chip>
-              )}
-            </div>
-            <span
-              className="text-lg font-semibold"
-              style={{ color: colors.text.primary }}
-            >
-              {selectedHw?.title}
-            </span>
-            {selectedHw && (
-              <Breadcrumb
-                hw={selectedHw}
-                size="md"
-                onCourseClick={() => {
-                  detailDisclosure.onClose();
-                  navigate(`/tutor/courses/${selectedHw.courseId}`);
-                }}
-              />
-            )}
-          </ModalHeader>
-          <ModalBody className="space-y-5 pb-2">
-            {selectedHw && (
-              <>
-                {/* Student */}
-                {selectedHw.student && (
-                  <div
-                    className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
-                    style={{ backgroundColor: colors.background.gray }}
-                    onClick={() => {
-                      detailDisclosure.onClose();
-                      navigate(`/tutor/students/${selectedHw.studentId}`);
-                    }}
-                  >
-                    <Avatar
-                      src={withCDN(selectedHw.student.avatar)}
-                      size="md"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className="text-[11px] uppercase tracking-wide font-semibold"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.assignedTo")}
-                      </p>
-                      <p
-                        className="text-sm font-semibold"
-                        style={{ color: colors.text.primary }}
-                      >
-                        {`${selectedHw.student.firstName || ""} ${selectedHw.student.lastName || ""}`.trim()}
-                      </p>
-                    </div>
-                    <SquareAltArrowRight
-                      weight="BoldDuotone"
-                      className="w-4 h-4 shrink-0"
-                      style={{ color: colors.primary.main }}
-                    />
-                  </div>
-                )}
+      {/* Detail view now lives at /tutor/homework/:id - see HomeworkDetail page */}
 
-                {/* Description */}
-                <div>
-                  <p
-                    className="text-xs font-semibold uppercase tracking-wide mb-2"
-                    style={{ color: colors.text.tertiary }}
-                  >
-                    {t("tutorDashboard.homework.descriptionLabel")}
-                  </p>
-                  <p
-                    className="text-sm whitespace-pre-wrap"
-                    style={{ color: colors.text.primary }}
-                  >
-                    {selectedHw.description}
-                  </p>
-                </div>
-
-                {/* Meta grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div
-                    className="p-3 rounded-xl"
-                    style={{ backgroundColor: colors.background.gray }}
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Calendar
-                        weight="BoldDuotone"
-                        className="w-3.5 h-3.5"
-                        style={{ color: colors.text.tertiary }}
-                      />
-                      <p
-                        className="text-[11px] uppercase tracking-wide font-semibold"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.dueDate")}
-                      </p>
-                    </div>
-                    <p
-                      className="text-sm font-medium"
-                      style={{ color: colors.text.primary }}
-                    >
-                      {formatDate(selectedHw.dueAt, locale) ||
-                        t("tutorDashboard.homework.noDueDate")}
-                    </p>
-                  </div>
-                  <div
-                    className="p-3 rounded-xl"
-                    style={{ backgroundColor: colors.background.gray }}
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Target
-                        weight="BoldDuotone"
-                        className="w-3.5 h-3.5"
-                        style={{ color: colors.text.tertiary }}
-                      />
-                      <p
-                        className="text-[11px] uppercase tracking-wide font-semibold"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.maxScore")}
-                      </p>
-                    </div>
-                    <p
-                      className="text-sm font-medium"
-                      style={{ color: colors.text.primary }}
-                    >
-                      {selectedHw.maxScore ?? "—"}
-                    </p>
-                  </div>
-                  {selectedHw.assignedAt && (
-                    <div
-                      className="p-3 rounded-xl"
-                      style={{ backgroundColor: colors.background.gray }}
-                    >
-                      <p
-                        className="text-[11px] uppercase tracking-wide font-semibold mb-1"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.assignedAt")}
-                      </p>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: colors.text.primary }}
-                      >
-                        {formatDate(selectedHw.assignedAt, locale)}
-                      </p>
-                    </div>
-                  )}
-                  {selectedHw.submittedAt && (
-                    <div
-                      className="p-3 rounded-xl"
-                      style={{ backgroundColor: colors.background.gray }}
-                    >
-                      <p
-                        className="text-[11px] uppercase tracking-wide font-semibold mb-1"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.submittedAt")}
-                      </p>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: colors.text.primary }}
-                      >
-                        {formatDate(selectedHw.submittedAt, locale)}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Resource */}
-                {selectedHw.resourceUrl && (
-                  <div>
-                    <p
-                      className="text-xs font-semibold uppercase tracking-wide mb-2"
-                      style={{ color: colors.text.tertiary }}
-                    >
-                      {t("tutorDashboard.homework.resource")}
-                    </p>
-                    <a
-                      href={withCDN(selectedHw.resourceUrl)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-xl hover:opacity-90 transition-opacity"
-                      style={{ backgroundColor: `${colors.primary.main}12` }}
-                    >
-                      {getFileTypeIcon(
-                        selectedHw.resourceUrl,
-                        "w-9 h-9 shrink-0",
-                        { color: colors.primary.main },
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-sm font-semibold truncate"
-                          style={{ color: colors.primary.main }}
-                        >
-                          {getFileBaseName(selectedHw.resourceUrl)}
-                        </p>
-                      </div>
-                      <SquareAltArrowRight
-                        weight="BoldDuotone"
-                        className="w-4 h-4 shrink-0"
-                        style={{ color: colors.primary.main }}
-                      />
-                    </a>
-                  </div>
-                )}
-
-                {/* Submission */}
-                <div>
-                  <p
-                    className="text-xs font-semibold uppercase tracking-wide mb-2"
-                    style={{ color: colors.text.tertiary }}
-                  >
-                    {t("tutorDashboard.homework.submission")}
-                  </p>
-                  {selectedHw.submissionUrl ? (
-                    <SubmissionPreview url={selectedHw.submissionUrl} />
-                  ) : (
-                    <p
-                      className="text-sm italic"
-                      style={{ color: colors.text.tertiary }}
-                    >
-                      {t("tutorDashboard.homework.noSubmission")}
-                    </p>
-                  )}
-                </div>
-
-                {/* Score + feedback */}
-                {selectedHw.status === "Scored" && (
-                  <div
-                    className="p-5 rounded-xl space-y-4"
-                    style={{
-                      backgroundColor: `${colors.state.success}10`,
-                      border: `1px solid ${colors.state.success}30`,
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center"
-                          style={{
-                            backgroundColor: `${colors.state.success}25`,
-                          }}
-                        >
-                          <SquareAcademicCap
-                            weight="BoldDuotone"
-                            className="w-5 h-5"
-                            style={{ color: colors.state.success }}
-                          />
-                        </div>
-                        <div>
-                          <p
-                            className="text-xs uppercase tracking-wide font-semibold"
-                            style={{ color: colors.text.tertiary }}
-                          >
-                            {t("tutorDashboard.homework.score")}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className="text-3xl font-bold"
-                        style={{ color: colors.state.success }}
-                      >
-                        {selectedHw.score}
-                        <span
-                          className="text-base font-normal"
-                          style={{ color: colors.text.tertiary }}
-                        >
-                          /{selectedHw.maxScore}
-                        </span>
-                      </span>
-                    </div>
-                    <Progress
-                      aria-label="Score progress"
-                      value={
-                        selectedHw.maxScore
-                          ? (selectedHw.score / selectedHw.maxScore) * 100
-                          : 0
-                      }
-                      size="md"
-                      color="success"
-                    />
-                    <div>
-                      <p
-                        className="text-xs font-semibold uppercase tracking-wide mb-1"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {t("tutorDashboard.homework.studentFeedback")}
-                      </p>
-                      <p
-                        className="text-sm whitespace-pre-wrap"
-                        style={{ color: colors.text.primary }}
-                      >
-                        {selectedHw.tutorFeedback ||
-                          t("tutorDashboard.homework.noFeedback")}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={detailDisclosure.onClose}>
-              {t("tutorDashboard.homework.close")}
-            </Button>
-            {selectedHw?.status === "NotStarted" && (
-              <Button
-                startContent={
-                  <Plain weight="BoldDuotone" className="w-4 h-4" />
-                }
-                onPress={() => {
-                  detailDisclosure.onClose();
-                  handleAssign(selectedHw);
-                }}
-                style={{
-                  backgroundColor: colors.primary.main,
-                  color: colors.text.white,
-                }}
-              >
-                {t("tutorDashboard.homework.assign")}
-              </Button>
-            )}
-            {selectedHw?.status === "Submitted" && (
-              <Button
-                startContent={<Star weight="BoldDuotone" className="w-4 h-4" />}
-                onPress={() => {
-                  detailDisclosure.onClose();
-                  openGrade(selectedHw);
-                }}
-                style={{
-                  backgroundColor: colors.primary.main,
-                  color: colors.text.white,
-                }}
-              >
-                {t("tutorDashboard.homework.grade")}
-              </Button>
-            )}
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* ==================== DELETE MODAL ==================== */}
       <Modal

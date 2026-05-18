@@ -5,6 +5,7 @@ import {
   CloseCircle,
   Document,
   DocumentText,
+  Eye,
   Gallery,
   LinkMinimalistic,
   MusicNotes,
@@ -338,6 +339,21 @@ const CreateHomework = () => {
             isIconOnly
             variant="light"
             size="sm"
+            onPress={() => {
+              const url = URL.createObjectURL(file);
+              window.open(url, "_blank", "noopener,noreferrer");
+            }}
+          >
+            <Eye
+              weight="BoldDuotone"
+              className="w-5 h-5"
+              style={{ color: colors.primary.main }}
+            />
+          </Button>
+          <Button
+            isIconOnly
+            variant="light"
+            size="sm"
             onPress={() => setFile(null)}
           >
             <CloseCircle
@@ -650,32 +666,37 @@ const CreateHomework = () => {
                   {errors.type}
                 </p>
               )}
-            </div>
 
-            {type === "Writing" && (
-              <Select
-                label={t("tutorDashboard.homework.writingSubTypeLabel")}
-                labelPlacement="outside"
-                placeholder={t(
-                  "tutorDashboard.homework.writingSubTypePlaceholder",
-                )}
-                selectedKeys={writingSubType ? [writingSubType] : []}
-                onSelectionChange={(keys) => {
-                  setWritingSubType(Array.from(keys)[0] || "");
-                  if (errors.writingSubType)
-                    setErrors((p) => ({ ...p, writingSubType: undefined }));
-                }}
-                isInvalid={!!errors.writingSubType}
-                errorMessage={errors.writingSubType}
-                classNames={selectClassNames}
-              >
-                {WRITING_SUB_TYPES.map((s) => (
-                  <SelectItem key={s} textValue={writingSubLabel(s)}>
-                    {writingSubLabel(s)}
-                  </SelectItem>
-                ))}
-              </Select>
-            )}
+              {type === "Writing" && (
+                <div
+                  className="pt-4 border-t"
+                  style={{ borderColor: colors.border.light }}
+                >
+                  <Select
+                    label={t("tutorDashboard.homework.writingSubTypeLabel")}
+                    labelPlacement="outside"
+                    placeholder={t(
+                      "tutorDashboard.homework.writingSubTypePlaceholder",
+                    )}
+                    selectedKeys={writingSubType ? [writingSubType] : []}
+                    onSelectionChange={(keys) => {
+                      setWritingSubType(Array.from(keys)[0] || "");
+                      if (errors.writingSubType)
+                        setErrors((p) => ({ ...p, writingSubType: undefined }));
+                    }}
+                    isInvalid={!!errors.writingSubType}
+                    errorMessage={errors.writingSubType}
+                    classNames={selectClassNames}
+                  >
+                    {WRITING_SUB_TYPES.map((s) => (
+                      <SelectItem key={s} textValue={writingSubLabel(s)}>
+                        {writingSubLabel(s)}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
+              )}
+            </div>
 
             <Textarea
               label={t("tutorDashboard.homework.descriptionLabel")}
@@ -822,6 +843,22 @@ const CreateHomework = () => {
                   style={{ color: colors.text.tertiary }}
                 />
               }
+              endContent={
+                resourceUrl.trim() ? (
+                  <button
+                    type="button"
+                    onClick={() => window.open(resourceUrl.trim(), "_blank", "noopener,noreferrer")}
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: `${colors.primary.main}15`,
+                      color: colors.primary.main,
+                    }}
+                  >
+                    <Eye weight="BoldDuotone" className="w-3.5 h-3.5" />
+                    {t("tutorDashboard.homework.viewUrl")}
+                  </button>
+                ) : null
+              }
               classNames={inputClassNames}
             />
           )}
@@ -911,6 +948,22 @@ const CreateHomework = () => {
                     className="w-4 h-4"
                     style={{ color: colors.text.tertiary }}
                   />
+                }
+                endContent={
+                  mediaUrl.trim() ? (
+                    <button
+                      type="button"
+                      onClick={() => window.open(mediaUrl.trim(), "_blank", "noopener,noreferrer")}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
+                      style={{
+                        backgroundColor: `${colors.primary.main}15`,
+                        color: colors.primary.main,
+                      }}
+                    >
+                      <Eye weight="BoldDuotone" className="w-3.5 h-3.5" />
+                      {t("tutorDashboard.homework.viewUrl")}
+                    </button>
+                  ) : null
                 }
                 classNames={inputClassNames}
               />
