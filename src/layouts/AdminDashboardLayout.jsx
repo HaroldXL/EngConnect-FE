@@ -4,6 +4,7 @@ import {
   AltArrowLeft,
   AltArrowRight,
   Bell,
+  BillList,
   BookBookmark,
   CalendarMark,
   ChecklistMinimalistic,
@@ -16,8 +17,10 @@ import {
   PresentationGraph,
   ShieldCheck,
   SquareAcademicCap,
+  Tag,
   TagPrice,
   Ticket,
+  TicketSale,
   Wallet,
 } from "@solar-icons/react";
 import { useSelector } from "react-redux";
@@ -109,7 +112,7 @@ const AdminDashboardLayout = () => {
         {
           path: "/admin/categories",
           label: t("adminDashboard.nav.categories"),
-          icon: TagPrice,
+          icon: Tag,
         },
       ],
     },
@@ -126,7 +129,7 @@ const AdminDashboardLayout = () => {
         {
           path: "/admin/finance",
           label: t("adminDashboard.nav.ordersTransactions"),
-          icon: Dollar,
+          icon: BillList,
         },
         {
           path: "/admin/payroll",
@@ -136,7 +139,7 @@ const AdminDashboardLayout = () => {
         {
           path: "/admin/commission",
           label: t("adminDashboard.nav.commission"),
-          icon: DollarMinimalistic,
+          icon: TicketSale,
         },
       ],
     },

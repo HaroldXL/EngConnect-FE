@@ -75,6 +75,7 @@ import VideoCall from "../pages/VideoCall/VideoCall";
 import NotFound from "../pages/NotFound/NotFound";
 import Test from "../pages/Test/test";
 import TutorHomework from "../pages/TutorDashboard/Homework/Homework";
+import TutorCreateHomework from "../pages/TutorDashboard/Homework/CreateHomework";
 import StudentHomework from "../pages/StudentDashboard/Homework/Homework";
 import StudentOrders from "../pages/StudentDashboard/Orders/Orders";
 
@@ -282,6 +283,10 @@ export const router = createBrowserRouter([
       {
         path: "homework",
         element: <TutorHomework />,
+      },
+      {
+        path: "homework/create",
+        element: <TutorCreateHomework />,
       },
       {
         path: "profile",

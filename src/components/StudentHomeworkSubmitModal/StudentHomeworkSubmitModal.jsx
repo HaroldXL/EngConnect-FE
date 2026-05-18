@@ -1,5 +1,13 @@
 ﻿import { useState, useRef, useEffect } from "react";
-import { CloseSquare, CloudUpload, DangerTriangle, DocumentText, File, Gallery, Plain } from "@solar-icons/react"
+import {
+  CloseSquare,
+  CloudUpload,
+  DangerTriangle,
+  DocumentText,
+  File,
+  Gallery,
+  Plain,
+} from "@solar-icons/react";
 import {
   Modal,
   ModalContent,
@@ -13,6 +21,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { lessonHomeworkApi } from "../../api";
+import { XIcon } from "@phosphor-icons/react";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -34,7 +43,9 @@ const getFileTypeIcon = (name, className, style) => {
   if (PDF_RE.test(base))
     return <File weight="BoldDuotone" className={className} style={style} />;
   if (DOC_RE.test(base))
-    return <DocumentText weight="BoldDuotone" className={className} style={style} />;
+    return (
+      <DocumentText weight="BoldDuotone" className={className} style={style} />
+    );
   if (ZIP_RE.test(base))
     return <File weight="BoldDuotone" className={className} style={style} />;
   return <File weight="BoldDuotone" className={className} style={style} />;
@@ -254,7 +265,7 @@ export default function StudentHomeworkSubmitModal({
                   isDisabled={submitting}
                   aria-label={t("studentDashboard.homework.removeFile")}
                 >
-                  <CloseSquare weight="BoldDuotone" className="w-4 h-4" />
+                  <XIcon className="w-4 h-4" />
                 </Button>
               </div>
             )}
@@ -267,7 +278,10 @@ export default function StudentHomeworkSubmitModal({
                   color: colors.state.error,
                 }}
               >
-                <DangerTriangle weight="BoldDuotone" className="w-4 h-4 shrink-0" />
+                <DangerTriangle
+                  weight="BoldDuotone"
+                  className="w-4 h-4 shrink-0"
+                />
                 <span>{error}</span>
               </div>
             )}
@@ -299,9 +313,7 @@ export default function StudentHomeworkSubmitModal({
             isLoading={submitting}
             isDisabled={!file}
             startContent={
-              !submitting && (
-                <Plain weight="BoldDuotone" className="w-4 h-4" />
-              )
+              !submitting && <Plain weight="BoldDuotone" className="w-4 h-4" />
             }
             style={{
               backgroundColor: colors.primary.main,

@@ -14,9 +14,37 @@ export const lessonHomeworkApi = {
   },
 
   // Tutor creates homework (status = NotStarted after this)
-  // body: { courseResourceId, lessonId, description, maxScore, dueAt }
+  // body: {
+  //   lessonId, title, type, writingSubType,
+  //   resourceFile (File), mediaFile (File),
+  //   resourceUrl, mediaUrl,
+  //   description, maxScore, dueAt,
+  // }
   createHomework: async (body) => {
-    const response = await axiosInstance.post("/lesson-homeworks", body);
+    const formData = new FormData();
+    const appendIfDefined = (key, value) => {
+      if (value === undefined || value === null || value === "") return;
+      formData.append(key, value);
+    };
+    appendIfDefined("LessonId", body.lessonId);
+    appendIfDefined("Title", body.title);
+    appendIfDefined("Type", body.type);
+    appendIfDefined("WritingSubType", body.writingSubType);
+    appendIfDefined("ResourceUrl", body.resourceUrl);
+    appendIfDefined("MediaUrl", body.mediaUrl);
+    appendIfDefined("Description", body.description);
+    if (body.maxScore !== undefined && body.maxScore !== null && body.maxScore !== "")
+      formData.append("MaxScore", String(body.maxScore));
+    appendIfDefined("DueAt", body.dueAt);
+    if (body.resourceFile instanceof File)
+      formData.append("ResourceFile", body.resourceFile, body.resourceFile.name);
+    if (body.mediaFile instanceof File)
+      formData.append("MediaFile", body.mediaFile, body.mediaFile.name);
+
+    const response = await axiosInstance.post("/lesson-homeworks", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 120000,
+    });
     return response.data;
   },
 

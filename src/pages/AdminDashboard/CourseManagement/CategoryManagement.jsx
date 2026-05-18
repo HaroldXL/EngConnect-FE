@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { AddCircle, Folder2, MinimalisticMagnifier, Pen, TagPrice, TrashBinMinimalistic } from "@solar-icons/react"
+import {
+  AddCircle,
+  Folder2,
+  MinimalisticMagnifier,
+  Pen,
+  TagPrice,
+  TrashBinMinimalistic,
+} from "@solar-icons/react";
 import {
   Card,
   CardBody,
@@ -28,7 +35,7 @@ import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { coursesApi } from "../../../api";
-
+import { Tag } from "@solar-icons/react/ssr";
 
 const CategoryManagement = () => {
   const { t, i18n } = useTranslation();
@@ -207,7 +214,9 @@ const CategoryManagement = () => {
         </div>
         <div className="flex gap-2">
           <Button
-            startContent={<AddCircle weight="BoldDuotone" className="w-4 h-4" />}
+            startContent={
+              <AddCircle weight="BoldDuotone" className="w-4 h-4" />
+            }
             style={{
               backgroundColor: colors.primary.main,
               color: colors.text.white,
@@ -281,7 +290,8 @@ const CategoryManagement = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               startContent={
-                <MinimalisticMagnifier weight="BoldDuotone"
+                <MinimalisticMagnifier
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -361,7 +371,8 @@ const CategoryManagement = () => {
                     <TableRow key={cat.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <TagPrice weight="BoldDuotone"
+                          <Tag
+                            weight="BoldDuotone"
                             className="w-4 h-4 flex-shrink-0"
                             style={{ color: colors.primary.main }}
                           />
@@ -408,7 +419,8 @@ const CategoryManagement = () => {
                             size="sm"
                             onPress={() => handleEdit(cat)}
                           >
-                            <Pen weight="BoldDuotone"
+                            <Pen
+                              weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.primary.main }}
                             />
@@ -419,7 +431,8 @@ const CategoryManagement = () => {
                             size="sm"
                             onPress={() => handleDeleteClick(cat)}
                           >
-                            <TrashBinMinimalistic weight="BoldDuotone"
+                            <TrashBinMinimalistic
+                              weight="BoldDuotone"
                               className="w-4 h-4"
                               style={{ color: colors.state.error }}
                             />

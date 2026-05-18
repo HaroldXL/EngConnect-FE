@@ -54,7 +54,7 @@ import { selectUser } from "../../../store";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
-import { lessonHomeworkApi, studentApi, coursesApi } from "../../../api";
+import { lessonHomeworkApi } from "../../../api";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import toDoIllustration from "../../../assets/illustrations/to-do.avif";
@@ -111,7 +111,6 @@ const Homework = () => {
   const {
     inputClassNames,
     textareaClassNames,
-    selectClassNames,
     filterInputClassNames,
     filterTabsClassNames,
   } = useInputStyles();
@@ -126,22 +125,6 @@ const Homework = () => {
 
   const [selectedHw, setSelectedHw] = useState(null);
   const [assigningId, setAssigningId] = useState(null);
-
-  // Create modal
-  const createDisclosure = useDisclosure();
-  const [lessons, setLessons] = useState([]);
-  const [lessonsLoading, setLessonsLoading] = useState(false);
-  const [resourcesByLesson, setResourcesByLesson] = useState({});
-  const [resourcesLoading, setResourcesLoading] = useState(false);
-  const [createForm, setCreateForm] = useState({
-    lessonId: "",
-    courseResourceId: "",
-    description: "",
-    maxScore: "",
-    dueAt: "",
-  });
-  const [createErrors, setCreateErrors] = useState({});
-  const [creating, setCreating] = useState(false);
 
   // Edit modal
   const editDisclosure = useDisclosure();
@@ -252,111 +235,6 @@ const Homework = () => {
     },
     [colors, t],
   );
-
-  // ==================== CREATE ====================
-  const openCreate = async () => {
-    setCreateForm({
-      lessonId: "",
-      courseResourceId: "",
-      description: "",
-      maxScore: "100",
-      dueAt: "",
-    });
-    setCreateErrors({});
-    createDisclosure.onOpen();
-
-    if (user?.tutorId && lessons.length === 0) {
-      try {
-        setLessonsLoading(true);
-        const res = await studentApi.getLessons({
-          TutorId: user.tutorId,
-          "page-size": 200,
-        });
-        setLessons(res?.data?.items || []);
-      } catch (err) {
-        console.error("Failed to load lessons:", err);
-      } finally {
-        setLessonsLoading(false);
-      }
-    }
-  };
-
-  const loadResourcesForLesson = async (lesson) => {
-    if (!lesson?.sessionId) return;
-    if (resourcesByLesson[lesson.sessionId]) return;
-    try {
-      setResourcesLoading(true);
-      const res = await coursesApi.getAllCourseResources({
-        CourseSessionId: lesson.sessionId,
-        "page-size": 100,
-      });
-      setResourcesByLesson((prev) => ({
-        ...prev,
-        [lesson.sessionId]: res?.data?.items || [],
-      }));
-    } catch (err) {
-      console.error("Failed to load resources:", err);
-      setResourcesByLesson((prev) => ({ ...prev, [lesson.sessionId]: [] }));
-    } finally {
-      setResourcesLoading(false);
-    }
-  };
-
-  const selectedLesson = useMemo(
-    () => lessons.find((l) => l.id === createForm.lessonId) || null,
-    [lessons, createForm.lessonId],
-  );
-
-  const availableResources = useMemo(() => {
-    if (!selectedLesson?.sessionId) return [];
-    return resourcesByLesson[selectedLesson.sessionId] || [];
-  }, [selectedLesson, resourcesByLesson]);
-
-  const validateCreate = () => {
-    const errs = {};
-    if (!createForm.lessonId)
-      errs.lessonId = t("tutorDashboard.homework.lessonRequired");
-    if (!createForm.courseResourceId)
-      errs.courseResourceId = t("tutorDashboard.homework.resourceRequired");
-    if (!createForm.description.trim())
-      errs.description = t("tutorDashboard.homework.descriptionRequired");
-    if (!createForm.maxScore || Number(createForm.maxScore) <= 0)
-      errs.maxScore = t("tutorDashboard.homework.maxScoreRequired");
-    setCreateErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleCreate = async () => {
-    if (!validateCreate()) return;
-    try {
-      setCreating(true);
-      await lessonHomeworkApi.createHomework({
-        lessonId: createForm.lessonId,
-        courseResourceId: createForm.courseResourceId,
-        description: createForm.description.trim(),
-        maxScore: Number(createForm.maxScore),
-        dueAt: createForm.dueAt
-          ? new Date(createForm.dueAt).toISOString()
-          : null,
-      });
-      addToast({
-        title: t("tutorDashboard.homework.createSuccess"),
-        color: "success",
-        timeout: 3000,
-      });
-      createDisclosure.onClose();
-      fetchHomeworks();
-    } catch (err) {
-      console.error("Failed to create homework:", err);
-      addToast({
-        title: t("tutorDashboard.homework.createError"),
-        color: "danger",
-        timeout: 3000,
-      });
-    } finally {
-      setCreating(false);
-    }
-  };
 
   // ==================== ASSIGN ====================
   const handleAssign = async (hw) => {
@@ -699,7 +577,7 @@ const Homework = () => {
             backgroundColor: colors.primary.main,
             color: colors.text.white,
           }}
-          onPress={openCreate}
+          onPress={() => navigate("/tutor/homework/create")}
         >
           {t("tutorDashboard.homework.createBtn")}
         </Button>
@@ -1106,206 +984,6 @@ const Homework = () => {
           })}
         </motion.div>
       )}
-
-      {/* ==================== CREATE MODAL ==================== */}
-      <Modal
-        isOpen={createDisclosure.isOpen}
-        onClose={createDisclosure.onClose}
-        size="2xl"
-        scrollBehavior="inside"
-        isDismissable={!creating}
-      >
-        <ModalContent style={{ backgroundColor: colors.background.light }}>
-          <ModalHeader style={{ color: colors.text.primary }}>
-            {t("tutorDashboard.homework.createModalTitle")}
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              {/* Lesson select */}
-              <Select
-                label={t("tutorDashboard.homework.lessonLabel")}
-                labelPlacement="outside"
-                placeholder={
-                  lessonsLoading
-                    ? t("tutorDashboard.homework.loadingLessons")
-                    : t("tutorDashboard.homework.lessonPlaceholder")
-                }
-                description={t("tutorDashboard.homework.lessonHint")}
-                selectedKeys={createForm.lessonId ? [createForm.lessonId] : []}
-                onSelectionChange={(keys) => {
-                  const id = Array.from(keys)[0] || "";
-                  setCreateForm((p) => ({
-                    ...p,
-                    lessonId: id,
-                    courseResourceId: "",
-                  }));
-                  setCreateErrors((p) => ({ ...p, lessonId: undefined }));
-                  const lesson = lessons.find((l) => l.id === id);
-                  if (lesson) loadResourcesForLesson(lesson);
-                }}
-                isInvalid={!!createErrors.lessonId}
-                errorMessage={createErrors.lessonId}
-                isLoading={lessonsLoading}
-                classNames={selectClassNames}
-              >
-                {lessons.map((l) => {
-                  const studentName =
-                    `${l.studentFirstName || ""} ${l.studentLastName || ""}`.trim() ||
-                    "—";
-                  return (
-                    <SelectItem
-                      key={l.id}
-                      textValue={`${l.sessionTitle} - ${studentName}`}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {l.sessionTitle || "Lesson"}
-                        </span>
-                        <span
-                          className="text-xs"
-                          style={{ color: colors.text.tertiary }}
-                        >
-                          {studentName} · {l.courseTitle}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </Select>
-
-              {selectedLesson && (
-                <Select
-                  label={t("tutorDashboard.homework.resourceLabel")}
-                  labelPlacement="outside"
-                  placeholder={
-                    resourcesLoading
-                      ? t("tutorDashboard.homework.loadingResources")
-                      : availableResources.length === 0
-                        ? t("tutorDashboard.homework.noResourcesInLesson")
-                        : t("tutorDashboard.homework.resourcePlaceholder")
-                  }
-                  description={t("tutorDashboard.homework.resourceHint")}
-                  selectedKeys={
-                    createForm.courseResourceId
-                      ? [createForm.courseResourceId]
-                      : []
-                  }
-                  onSelectionChange={(keys) => {
-                    const id = Array.from(keys)[0] || "";
-                    setCreateForm((p) => ({ ...p, courseResourceId: id }));
-                    setCreateErrors((p) => ({
-                      ...p,
-                      courseResourceId: undefined,
-                    }));
-                  }}
-                  isInvalid={!!createErrors.courseResourceId}
-                  errorMessage={createErrors.courseResourceId}
-                  isDisabled={
-                    availableResources.length === 0 || resourcesLoading
-                  }
-                  isLoading={resourcesLoading}
-                  classNames={selectClassNames}
-                >
-                  {availableResources.map((r) => (
-                    <SelectItem key={r.id} textValue={r.title}>
-                      {r.title}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-
-              <Textarea
-                label={t("tutorDashboard.homework.descriptionLabel")}
-                labelPlacement="outside"
-                placeholder={t(
-                  "tutorDashboard.homework.descriptionPlaceholder",
-                )}
-                value={createForm.description}
-                onValueChange={(v) => {
-                  setCreateForm((p) => ({ ...p, description: v }));
-                  if (createErrors.description)
-                    setCreateErrors((p) => ({ ...p, description: undefined }));
-                }}
-                minRows={3}
-                isInvalid={!!createErrors.description}
-                errorMessage={createErrors.description}
-                classNames={textareaClassNames}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  type="number"
-                  label={t("tutorDashboard.homework.maxScoreLabel")}
-                  labelPlacement="outside"
-                  placeholder={t("tutorDashboard.homework.maxScorePlaceholder")}
-                  value={createForm.maxScore}
-                  onValueChange={(v) => {
-                    setCreateForm((p) => ({ ...p, maxScore: v }));
-                    if (createErrors.maxScore)
-                      setCreateErrors((p) => ({ ...p, maxScore: undefined }));
-                  }}
-                  isInvalid={!!createErrors.maxScore}
-                  errorMessage={createErrors.maxScore}
-                  min={1}
-                  classNames={inputClassNames}
-                />
-                <div className="flex flex-col gap-1.5">
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: colors.text.secondary }}
-                  >
-                    {t("tutorDashboard.homework.dueAtLabel")}
-                  </span>
-                  <input
-                    type="datetime-local"
-                    className="w-full h-10 px-3 rounded-xl text-sm outline-none transition-colors"
-                    style={{
-                      backgroundColor: colors.background.input,
-                      color: colors.text.primary,
-                    }}
-                    min={new Date(
-                      Date.now() - new Date().getTimezoneOffset() * 60000,
-                    )
-                      .toISOString()
-                      .slice(0, 16)}
-                    value={createForm.dueAt}
-                    onChange={(e) =>
-                      setCreateForm((p) => ({ ...p, dueAt: e.target.value }))
-                    }
-                  />
-                  <span
-                    className="text-xs"
-                    style={{ color: colors.text.tertiary }}
-                  >
-                    {t("tutorDashboard.homework.dueAtHint")}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="light"
-              onPress={createDisclosure.onClose}
-              isDisabled={creating}
-            >
-              {t("tutorDashboard.homework.cancel")}
-            </Button>
-            <Button
-              onPress={handleCreate}
-              isLoading={creating}
-              style={{
-                backgroundColor: colors.primary.main,
-                color: colors.text.white,
-              }}
-            >
-              {creating
-                ? t("tutorDashboard.homework.creating")
-                : t("tutorDashboard.homework.createBtnAction")}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* ==================== EDIT MODAL ==================== */}
       <Modal

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card as CardIcon,
+  Chart,
   CheckCircle,
   ClipboardList,
   CloseCircle,
@@ -462,7 +463,7 @@ const Earnings = () => {
           key="earnings"
           title={
             <div className="flex items-center gap-2">
-              <GraphUp weight="BoldDuotone" className="w-5 h-5" />
+              <Chart weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("tutorDashboard.earnings.earningsTab")}</span>
             </div>
           }
@@ -501,7 +502,7 @@ const Earnings = () => {
                   className="text-lg font-semibold flex items-center gap-2"
                   style={{ color: colors.text.primary }}
                 >
-                  <CourseUp
+                  <Chart
                     weight="BoldDuotone"
                     className="w-5 h-5"
                     style={{ color: colors.primary.main }}
@@ -715,9 +716,14 @@ const Earnings = () => {
           <CardBody className="p-4">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h2
-                className="text-lg font-semibold"
+                className="text-lg font-semibold flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
+                <ClipboardList
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.primary.main }}
+                />
                 {t("tutorDashboard.earnings.payoutsList")}
               </h2>
               <div className="flex items-center gap-2">
@@ -910,9 +916,14 @@ const Earnings = () => {
           <CardBody className="p-4">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h2
-                className="text-lg font-semibold"
+                className="text-lg font-semibold flex items-center gap-2"
                 style={{ color: colors.text.primary }}
               >
+                <CourseUp
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.primary.main }}
+                />
                 {t("tutorDashboard.earnings.courseSalesList")}
               </h2>
               <Select
