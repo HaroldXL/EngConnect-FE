@@ -11,7 +11,21 @@ import CourseCard from "../../components/CourseCard/CourseCard";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
 import { coursesApi } from "../../api";
-import { AltArrowRight, BookBookmark, CalendarMark, ClockCircle, HeadphonesRound, Laptop, Notes, Star, Stars, TagPrice, UserId, UserSpeak, UsersGroupRounded } from "@solar-icons/react"
+import {
+  AltArrowRight,
+  BookBookmark,
+  CalendarMark,
+  ClockCircle,
+  HeadphonesRound,
+  Laptop,
+  Notes,
+  Star,
+  Stars,
+  TagPrice,
+  UserId,
+  UserSpeak,
+  UsersGroupRounded,
+} from "@solar-icons/react";
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -44,6 +58,7 @@ import avatarTalon from "../../assets/images/avatar-talon.png";
 import aiImage from "../../assets/illustrations/ai.avif";
 import videoImage from "../../assets/illustrations/video.avif";
 import iconsImage from "../../assets/illustrations/icons.avif";
+import iconsDrawingImage from "../../assets/illustrations/icons-drawing.avif";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -84,14 +99,30 @@ const Home = () => {
   const getSkillStyle = (name = "") => {
     const n = name.toLowerCase();
     if (n.includes("speak"))
-      return { Icon: UserSpeak, color: "#F97316", iconBg: "rgba(249,115,22,0.15)" };
+      return {
+        Icon: UserSpeak,
+        color: "#F97316",
+        iconBg: "rgba(249,115,22,0.15)",
+      };
     if (n.includes("listen"))
-      return { Icon: HeadphonesRound, color: "#06B6D4", iconBg: "rgba(6,182,212,0.15)" };
+      return {
+        Icon: HeadphonesRound,
+        color: "#06B6D4",
+        iconBg: "rgba(6,182,212,0.15)",
+      };
     if (n.includes("read"))
-      return { Icon: BookBookmark, color: "#10B981", iconBg: "rgba(16,185,129,0.15)" };
+      return {
+        Icon: BookBookmark,
+        color: "#10B981",
+        iconBg: "rgba(16,185,129,0.15)",
+      };
     if (n.includes("writ"))
       return { Icon: Notes, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
-    return { Icon: TagPrice, color: colors.primary.main, iconBg: "rgba(59,130,246,0.15)" };
+    return {
+      Icon: TagPrice,
+      color: colors.primary.main,
+      iconBg: "rgba(59,130,246,0.15)",
+    };
   };
 
   const testimonials = [
@@ -222,7 +253,10 @@ const Home = () => {
                   color: colors.primary.main,
                 }}
               >
-                <Stars weight="BoldDuotone" className="inline-block mr-2 w-4 h-4" />
+                <Stars
+                  weight="BoldDuotone"
+                  className="inline-block mr-2 w-4 h-4"
+                />
                 {t("home.hero.badge")}
               </span>
 
@@ -253,7 +287,9 @@ const Home = () => {
                     color: colors.text.white,
                   }}
                   onPress={() => navigate("/register")}
-                  endContent={<AltArrowRight weight="BoldDuotone" className="w-5 h-5" />}
+                  endContent={
+                    <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+                  }
                 >
                   {t("home.hero.startLearning")}
                 </Button>
@@ -282,17 +318,19 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
+      {/* Why Choose EngConnect Section */}
       <section
         className="py-20 px-6 md:px-12"
         style={{ backgroundColor: colors.background.light }}
       >
         <div className="max-w-7xl mx-auto">
+          {/* Centered heading */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
             <h2
               className="text-3xl sm:text-4xl font-bold mb-4"
@@ -309,47 +347,68 @@ const Home = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {features.map((feature, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Card
-                  className="h-full hover:border-primary transition-colors shadow-none"
-                  style={{
-                    backgroundColor: colors.background.gray,
-                  }}
-                >
-                  <CardBody className="p-6 text-center flex flex-col items-center">
-                    <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                      style={{
-                        backgroundColor: feature.bgColor,
-                      }}
-                    >
-                      <feature.icon
-                        className="w-7 h-7"
-                        style={{ color: feature.color }}
-                      />
-                    </div>
-                    <h3
-                      className="text-lg font-bold mb-2"
-                      style={{ color: colors.text.primary }}
-                    >
-                      {feature.title}
-                    </h3>
-                    <p style={{ color: colors.text.secondary }}>
-                      {feature.description}
-                    </p>
-                  </CardBody>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left — Illustration */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="flex justify-center"
+            >
+              <img
+                src={iconsDrawingImage}
+                alt="Why EngConnect"
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onContextMenu={(e) => e.preventDefault()}
+                className="w-full max-w-md h-auto"
+              />
+            </motion.div>
+
+            {/* Right — 2×2 grid */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="grid grid-cols-2 gap-4">
+                {features.map((feature) => (
+                  <Card
+                    key={feature.title}
+                    shadow="none"
+                    className="border-none"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <CardBody className="p-4">
+                      <div
+                        className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                        style={{ backgroundColor: feature.bgColor }}
+                      >
+                        <feature.icon
+                          className="w-6 h-6"
+                          style={{ color: feature.color }}
+                        />
+                      </div>
+                      <h3
+                        className="text-sm font-bold mb-1"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {feature.title}
+                      </h3>
+                      <p
+                        className="text-xs leading-relaxed"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {feature.description}
+                      </p>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -392,12 +451,16 @@ const Home = () => {
                     color: "#3B82F6",
                   },
                   {
-                    icon: (props) => <ClockCircle weight="BoldDuotone" {...props} />,
+                    icon: (props) => (
+                      <ClockCircle weight="BoldDuotone" {...props} />
+                    ),
                     text: t("home.videoSection.feature2"),
                     color: "#10B981",
                   },
                   {
-                    icon: (props) => <UsersGroupRounded weight="BoldDuotone" {...props} />,
+                    icon: (props) => (
+                      <UsersGroupRounded weight="BoldDuotone" {...props} />
+                    ),
                     text: t("home.videoSection.feature3"),
                     color: "#F59E0B",
                   },
@@ -500,7 +563,8 @@ const Home = () => {
                         backgroundColor: colors.background.primaryLight,
                       }}
                     >
-                      <Stars weight="BoldDuotone"
+                      <Stars
+                        weight="BoldDuotone"
                         className="w-4 h-4"
                         style={{ color: colors.primary.main }}
                       />
@@ -763,7 +827,8 @@ const Home = () => {
                   style={{ color: colors.primary.main }}
                   onClick={() => navigate("/courses")}
                 >
-                  {t("home.categories.browseAll")} <AltArrowRight weight="BoldDuotone" size={14} />
+                  {t("home.categories.browseAll")}{" "}
+                  <AltArrowRight weight="BoldDuotone" size={14} />
                 </button>
               </div>
             )}
@@ -837,7 +902,9 @@ const Home = () => {
                 backgroundColor: colors.primary.main,
                 color: colors.text.white,
               }}
-              endContent={<AltArrowRight weight="BoldDuotone" className="w-5 h-5" />}
+              endContent={
+                <AltArrowRight weight="BoldDuotone" className="w-5 h-5" />
+              }
               onPress={() => navigate("/courses")}
             >
               {t("home.courses.viewAll")}
@@ -898,7 +965,8 @@ const Home = () => {
                     <CardBody className="p-6">
                       <div className="flex items-center gap-1 mb-4">
                         {Array.from({ length: testimonial.rating }, (_, i) => (
-                          <Star weight="BoldDuotone"
+                          <Star
+                            weight="BoldDuotone"
                             key={`rating-star-${testimonial.id}-${i}`}
                             className="w-4 h-4"
                             fill={colors.state.warning}

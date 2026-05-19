@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { AddCircle, DocumentAdd, MinimalisticMagnifier } from "@solar-icons/react";
+import {
+  AddCircle,
+  DocumentAdd,
+  MinimalisticMagnifier,
+} from "@solar-icons/react";
 import { Button, Input, Tabs, Tab } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +14,7 @@ import { motion } from "framer-motion";
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import CourseCardSkeleton from "../../../components/CourseCardSkeleton/CourseCardSkeleton";
 import { coursesApi } from "../../../api";
-import IconsDrawingImage from "../../../assets/illustrations/icons-drawing.avif";
+import IconsDrawingImage from "../../../assets/illustrations/icons-drawing-run.avif";
 
 const MyCourses = () => {
   const { t } = useTranslation();
