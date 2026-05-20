@@ -43,6 +43,7 @@ import useInputStyles from "../../hooks/useInputStyles";
 import AIDetectionCard from "../../components/HomeworkAI/AIDetectionCard";
 import WritingAnalysisCard from "../../components/HomeworkAI/WritingAnalysisCard";
 import ReadingAnalysisCard from "../../components/HomeworkAI/ReadingAnalysisCard";
+import ListeningTranscriptCard from "../../components/HomeworkAI/ListeningTranscriptCard";
 import StudentHomeworkSubmitModal from "../../components/StudentHomeworkSubmitModal/StudentHomeworkSubmitModal";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
@@ -309,6 +310,7 @@ export default function HomeworkDetail({ role }) {
   // AI feature visibility
   const isWriting = hw.type === "Writing";
   const isReading = hw.type === "Reading";
+  const isListening = hw.type === "Listening";
   const showAIDetection = isTutor && isWriting;
   const showWritingAnalysis =
     isWriting &&
@@ -317,6 +319,7 @@ export default function HomeworkDetail({ role }) {
     !isTutor &&
     isReading &&
     (hw.status === "Submitted" || hw.status === "Scored");
+  const showListeningTranscript = isListening && hw.status === "Scored";
 
   const canRunWritingAI = isTutor && !!hw.submissionUrl;
   const canRunReadingAI = !isTutor && !!hw.resourceUrl;
@@ -579,6 +582,16 @@ export default function HomeworkDetail({ role }) {
               homeworkId={hw.id}
               analysisRaw={hw.aiAnalysisData}
               canRun={canRunReadingAI}
+              onUpdated={fetchHw}
+            />
+          )}
+
+          {/* Listening Transcript (auto after grading) */}
+          {showListeningTranscript && (
+            <ListeningTranscriptCard
+              mediaUrl={withCDN(hw.mediaUrl)}
+              analysisRaw={hw.aiAnalysisData}
+              enabled={showListeningTranscript}
               onUpdated={fetchHw}
             />
           )}
