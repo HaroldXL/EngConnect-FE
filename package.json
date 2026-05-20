@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "@solar-icons/react": "^1.1.0",
     "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-query": "^5.100.11",
     "@tldraw/tldraw": "^4.5.10",
     "antd": "^6.1.4",
     "axios": "^1.13.4",

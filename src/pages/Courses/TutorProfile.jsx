@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   BookBookmark,
   ClockCircle,
@@ -29,68 +30,32 @@ const TutorProfile = () => {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
-  const [tutor, setTutor] = useState(null);
-  const [courses, setCourses] = useState([]);
-  const [documents, setDocuments] = useState([]);
-  const [loadingTutor, setLoadingTutor] = useState(true);
-  const [loadingCourses, setLoadingCourses] = useState(true);
-  const [loadingDocs, setLoadingDocs] = useState(true);
   const [selectedTab, setSelectedTab] = useState("courses");
   const [viewingImageUrl, setViewingImageUrl] = useState(null);
 
-  useEffect(() => {
-    const fetchTutor = async () => {
-      try {
-        setLoadingTutor(true);
-        const res = await tutorApi.getTutorById(tutorId);
-        setTutor(res.data);
-      } catch (err) {
-        console.error("Failed to fetch tutor:", err);
-      } finally {
-        setLoadingTutor(false);
-      }
-    };
+  const { data: tutor, isLoading: loadingTutor } = useQuery({
+    queryKey: ["tutor", tutorId],
+    queryFn: () => tutorApi.getTutorById(tutorId).then((r) => r.data),
+    enabled: !!tutorId,
+  });
 
-    const fetchCourses = async () => {
-      try {
-        setLoadingCourses(true);
-        const res = await coursesApi.getAllCourses({
-          TutorId: tutorId,
-          Status: "Published",
-          "page-size": 50,
-        });
-        setCourses(res.data?.items || []);
-      } catch (err) {
-        console.error("Failed to fetch tutor courses:", err);
-      } finally {
-        setLoadingCourses(false);
-      }
-    };
+  const { data: courses = [], isLoading: loadingCourses } = useQuery({
+    queryKey: ["tutor-courses", tutorId],
+    queryFn: () =>
+      coursesApi
+        .getAllCourses({ TutorId: tutorId, Status: "Published", "page-size": 50 })
+        .then((r) => r.data?.items || []),
+    enabled: !!tutorId,
+  });
 
-    const fetchDocuments = async () => {
-      try {
-        setLoadingDocs(true);
-        const res = await tutorApi.getTutorDocuments({
-          TutorId: tutorId,
-          Status: "Active",
-        });
-        const items = Array.isArray(res.data)
-          ? res.data
-          : res.data?.items || [];
-        setDocuments(items);
-      } catch {
-        // silently ignore — docs are supplementary info
-      } finally {
-        setLoadingDocs(false);
-      }
-    };
-
-    if (tutorId) {
-      fetchTutor();
-      fetchCourses();
-      fetchDocuments();
-    }
-  }, [tutorId]);
+  const { data: documents = [], isLoading: loadingDocs } = useQuery({
+    queryKey: ["tutor-documents", tutorId],
+    queryFn: () =>
+      tutorApi
+        .getTutorDocuments({ TutorId: tutorId, Status: "Active" })
+        .then((r) => (Array.isArray(r.data) ? r.data : r.data?.items || [])),
+    enabled: !!tutorId,
+  });
 
   const tutorName = tutor
     ? `${tutor.user?.firstName ?? ""} ${tutor.user?.lastName ?? ""}`.trim()

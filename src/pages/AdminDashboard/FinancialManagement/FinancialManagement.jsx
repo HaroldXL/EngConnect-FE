@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   AltArrowDown,
   CheckCircle,
@@ -117,31 +118,17 @@ const FinancialManagement = () => {
 
   const [activeTab, setActiveTab] = useState("orders");
 
-  // Summary stats
-  const [stats, setStats] = useState({
-    totalOrders: 0,
-    paidOrders: 0,
-    totalTxns: 0,
-    failedTxns: 0,
-  });
-
   // Orders tab state
-  const [orders, setOrders] = useState([]);
-  const [ordersTotal, setOrdersTotal] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
   const [ordersSearch, setOrdersSearch] = useState("");
   const [ordersDebSearch, setOrdersDebSearch] = useState("");
   const [ordersStatus, setOrdersStatus] = useState("All");
-  const [ordersLoading, setOrdersLoading] = useState(false);
 
   // Transactions tab state
-  const [txns, setTxns] = useState([]);
-  const [txnsTotal, setTxnsTotal] = useState(1);
   const [txnsPage, setTxnsPage] = useState(1);
   const [txnsSearch, setTxnsSearch] = useState("");
   const [txnsDebSearch, setTxnsDebSearch] = useState("");
   const [txnsStatus, setTxnsStatus] = useState("All");
-  const [txnsLoading, setTxnsLoading] = useState(false);
 
   // Lookup caches
   const [courseMap, setCourseMap] = useState({});
@@ -179,87 +166,52 @@ const FinancialManagement = () => {
     return () => clearTimeout(t);
   }, [txnsSearch]);
 
-  // Fetch summary stats on mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allOrders, paidOrders, allTxns, failedTxns] = await Promise.all([
-          adminApi.getPaymentOrders({ page: 1, "page-size": 1 }),
-          adminApi.getPaymentOrders({
-            page: 1,
-            "page-size": 1,
-            Status: "Paid",
-          }),
-          adminApi.getPaymentTransactions({ page: 1, "page-size": 1 }),
-          adminApi.getPaymentTransactions({
-            page: 1,
-            "page-size": 1,
-            Status: "Failed",
-          }),
-        ]);
-        setStats({
-          totalOrders: allOrders.data?.totalItems || 0,
-          paidOrders: paidOrders.data?.totalItems || 0,
-          totalTxns: allTxns.data?.totalItems || 0,
-          failedTxns: failedTxns.data?.totalItems || 0,
-        });
-      } catch {
-        // ignore
-      }
-    };
-    fetchStats();
-  }, []);
+  const { data: stats = { totalOrders: 0, paidOrders: 0, totalTxns: 0, failedTxns: 0 } } = useQuery({
+    queryKey: ["admin-financial-stats"],
+    queryFn: () =>
+      Promise.all([
+        adminApi.getPaymentOrders({ page: 1, "page-size": 1 }),
+        adminApi.getPaymentOrders({ page: 1, "page-size": 1, Status: "Paid" }),
+        adminApi.getPaymentTransactions({ page: 1, "page-size": 1 }),
+        adminApi.getPaymentTransactions({ page: 1, "page-size": 1, Status: "Failed" }),
+      ]).then(([allOrders, paidOrders, allTxns, failedTxns]) => ({
+        totalOrders: allOrders.data?.totalItems || 0,
+        paidOrders: paidOrders.data?.totalItems || 0,
+        totalTxns: allTxns.data?.totalItems || 0,
+        failedTxns: failedTxns.data?.totalItems || 0,
+      })),
+    staleTime: 60 * 1000,
+  });
 
-  // Fetch orders
-  const fetchOrders = useCallback(async () => {
-    setOrdersLoading(true);
-    try {
-      const params = {
-        page: ordersPage,
-        "page-size": PAGE_SIZE,
-        "sort-params": "OrderNo-asc",
-      };
+  const { data: ordersData, isLoading: ordersLoading } = useQuery({
+    queryKey: ["admin-orders", ordersPage, ordersDebSearch, ordersStatus],
+    queryFn: async () => {
+      const params = { page: ordersPage, "page-size": PAGE_SIZE, "sort-params": "OrderNo-asc" };
       if (ordersDebSearch) params["search-term"] = ordersDebSearch;
       if (ordersStatus !== "All") params.Status = ordersStatus;
       const res = await adminApi.getPaymentOrders(params);
-      const data = res.data || {};
-      setOrders(data.items || []);
-      setOrdersTotal(data.totalPages || 1);
-    } catch {
-      setOrders([]);
-    } finally {
-      setOrdersLoading(false);
-    }
-  }, [ordersPage, ordersDebSearch, ordersStatus]);
+      return res.data || {};
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const orders = ordersData?.items ?? [];
+  const ordersTotal = ordersData?.totalPages ?? 1;
 
-  // Fetch transactions
-  const fetchTxns = useCallback(async () => {
-    setTxnsLoading(true);
-    try {
-      const params = {
-        page: txnsPage,
-        "page-size": PAGE_SIZE,
-        "sort-params": "OrderNo-asc",
-      };
+  const { data: txnsData, isLoading: txnsLoading } = useQuery({
+    queryKey: ["admin-txns", txnsPage, txnsDebSearch, txnsStatus],
+    queryFn: async () => {
+      const params = { page: txnsPage, "page-size": PAGE_SIZE, "sort-params": "OrderNo-asc" };
       if (txnsDebSearch) params["search-term"] = txnsDebSearch;
       if (txnsStatus !== "All") params.Status = txnsStatus;
       const res = await adminApi.getPaymentTransactions(params);
-      const data = res.data || {};
-      setTxns(data.items || []);
-      setTxnsTotal(data.totalPages || 1);
-    } catch {
-      setTxns([]);
-    } finally {
-      setTxnsLoading(false);
-    }
-  }, [txnsPage, txnsDebSearch, txnsStatus]);
-
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-  useEffect(() => {
-    fetchTxns();
-  }, [fetchTxns]);
+      return res.data || {};
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const txns = txnsData?.items ?? [];
+  const txnsTotal = txnsData?.totalPages ?? 1;
 
   // Resolve course names
   useEffect(() => {

@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { CheckCircle, Export, Eye, Filter, MinimalisticMagnifier, MenuDots, Pen, PresentationGraph, Star, TrashBinMinimalistic } from "@solar-icons/react"
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { CheckCircle, Eye, Filter, MinimalisticMagnifier, MenuDots, Pen, PresentationGraph, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -44,19 +45,11 @@ const TutorManagement = () => {
   const { tableCardStyle, tableClassNames } = useTableStyles();
   const navigate = useNavigate();
 
-  // List state
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedVerifiedStatus, setSelectedVerifiedStatus] = useState("all");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [tutors, setTutors] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-
-  // Stats
-  const [totalTutorsCount, setTotalTutorsCount] = useState(0);
-  const [verifiedCount, setVerifiedCount] = useState(0);
 
   // Delete modal
   const {
@@ -65,7 +58,6 @@ const TutorManagement = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const [tutorToDelete, setTutorToDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
 
   // Edit modal
   const {
@@ -80,7 +72,8 @@ const TutorManagement = () => {
     status: "",
   });
   const [editTutorId, setEditTutorId] = useState(null);
-  const [saving, setSaving] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -91,50 +84,63 @@ const TutorManagement = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch tutors list
-  const fetchTutors = useCallback(async () => {
-    setLoading(true);
-    try {
+  // Tutors list
+  const { data: tutorData, isLoading: loading } = useQuery({
+    queryKey: ["admin-tutors", page, pageSize, debouncedSearch, selectedVerifiedStatus],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
-      if (selectedVerifiedStatus !== "all")
-        params.VerifiedStatus = selectedVerifiedStatus;
+      if (selectedVerifiedStatus !== "all") params.VerifiedStatus = selectedVerifiedStatus;
+      return adminApi.getAllTutors(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const tutors = tutorData?.items ?? [];
+  const totalPages = tutorData?.totalPages ?? 1;
 
-      const response = await adminApi.getAllTutors(params);
-      const data = response.data;
-      setTutors(data.items || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (error) {
-      console.error("Failed to fetch tutors:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, debouncedSearch, selectedVerifiedStatus]);
+  // Stats
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-tutor-stats"],
+    queryFn: () =>
+      Promise.all([
+        adminApi.getAllTutors({ "page-size": 1, page: 1 }),
+        adminApi.getAllTutors({ VerifiedStatus: "Verified", "page-size": 1, page: 1 }),
+      ]).then(([allRes, verifiedRes]) => ({
+        total: allRes.data.totalItems || 0,
+        verified: verifiedRes.data.totalItems || 0,
+      })),
+    staleTime: 60 * 1000,
+  });
+  const totalTutorsCount = statsData?.total ?? 0;
+  const verifiedCount = statsData?.verified ?? 0;
 
-  useEffect(() => {
-    fetchTutors();
-  }, [fetchTutors]);
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id) => adminApi.deleteTutor(id),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.tutors.deleteSuccess"), color: "success" });
+      onDeleteClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-tutors"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tutor-stats"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.tutors.deleteFailed"), color: "danger" });
+    },
+  });
 
-  // Fetch stats on mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allRes, verifiedRes] = await Promise.all([
-          adminApi.getAllTutors({ "page-size": 1, page: 1 }),
-          adminApi.getAllTutors({
-            VerifiedStatus: "Verified",
-            "page-size": 1,
-            page: 1,
-          }),
-        ]);
-        setTotalTutorsCount(allRes.data.totalItems || 0);
-        setVerifiedCount(verifiedRes.data.totalItems || 0);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Edit mutation
+  const editMutation = useMutation({
+    mutationFn: ({ id, form }) => adminApi.updateTutor(id, form),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.tutors.updateSuccess"), color: "success" });
+      onEditClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-tutors"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.tutors.updateFailed"), color: "danger" });
+    },
+  });
 
   const stats = [
     {
@@ -190,28 +196,9 @@ const TutorManagement = () => {
     onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!tutorToDelete) return;
-    setDeleting(true);
-    try {
-      await adminApi.deleteTutor(tutorToDelete.id);
-      onDeleteClose();
-      setTutorToDelete(null);
-      addToast({
-        title: t("adminDashboard.tutors.deleteSuccess"),
-        color: "success",
-      });
-      fetchTutors();
-      setTotalTutorsCount((prev) => prev - 1);
-    } catch (error) {
-      console.error("Failed to delete tutor:", error);
-      addToast({
-        title: t("adminDashboard.tutors.deleteFailed"),
-        color: "danger",
-      });
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(tutorToDelete.id);
   };
 
   // Edit
@@ -226,26 +213,9 @@ const TutorManagement = () => {
     onEditOpen();
   };
 
-  const handleEditSave = async () => {
+  const handleEditSave = () => {
     if (!editTutorId) return;
-    setSaving(true);
-    try {
-      await adminApi.updateTutor(editTutorId, editForm);
-      onEditClose();
-      addToast({
-        title: t("adminDashboard.tutors.updateSuccess"),
-        color: "success",
-      });
-      fetchTutors();
-    } catch (error) {
-      console.error("Failed to update tutor:", error);
-      addToast({
-        title: t("adminDashboard.tutors.updateFailed"),
-        color: "danger",
-      });
-    } finally {
-      setSaving(false);
-    }
+    editMutation.mutate({ id: editTutorId, form: editForm });
   };
 
   return (
@@ -608,7 +578,7 @@ const TutorManagement = () => {
                 <Button
                   color="danger"
                   onPress={handleDeleteConfirm}
-                  isLoading={deleting}
+                  isLoading={deleteMutation.isPending}
                 >
                   {t("adminDashboard.tutors.delete")}
                 </Button>
@@ -682,7 +652,7 @@ const TutorManagement = () => {
                 </Button>
                 <Button
                   onPress={handleEditSave}
-                  isLoading={saving}
+                  isLoading={editMutation.isPending}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,

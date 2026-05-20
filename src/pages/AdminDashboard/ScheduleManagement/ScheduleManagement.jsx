@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
@@ -108,24 +109,11 @@ const ScheduleManagement = () => {
 
   const [activeTab, setActiveTab] = useState("overview");
 
-  // ── Overview / Stats ─────────────────────────────────────
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [statsTotal, setStatsTotal] = useState(0);
-  const [statsScheduled, setStatsScheduled] = useState(0);
-  const [statsInProgress, setStatsInProgress] = useState(0);
-  const [statsCompleted, setStatsCompleted] = useState(0);
-  const [statsCancelled, setStatsCancelled] = useState(0);
-  const [liveNow, setLiveNow] = useState([]);
-  const [upcomingToday, setUpcomingToday] = useState([]);
-
   // ── Lessons ──────────────────────────────────────────────
-  const [lessons, setLessons] = useState([]);
-  const [lessonsLoading, setLessonsLoading] = useState(false);
   const [lessonSearch, setLessonSearch] = useState("");
   const [debouncedLessonSearch, setDebouncedLessonSearch] = useState("");
   const [lessonStatusFilter, setLessonStatusFilter] = useState("all");
   const [lessonPage, setLessonPage] = useState(1);
-  const [lessonTotalPages, setLessonTotalPages] = useState(1);
   const lessonPageSize = 10;
 
   // Date filter
@@ -160,10 +148,7 @@ const ScheduleManagement = () => {
   const [selectedLesson, setSelectedLesson] = useState(null);
 
   // ── Tutor Slots ───────────────────────────────────────────
-  const [schedules, setSchedules] = useState([]);
-  const [schedulesLoading, setSchedulesLoading] = useState(false);
   const [scheduleStatusFilter, setScheduleStatusFilter] = useState("all");
-  const [tutorMap, setTutorMap] = useState({});
 
   // ── debounce lesson search ────────────────────────────────
   useEffect(() => {
@@ -174,129 +159,68 @@ const ScheduleManagement = () => {
     return () => clearTimeout(t);
   }, [lessonSearch]);
 
-  // ── fetch overview stats + live + upcoming ────────────────
-  useEffect(() => {
-    const fetchOverview = async () => {
-      setStatsLoading(true);
-      try {
-        const todayFrom = toApiStart(todayStr());
-        const todayTo = toApiEnd(todayStr());
-        const [allR, schR, liveR, compR, canR, upcomingR] =
-          await Promise.allSettled([
-            studentApi.getLessons({ "page-size": 1, page: 1 }),
-            studentApi.getLessons({
-              Status: "Scheduled",
-              "page-size": 1,
-              page: 1,
-            }),
-            studentApi.getLessons({
-              Status: "InProgress",
-              "page-size": 10,
-              page: 1,
-            }),
-            studentApi.getLessons({
-              Status: "Completed",
-              "page-size": 1,
-              page: 1,
-            }),
-            studentApi.getLessons({
-              Status: "Cancelled",
-              "page-size": 1,
-              page: 1,
-            }),
-            studentApi.getLessons({
-              Status: "Scheduled",
-              StartTimeFrom: todayFrom,
-              StartTimeTo: todayTo,
-              "page-size": 10,
-              page: 1,
-            }),
-          ]);
-        if (allR.status === "fulfilled")
-          setStatsTotal(allR.value?.data?.totalItems || 0);
-        if (schR.status === "fulfilled")
-          setStatsScheduled(schR.value?.data?.totalItems || 0);
-        if (liveR.status === "fulfilled") {
-          setStatsInProgress(liveR.value?.data?.totalItems || 0);
-          setLiveNow(liveR.value?.data?.items || []);
-        }
-        if (compR.status === "fulfilled")
-          setStatsCompleted(compR.value?.data?.totalItems || 0);
-        if (canR.status === "fulfilled")
-          setStatsCancelled(canR.value?.data?.totalItems || 0);
-        if (upcomingR.status === "fulfilled")
-          setUpcomingToday(upcomingR.value?.data?.items || []);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-    fetchOverview();
-  }, []);
-
-  // ── date range params ─────────────────────────────────────
-  const getDateParams = useCallback(() => {
-    switch (datePreset) {
-      case "today":
-        return {
-          StartTimeFrom: toApiStart(todayStr()),
-          StartTimeTo: toApiEnd(todayStr()),
-        };
-      case "week":
-        return {
-          StartTimeFrom: toApiStart(startOfWeekStr()),
-          StartTimeTo: toApiEnd(endOfWeekStr()),
-        };
-      case "month":
-        return {
-          StartTimeFrom: toApiStart(startOfMonthStr()),
-          StartTimeTo: toApiEnd(endOfMonthStr()),
-        };
-      case "custom":
-        return {
-          ...(customFrom && { StartTimeFrom: toApiStart(customFrom) }),
-          ...(customTo && { StartTimeTo: toApiEnd(customTo) }),
-        };
-      default:
-        return {};
-    }
-  }, [datePreset, customFrom, customTo]);
-
-  // ── fetch lessons ─────────────────────────────────────────
-  const fetchLessons = useCallback(async () => {
-    setLessonsLoading(true);
-    try {
-      const params = {
-        page: lessonPage,
-        "page-size": lessonPageSize,
-        ...getDateParams(),
+  // ── overview query ────────────────────────────────────────
+  const { data: overviewData, isLoading: statsLoading } = useQuery({
+    queryKey: ["admin-schedule-overview"],
+    queryFn: async () => {
+      const todayFrom = toApiStart(todayStr());
+      const todayTo = toApiEnd(todayStr());
+      const [allR, schR, liveR, compR, canR, upcomingR] = await Promise.allSettled([
+        studentApi.getLessons({ "page-size": 1, page: 1 }),
+        studentApi.getLessons({ Status: "Scheduled", "page-size": 1, page: 1 }),
+        studentApi.getLessons({ Status: "InProgress", "page-size": 10, page: 1 }),
+        studentApi.getLessons({ Status: "Completed", "page-size": 1, page: 1 }),
+        studentApi.getLessons({ Status: "Cancelled", "page-size": 1, page: 1 }),
+        studentApi.getLessons({ Status: "Scheduled", StartTimeFrom: todayFrom, StartTimeTo: todayTo, "page-size": 10, page: 1 }),
+      ]);
+      return {
+        statsTotal: allR.status === "fulfilled" ? allR.value?.data?.totalItems || 0 : 0,
+        statsScheduled: schR.status === "fulfilled" ? schR.value?.data?.totalItems || 0 : 0,
+        statsInProgress: liveR.status === "fulfilled" ? liveR.value?.data?.totalItems || 0 : 0,
+        liveNow: liveR.status === "fulfilled" ? liveR.value?.data?.items || [] : [],
+        statsCompleted: compR.status === "fulfilled" ? compR.value?.data?.totalItems || 0 : 0,
+        statsCancelled: canR.status === "fulfilled" ? canR.value?.data?.totalItems || 0 : 0,
+        upcomingToday: upcomingR.status === "fulfilled" ? upcomingR.value?.data?.items || [] : [],
       };
+    },
+    enabled: activeTab === "overview",
+    staleTime: 60 * 1000,
+  });
+  const statsTotal = overviewData?.statsTotal ?? 0;
+  const statsScheduled = overviewData?.statsScheduled ?? 0;
+  const statsInProgress = overviewData?.statsInProgress ?? 0;
+  const liveNow = overviewData?.liveNow ?? [];
+  const statsCompleted = overviewData?.statsCompleted ?? 0;
+  const statsCancelled = overviewData?.statsCancelled ?? 0;
+  const upcomingToday = overviewData?.upcomingToday ?? [];
+
+  // ── lessons query ─────────────────────────────────────────
+  const getLessonDateParams = () => {
+    switch (datePreset) {
+      case "today": return { StartTimeFrom: toApiStart(todayStr()), StartTimeTo: toApiEnd(todayStr()) };
+      case "week": return { StartTimeFrom: toApiStart(startOfWeekStr()), StartTimeTo: toApiEnd(endOfWeekStr()) };
+      case "month": return { StartTimeFrom: toApiStart(startOfMonthStr()), StartTimeTo: toApiEnd(endOfMonthStr()) };
+      case "custom": return { ...(customFrom && { StartTimeFrom: toApiStart(customFrom) }), ...(customTo && { StartTimeTo: toApiEnd(customTo) }) };
+      default: return {};
+    }
+  };
+
+  const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
+    queryKey: ["admin-lessons", lessonPage, lessonStatusFilter, debouncedLessonSearch, selectedTutor?.id, selectedStudent?.id, datePreset, customFrom, customTo],
+    queryFn: async () => {
+      const params = { page: lessonPage, "page-size": lessonPageSize, ...getLessonDateParams() };
       if (lessonStatusFilter !== "all") params.Status = lessonStatusFilter;
       if (debouncedLessonSearch) params["search-term"] = debouncedLessonSearch;
       if (selectedTutor) params.TutorId = selectedTutor.id;
       if (selectedStudent) params.StudentId = selectedStudent.id;
-
       const res = await studentApi.getLessons(params);
-      const data = res?.data;
-      setLessons(data?.items || []);
-      setLessonTotalPages(data?.totalPages || 1);
-    } catch {
-      setLessons([]);
-    } finally {
-      setLessonsLoading(false);
-    }
-  }, [
-    lessonPage,
-    lessonPageSize,
-    lessonStatusFilter,
-    debouncedLessonSearch,
-    selectedTutor,
-    selectedStudent,
-    getDateParams,
-  ]);
-
-  useEffect(() => {
-    if (activeTab === "lessons") fetchLessons();
-  }, [fetchLessons, activeTab]);
+      return res?.data || {};
+    },
+    enabled: activeTab === "lessons",
+    staleTime: 30 * 1000,
+  });
+  const lessons = lessonsData?.items ?? [];
+  const lessonTotalPages = lessonsData?.totalPages ?? 1;
 
   // ── fetch tutor picker ────────────────────────────────────
   useEffect(() => {
@@ -336,37 +260,27 @@ const ScheduleManagement = () => {
     return () => clearTimeout(timer);
   }, [studentPickerSearch, studentPickerOpen]);
 
-  // ── fetch tutor slots ─────────────────────────────────────
-  const fetchSchedules = useCallback(async () => {
-    setSchedulesLoading(true);
-    try {
+  // ── slots query ───────────────────────────────────────────
+  const { data: slotsData, isLoading: schedulesLoading } = useQuery({
+    queryKey: ["admin-slots", scheduleStatusFilter],
+    queryFn: async () => {
       const params = { page: 1, "page-size": 100 };
       if (scheduleStatusFilter !== "all") params.Status = scheduleStatusFilter;
       const res = await tutorApi.getTutorSchedules(params);
       const items = res?.data?.items || [];
-      setSchedules(items);
-
-      const uniqueIds = [
-        ...new Set(items.map((s) => s.tutorId).filter(Boolean)),
-      ];
-      const results = await Promise.allSettled(
-        uniqueIds.map((id) => adminApi.getTutorById(id)),
-      );
-      const map = {};
+      const uniqueIds = [...new Set(items.map((s) => s.tutorId).filter(Boolean))];
+      const results = await Promise.allSettled(uniqueIds.map((id) => adminApi.getTutorById(id)));
+      const tutorMap = {};
       results.forEach((r, i) => {
-        if (r.status === "fulfilled") map[uniqueIds[i]] = r.value?.data;
+        if (r.status === "fulfilled") tutorMap[uniqueIds[i]] = r.value?.data;
       });
-      setTutorMap((prev) => ({ ...prev, ...map }));
-    } catch {
-      setSchedules([]);
-    } finally {
-      setSchedulesLoading(false);
-    }
-  }, [scheduleStatusFilter]);
-
-  useEffect(() => {
-    if (activeTab === "slots") fetchSchedules();
-  }, [fetchSchedules, activeTab]);
+      return { schedules: items, tutorMap };
+    },
+    enabled: activeTab === "slots",
+    staleTime: 60 * 1000,
+  });
+  const schedules = slotsData?.schedules ?? [];
+  const tutorMap = slotsData?.tutorMap ?? {};
 
   // ── grouped slots ──────────────────────────────────────────
   const groupedSlots = useMemo(() => {

@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { BookBookmark, CheckCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
@@ -48,18 +49,8 @@ const CourseManagement = () => {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [courses, setCourses] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-
-  // Stats
-  const [totalCount, setTotalCount] = useState(0);
-  const [publishedCount, setPublishedCount] = useState(0);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [draftCount, setDraftCount] = useState(0);
 
   // Delete modal
   const {
@@ -68,7 +59,8 @@ const CourseManagement = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const [courseToDelete, setCourseToDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -79,84 +71,67 @@ const CourseManagement = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch courses
-  const fetchCourses = useCallback(async () => {
-    setLoading(true);
-    try {
+  // Categories for filter dropdown
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      coursesApi.getCategories({ "page-size": 100, page: 1 }).then((r) => r.data?.items || []),
+    staleTime: 5 * 60 * 1000,
+  });
+  const categories = categoriesData ?? [];
+
+  // Courses list
+  const { data: courseData, isLoading: loading } = useQuery({
+    queryKey: ["admin-courses", page, pageSize, debouncedSearch, selectedStatus, selectedLevel, selectedCategory],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
       if (selectedStatus !== "all") params.Status = selectedStatus;
       if (selectedLevel !== "all") params.Level = selectedLevel;
       if (selectedCategory !== "all") params.CategoryId = selectedCategory;
+      return coursesApi.getAllCourses(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const courses = courseData?.items ?? [];
+  const totalPages = courseData?.totalPages ?? 1;
 
-      const response = await coursesApi.getAllCourses(params);
-      const data = response.data;
-      setCourses(data.items || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (error) {
-      console.error("Failed to fetch courses:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    page,
-    pageSize,
-    debouncedSearch,
-    selectedStatus,
-    selectedLevel,
-    selectedCategory,
-  ]);
+  // Stats (4 counts fetched in parallel)
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-course-stats"],
+    queryFn: () =>
+      Promise.all([
+        coursesApi.getAllCourses({ "page-size": 1, page: 1 }),
+        coursesApi.getAllCourses({ Status: "Published", "page-size": 1, page: 1 }),
+        coursesApi.getAllCourses({ Status: "Pending", "page-size": 1, page: 1 }),
+        coursesApi.getAllCourses({ Status: "Draft", "page-size": 1, page: 1 }),
+      ]).then(([allRes, publishedRes, pendingRes, draftRes]) => ({
+        total: allRes.data.totalItems || 0,
+        published: publishedRes.data.totalItems || 0,
+        pending: pendingRes.data.totalItems || 0,
+        draft: draftRes.data.totalItems || 0,
+      })),
+    staleTime: 60 * 1000,
+  });
+  const totalCount = statsData?.total ?? 0;
+  const publishedCount = statsData?.published ?? 0;
+  const pendingCount = statsData?.pending ?? 0;
+  const draftCount = statsData?.draft ?? 0;
 
-  useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
-
-  // Fetch categories for filter
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const res = await coursesApi.getCategories({
-          "page-size": 100,
-          page: 1,
-        });
-        setCategories(res.data?.items || []);
-      } catch (_) {}
-    };
-    loadCategories();
-  }, []);
-
-  // Fetch stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allRes, publishedRes, pendingRes, draftRes] = await Promise.all([
-          coursesApi.getAllCourses({ "page-size": 1, page: 1 }),
-          coursesApi.getAllCourses({
-            Status: "Published",
-            "page-size": 1,
-            page: 1,
-          }),
-          coursesApi.getAllCourses({
-            Status: "Pending",
-            "page-size": 1,
-            page: 1,
-          }),
-          coursesApi.getAllCourses({
-            Status: "Draft",
-            "page-size": 1,
-            page: 1,
-          }),
-        ]);
-        setTotalCount(allRes.data.totalItems || 0);
-        setPublishedCount(publishedRes.data.totalItems || 0);
-        setPendingCount(pendingRes.data.totalItems || 0);
-        setDraftCount(draftRes.data.totalItems || 0);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id) => coursesApi.deleteCourse(id),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.courses.deleteSuccess"), color: "success" });
+      onDeleteClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-course-stats"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.courses.deleteFailed"), color: "danger" });
+    },
+  });
 
   const stats = [
     {
@@ -246,25 +221,9 @@ const CourseManagement = () => {
     onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!courseToDelete) return;
-    setDeleting(true);
-    try {
-      await coursesApi.deleteCourse(courseToDelete.id);
-      addToast({
-        title: t("adminDashboard.courses.deleteSuccess"),
-        color: "success",
-      });
-      onDeleteClose();
-      fetchCourses();
-    } catch (error) {
-      addToast({
-        title: t("adminDashboard.courses.deleteFailed"),
-        color: "danger",
-      });
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(courseToDelete.id);
   };
 
   return (
@@ -686,13 +645,13 @@ const CourseManagement = () => {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={deleting}>
+                <Button variant="light" onPress={onClose} isDisabled={deleteMutation.isPending}>
                   {t("adminDashboard.courses.cancel")}
                 </Button>
                 <Button
                   color="danger"
                   onPress={handleDeleteConfirm}
-                  isLoading={deleting}
+                  isLoading={deleteMutation.isPending}
                 >
                   {t("adminDashboard.courses.delete")}
                 </Button>

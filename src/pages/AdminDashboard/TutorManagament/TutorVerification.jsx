@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { CheckCircle, ClipboardList, CloseCircle, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, Star, TrashBinMinimalistic } from "@solar-icons/react"
 import {
   Card,
   CardBody,
@@ -42,21 +43,14 @@ const TutorVerification = () => {
   const { inputClassNames, textareaClassNames } = useInputStyles();
   const { tableCardStyle, tableClassNames } = useTableStyles();
 
-  // List state
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [requests, setRequests] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
 
-  // Stats
-  const [totalCount, setTotalCount] = useState(0);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [approvedCount, setApprovedCount] = useState(0);
-  const [rejectedCount, setRejectedCount] = useState(0);
+  // Tutor detail cache for table display (tutorId → tutor)
+  const [tutorCache, setTutorCache] = useState({});
 
   // Detail modal
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -64,19 +58,15 @@ const TutorVerification = () => {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailTutor, setDetailTutor] = useState(null);
 
-  // Tutor data cache: tutorId → tutor object
-  const tutorCacheRef = useRef({});
-
   // Review modal (approve/reject)
   const {
     isOpen: isReviewOpen,
     onOpen: onReviewOpen,
     onClose: onReviewClose,
   } = useDisclosure();
-  const [reviewAction, setReviewAction] = useState(null); // "approve" | "reject"
+  const [reviewAction, setReviewAction] = useState(null);
   const [reviewRequestId, setReviewRequestId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [reviewing, setReviewing] = useState(false);
 
   // Delete modal
   const {
@@ -85,7 +75,8 @@ const TutorVerification = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const [requestToDelete, setRequestToDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -96,82 +87,100 @@ const TutorVerification = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch verification requests
-  const fetchRequests = useCallback(async () => {
-    setLoading(true);
-    try {
+  // Verification requests list
+  const { data: requestData, isLoading: loading } = useQuery({
+    queryKey: ["admin-tutor-verifications", page, pageSize, debouncedSearch, selectedStatus],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
       if (selectedStatus !== "all") params.Status = selectedStatus;
+      return adminApi.getVerificationRequests(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 10 * 1000,
+  });
+  const requests = requestData?.items ?? [];
+  const totalPages = requestData?.totalPages ?? 1;
 
-      const response = await adminApi.getVerificationRequests(params);
-      const data = response.data;
-      const items = data.items || [];
-      setRequests(items);
-      setTotalPages(data.totalPages || 1);
-
-      // Fetch tutor data for items not yet cached
-      const uncachedIds = [
-        ...new Set(
-          items
-            .map((r) => r.tutorId)
-            .filter((id) => id && !tutorCacheRef.current[id]),
-        ),
-      ];
-      if (uncachedIds.length > 0) {
-        const results = await Promise.allSettled(
-          uncachedIds.map((id) => adminApi.getTutorById(id)),
-        );
-        results.forEach((result, i) => {
-          if (result.status === "fulfilled") {
-            tutorCacheRef.current[uncachedIds[i]] = result.value.data;
-          }
+  // Fetch tutor details for displayed rows (not yet in cache)
+  useEffect(() => {
+    if (!requests.length) return;
+    const uncachedIds = [...new Set(
+      requests.map((r) => r.tutorId).filter((id) => id && !tutorCache[id]),
+    )];
+    if (!uncachedIds.length) return;
+    Promise.allSettled(uncachedIds.map((id) => adminApi.getTutorById(id))).then(
+      (results) => {
+        const entries = {};
+        results.forEach((r, i) => {
+          if (r.status === "fulfilled") entries[uncachedIds[i]] = r.value.data;
         });
-      }
-    } catch (error) {
-      console.error("Failed to fetch verification requests:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, debouncedSearch, selectedStatus]);
+        setTutorCache((prev) => ({ ...prev, ...entries }));
+      },
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requests]);
 
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
+  // Stats
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-tutor-verification-stats"],
+    queryFn: () =>
+      Promise.all([
+        adminApi.getVerificationRequests({ "page-size": 1, page: 1 }),
+        adminApi.getVerificationRequests({ Status: "Pending", "page-size": 1, page: 1 }),
+        adminApi.getVerificationRequests({ Status: "Approved", "page-size": 1, page: 1 }),
+        adminApi.getVerificationRequests({ Status: "Rejected", "page-size": 1, page: 1 }),
+      ]).then(([allRes, pendingRes, approvedRes, rejectedRes]) => ({
+        total: allRes.data.totalItems || 0,
+        pending: pendingRes.data.totalItems || 0,
+        approved: approvedRes.data.totalItems || 0,
+        rejected: rejectedRes.data.totalItems || 0,
+      })),
+    staleTime: 10 * 1000,
+  });
+  const totalCount = statsData?.total ?? 0;
+  const pendingCount = statsData?.pending ?? 0;
+  const approvedCount = statsData?.approved ?? 0;
+  const rejectedCount = statsData?.rejected ?? 0;
 
-  // Fetch stats on mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allRes, pendingRes, approvedRes, rejectedRes] =
-          await Promise.all([
-            adminApi.getVerificationRequests({ "page-size": 1, page: 1 }),
-            adminApi.getVerificationRequests({
-              Status: "Pending",
-              "page-size": 1,
-              page: 1,
-            }),
-            adminApi.getVerificationRequests({
-              Status: "Approved",
-              "page-size": 1,
-              page: 1,
-            }),
-            adminApi.getVerificationRequests({
-              Status: "Rejected",
-              "page-size": 1,
-              page: 1,
-            }),
-          ]);
-        setTotalCount(allRes.data.totalItems || 0);
-        setPendingCount(pendingRes.data.totalItems || 0);
-        setApprovedCount(approvedRes.data.totalItems || 0);
-        setRejectedCount(rejectedRes.data.totalItems || 0);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Review mutation
+  const reviewMutation = useMutation({
+    mutationFn: ({ requestId, approved, rejectionReason }) =>
+      adminApi.reviewVerificationRequest(requestId, { approved, rejectionReason: approved ? "" : rejectionReason }),
+    onSuccess: (_, { approved }) => {
+      addToast({
+        title: approved
+          ? t("adminDashboard.verification.approveSuccess")
+          : t("adminDashboard.verification.rejectSuccess"),
+        color: "success",
+      });
+      onReviewClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-tutor-verifications"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tutor-verification-stats"] });
+    },
+    onError: (_, { approved }) => {
+      addToast({
+        title: approved
+          ? t("adminDashboard.verification.approveFailed")
+          : t("adminDashboard.verification.rejectFailed"),
+        color: "danger",
+      });
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id) => adminApi.deleteVerificationRequest(id),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.verification.deleteSuccess"), color: "success" });
+      onDeleteClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-tutor-verifications"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tutor-verification-stats"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.verification.deleteFailed"), color: "danger" });
+    },
+  });
 
   const stats = [
     {
@@ -245,7 +254,7 @@ const TutorVerification = () => {
   };
 
   const getTutorName = (tutorId) => {
-    const tutor = tutorCacheRef.current[tutorId];
+    const tutor = tutorCache[tutorId];
     if (!tutor) return t("adminDashboard.verification.nA");
     if (tutor.user) {
       return `${tutor.user.firstName || ""} ${tutor.user.lastName || ""}`.trim();
@@ -254,12 +263,12 @@ const TutorVerification = () => {
   };
 
   const getTutorEmail = (tutorId) => {
-    const tutor = tutorCacheRef.current[tutorId];
+    const tutor = tutorCache[tutorId];
     return tutor?.user?.email || "";
   };
 
   const getTutorAvatar = (tutorId) => {
-    const tutor = tutorCacheRef.current[tutorId];
+    const tutor = tutorCache[tutorId];
     return tutor?.avatar || "";
   };
 
@@ -281,7 +290,7 @@ const TutorVerification = () => {
       }
       if (tutorRes.status === "fulfilled") {
         setDetailTutor(tutorRes.value.data);
-        tutorCacheRef.current[request.tutorId] = tutorRes.value.data;
+        setTutorCache((prev) => ({ ...prev, [request.tutorId]: tutorRes.value.data }));
       }
     } catch (error) {
       console.error("Failed to fetch request detail:", error);
@@ -298,43 +307,13 @@ const TutorVerification = () => {
     onReviewOpen();
   };
 
-  const handleReviewConfirm = async () => {
+  const handleReviewConfirm = () => {
     if (!reviewRequestId || !reviewAction) return;
-    setReviewing(true);
-    try {
-      const approved = reviewAction === "approve";
-      await adminApi.reviewVerificationRequest(reviewRequestId, {
-        approved,
-        rejectionReason: approved ? "" : rejectionReason,
-      });
-      onReviewClose();
-      addToast({
-        title: approved
-          ? t("adminDashboard.verification.approveSuccess")
-          : t("adminDashboard.verification.rejectSuccess"),
-        color: "success",
-      });
-      fetchRequests();
-      // Refresh stats
-      if (approved) {
-        setPendingCount((prev) => Math.max(0, prev - 1));
-        setApprovedCount((prev) => prev + 1);
-      } else {
-        setPendingCount((prev) => Math.max(0, prev - 1));
-        setRejectedCount((prev) => prev + 1);
-      }
-    } catch (error) {
-      console.error("Failed to review request:", error);
-      addToast({
-        title:
-          reviewAction === "approve"
-            ? t("adminDashboard.verification.approveFailed")
-            : t("adminDashboard.verification.rejectFailed"),
-        color: "danger",
-      });
-    } finally {
-      setReviewing(false);
-    }
+    reviewMutation.mutate({
+      requestId: reviewRequestId,
+      approved: reviewAction === "approve",
+      rejectionReason,
+    });
   };
 
   // Delete
@@ -343,28 +322,9 @@ const TutorVerification = () => {
     onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!requestToDelete) return;
-    setDeleting(true);
-    try {
-      await adminApi.deleteVerificationRequest(requestToDelete.id);
-      onDeleteClose();
-      setRequestToDelete(null);
-      addToast({
-        title: t("adminDashboard.verification.deleteSuccess"),
-        color: "success",
-      });
-      fetchRequests();
-      setTotalCount((prev) => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error("Failed to delete request:", error);
-      addToast({
-        title: t("adminDashboard.verification.deleteFailed"),
-        color: "danger",
-      });
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(requestToDelete.id);
   };
 
   return (
@@ -1022,7 +982,7 @@ const TutorVerification = () => {
                 <Button
                   color={reviewAction === "approve" ? "success" : "danger"}
                   onPress={handleReviewConfirm}
-                  isLoading={reviewing}
+                  isLoading={reviewMutation.isPending}
                   isDisabled={
                     reviewAction === "reject" && !rejectionReason.trim()
                   }
@@ -1055,7 +1015,7 @@ const TutorVerification = () => {
                 <Button
                   color="danger"
                   onPress={handleDeleteConfirm}
-                  isLoading={deleting}
+                  isLoading={deleteMutation.isPending}
                 >
                   {t("adminDashboard.verification.delete")}
                 </Button>

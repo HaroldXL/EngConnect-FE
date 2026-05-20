@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AltArrowLeft, CalendarMark, ClockCircle, File, SquareAcademicCap, Star } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardBody, Button, Avatar, Chip, Spinner } from "@heroui/react";
@@ -19,76 +20,36 @@ const AdminTutorDetail = () => {
   const { t, i18n } = useTranslation();
   const colors = useThemeColors();
 
-  const [tutor, setTutor] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [courses, setCourses] = useState([]);
-  const [loadingCourses, setLoadingCourses] = useState(true);
-  const [scheduleSlots, setScheduleSlots] = useState([]);
-  const [loadingSlots, setLoadingSlots] = useState(true);
-  const [documents, setDocuments] = useState([]);
-  const [loadingDocs, setLoadingDocs] = useState(true);
   const [viewingImageUrl, setViewingImageUrl] = useState(null);
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      setLoading(true);
-      try {
-        const response = await adminApi.getTutorById(id);
-        setTutor(response.data);
-      } catch (error) {
-        console.error("Failed to fetch tutor detail:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchCourses = async () => {
-      try {
-        setLoadingCourses(true);
-        const res = await coursesApi.getAllCourses({
-          TutorId: id,
-          "page-size": 50,
-        });
-        setCourses(res.data?.items || []);
-      } catch (err) {
-        console.error("Failed to fetch tutor courses:", err);
-      } finally {
-        setLoadingCourses(false);
-      }
-    };
-    const fetchSlots = async () => {
-      try {
-        setLoadingSlots(true);
-        const res = await tutorApi.getTutorSchedules({
-          TutorId: id,
-          "page-size": 100,
-        });
-        setScheduleSlots(res?.data?.items || []);
-      } catch (err) {
-        console.error("Failed to fetch tutor schedules:", err);
-      } finally {
-        setLoadingSlots(false);
-      }
-    };
-    const fetchDocuments = async () => {
-      try {
-        setLoadingDocs(true);
-        const res = await tutorApi.getTutorDocuments({ TutorId: id });
-        const items = Array.isArray(res.data)
-          ? res.data
-          : res.data?.items || [];
-        setDocuments(items);
-      } catch {
-        // silently ignore
-      } finally {
-        setLoadingDocs(false);
-      }
-    };
+  const { data: tutor, isLoading: loading } = useQuery({
+    queryKey: ["admin-tutor", id],
+    queryFn: () => adminApi.getTutorById(id).then((r) => r.data),
+    enabled: !!id,
+  });
 
-    fetchDetail();
-    fetchCourses();
-    fetchSlots();
-    fetchDocuments();
-  }, [id]);
+  const { data: courses = [], isLoading: loadingCourses } = useQuery({
+    queryKey: ["admin-tutor-courses", id],
+    queryFn: () =>
+      coursesApi.getAllCourses({ TutorId: id, "page-size": 50 }).then((r) => r.data?.items || []),
+    enabled: !!id,
+  });
+
+  const { data: scheduleSlots = [], isLoading: loadingSlots } = useQuery({
+    queryKey: ["admin-tutor-schedules", id],
+    queryFn: () =>
+      tutorApi.getTutorSchedules({ TutorId: id, "page-size": 100 }).then((r) => r?.data?.items || []),
+    enabled: !!id,
+  });
+
+  const { data: documents = [], isLoading: loadingDocs } = useQuery({
+    queryKey: ["admin-tutor-documents", id],
+    queryFn: () =>
+      tutorApi.getTutorDocuments({ TutorId: id }).then((r) =>
+        Array.isArray(r.data) ? r.data : r.data?.items || []
+      ),
+    enabled: !!id,
+  });
 
   const getVerifiedColor = (status) => {
     return status === "Verified" ? "success" : "warning";

@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { BookBookmark, CheckCircle, ClipboardList, CloseCircle, Export, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, TrashBinMinimalistic } from "@solar-icons/react"
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { BookBookmark, CheckCircle, ClipboardList, CloseCircle, Eye, Filter, ForbiddenCircle, Hourglass, MinimalisticMagnifier, MenuDots, TrashBinMinimalistic } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -44,24 +45,14 @@ const CourseVerification = () => {
   const { inputClassNames, textareaClassNames } = useInputStyles();
   const { tableCardStyle, tableClassNames } = useTableStyles();
 
-  // List state
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [requests, setRequests] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
 
-  // Stats
-  const [totalCount, setTotalCount] = useState(0);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [approvedCount, setApprovedCount] = useState(0);
-  const [rejectedCount, setRejectedCount] = useState(0);
-
-  // Course data cache: courseId → course object
-  const courseCacheRef = useRef({});
+  // Course detail cache for display (courseId → course)
+  const [courseCache, setCourseCache] = useState({});
 
   // Review modal
   const {
@@ -72,7 +63,6 @@ const CourseVerification = () => {
   const [reviewAction, setReviewAction] = useState(null);
   const [reviewRequestId, setReviewRequestId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [reviewing, setReviewing] = useState(false);
 
   // Delete modal
   const {
@@ -81,7 +71,8 @@ const CourseVerification = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const [requestToDelete, setRequestToDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -92,85 +83,100 @@ const CourseVerification = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch verification requests
-  const fetchRequests = useCallback(async () => {
-    setLoading(true);
-    try {
+  // Verification requests list
+  const { data: requestData, isLoading: loading } = useQuery({
+    queryKey: ["admin-course-verifications", page, pageSize, debouncedSearch, selectedStatus],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
       if (selectedStatus !== "all") params.Status = selectedStatus;
+      return coursesApi.getCourseVerificationRequests(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 10 * 1000,
+  });
+  const requests = requestData?.items ?? [];
+  const totalPages = requestData?.totalPages ?? 1;
 
-      const response = await coursesApi.getCourseVerificationRequests(params);
-      const data = response.data;
-      const items = data.items || [];
-      setRequests(items);
-      setTotalPages(data.totalPages || 1);
-
-      // Fetch course data for items not yet cached
-      const uncachedIds = [
-        ...new Set(
-          items
-            .map((r) => r.courseId)
-            .filter((id) => id && !courseCacheRef.current[id]),
-        ),
-      ];
-      if (uncachedIds.length > 0) {
-        const results = await Promise.allSettled(
-          uncachedIds.map((id) => coursesApi.getCourseById(id)),
-        );
-        results.forEach((result, i) => {
-          if (result.status === "fulfilled") {
-            courseCacheRef.current[uncachedIds[i]] = result.value.data;
-          }
+  // Fetch course details for displayed requests (not in cache yet)
+  useEffect(() => {
+    if (!requests.length) return;
+    const uncachedIds = [...new Set(
+      requests.map((r) => r.courseId).filter((id) => id && !courseCache[id]),
+    )];
+    if (!uncachedIds.length) return;
+    Promise.allSettled(uncachedIds.map((id) => coursesApi.getCourseById(id))).then(
+      (results) => {
+        const entries = {};
+        results.forEach((r, i) => {
+          if (r.status === "fulfilled") entries[uncachedIds[i]] = r.value.data;
         });
-      }
-    } catch (error) {
-      console.error("Failed to fetch course verification requests:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, debouncedSearch, selectedStatus]);
+        setCourseCache((prev) => ({ ...prev, ...entries }));
+      },
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requests]);
 
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
+  // Stats
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-course-verification-stats"],
+    queryFn: () =>
+      Promise.all([
+        coursesApi.getCourseVerificationRequests({ "page-size": 1, page: 1 }),
+        coursesApi.getCourseVerificationRequests({ Status: "Pending", "page-size": 1, page: 1 }),
+        coursesApi.getCourseVerificationRequests({ Status: "Approved", "page-size": 1, page: 1 }),
+        coursesApi.getCourseVerificationRequests({ Status: "Rejected", "page-size": 1, page: 1 }),
+      ]).then(([allRes, pendingRes, approvedRes, rejectedRes]) => ({
+        total: allRes.data.totalItems || 0,
+        pending: pendingRes.data.totalItems || 0,
+        approved: approvedRes.data.totalItems || 0,
+        rejected: rejectedRes.data.totalItems || 0,
+      })),
+    staleTime: 10 * 1000,
+  });
+  const totalCount = statsData?.total ?? 0;
+  const pendingCount = statsData?.pending ?? 0;
+  const approvedCount = statsData?.approved ?? 0;
+  const rejectedCount = statsData?.rejected ?? 0;
 
-  // Fetch stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allRes, pendingRes, approvedRes, rejectedRes] =
-          await Promise.all([
-            coursesApi.getCourseVerificationRequests({
-              "page-size": 1,
-              page: 1,
-            }),
-            coursesApi.getCourseVerificationRequests({
-              Status: "Pending",
-              "page-size": 1,
-              page: 1,
-            }),
-            coursesApi.getCourseVerificationRequests({
-              Status: "Approved",
-              "page-size": 1,
-              page: 1,
-            }),
-            coursesApi.getCourseVerificationRequests({
-              Status: "Rejected",
-              "page-size": 1,
-              page: 1,
-            }),
-          ]);
-        setTotalCount(allRes.data.totalItems || 0);
-        setPendingCount(pendingRes.data.totalItems || 0);
-        setApprovedCount(approvedRes.data.totalItems || 0);
-        setRejectedCount(rejectedRes.data.totalItems || 0);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Review mutation (approve/reject)
+  const reviewMutation = useMutation({
+    mutationFn: ({ requestId, approved, rejectionReason }) =>
+      coursesApi.reviewCourseVerificationRequest(requestId, { requestId, approved, rejectionReason }),
+    onSuccess: (_, { approved }) => {
+      addToast({
+        title: approved
+          ? t("adminDashboard.courseVerification.approveSuccess")
+          : t("adminDashboard.courseVerification.rejectSuccess"),
+        color: "success",
+      });
+      onReviewClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-course-verifications"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-course-verification-stats"] });
+    },
+    onError: (_, { approved }) => {
+      addToast({
+        title: approved
+          ? t("adminDashboard.courseVerification.approveFailed")
+          : t("adminDashboard.courseVerification.rejectFailed"),
+        color: "danger",
+      });
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id) => coursesApi.deleteCourseVerificationRequest(id),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.courseVerification.deleteSuccess"), color: "success" });
+      onDeleteClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-course-verifications"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-course-verification-stats"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.courseVerification.deleteFailed"), color: "danger" });
+    },
+  });
 
   const stats = [
     {
@@ -244,12 +250,12 @@ const CourseVerification = () => {
   };
 
   const getCourseName = (courseId) => {
-    const course = courseCacheRef.current[courseId];
+    const course = courseCache[courseId];
     return course?.title || courseId?.slice(0, 8) + "...";
   };
 
   const getCourseThumbnail = (courseId) => {
-    return courseCacheRef.current[courseId]?.thumbnailUrl || "";
+    return courseCache[courseId]?.thumbnailUrl || "";
   };
 
   // View detail
@@ -265,35 +271,13 @@ const CourseVerification = () => {
     onReviewOpen();
   };
 
-  const handleReviewConfirm = async () => {
+  const handleReviewConfirm = () => {
     if (!reviewRequestId) return;
-    setReviewing(true);
-    try {
-      await coursesApi.reviewCourseVerificationRequest(reviewRequestId, {
-        requestId: reviewRequestId,
-        approved: reviewAction === "approve",
-        rejectionReason: reviewAction === "reject" ? rejectionReason : null,
-      });
-      addToast({
-        title:
-          reviewAction === "approve"
-            ? t("adminDashboard.courseVerification.approveSuccess")
-            : t("adminDashboard.courseVerification.rejectSuccess"),
-        color: "success",
-      });
-      onReviewClose();
-      fetchRequests();
-    } catch (error) {
-      addToast({
-        title:
-          reviewAction === "approve"
-            ? t("adminDashboard.courseVerification.approveFailed")
-            : t("adminDashboard.courseVerification.rejectFailed"),
-        color: "danger",
-      });
-    } finally {
-      setReviewing(false);
-    }
+    reviewMutation.mutate({
+      requestId: reviewRequestId,
+      approved: reviewAction === "approve",
+      rejectionReason: reviewAction === "reject" ? rejectionReason : null,
+    });
   };
 
   // Delete
@@ -302,25 +286,9 @@ const CourseVerification = () => {
     onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!requestToDelete) return;
-    setDeleting(true);
-    try {
-      await coursesApi.deleteCourseVerificationRequest(requestToDelete.id);
-      addToast({
-        title: t("adminDashboard.courseVerification.deleteSuccess"),
-        color: "success",
-      });
-      onDeleteClose();
-      fetchRequests();
-    } catch (error) {
-      addToast({
-        title: t("adminDashboard.courseVerification.deleteFailed"),
-        color: "danger",
-      });
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(requestToDelete.id);
   };
 
   return (
@@ -698,14 +666,14 @@ const CourseVerification = () => {
                 <Button
                   variant="light"
                   onPress={onClose}
-                  isDisabled={reviewing}
+                  isDisabled={reviewMutation.isPending}
                 >
                   {t("adminDashboard.courseVerification.cancel")}
                 </Button>
                 <Button
                   color={reviewAction === "approve" ? "success" : "danger"}
                   onPress={handleReviewConfirm}
-                  isLoading={reviewing}
+                  isLoading={reviewMutation.isPending}
                   isDisabled={
                     reviewAction === "reject" && !rejectionReason.trim()
                   }
@@ -732,13 +700,13 @@ const CourseVerification = () => {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={deleting}>
+                <Button variant="light" onPress={onClose} isDisabled={deleteMutation.isPending}>
                   {t("adminDashboard.courseVerification.cancel")}
                 </Button>
                 <Button
                   color="danger"
                   onPress={handleDeleteConfirm}
-                  isLoading={deleting}
+                  isLoading={deleteMutation.isPending}
                 >
                   {t("adminDashboard.courseVerification.delete")}
                 </Button>

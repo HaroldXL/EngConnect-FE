@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AltArrowLeft, Card as CardIcon, ChatRoundDots, CheckCircle, Dollar, Eye, Letter, MinimalisticMagnifier, Restart, Plain, ShieldCheck, TrashBinMinimalistic, UserCircle, Wallet } from "@solar-icons/react"
 import {
   Card,
@@ -83,15 +84,15 @@ const SupportTickets = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
+  const queryClient = useQueryClient();
+
   const [view, setView] = useState("list");
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   // List
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
 
@@ -133,33 +134,24 @@ const SupportTickets = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchTickets = useCallback(async () => {
-    setLoading(true);
-    try {
+  const { data: ticketsData, isLoading: loading } = useQuery({
+    queryKey: ["admin-tickets", page, appliedSearch, statusFilter, typeFilter],
+    queryFn: async () => {
       const params = { page, "page-size": 10 };
-      if (searchTerm) params["search-term"] = searchTerm;
+      if (appliedSearch) params["search-term"] = appliedSearch;
       if (statusFilter) params.Status = statusFilter;
       if (typeFilter) params.Type = typeFilter;
-
       const res = await supportApi.getTickets(params);
-      if (res.isSuccess) {
-        setTickets(res.data.items || []);
-        setTotalPages(res.data.totalPages || 1);
-      }
-    } catch {
-      setTickets([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, searchTerm, statusFilter, typeFilter]);
-
-  useEffect(() => {
-    fetchTickets();
-  }, [fetchTickets]);
+      return res.isSuccess ? res.data : { items: [], totalPages: 1 };
+    },
+    staleTime: 10 * 1000,
+  });
+  const tickets = ticketsData?.items ?? [];
+  const totalPages = ticketsData?.totalPages ?? 1;
 
   const handleSearch = () => {
+    setAppliedSearch(searchTerm);
     setPage(1);
-    fetchTickets();
   };
 
   const resolveSender = async (userId) => {
@@ -279,7 +271,7 @@ const SupportTickets = () => {
       });
       setDeleteOpen(false);
       setDeleteId(null);
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
     } catch {
       addToast({
         title: t("adminDashboard.supportTickets.deleteFailed"),
@@ -300,7 +292,7 @@ const SupportTickets = () => {
       if (selectedTicket && selectedTicket.id === ticketId) {
         setSelectedTicket((prev) => ({ ...prev, status }));
       }
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
     } catch {
       addToast({
         title: t("adminDashboard.supportTickets.updateStatusFailed"),
@@ -315,7 +307,7 @@ const SupportTickets = () => {
     try {
       await supportApi.updateTicketStatus(selectedTicket.id, "Closed");
       setSelectedTicket((prev) => ({ ...prev, status: "Closed" }));
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
       addToast({
         title: t("adminDashboard.supportTickets.reschedule.rejectSuccess"),
         color: "success",
@@ -348,7 +340,7 @@ const SupportTickets = () => {
       await studentApi.updateLessonStatus(lessonId, "Reschedule");
       await supportApi.updateTicketStatus(selectedTicket.id, "Resolved");
       setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
       addToast({
         title: t("adminDashboard.supportTickets.reschedule.approveSuccess"),
         color: "success",
@@ -381,7 +373,7 @@ const SupportTickets = () => {
       setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
       setPayoutPasswordOpen(false);
       setPayoutPassword("");
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
       addToast({
         title: t("adminDashboard.supportTickets.payout.approveSuccess"),
         color: "success",
@@ -429,7 +421,7 @@ const SupportTickets = () => {
       setRefundPasswordOpen(false);
       setRefundPassword("");
       setRefundNote("");
-      fetchTickets();
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
       addToast({
         title: t("adminDashboard.supportTickets.refund.approveSuccess"),
         color: "success",

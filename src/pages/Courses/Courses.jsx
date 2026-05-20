@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AltArrowDown, AltArrowUp, CloseSquare, Diploma, Filter, GraphUp, Lightning, MinimalisticMagnifier, Target } from "@solar-icons/react"
 import {
   Button,
@@ -45,15 +46,12 @@ const Courses = () => {
   const initialQ = searchParams.get("q") || "";
   const [searchInput, setSearchInput] = useState(initialQ);
   const [searchQuery, setSearchQuery] = useState(initialQ);
-  const [selectedCategories, setSelectedCategories] = useState(new Set());
+  const [selectedCategories, setSelectedCategories] = useState(
+    () => new Set(searchParams.get("category") ? [searchParams.get("category")] : []),
+  );
   const [selectedLevels, setSelectedLevels] = useState(new Set());
   const [sortBy, setSortBy] = useState("newest");
-  const [courses, setCourses] = useState([]);
-  const [allCourses, setAllCourses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const PAGE_SIZE = 9;
   const { inputClassNames, selectClassNames } = useInputStyles();
 
@@ -64,18 +62,28 @@ const Courses = () => {
   // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Fetch categories once on mount
+  // Serialize Sets for query keys (Sets are not serializable)
+  const selectedCategoriesArr = useMemo(
+    () => [...selectedCategories].sort(),
+    [selectedCategories],
+  );
+  const selectedLevelsArr = useMemo(
+    () => [...selectedLevels].sort(),
+    [selectedLevels],
+  );
+
+  // Reset to page 1 when search/filters change
   useEffect(() => {
-    coursesApi
-      .getCategories({ "page-size": 50 })
-      .then((res) => {
-        const items = res?.data?.items || [];
-        setCategories(items);
-        const catParam = searchParams.get("category");
-        if (catParam) setSelectedCategories(new Set([catParam]));
-      })
-      .catch(() => {});
-  }, []);
+    setPage(1);
+  }, [searchQuery, selectedCategoriesArr, selectedLevelsArr, sortBy]);
+
+  // Categories — cached 5 min (inherits QueryClient default)
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      coursesApi.getCategories({ "page-size": 50 }).then((r) => r?.data?.items || []),
+  });
+  const categories = categoriesData ?? [];
 
   const skillCategories = useMemo(
     () => categories.filter((c) => c.type === "Skill"),
@@ -86,42 +94,29 @@ const Courses = () => {
     [categories],
   );
 
-  // Reset to page 1 when search/filters change
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, selectedCategories, selectedLevels, sortBy]);
-
-  // Fetch courses — server-paginated normally; when client filters active, fetch all at once
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const hasFilters = selectedCategories.size > 0 || selectedLevels.size > 0;
-      try {
-        setLoading(true);
-        const params = { Status: "Published" };
-        if (hasFilters) {
-          params["page-size"] = 200;
-          params.page = 1;
-        } else {
-          params["page-size"] = PAGE_SIZE;
-          params.page = page;
-        }
-        if (searchQuery.trim()) params["search-term"] = searchQuery.trim();
-        const res = await coursesApi.getAllCourses(params);
-        const items = res?.data?.items || [];
-        const total = res?.data?.totalItems ?? items.length;
-        setCourses(items);
-        if (!hasFilters) {
-          setTotalPages(Math.max(1, Math.ceil(total / PAGE_SIZE)));
-          if (!searchQuery.trim() && page === 1) setAllCourses(items);
-        }
-      } catch (err) {
-        console.error("Failed to fetch courses:", err);
-      } finally {
-        setLoading(false);
+  // Courses — re-fetch when search/page/filters change; shorter stale time
+  const hasFilters = selectedCategories.size > 0 || selectedLevels.size > 0;
+  const { data: coursesData, isLoading: loading } = useQuery({
+    queryKey: ["courses", searchQuery, page, selectedCategoriesArr, selectedLevelsArr],
+    queryFn: () => {
+      const params = { Status: "Published" };
+      if (hasFilters) {
+        params["page-size"] = 200;
+        params.page = 1;
+      } else {
+        params["page-size"] = PAGE_SIZE;
+        params.page = page;
       }
-    };
-    fetchCourses();
-  }, [searchQuery, page, selectedCategories, selectedLevels]);
+      if (searchQuery.trim()) params["search-term"] = searchQuery.trim();
+      return coursesApi.getAllCourses(params).then((r) => r?.data ?? {});
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const courses = coursesData?.items ?? [];
+  const totalPages = hasFilters
+    ? 1
+    : Math.max(1, Math.ceil((coursesData?.totalItems ?? 0) / PAGE_SIZE));
 
   const toggleCategory = (id) => {
     setSelectedCategories((prev) => {

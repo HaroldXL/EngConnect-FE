@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   AddCircle,
   Folder2,
   MinimalisticMagnifier,
   Pen,
-  TagPrice,
   TrashBinMinimalistic,
 } from "@solar-icons/react";
 import {
@@ -43,15 +43,10 @@ const CategoryManagement = () => {
   const { inputClassNames } = useInputStyles();
   const { tableCardStyle, tableClassNames } = useTableStyles();
 
-  // List state
+  const pageSize = 10;
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const [categories, setCategories] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   // Create/Edit modal
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,7 +54,6 @@ const CategoryManagement = () => {
   const [formName, setFormName] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formType, setFormType] = useState("");
-  const [saving, setSaving] = useState(false);
 
   // Delete modal
   const {
@@ -68,7 +62,8 @@ const CategoryManagement = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -79,28 +74,57 @@ const CategoryManagement = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch categories
-  const fetchCategories = useCallback(async () => {
-    setLoading(true);
-    try {
+  const { data: catData, isLoading: loading } = useQuery({
+    queryKey: ["admin-categories", page, pageSize, debouncedSearch],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
+      return coursesApi.getCategories(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
 
-      const response = await coursesApi.getCategories(params);
-      const data = response.data;
-      setCategories(data.items || []);
-      setTotalPages(data.totalPages || 1);
-      setTotalCount(data.totalItems || 0);
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, debouncedSearch]);
+  const categories = catData?.items ?? [];
+  const totalPages = catData?.totalPages ?? 1;
+  const totalCount = catData?.totalItems ?? 0;
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  const saveMutation = useMutation({
+    mutationFn: ({ id, data }) =>
+      id ? coursesApi.updateCategory(id, data) : coursesApi.createCategory(data),
+    onSuccess: (_, { id }) => {
+      addToast({
+        title: id
+          ? t("adminDashboard.categories.updateSuccess")
+          : t("adminDashboard.categories.createSuccess"),
+        color: "success",
+      });
+      onClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+    onError: (_, { id }) => {
+      addToast({
+        title: id
+          ? t("adminDashboard.categories.updateFailed")
+          : t("adminDashboard.categories.createFailed"),
+        color: "danger",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => coursesApi.deleteCategory(id),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.categories.deleteSuccess"), color: "success" });
+      onDeleteClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.categories.deleteFailed"), color: "danger" });
+    },
+  });
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
@@ -128,68 +152,26 @@ const CategoryManagement = () => {
     onOpen();
   };
 
-  // Save (create or update)
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!formName.trim()) return;
-    setSaving(true);
-    try {
-      const data = {
+    saveMutation.mutate({
+      id: editingCategory?.id ?? null,
+      data: {
         name: formName.trim(),
         description: formDescription.trim(),
         type: formType.trim(),
-      };
-      if (editingCategory) {
-        await coursesApi.updateCategory(editingCategory.id, data);
-        addToast({
-          title: t("adminDashboard.categories.updateSuccess"),
-          color: "success",
-        });
-      } else {
-        await coursesApi.createCategory(data);
-        addToast({
-          title: t("adminDashboard.categories.createSuccess"),
-          color: "success",
-        });
-      }
-      onClose();
-      fetchCategories();
-    } catch (error) {
-      addToast({
-        title: editingCategory
-          ? t("adminDashboard.categories.updateFailed")
-          : t("adminDashboard.categories.createFailed"),
-        color: "danger",
-      });
-    } finally {
-      setSaving(false);
-    }
+      },
+    });
   };
 
-  // Delete
   const handleDeleteClick = (category) => {
     setCategoryToDelete(category);
     onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!categoryToDelete) return;
-    setDeleting(true);
-    try {
-      await coursesApi.deleteCategory(categoryToDelete.id);
-      addToast({
-        title: t("adminDashboard.categories.deleteSuccess"),
-        color: "success",
-      });
-      onDeleteClose();
-      fetchCategories();
-    } catch (error) {
-      addToast({
-        title: t("adminDashboard.categories.deleteFailed"),
-        color: "danger",
-      });
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(categoryToDelete.id);
   };
 
   return (
@@ -491,7 +473,7 @@ const CategoryManagement = () => {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={saving}>
+                <Button variant="light" onPress={onClose} isDisabled={saveMutation.isPending}>
                   {t("adminDashboard.categories.cancel")}
                 </Button>
                 <Button
@@ -500,7 +482,7 @@ const CategoryManagement = () => {
                     color: colors.text.white,
                   }}
                   onPress={handleSave}
-                  isLoading={saving}
+                  isLoading={saveMutation.isPending}
                   isDisabled={!formName.trim()}
                 >
                   {t("adminDashboard.categories.save")}
@@ -525,13 +507,13 @@ const CategoryManagement = () => {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={deleting}>
+                <Button variant="light" onPress={onClose} isDisabled={deleteMutation.isPending}>
                   {t("adminDashboard.categories.cancel")}
                 </Button>
                 <Button
                   color="danger"
                   onPress={handleDeleteConfirm}
-                  isLoading={deleting}
+                  isLoading={deleteMutation.isPending}
                 >
                   {t("adminDashboard.categories.delete")}
                 </Button>

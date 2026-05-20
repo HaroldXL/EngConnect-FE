@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   AltArrowDown,
   AltArrowLeft,
@@ -100,11 +101,7 @@ const CourseDetail = () => {
   const { theme } = useTheme();
   const user = useSelector(selectUser);
 
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isEnrolled, setIsEnrolled] = useState(false);
   const [expandedModules, setExpandedModules] = useState({});
-  const [tutorInfo, setTutorInfo] = useState(null);
   const [videoOpen, setVideoOpen] = useState(false);
   const instructorRef = useRef(null);
 
@@ -121,30 +118,22 @@ const CourseDetail = () => {
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        setLoading(true);
-        const params = user?.studentId ? { studentId: user.studentId } : {};
-        const res = await coursesApi.getCourseById(id, params);
-        setCourse(res.data);
-        setIsEnrolled(!!user?.studentId && res.data?.isEnrollment === true);
-        if (res.data?.tutorId) {
-          try {
-            const tutorRes = await tutorApi.getTutorById(res.data.tutorId);
-            setTutorInfo(tutorRes.data);
-          } catch (tutorErr) {
-            console.error("Failed to fetch tutor:", tutorErr);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch course:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourse();
-  }, [id]);
+  const { data: course, isLoading: loading } = useQuery({
+    queryKey: ["course", id, user?.studentId],
+    queryFn: () =>
+      coursesApi
+        .getCourseById(id, user?.studentId ? { studentId: user.studentId } : {})
+        .then((r) => r.data),
+    enabled: !!id,
+  });
+
+  const isEnrolled = !!user?.studentId && course?.isEnrollment === true;
+
+  const { data: tutorInfo } = useQuery({
+    queryKey: ["tutor", course?.tutorId],
+    queryFn: () => tutorApi.getTutorById(course.tutorId).then((r) => r.data),
+    enabled: !!course?.tutorId,
+  });
 
   // Fetch reviews
   useEffect(() => {

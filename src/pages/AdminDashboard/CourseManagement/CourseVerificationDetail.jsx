@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { AltArrowDown, AltArrowLeft, AltArrowRight, AltArrowUp, BookBookmark, Calendar, ClockCircle, Diploma, DocumentText, File, LinkMinimalistic, PlayCircle, SquareAltArrowRight, Star, Target, UsersGroupRounded, Videocamera } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -31,10 +32,6 @@ const AdminCourseVerificationDetail = () => {
   const colors = useThemeColors();
   const { textareaClassNames } = useInputStyles();
 
-  const [request, setRequest] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [course, setCourse] = useState(null);
-  const [tutorInfo, setTutorInfo] = useState(null);
   const [expandedModules, setExpandedModules] = useState({});
   const [expandedSessions, setExpandedSessions] = useState({});
   const [sessionResources, setSessionResources] = useState({});
@@ -44,7 +41,6 @@ const AdminCourseVerificationDetail = () => {
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [reviewAction, setReviewAction] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [reviewing, setReviewing] = useState(false);
 
   const toggleModule = (moduleId) =>
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
@@ -95,39 +91,55 @@ const AdminCourseVerificationDetail = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      setLoading(true);
-      try {
-        // Fetch request by listing all and finding by id
-        const reqRes = await coursesApi.getCourseVerificationRequests({
-          page: 1,
-          "page-size": 1000,
-        });
-        const found = (reqRes.data.items || []).find((r) => r.id === id);
-        if (found) {
-          setRequest(found);
-          if (found.courseId) {
-            const courseRes = await coursesApi.getCourseById(found.courseId);
-            setCourse(courseRes.data);
-            if (courseRes.data?.tutorId) {
-              try {
-                const tutorRes = await tutorApi.getTutorById(
-                  courseRes.data.tutorId,
-                );
-                setTutorInfo(tutorRes.data);
-              } catch (_) {}
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch verification detail:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetail();
-  }, [id]);
+  const { data: request, isLoading: loading } = useQuery({
+    queryKey: ["admin-course-verification-request", id],
+    queryFn: () =>
+      coursesApi.getCourseVerificationRequests({ page: 1, "page-size": 1000 })
+        .then((r) => (r.data.items || []).find((item) => item.id === id) || null),
+    enabled: !!id,
+  });
+
+  const courseId = request?.courseId;
+  const { data: course } = useQuery({
+    queryKey: ["admin-course", courseId],
+    queryFn: () => coursesApi.getCourseById(courseId).then((r) => r.data),
+    enabled: !!courseId,
+  });
+
+  const tutorId = course?.tutorId;
+  const { data: tutorInfo } = useQuery({
+    queryKey: ["admin-tutor", tutorId],
+    queryFn: () => tutorApi.getTutorById(tutorId).then((r) => r.data),
+    enabled: !!tutorId,
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: ({ approved, reason }) =>
+      coursesApi.reviewCourseVerificationRequest(id, {
+        requestId: id,
+        approved,
+        rejectionReason: reason,
+      }),
+    onSuccess: () => {
+      addToast({
+        title:
+          reviewAction === "approve"
+            ? t("adminDashboard.courseVerification.approveSuccess")
+            : t("adminDashboard.courseVerification.rejectSuccess"),
+        color: "success",
+      });
+      navigate("/admin/course-verification");
+    },
+    onError: () => {
+      addToast({
+        title:
+          reviewAction === "approve"
+            ? t("adminDashboard.courseVerification.approveFailed")
+            : t("adminDashboard.courseVerification.rejectFailed"),
+        color: "danger",
+      });
+    },
+  });
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -175,34 +187,12 @@ const AdminCourseVerificationDetail = () => {
     setIsReviewOpen(true);
   };
 
-  const handleReviewConfirm = async () => {
+  const handleReviewConfirm = () => {
     if (!id) return;
-    setReviewing(true);
-    try {
-      await coursesApi.reviewCourseVerificationRequest(id, {
-        requestId: id,
-        approved: reviewAction === "approve",
-        rejectionReason: reviewAction === "reject" ? rejectionReason : null,
-      });
-      addToast({
-        title:
-          reviewAction === "approve"
-            ? t("adminDashboard.courseVerification.approveSuccess")
-            : t("adminDashboard.courseVerification.rejectSuccess"),
-        color: "success",
-      });
-      navigate("/admin/course-verification");
-    } catch (error) {
-      addToast({
-        title:
-          reviewAction === "approve"
-            ? t("adminDashboard.courseVerification.approveFailed")
-            : t("adminDashboard.courseVerification.rejectFailed"),
-        color: "danger",
-      });
-    } finally {
-      setReviewing(false);
-    }
+    reviewMutation.mutate({
+      approved: reviewAction === "approve",
+      reason: reviewAction === "reject" ? rejectionReason : null,
+    });
   };
 
   return (
@@ -1259,14 +1249,14 @@ const AdminCourseVerificationDetail = () => {
                 <Button
                   variant="light"
                   onPress={onClose}
-                  isDisabled={reviewing}
+                  isDisabled={reviewMutation.isPending}
                 >
                   {t("adminDashboard.courseVerification.cancel")}
                 </Button>
                 <Button
                   color={reviewAction === "approve" ? "success" : "danger"}
                   onPress={handleReviewConfirm}
-                  isLoading={reviewing}
+                  isLoading={reviewMutation.isPending}
                   isDisabled={
                     reviewAction === "reject" && !rejectionReason.trim()
                   }

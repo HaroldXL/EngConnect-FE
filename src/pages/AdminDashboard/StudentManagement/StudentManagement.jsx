@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { CheckCircle, Export, Eye, Filter, MinimalisticMagnifier, MenuDots, Pen, UsersGroupRounded } from "@solar-icons/react"
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { CheckCircle, Eye, Filter, MinimalisticMagnifier, MenuDots, Pen, UsersGroupRounded } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -43,19 +44,11 @@ const StudentManagement = () => {
   const { inputClassNames } = useInputStyles();
   const { tableCardStyle, tableClassNames } = useTableStyles();
 
-  // List state
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [students, setStudents] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-
-  // Stats
-  const [totalStudentsCount, setTotalStudentsCount] = useState(0);
-  const [activeCount, setActiveCount] = useState(0);
 
   // Edit modal
   const {
@@ -70,7 +63,6 @@ const StudentManagement = () => {
     class: "",
   });
   const [editStudent, setEditStudent] = useState(null);
-  const [saving, setSaving] = useState(false);
 
   // Status modal
   const {
@@ -80,7 +72,8 @@ const StudentManagement = () => {
   } = useDisclosure();
   const [statusStudent, setStatusStudent] = useState(null);
   const [newStatus, setNewStatus] = useState("");
-  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Debounce search
   useEffect(() => {
@@ -91,49 +84,63 @@ const StudentManagement = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch students list
-  const fetchStudents = useCallback(async () => {
-    setLoading(true);
-    try {
+  // Students list
+  const { data: studentData, isLoading: loading } = useQuery({
+    queryKey: ["admin-students", page, pageSize, debouncedSearch, selectedStatus],
+    queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
       if (selectedStatus !== "all") params.Status = selectedStatus;
+      return adminApi.getAllStudents(params).then((r) => r.data);
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const students = studentData?.items ?? [];
+  const totalPages = studentData?.totalPages ?? 1;
 
-      const response = await adminApi.getAllStudents(params);
-      const data = response.data;
-      setStudents(data.items || []);
-      setTotalPages(data.totalPages || 1);
-    } catch {
-      setStudents([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, debouncedSearch, selectedStatus]);
+  // Stats
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-student-stats"],
+    queryFn: () =>
+      Promise.all([
+        adminApi.getAllStudents({ "page-size": 1, page: 1 }),
+        adminApi.getAllStudents({ Status: "Active", "page-size": 1, page: 1 }),
+      ]).then(([allRes, activeRes]) => ({
+        total: allRes.data.totalItems || 0,
+        active: activeRes.data.totalItems || 0,
+      })),
+    staleTime: 60 * 1000,
+  });
+  const totalStudentsCount = statsData?.total ?? 0;
+  const activeCount = statsData?.active ?? 0;
 
-  useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
+  // Edit mutation
+  const editMutation = useMutation({
+    mutationFn: ({ id, userId, form }) => adminApi.updateStudent(id, userId, form),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.students.updateSuccess"), color: "success" });
+      onEditClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.students.updateFailed"), color: "danger" });
+    },
+  });
 
-  // Fetch stats on mount
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [allRes, activeRes] = await Promise.all([
-          adminApi.getAllStudents({ "page-size": 1, page: 1 }),
-          adminApi.getAllStudents({
-            Status: "Active",
-            "page-size": 1,
-            page: 1,
-          }),
-        ]);
-        setTotalStudentsCount(allRes.data.totalItems || 0);
-        setActiveCount(activeRes.data.totalItems || 0);
-      } catch {
-        // stats are non-critical
-      }
-    };
-    fetchStats();
-  }, []);
+  // Status mutation
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }) => adminApi.updateStudentStatus(id, status),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.students.statusUpdateSuccess"), color: "success" });
+      onStatusClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-student-stats"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.students.statusUpdateFailed"), color: "danger" });
+    },
+  });
 
   const stats = [
     {
@@ -193,29 +200,9 @@ const StudentManagement = () => {
     onEditOpen();
   };
 
-  const handleEditSave = async () => {
+  const handleEditSave = () => {
     if (!editStudent) return;
-    setSaving(true);
-    try {
-      await adminApi.updateStudent(
-        editStudent.id,
-        editStudent.userId,
-        editForm,
-      );
-      onEditClose();
-      addToast({
-        title: t("adminDashboard.students.updateSuccess"),
-        color: "success",
-      });
-      fetchStudents();
-    } catch {
-      addToast({
-        title: t("adminDashboard.students.updateFailed"),
-        color: "danger",
-      });
-    } finally {
-      setSaving(false);
-    }
+    editMutation.mutate({ id: editStudent.id, userId: editStudent.userId, form: editForm });
   };
 
   // Status change
@@ -225,36 +212,9 @@ const StudentManagement = () => {
     onStatusOpen();
   };
 
-  const handleStatusSave = async () => {
+  const handleStatusSave = () => {
     if (!statusStudent) return;
-    setUpdatingStatus(true);
-    try {
-      await adminApi.updateStudentStatus(statusStudent.id, newStatus);
-      onStatusClose();
-      addToast({
-        title: t("adminDashboard.students.statusUpdateSuccess"),
-        color: "success",
-      });
-      fetchStudents();
-      // Refresh stats
-      const [allRes, activeRes] = await Promise.all([
-        adminApi.getAllStudents({ "page-size": 1, page: 1 }),
-        adminApi.getAllStudents({
-          Status: "Active",
-          "page-size": 1,
-          page: 1,
-        }),
-      ]);
-      setTotalStudentsCount(allRes.data.totalItems || 0);
-      setActiveCount(activeRes.data.totalItems || 0);
-    } catch {
-      addToast({
-        title: t("adminDashboard.students.statusUpdateFailed"),
-        color: "danger",
-      });
-    } finally {
-      setUpdatingStatus(false);
-    }
+    statusMutation.mutate({ id: statusStudent.id, status: newStatus });
   };
 
   return (
@@ -622,7 +582,7 @@ const StudentManagement = () => {
                 </Button>
                 <Button
                   onPress={handleEditSave}
-                  isLoading={saving}
+                  isLoading={editMutation.isPending}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,
@@ -693,7 +653,7 @@ const StudentManagement = () => {
                 </Button>
                 <Button
                   onPress={handleStatusSave}
-                  isLoading={updatingStatus}
+                  isLoading={statusMutation.isPending}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: colors.text.white,

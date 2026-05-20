@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AltArrowLeft, BookBookmark, CalendarMark, GraphUp, Letter, SquareAcademicCap } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -29,55 +29,24 @@ const AdminStudentDetail = () => {
   const { t, i18n } = useTranslation();
   const colors = useThemeColors();
 
-  const [student, setStudent] = useState(null);
-  const [loadingStudent, setLoadingStudent] = useState(true);
-  const [enrollments, setEnrollments] = useState([]);
-  const [loadingEnrollments, setLoadingEnrollments] = useState(true);
+  const { data: student, isLoading: loadingStudent } = useQuery({
+    queryKey: ["admin-student", id],
+    queryFn: () => adminApi.getStudentById(id).then((r) => r.data),
+    enabled: !!id,
+  });
 
-  useEffect(() => {
-    const fetchStudent = async () => {
-      setLoadingStudent(true);
-      try {
-        const res = await adminApi.getStudentById(id);
-        setStudent(res.data);
-      } catch (err) {
-        console.error("Failed to fetch student:", err);
-      } finally {
-        setLoadingStudent(false);
-      }
-    };
-
-    const fetchEnrollments = async () => {
-      setLoadingEnrollments(true);
-      try {
-        const [inProgressRes, completedRes] = await Promise.all([
-          coursesApi.getAllCourseEnrollments({
-            StudentId: id,
-            Status: "InProgress",
-            "page-size": 50,
-          }),
-          coursesApi.getAllCourseEnrollments({
-            StudentId: id,
-            Status: "Completed",
-            "page-size": 50,
-          }),
-        ]);
-        setEnrollments([
-          ...(inProgressRes?.data?.items || []),
-          ...(completedRes?.data?.items || []),
-        ]);
-      } catch (err) {
-        console.error("Failed to fetch enrollments:", err);
-      } finally {
-        setLoadingEnrollments(false);
-      }
-    };
-
-    if (id) {
-      fetchStudent();
-      fetchEnrollments();
-    }
-  }, [id]);
+  const { data: enrollments = [], isLoading: loadingEnrollments } = useQuery({
+    queryKey: ["admin-student-enrollments", id],
+    queryFn: () =>
+      Promise.all([
+        coursesApi.getAllCourseEnrollments({ StudentId: id, Status: "InProgress", "page-size": 50 }),
+        coursesApi.getAllCourseEnrollments({ StudentId: id, Status: "Completed", "page-size": 50 }),
+      ]).then(([inProgressRes, completedRes]) => [
+        ...(inProgressRes?.data?.items || []),
+        ...(completedRes?.data?.items || []),
+      ]),
+    enabled: !!id,
+  });
 
   const getStatusColor = (status) => {
     switch (status) {

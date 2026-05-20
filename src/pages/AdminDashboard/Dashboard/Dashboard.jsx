@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AltArrowDown, AltArrowRight, AltArrowUp, BookBookmark, Calendar, Cart2, CheckCircle, ClipboardList, Dollar, PresentationGraph, SquareAltArrowRight, Star, UsersGroupRounded, Wallet } from "@solar-icons/react"
 import {
   Card,
@@ -46,27 +47,11 @@ const Dashboard = () => {
   const def = getDefaultRange(29);
   const [fromDate, setFromDate] = useState(def.from);
   const [toDate, setToDate] = useState(def.to);
-  const [summaryLoading, setSummaryLoading] = useState(true);
-  const [summary, setSummary] = useState(null);
-  const [overallLoading, setOverallLoading] = useState(true);
-  const [overallTotals, setOverallTotals] = useState(null);
+  const [appliedFrom, setAppliedFrom] = useState(def.from);
+  const [appliedTo, setAppliedTo] = useState(def.to);
   const [activeLines, setActiveLines] = useState(
     new Set(["totalStudents", "totalTutors", "totalPaidOrders", "totalRevenue"])
   );
-
-  // ---- Pending Approvals ----
-  const [pendingLoading, setPendingLoading] = useState(true);
-  const [pendingCourses, setPendingCourses] = useState([]);
-  const [pendingCoursesCount, setPendingCoursesCount] = useState(0);
-  const [courseDetails, setCourseDetails] = useState({});
-  const [pendingTutors, setPendingTutors] = useState([]);
-  const [pendingTutorsCount, setPendingTutorsCount] = useState(0);
-  const [tutorDetails, setTutorDetails] = useState({});
-
-  // ---- Feeds ----
-  const [feedsLoading, setFeedsLoading] = useState(true);
-  const [feeds, setFeeds] = useState(null);
-  const [studentMap, setStudentMap] = useState({});
 
   // ---- Salary ----
   const now = new Date();
@@ -74,38 +59,102 @@ const Dashboard = () => {
   const [salaryMonth, setSalaryMonth] = useState(now.getMonth() + 1);
   const [salaryYearInput, setSalaryYearInput] = useState(now.getFullYear());
   const [salaryMonthInput, setSalaryMonthInput] = useState(now.getMonth() + 1);
-  const [salaryLoading, setSalaryLoading] = useState(true);
-  const [salary, setSalary] = useState(null);
   const [expandedTutors, setExpandedTutors] = useState(new Set());
 
-  // ---- Fetch Summary ----
-  const applyDateRange = useCallback(async (from, to) => {
-    setSummaryLoading(true);
-    try {
-      const res = await adminApi.getDashboardSummary({
-        FromDate: toApiDate(from),
-        ToDate: toApiDate(to),
+  // ---- Queries ----
+  const { data: summary, isLoading: summaryLoading } = useQuery({
+    queryKey: ["admin-dashboard-summary", appliedFrom, appliedTo],
+    queryFn: () =>
+      adminApi.getDashboardSummary({ FromDate: toApiDate(appliedFrom), ToDate: toApiDate(appliedTo) })
+        .then((r) => r?.data || null),
+    staleTime: 60 * 1000,
+  });
+
+  const { data: overallTotals, isLoading: overallLoading } = useQuery({
+    queryKey: ["admin-dashboard-overall"],
+    queryFn: () => adminApi.getDashboardSummary({}).then((r) => r?.data?.overallTotals || null),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: feedsData, isLoading: feedsLoading } = useQuery({
+    queryKey: ["admin-dashboard-feeds"],
+    queryFn: async () => {
+      const res = await adminApi.getDashboardFeeds({
+        RecentOrderLimit: 10,
+        TopCourseLimit: 5,
+        RecentReviewLimit: 5,
       });
-      setSummary(res?.data || null);
-    } catch (err) {
-      console.error("Summary fetch failed:", err);
-    } finally {
-      setSummaryLoading(false);
-    }
-  }, []);
+      const data = res?.data || null;
+      if (!data) return { feeds: null, studentMap: {} };
+      const ids = [
+        ...new Set(
+          [
+            ...(data.recentOrders || []).map((o) => o.studentId),
+            ...(data.recentCourseReviews || []).filter((r) => !r.isAnonymous).map((r) => r.studentId),
+          ].filter(Boolean),
+        ),
+      ];
+      const studentMap = {};
+      if (ids.length > 0) {
+        const results = await Promise.allSettled(ids.map((id) => adminApi.getStudentById(id)));
+        results.forEach((r, i) => {
+          if (r.status === "fulfilled") studentMap[ids[i]] = r.value?.data || r.value;
+        });
+      }
+      return { feeds: data, studentMap };
+    },
+    staleTime: 60 * 1000,
+  });
+  const feeds = feedsData?.feeds ?? null;
+  const studentMap = feedsData?.studentMap ?? {};
 
-  useEffect(() => {
-    applyDateRange(fromDate, toDate);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const { data: salary, isLoading: salaryLoading } = useQuery({
+    queryKey: ["admin-dashboard-salary", salaryYear, salaryMonth],
+    queryFn: () =>
+      adminApi.getTutorMonthlySalary({ Year: salaryYear, Month: salaryMonth })
+        .then((r) => r?.data || null),
+    staleTime: 2 * 60 * 1000,
+  });
 
-  // Fetch overall totals once (no date filter — platform-wide cumulative)
-  useEffect(() => {
-    setOverallLoading(true);
-    adminApi.getDashboardSummary({})
-      .then((res) => setOverallTotals(res?.data?.overallTotals || null))
-      .catch(() => {})
-      .finally(() => setOverallLoading(false));
-  }, []);
+  const { data: pendingData, isLoading: pendingLoading } = useQuery({
+    queryKey: ["admin-dashboard-pending"],
+    queryFn: async () => {
+      const [courseRes, tutorRes] = await Promise.allSettled([
+        coursesApi.getCourseVerificationRequests({ Status: "Pending", "page-size": 5, page: 1 }),
+        adminApi.getVerificationRequests({ Status: "Pending", "page-size": 5, page: 1 }),
+      ]);
+      let pendingCourses = [], pendingCoursesCount = 0, courseDetails = {};
+      let pendingTutors = [], pendingTutorsCount = 0, tutorDetails = {};
+      if (courseRes.status === "fulfilled") {
+        const items = courseRes.value.data?.items || [];
+        pendingCourses = items;
+        pendingCoursesCount = courseRes.value.data?.totalItems || 0;
+        const ids = [...new Set(items.map((r) => r.courseId).filter(Boolean))];
+        if (ids.length > 0) {
+          const results = await Promise.allSettled(ids.map((id) => coursesApi.getCourseById(id)));
+          results.forEach((r, i) => { if (r.status === "fulfilled") courseDetails[ids[i]] = r.value.data; });
+        }
+      }
+      if (tutorRes.status === "fulfilled") {
+        const items = tutorRes.value.data?.items || [];
+        pendingTutors = items;
+        pendingTutorsCount = tutorRes.value.data?.totalItems || 0;
+        const ids = [...new Set(items.map((r) => r.tutorId).filter(Boolean))];
+        if (ids.length > 0) {
+          const results = await Promise.allSettled(ids.map((id) => adminApi.getTutorById(id)));
+          results.forEach((r, i) => { if (r.status === "fulfilled") tutorDetails[ids[i]] = r.value.data; });
+        }
+      }
+      return { pendingCourses, pendingCoursesCount, courseDetails, pendingTutors, pendingTutorsCount, tutorDetails };
+    },
+    staleTime: 60 * 1000,
+  });
+  const pendingCourses = pendingData?.pendingCourses ?? [];
+  const pendingCoursesCount = pendingData?.pendingCoursesCount ?? 0;
+  const courseDetails = pendingData?.courseDetails ?? {};
+  const pendingTutors = pendingData?.pendingTutors ?? [];
+  const pendingTutorsCount = pendingData?.pendingTutorsCount ?? 0;
+  const tutorDetails = pendingData?.tutorDetails ?? {};
 
   const toggleLine = (key) => {
     setActiveLines((prev) => {
@@ -119,129 +168,9 @@ const Dashboard = () => {
     const r = getDefaultRange(days - 1);
     setFromDate(r.from);
     setToDate(r.to);
-    applyDateRange(r.from, r.to);
+    setAppliedFrom(r.from);
+    setAppliedTo(r.to);
   };
-
-  // ---- Fetch Feeds ----
-  useEffect(() => {
-    const fetchFeeds = async () => {
-      setFeedsLoading(true);
-      try {
-        const res = await adminApi.getDashboardFeeds({
-          RecentOrderLimit: 10,
-          TopCourseLimit: 5,
-          RecentReviewLimit: 5,
-        });
-        const data = res?.data || null;
-        setFeeds(data);
-        if (data) {
-          const ids = [
-            ...new Set(
-              [
-                ...(data.recentOrders || []).map((o) => o.studentId),
-                ...(data.recentCourseReviews || [])
-                  .filter((r) => !r.isAnonymous)
-                  .map((r) => r.studentId),
-              ].filter(Boolean),
-            ),
-          ];
-          if (ids.length > 0) {
-            const results = await Promise.allSettled(
-              ids.map((id) => adminApi.getStudentById(id)),
-            );
-            const map = {};
-            results.forEach((r, i) => {
-              if (r.status === "fulfilled")
-                map[ids[i]] = r.value?.data || r.value;
-            });
-            setStudentMap(map);
-          }
-        }
-      } catch (err) {
-        console.error("Feeds fetch failed:", err);
-      } finally {
-        setFeedsLoading(false);
-      }
-    };
-    fetchFeeds();
-  }, []);
-
-  // ---- Fetch Salary ----
-  const fetchSalary = useCallback(async (year, month) => {
-    setSalaryLoading(true);
-    try {
-      const res = await adminApi.getTutorMonthlySalary({ Year: year, Month: month });
-      setSalary(res?.data || null);
-    } catch (err) {
-      console.error("Salary fetch failed:", err);
-    } finally {
-      setSalaryLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSalary(salaryYear, salaryMonth);
-  }, [fetchSalary, salaryYear, salaryMonth]);
-
-  // ---- Fetch Pending Approvals ----
-  useEffect(() => {
-    const fetchPending = async () => {
-      setPendingLoading(true);
-      try {
-        const [courseRes, tutorRes] = await Promise.allSettled([
-          coursesApi.getCourseVerificationRequests({
-            Status: "Pending",
-            "page-size": 5,
-            page: 1,
-          }),
-          adminApi.getVerificationRequests({
-            Status: "Pending",
-            "page-size": 5,
-            page: 1,
-          }),
-        ]);
-        if (courseRes.status === "fulfilled") {
-          const items = courseRes.value.data?.items || [];
-          setPendingCourses(items);
-          setPendingCoursesCount(courseRes.value.data?.totalItems || 0);
-          const ids = [
-            ...new Set(items.map((r) => r.courseId).filter(Boolean)),
-          ];
-          if (ids.length > 0) {
-            const results = await Promise.allSettled(
-              ids.map((id) => coursesApi.getCourseById(id)),
-            );
-            const details = {};
-            results.forEach((r, i) => {
-              if (r.status === "fulfilled") details[ids[i]] = r.value.data;
-            });
-            setCourseDetails(details);
-          }
-        }
-        if (tutorRes.status === "fulfilled") {
-          const items = tutorRes.value.data?.items || [];
-          setPendingTutors(items);
-          setPendingTutorsCount(tutorRes.value.data?.totalItems || 0);
-          const ids = [
-            ...new Set(items.map((r) => r.tutorId).filter(Boolean)),
-          ];
-          if (ids.length > 0) {
-            const results = await Promise.allSettled(
-              ids.map((id) => adminApi.getTutorById(id)),
-            );
-            const details = {};
-            results.forEach((r, i) => {
-              if (r.status === "fulfilled") details[ids[i]] = r.value.data;
-            });
-            setTutorDetails(details);
-          }
-        }
-      } finally {
-        setPendingLoading(false);
-      }
-    };
-    fetchPending();
-  }, []);
 
   // ---- Helpers ----
   const getStudentName = (studentId) => {
@@ -392,7 +321,7 @@ const Dashboard = () => {
                 <Button
                   size="sm"
                   style={{ backgroundColor: colors.primary.main, color: "#fff" }}
-                  onPress={() => applyDateRange(fromDate, toDate)}
+                  onPress={() => { setAppliedFrom(fromDate); setAppliedTo(toDate); }}
                 >
                   {t("adminDashboard.dashboard.apply")}
                 </Button>
@@ -762,10 +691,7 @@ const Dashboard = () => {
                 <Button
                   size="sm"
                   style={{ backgroundColor: colors.primary.main, color: "#fff" }}
-                  onPress={() => {
-                    setSalaryYear(salaryYearInput);
-                    setSalaryMonth(salaryMonthInput);
-                  }}
+                  onPress={() => { setSalaryYear(salaryYearInput); setSalaryMonth(salaryMonthInput); }}
                 >
                   {t("adminDashboard.dashboard.apply")}
                 </Button>

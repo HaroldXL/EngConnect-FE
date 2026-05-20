@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Calendar,
   CheckCircle,
@@ -73,28 +74,13 @@ const PayrollManagement = () => {
 
   const [activeTab, setActiveTab] = useState("periods");
 
-  // Tutors map (tutorId -> { name, avatar })
-  const [tutorsMap, setTutorsMap] = useState({});
-
-  // Periods
-  const [periods, setPeriods] = useState([]);
-  const [periodsLoading, setPeriodsLoading] = useState(true);
+  // Filter state
   const [periodsPage, setPeriodsPage] = useState(1);
-  const [periodsTotalPages, setPeriodsTotalPages] = useState(1);
   const [periodStatusFilter, setPeriodStatusFilter] = useState("");
-
-  // Payouts
-  const [payouts, setPayouts] = useState([]);
-  const [payoutsLoading, setPayoutsLoading] = useState(false);
   const [payoutsPage, setPayoutsPage] = useState(1);
-  const [payoutsTotalPages, setPayoutsTotalPages] = useState(1);
   const [payoutTypeFilter, setPayoutTypeFilter] = useState("");
   const [payoutStatusFilter, setPayoutStatusFilter] = useState("");
   const [payoutPeriodFilter, setPayoutPeriodFilter] = useState("");
-
-  // Earnings overview
-  const [tutorsSummary, setTutorsSummary] = useState([]);
-  const [tutorsSummaryLoading, setTutorsSummaryLoading] = useState(false);
 
   // Payout detail modal
   const [selectedPayout, setSelectedPayout] = useState(null);
@@ -102,11 +88,11 @@ const PayrollManagement = () => {
   const [payoutItemsLoading, setPayoutItemsLoading] = useState(false);
   const [payoutDetailOpen, setPayoutDetailOpen] = useState(false);
 
-  // ── Load tutors map (for name + avatar lookup) ──────
-  useEffect(() => {
-    tutorApi
-      .getAllTutors({ "page-size": 200 })
-      .then((res) => {
+  // ── Queries ──────────────────────────────────────────
+  const { data: tutorsMap = {} } = useQuery({
+    queryKey: ["admin-payroll-tutors-map"],
+    queryFn: () =>
+      tutorApi.getAllTutors({ "page-size": 200 }).then((res) => {
         const map = {};
         (res?.data?.items || []).forEach((tutor) => {
           map[tutor.id] = {
@@ -115,78 +101,54 @@ const PayrollManagement = () => {
             email: tutor.user?.email,
           };
         });
-        setTutorsMap(map);
-      })
-      .catch(() => {});
-  }, []);
+        return map;
+      }),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  // ── Periods ─────────────────────────────────────────
-  const fetchPeriods = useCallback(async () => {
-    setPeriodsLoading(true);
-    try {
+  const { data: periodsData, isLoading: periodsLoading } = useQuery({
+    queryKey: ["admin-periods", periodsPage, periodStatusFilter],
+    queryFn: async () => {
       const params = { page: periodsPage, "page-size": 10 };
       if (periodStatusFilter) params.Status = periodStatusFilter;
       const res = await paymentApi.getPayrollPeriods(params);
-      setPeriods(res?.data?.items || []);
-      setPeriodsTotalPages(res?.data?.totalPages || 1);
-    } catch {
-      setPeriods([]);
-    } finally {
-      setPeriodsLoading(false);
-    }
-  }, [periodsPage, periodStatusFilter]);
+      return res?.data || {};
+    },
+    staleTime: 30 * 1000,
+  });
+  const periods = periodsData?.items ?? [];
+  const periodsTotalPages = periodsData?.totalPages ?? 1;
 
-  useEffect(() => {
-    fetchPeriods();
-  }, [fetchPeriods]);
+  const { data: allPeriods = [] } = useQuery({
+    queryKey: ["admin-all-periods"],
+    queryFn: () =>
+      paymentApi.getPayrollPeriods({ "page-size": 100 }).then((res) => res?.data?.items || []),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  // Periods (full list for filter dropdown)
-  const [allPeriods, setAllPeriods] = useState([]);
-  useEffect(() => {
-    paymentApi
-      .getPayrollPeriods({ "page-size": 100 })
-      .then((res) => setAllPeriods(res?.data?.items || []))
-      .catch(() => {});
-  }, []);
-
-  // ── Payouts ─────────────────────────────────────────
-  const fetchPayouts = useCallback(async () => {
-    setPayoutsLoading(true);
-    try {
+  const { data: payoutsData, isLoading: payoutsLoading } = useQuery({
+    queryKey: ["admin-payouts", payoutsPage, payoutTypeFilter, payoutStatusFilter, payoutPeriodFilter],
+    queryFn: async () => {
       const params = { page: payoutsPage, "page-size": 10 };
       if (payoutTypeFilter) params.PayoutType = payoutTypeFilter;
       if (payoutStatusFilter) params.Status = payoutStatusFilter;
       if (payoutPeriodFilter) params.PayrollPeriodId = payoutPeriodFilter;
       const res = await paymentApi.getPayouts(params);
-      setPayouts(res?.data?.items || []);
-      setPayoutsTotalPages(res?.data?.totalPages || 1);
-    } catch {
-      setPayouts([]);
-    } finally {
-      setPayoutsLoading(false);
-    }
-  }, [payoutsPage, payoutTypeFilter, payoutStatusFilter, payoutPeriodFilter]);
+      return res?.data || {};
+    },
+    enabled: activeTab === "payouts",
+    staleTime: 30 * 1000,
+  });
+  const payouts = payoutsData?.items ?? [];
+  const payoutsTotalPages = payoutsData?.totalPages ?? 1;
 
-  useEffect(() => {
-    if (activeTab === "payouts") fetchPayouts();
-  }, [activeTab, fetchPayouts]);
-
-  // ── Earnings overview (all tutors) ──────────────────
-  const fetchTutorsSummary = useCallback(async () => {
-    setTutorsSummaryLoading(true);
-    try {
-      const res = await paymentApi.getTotalEarning({});
-      setTutorsSummary(res?.data?.allTutors?.tutors || []);
-    } catch {
-      setTutorsSummary([]);
-    } finally {
-      setTutorsSummaryLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (activeTab === "overview") fetchTutorsSummary();
-  }, [activeTab, fetchTutorsSummary]);
+  const { data: tutorsSummary = [], isLoading: tutorsSummaryLoading } = useQuery({
+    queryKey: ["admin-tutors-summary"],
+    queryFn: () =>
+      paymentApi.getTotalEarning({}).then((res) => res?.data?.allTutors?.tutors || []),
+    enabled: activeTab === "overview",
+    staleTime: 2 * 60 * 1000,
+  });
 
   // ── Open payout detail modal ────────────────────────
   const openPayoutDetail = async (payout) => {

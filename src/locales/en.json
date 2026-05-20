@@ -915,7 +915,9 @@
       "scoreProgress": "{{score}} out of {{max}}",
       "submitHint": "Upload your completed assignment file.",
       "awaitingGrade": "Waiting for tutor to grade...",
-      "notSubmittedYet": "Not submitted yet"
+      "notSubmittedYet": "Not submitted yet",
+      "filterByCourse": "Filter by Course",
+      "allCourses": "All courses"
     },
     "community": {
       "title": "Community",
@@ -3229,6 +3231,7 @@
     "vocabUpgradesEmpty": "No vocabulary upgrades suggested",
     "overallBand": "Overall Band",
     "aiBadge": "AI analyzed",
-    "openFullView": "Open full view"
+    "openFullView": "Open full view",
+    "disclaimer": "AI-generated content is for reference only — please verify before relying on it."
   }
 }

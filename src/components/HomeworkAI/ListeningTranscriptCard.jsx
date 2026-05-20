@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { useThemeColors } from "../../hooks/useThemeColors";
 import clockAndCat from "../../assets/illustrations/clock-and-cat.avif";
+import AIDisclaimer from "./AIDisclaimer";
 
 const safeParse = (raw) => {
   if (!raw) return null;
@@ -138,6 +139,10 @@ export default function ListeningTranscriptCard({
             </div>
           </div>
 
+          <div className="mb-4">
+            <AIDisclaimer />
+          </div>
+
           <div
             className="rounded-xl flex flex-col items-center text-center py-6 px-4 gap-2"
             style={{ backgroundColor: colors.background.gray }}
@@ -251,6 +256,8 @@ export default function ListeningTranscriptCard({
             {t("homeworkAI.listeningCopy")}
           </Button>
         </div>
+
+        <AIDisclaimer />
 
         {/* Audio player */}
         {mediaUrl && (

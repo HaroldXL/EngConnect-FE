@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AltArrowDown, AltArrowLeft, AltArrowRight, AltArrowUp, BookBookmark, Calendar, ClockCircle, Diploma, DocumentText, File, LinkMinimalistic, PlayCircle, SquareAltArrowRight, Star, Target, UsersGroupRounded, Videocamera } from "@solar-icons/react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -23,21 +24,61 @@ const AdminCourseDetail = () => {
   const { t, i18n } = useTranslation();
   const colors = useThemeColors();
 
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [tutorInfo, setTutorInfo] = useState(null);
   const [expandedModules, setExpandedModules] = useState({});
   const [expandedSessions, setExpandedSessions] = useState({});
   const [sessionResources, setSessionResources] = useState({});
   const [loadingResources, setLoadingResources] = useState({});
 
   const [reviews, setReviews] = useState([]);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
   const [reviewsPage, setReviewsPage] = useState(1);
   const [reviewsHasMore, setReviewsHasMore] = useState(false);
   const [reviewsLoadingMore, setReviewsLoadingMore] = useState(false);
   const [reviewStudents, setReviewStudents] = useState({});
   const REVIEWS_PAGE_SIZE = 5;
+
+  const { data: course, isLoading: loading } = useQuery({
+    queryKey: ["admin-course", id],
+    queryFn: () => coursesApi.getCourseById(id).then((r) => r.data),
+    enabled: !!id,
+  });
+
+  const tutorId = course?.tutorId;
+  const { data: tutorInfo } = useQuery({
+    queryKey: ["admin-tutor", tutorId],
+    queryFn: () => tutorApi.getTutorById(tutorId).then((r) => r.data),
+    enabled: !!tutorId,
+  });
+
+  const { isLoading: reviewsLoading } = useQuery({
+    queryKey: ["admin-course-reviews-init", id],
+    queryFn: async () => {
+      const res = await coursesApi.getCourseReviews({
+        CourseId: id,
+        "page-index": 1,
+        "page-size": REVIEWS_PAGE_SIZE,
+      });
+      if (!res.isSuccess) return null;
+      const items = res.data?.items || [];
+      setReviews(items);
+      setReviewsHasMore((res.data?.totalPages ?? 1) > 1);
+      const ids = [...new Set(items.filter((r) => !r.isAnonymous).map((r) => r.studentId))];
+      if (ids.length > 0) {
+        const entries = await Promise.allSettled(
+          ids.map(async (sid) => {
+            try {
+              const r = await studentApi.getStudentById(sid);
+              return [sid, r.data];
+            } catch {
+              return [sid, null];
+            }
+          }),
+        );
+        setReviewStudents(Object.fromEntries(entries.map((e) => (e.status === "fulfilled" ? e.value : [null, null])).filter(([k]) => k)));
+      }
+      return items;
+    },
+    enabled: !!id,
+  });
 
   const toggleModule = (moduleId) =>
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
@@ -88,66 +129,6 @@ const AdminCourseDetail = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      setReviewsLoading(true);
-      try {
-        const res = await coursesApi.getCourseReviews({
-          CourseId: id,
-          "page-index": 1,
-          "page-size": REVIEWS_PAGE_SIZE,
-        });
-        if (res.isSuccess) {
-          const items = res.data?.items || [];
-          setReviews(items);
-          setReviewsHasMore((res.data?.totalPages ?? 1) > 1);
-          const ids = [
-            ...new Set(
-              items.filter((r) => !r.isAnonymous).map((r) => r.studentId),
-            ),
-          ];
-          if (ids.length > 0) {
-            const entries = await Promise.all(
-              ids.map(async (sid) => {
-                try {
-                  const r = await studentApi.getStudentById(sid);
-                  return [sid, r.data];
-                } catch {
-                  return [sid, null];
-                }
-              }),
-            );
-            setReviewStudents(Object.fromEntries(entries));
-          }
-        }
-      } catch (_) {
-      } finally {
-        setReviewsLoading(false);
-      }
-    };
-    if (id) fetchReviews();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchDetail = async () => {
-      setLoading(true);
-      try {
-        const res = await coursesApi.getCourseById(id);
-        setCourse(res.data);
-        if (res.data?.tutorId) {
-          try {
-            const tutorRes = await tutorApi.getTutorById(res.data.tutorId);
-            setTutorInfo(tutorRes.data);
-          } catch (_) {}
-        }
-      } catch (error) {
-        console.error("Failed to fetch course detail:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetail();
-  }, [id]);
 
   const handleLoadMoreReviews = async () => {
     setReviewsLoadingMore(true);
@@ -171,7 +152,7 @@ const AdminCourseDetail = () => {
           ),
         ];
         if (newIds.length > 0) {
-          const entries = await Promise.all(
+          const entries = await Promise.allSettled(
             newIds.map(async (sid) => {
               try {
                 const r = await studentApi.getStudentById(sid);
@@ -183,7 +164,11 @@ const AdminCourseDetail = () => {
           );
           setReviewStudents((prev) => ({
             ...prev,
-            ...Object.fromEntries(entries),
+            ...Object.fromEntries(
+              entries
+                .filter((e) => e.status === "fulfilled")
+                .map((e) => e.value),
+            ),
           }));
         }
       }

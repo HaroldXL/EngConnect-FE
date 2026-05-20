@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { lessonHomeworkApi } from "../../api";
+import AIDisclaimer from "./AIDisclaimer";
 
 /**
  * AIDetectionCard — Writing-only.
@@ -118,6 +119,10 @@ export default function AIDetectionCard({
               />
             </Button>
           )}
+        </div>
+
+        <div className="mb-4">
+          <AIDisclaimer />
         </div>
 
         {/* Body */}

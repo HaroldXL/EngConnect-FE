@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { lessonHomeworkApi } from "../../api";
+import AIDisclaimer from "./AIDisclaimer";
 
 const safeParse = (raw) => {
   if (!raw) return null;
@@ -118,6 +119,9 @@ export default function WritingAnalysisCard({
                 {t("homeworkAI.writingAnalysisSubtitle")}
               </p>
             </div>
+          </div>
+          <div className="mb-4">
+            <AIDisclaimer />
           </div>
           {canRun ? (
             <div className="flex flex-col items-center gap-3 py-2">
@@ -248,6 +252,8 @@ export default function WritingAnalysisCard({
             </Button>
           )}
         </div>
+
+        <AIDisclaimer />
 
         {/* Score Section */}
         <div

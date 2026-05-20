@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useCallback, useMemo } from "react";
-import { AltArrowRight, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Gallery, Hourglass, MinimalisticMagnifier, Plain, Star } from "@solar-icons/react"
+import { AltArrowRight, BookBookmark, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Filter, Gallery, MinimalisticMagnifier, Plain } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -12,6 +12,10 @@ import {
   useDisclosure,
   Avatar,
   Progress,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
 } from "@heroui/react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../store";
@@ -117,6 +121,8 @@ const Homework = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("all");
   const [selectedHw, setSelectedHw] = useState(null);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [isCourseFilterOpen, setIsCourseFilterOpen] = useState(false);
 
   const submitDisclosure = useDisclosure();
 
@@ -162,6 +168,21 @@ const Homework = () => {
     return { toDo, submitted, scored, overdue };
   }, [homeworks]);
 
+  // ── Course options ────────────────────────────────────────────────────────
+  const courseOptions = useMemo(() => {
+    const seen = new Set();
+    const result = [];
+    for (const h of homeworks) {
+      if (h.courseId && !seen.has(h.courseId)) {
+        seen.add(h.courseId);
+        result.push({ id: h.courseId, title: h.courseTitle || h.courseId });
+      }
+    }
+    return result;
+  }, [homeworks]);
+
+  const selectedCourse = courseOptions.find((c) => c.id === selectedCourseId) ?? null;
+
   // ── Filtered view ─────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     const map = {
@@ -169,9 +190,11 @@ const Homework = () => {
       submitted: "Submitted",
       scored: "Scored",
     };
-    if (selectedTab === "all") return homeworks;
-    return homeworks.filter((h) => h.status === map[selectedTab]);
-  }, [homeworks, selectedTab]);
+    let result = homeworks;
+    if (selectedCourseId) result = result.filter((h) => h.courseId === selectedCourseId);
+    if (selectedTab === "all") return result;
+    return result.filter((h) => h.status === map[selectedTab]);
+  }, [homeworks, selectedTab, selectedCourseId]);
 
   const statusChipProps = useCallback(
     (status) => {
@@ -368,7 +391,7 @@ const Homework = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15 }}
-        className="flex flex-col sm:flex-row gap-4"
+        className="flex items-center gap-3 flex-wrap"
       >
         <Input
           placeholder={t("studentDashboard.homework.searchPlaceholder")}
@@ -404,7 +427,98 @@ const Homework = () => {
             title={`${t("studentDashboard.homework.filter.scored")} (${stats.scored})`}
           />
         </Tabs>
+        <div className="ml-auto">
+          {selectedCourse ? (
+            <Chip
+              onClose={() => setSelectedCourseId(null)}
+              onClick={() => setIsCourseFilterOpen(true)}
+              className="cursor-pointer"
+              startContent={
+                <BookBookmark weight="BoldDuotone" className="w-3.5 h-3.5" />
+              }
+              style={{
+                backgroundColor: `${colors.primary.main}15`,
+                color: colors.primary.main,
+                border: `1px solid ${colors.primary.main}30`,
+              }}
+            >
+              {selectedCourse.title}
+            </Chip>
+          ) : (
+            <Button
+              size="sm"
+              startContent={
+                <Filter weight="BoldDuotone" className="w-4 h-4" />
+              }
+              onPress={() => setIsCourseFilterOpen(true)}
+              style={{
+                backgroundColor: `${colors.primary.main}12`,
+                color: colors.primary.main,
+                border: `1px solid ${colors.primary.main}30`,
+              }}
+            >
+              {t("studentDashboard.homework.filterByCourse")}
+            </Button>
+          )}
+        </div>
       </motion.div>
+
+      {/* Course filter modal */}
+      <Modal
+        isOpen={isCourseFilterOpen}
+        onOpenChange={setIsCourseFilterOpen}
+        size="sm"
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader style={{ color: colors.text.primary }}>
+                {t("studentDashboard.homework.filterByCourse")}
+              </ModalHeader>
+              <ModalBody className="pb-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setSelectedCourseId(null); onClose(); }}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-left transition-opacity hover:opacity-80"
+                  style={{
+                    backgroundColor: selectedCourseId ? colors.background.gray : `${colors.primary.main}15`,
+                    color: selectedCourseId ? colors.text.primary : colors.primary.main,
+                  }}
+                >
+                  <span className="text-sm font-medium">
+                    {t("studentDashboard.homework.allCourses")}
+                  </span>
+                </button>
+                {courseOptions.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => { setSelectedCourseId(c.id); onClose(); }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-left transition-opacity hover:opacity-80"
+                    style={{
+                      backgroundColor: selectedCourseId === c.id ? `${colors.primary.main}15` : colors.background.gray,
+                      color: selectedCourseId === c.id ? colors.primary.main : colors.text.primary,
+                    }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${colors.primary.main}15` }}
+                    >
+                      <BookBookmark
+                        weight="BoldDuotone"
+                        className="w-4 h-4"
+                        style={{ color: colors.primary.main }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium truncate">{c.title}</span>
+                  </button>
+                ))}
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       {/* List */}
       {loading ? (

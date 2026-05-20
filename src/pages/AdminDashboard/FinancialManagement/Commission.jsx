@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Calendar, DollarMinimalistic, InfoCircle, Pen } from "@solar-icons/react"
 import {
   Card,
@@ -27,14 +28,9 @@ const Commission = () => {
   const { inputClassNames } = useInputStyles();
   const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
-  const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Edit form state
   const [editName, setEditName] = useState("");
   const [editPercent, setEditPercent] = useState("");
   const [editApplyFrom, setEditApplyFrom] = useState("");
-  const [saving, setSaving] = useState(false);
 
   const {
     isOpen: isEditOpen,
@@ -42,25 +38,26 @@ const Commission = () => {
     onClose: onEditClose,
   } = useDisclosure();
 
-  const fetchConfig = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await paymentApi.getCommissionConfigs();
-      const items = res?.data?.items || [];
-      setConfig(items[0] || null);
-    } catch {
-      addToast({
-        title: t("adminDashboard.commission.fetchFailed"),
-        color: "danger",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchConfig();
-  }, [fetchConfig]);
+  const { data: config, isLoading: loading } = useQuery({
+    queryKey: ["admin-commission"],
+    queryFn: () =>
+      paymentApi.getCommissionConfigs().then((r) => r?.data?.items?.[0] || null),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => paymentApi.updateCommissionConfig(id, data),
+    onSuccess: () => {
+      addToast({ title: t("adminDashboard.commission.saveSuccess"), color: "success" });
+      onEditClose();
+      queryClient.invalidateQueries({ queryKey: ["admin-commission"] });
+    },
+    onError: () => {
+      addToast({ title: t("adminDashboard.commission.saveFailed"), color: "danger" });
+    },
+  });
 
   const openEdit = () => {
     if (!config) return;
@@ -75,37 +72,21 @@ const Commission = () => {
     onEditOpen();
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!config?.id) return;
     const percent = parseFloat(editPercent);
     if (isNaN(percent) || percent < 0 || percent > 100) {
-      addToast({
-        title: t("adminDashboard.commission.invalidPercent"),
-        color: "warning",
-      });
+      addToast({ title: t("adminDashboard.commission.invalidPercent"), color: "warning" });
       return;
     }
-    setSaving(true);
-    try {
-      await paymentApi.updateCommissionConfig(config.id, {
+    updateMutation.mutate({
+      id: config.id,
+      data: {
         name: editName.trim() || config.name,
         commissionPercent: percent,
         applyFrom: new Date(editApplyFrom).toISOString(),
-      });
-      addToast({
-        title: t("adminDashboard.commission.saveSuccess"),
-        color: "success",
-      });
-      onEditClose();
-      fetchConfig();
-    } catch {
-      addToast({
-        title: t("adminDashboard.commission.saveFailed"),
-        color: "danger",
-      });
-    } finally {
-      setSaving(false);
-    }
+      },
+    });
   };
 
   const formatDate = (iso) => {
@@ -347,11 +328,11 @@ const Commission = () => {
                 />
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onEditClose} disabled={saving}>
+                <Button variant="light" onPress={onEditClose} disabled={updateMutation.isPending}>
                   {t("adminDashboard.commission.cancel")}
                 </Button>
                 <Button
-                  isLoading={saving}
+                  isLoading={updateMutation.isPending}
                   style={{
                     backgroundColor: colors.primary.main,
                     color: "#fff",

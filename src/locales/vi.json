@@ -913,7 +913,9 @@
       "scoreProgress": "{{score}} trên {{max}}",
       "submitHint": "Tải lên file bài tập đã hoàn thành của bạn.",
       "awaitingGrade": "Đang chờ gia sư chấm điểm...",
-      "notSubmittedYet": "Chưa nộp bài"
+      "notSubmittedYet": "Chưa nộp bài",
+      "filterByCourse": "Lọc theo Khóa học",
+      "allCourses": "Tất cả khóa học"
     },
     "community": {
       "title": "Cộng đồng",
@@ -3226,6 +3228,7 @@
     "vocabUpgradesEmpty": "Không có gợi ý nâng cấp từ vựng",
     "overallBand": "Điểm tổng",
     "aiBadge": "Đã phân tích AI",
-    "openFullView": "Xem chi tiết"
+    "openFullView": "Xem chi tiết",
+    "disclaimer": "Nội dung do AI tạo chỉ mang tính tham khảo — vui lòng kiểm tra trước khi sử dụng."
   }
 }
