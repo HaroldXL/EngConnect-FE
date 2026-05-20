@@ -34,7 +34,9 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
-import { adminApi } from "../../../api";
+import { adminApi, tutorApi } from "../../../api";
+import DocumentCard from "../../../components/DocumentCard/DocumentCard";
+import ImageViewerModal from "../../../components/ImageViewerModal/ImageViewerModal";
 
 
 const TutorVerification = () => {
@@ -57,6 +59,8 @@ const TutorVerification = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailTutor, setDetailTutor] = useState(null);
+  const [detailDocuments, setDetailDocuments] = useState([]);
+  const [viewingImageUrl, setViewingImageUrl] = useState(null);
 
   // Review modal (approve/reject)
   const {
@@ -272,17 +276,21 @@ const TutorVerification = () => {
     return tutor?.avatar || "";
   };
 
-  // View detail — fetch request detail + tutor profile
+  // View detail — fetch request detail + tutor profile + documents
   const handleViewRequest = async (request) => {
     setSelectedRequest(request);
     setDetailTutor(null);
+    setDetailDocuments([]);
     onOpen();
     setDetailLoading(true);
     try {
-      const [reqRes, tutorRes] = await Promise.allSettled([
+      const [reqRes, tutorRes, docsRes] = await Promise.allSettled([
         adminApi.getVerificationRequestById(request.id),
         request.tutorId
           ? adminApi.getTutorById(request.tutorId)
+          : Promise.reject("no tutorId"),
+        request.tutorId
+          ? tutorApi.getTutorDocuments({ TutorId: request.tutorId })
           : Promise.reject("no tutorId"),
       ]);
       if (reqRes.status === "fulfilled") {
@@ -291,6 +299,10 @@ const TutorVerification = () => {
       if (tutorRes.status === "fulfilled") {
         setDetailTutor(tutorRes.value.data);
         setTutorCache((prev) => ({ ...prev, [request.tutorId]: tutorRes.value.data }));
+      }
+      if (docsRes.status === "fulfilled") {
+        const r = docsRes.value;
+        setDetailDocuments(Array.isArray(r.data) ? r.data : r.data?.items || []);
       }
     } catch (error) {
       console.error("Failed to fetch request detail:", error);
@@ -901,6 +913,38 @@ const TutorVerification = () => {
                               </a>
                             </div>
                           )}
+
+                          {/* Documents */}
+                          <div>
+                            <p
+                              className="text-sm font-semibold mb-2"
+                              style={{ color: colors.text.secondary }}
+                            >
+                              {t("tutorDashboard.profile.documents.myDocuments")}
+                              <span style={{ color: colors.text.tertiary }}>
+                                ({detailDocuments.length})
+                              </span>
+                            </p>
+                            {detailDocuments.length === 0 ? (
+                              <p
+                                className="text-sm italic"
+                                style={{ color: colors.text.tertiary }}
+                              >
+                                {t("tutorDashboard.profile.documents.noDocuments")}
+                              </p>
+                            ) : (
+                              <div className="grid grid-cols-2 gap-3">
+                                {detailDocuments.map((doc) => (
+                                  <DocumentCard
+                                    key={doc.id}
+                                    doc={doc}
+                                    onViewImage={setViewingImageUrl}
+                                    cardBgColor={colors.background.gray}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       ) : (
                         <p
@@ -994,6 +1038,11 @@ const TutorVerification = () => {
           )}
         </ModalContent>
       </Modal>
+
+      <ImageViewerModal
+        imageUrl={viewingImageUrl}
+        onClose={() => setViewingImageUrl(null)}
+      />
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} size="sm">

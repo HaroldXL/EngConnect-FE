@@ -1560,7 +1560,7 @@ const Profile = () => {
                           }
                           classNames={selectClassNames}
                         >
-                          {["Degree", "Diploma", "License", "Other"].map(
+                          {["Degree", "Certificate", "License", "Other"].map(
                             (type) => (
                               <SelectItem key={type}>
                                 {t(
