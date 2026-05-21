@@ -42,6 +42,8 @@ import StudentRescheduleRequestModal from "../StudentRescheduleRequestModal/Stud
 import LessonSummaryModal from "../LessonSummaryModal/LessonSummaryModal";
 import LessonQuizModal from "../LessonQuizModal/LessonQuizModal";
 import MakeupRequestModal from "../MakeupRequestModal/MakeupRequestModal";
+import LessonRatingModal from "../LessonRatingModal/LessonRatingModal";
+import LessonRatingDisplay from "../LessonRatingModal/LessonRatingDisplay";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
 const withCDN = (url) => {
@@ -184,6 +186,10 @@ const LessonDetailModal = ({
     onClose: onQuizClose,
   } = useDisclosure();
 
+  // Lesson rating
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [localRating, setLocalRating] = useState(null);
+
   const fetchRescheduleData = useCallback(async () => {
     if (!lesson || !isOpen) return;
     try {
@@ -318,6 +324,18 @@ const LessonDetailModal = ({
   useEffect(() => {
     fetchRescheduleData();
   }, [fetchRescheduleData]);
+
+  // Sync local rating from lesson
+  useEffect(() => {
+    if (!isOpen) {
+      setLocalRating(null);
+      return;
+    }
+    const existing = Array.isArray(lesson?.lessonRatings)
+      ? lesson.lessonRatings[0] || null
+      : null;
+    setLocalRating(existing);
+  }, [isOpen, lesson]);
 
   useEffect(() => {
     if (!lesson || !isOpen) {
@@ -911,6 +929,29 @@ const LessonDetailModal = ({
                 </div>
               )}
 
+              {/* Lesson Rating — visible once meeting ended */}
+              {lesson.meetingStatus === "Ended" && (
+                <div className="flex flex-col gap-2">
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: colors.text.secondary }}
+                  >
+                    {t("lessonRating.sectionTitle")}
+                  </p>
+                  <LessonRatingDisplay
+                    rating={localRating}
+                    canEdit={isStudentView}
+                    onAdd={() => setRatingModalOpen(true)}
+                    onEdit={() => setRatingModalOpen(true)}
+                    emptyMessage={
+                      isStudentView
+                        ? t("lessonRating.studentEmpty")
+                        : t("lessonRating.tutorEmpty")
+                    }
+                  />
+                </div>
+              )}
+
               {/* Lesson Summary + Quiz — side by side */}
               {(lesson.lessonScript?.summarizeText ||
                 (lesson.lessonScript?.id && role !== "tutor")) && (
@@ -1308,6 +1349,17 @@ const LessonDetailModal = ({
         isOpen={isQuizOpen}
         onClose={onQuizClose}
         lessonScriptId={lesson?.lessonScript?.id}
+      />
+
+      <LessonRatingModal
+        isOpen={ratingModalOpen}
+        onClose={() => setRatingModalOpen(false)}
+        lesson={lesson}
+        existingRating={localRating}
+        onSuccess={(updated) => {
+          setLocalRating(updated || null);
+          onRefresh?.();
+        }}
       />
 
       <TutorRescheduleOfferModal

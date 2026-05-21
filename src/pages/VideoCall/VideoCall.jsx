@@ -1,5 +1,29 @@
 ﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { AltArrowLeft, ChatDots, CloseSquare, DangerTriangle, DownloadMinimalistic, FileDownload, MenuDots, Microphone, Muted, Paperclip, PhoneCalling, PresentationGraph, Plain, SlashCircle, Stopwatch, UploadMinimalistic, UserCircle, Videocamera, WiFiRouter } from "@solar-icons/react"
+import {
+  AltArrowLeft,
+  ChatDots,
+  CloseSquare,
+  DangerTriangle,
+  DownloadMinimalistic,
+  FileDownload,
+  MenuDots,
+  Microphone,
+  Muted,
+  Paperclip,
+  PhoneCalling,
+  PresentationGraph,
+  Plain,
+  SlashCircle,
+  Stopwatch,
+  UploadMinimalistic,
+  UserCircle,
+  Videocamera,
+  WiFiRouter,
+  Translation,
+  Dialog,
+  Screencast2,
+  ShieldCross,
+} from "@solar-icons/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store";
@@ -7,6 +31,7 @@ import { useTranslation } from "react-i18next";
 import { meetingApi, authApi, studentApi } from "../../api";
 import useWebRTC from "../../hooks/useWebRTC";
 import WhiteboardPanel from "./WhiteboardPanel";
+import LessonRatingModal from "../../components/LessonRatingModal/LessonRatingModal";
 
 import conversationIllustration from "../../assets/illustrations/conversation.avif";
 
@@ -89,6 +114,8 @@ const VideoCall = () => {
   const [userNames, setUserNames] = useState({});
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [confirmDialog, setConfirmDialog] = useState(null); // null | "leave" | "end"
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingDismissed, setRatingDismissed] = useState(false);
 
   const [localFileMessages, setLocalFileMessages] = useState([]);
   // { id, name, size, mimeType, url, isMe, sentAt }
@@ -174,6 +201,17 @@ const VideoCall = () => {
     fetchInfo();
   }, [lessonId]);
 
+  // Auto-show rating modal once meeting ends (peer-initiated end)
+  useEffect(() => {
+    if (meetingStatus !== "Ended") return;
+    if (userRole !== "Student") return;
+    if (ratingDismissed || showRatingModal) return;
+    if (!lessonInfo) return;
+    const alreadyRated = (lessonInfo.lessonRatings || []).length > 0;
+    if (alreadyRated) return;
+    setShowRatingModal(true);
+  }, [meetingStatus, userRole, lessonInfo, ratingDismissed, showRatingModal]);
+
   // Elapsed timer: starts when connected + joined
   useEffect(() => {
     if (joined && connectionState === "connected") {
@@ -238,7 +276,9 @@ const VideoCall = () => {
   // touching the master router subscription.
   const registerWbHandler = useCallback((handler) => {
     wbMessageHandlerRef.current = handler;
-    return () => { wbMessageHandlerRef.current = null; };
+    return () => {
+      wbMessageHandlerRef.current = null;
+    };
   }, []);
 
   // ── Single unified data-channel router ────────────────────────────────────
@@ -262,10 +302,17 @@ const VideoCall = () => {
         if (msg.type === "file:chunk") {
           const { id, i, n, d } = msg;
           if (!pendingFileChunksRef.current[id]) {
-            pendingFileChunksRef.current[id] = { parts: new Array(n).fill(null), got: 0, n };
+            pendingFileChunksRef.current[id] = {
+              parts: new Array(n).fill(null),
+              got: 0,
+              n,
+            };
           }
           const entry = pendingFileChunksRef.current[id];
-          if (entry.parts[i] === null) { entry.parts[i] = d; entry.got++; }
+          if (entry.parts[i] === null) {
+            entry.parts[i] = d;
+            entry.got++;
+          }
           if (entry.got === entry.n) {
             const payload = entry.parts.join("");
             delete pendingFileChunksRef.current[id];
@@ -275,9 +322,15 @@ const VideoCall = () => {
               const url = URL.createObjectURL(blob);
               setLocalFileMessages((prev) => [
                 ...prev,
-                { id: fileMsg.id, name: fileMsg.name, size: fileMsg.size,
-                  mimeType: fileMsg.mimeType, url, isMe: false,
-                  sentAt: new Date().toISOString() },
+                {
+                  id: fileMsg.id,
+                  name: fileMsg.name,
+                  size: fileMsg.size,
+                  mimeType: fileMsg.mimeType,
+                  url,
+                  isMe: false,
+                  sentAt: new Date().toISOString(),
+                },
               ]);
             }
           }
@@ -286,7 +339,9 @@ const VideoCall = () => {
 
         // Everything else (wb:*, wb:chunk, wb:req_sync …) → whiteboard handler
         wbMessageHandlerRef.current?.(rawData);
-      } catch { /* ignore non-JSON or parse errors */ }
+      } catch {
+        /* ignore non-JSON or parse errors */
+      }
     });
     return () => unsub();
   }, [onDataMessage]); // stable — runs once after mount
@@ -427,9 +482,9 @@ const VideoCall = () => {
         style={{ backgroundColor: bg, color: "white" }}
       >
         {connectionState === "connected" ? (
-          <WiFiRouter weight="BoldDuotone" className="w-3.5 h-3.5" />
+          <Translation weight="BoldDuotone" className="w-3.5 h-3.5" />
         ) : (
-          <SlashCircle weight="BoldDuotone" className="w-3.5 h-3.5" />
+          <ShieldCross weight="BoldDuotone" className="w-3.5 h-3.5" />
         )}
         {t(`videoCall.connection.${connectionState}`)}
       </div>
@@ -442,7 +497,10 @@ const VideoCall = () => {
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
         <div className="text-center max-w-sm mx-4">
           <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-            <DangerTriangle weight="BoldDuotone" className="w-9 h-9 text-red-400" />
+            <DangerTriangle
+              weight="BoldDuotone"
+              className="w-9 h-9 text-red-400"
+            />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">
             {t("videoCall.accessDenied")}
@@ -483,6 +541,18 @@ const VideoCall = () => {
             {t("videoCall.backToSchedule")}
           </button>
         </div>
+        <LessonRatingModal
+          isOpen={showRatingModal}
+          onClose={() => {
+            setShowRatingModal(false);
+            setRatingDismissed(true);
+          }}
+          lesson={lessonInfo}
+          onSuccess={() => {
+            setShowRatingModal(false);
+            setRatingDismissed(true);
+          }}
+        />
       </div>
     );
   }
@@ -540,7 +610,10 @@ const VideoCall = () => {
               className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors flex items-center justify-center gap-2"
             >
               {loadingInfo ? (
-                <MenuDots weight="BoldDuotone" className="w-5 h-5 animate-spin" />
+                <MenuDots
+                  weight="BoldDuotone"
+                  className="w-5 h-5 animate-spin"
+                />
               ) : (
                 <Videocamera weight="BoldDuotone" className="w-5 h-5" />
               )}
@@ -591,10 +664,7 @@ const VideoCall = () => {
           onClick={() => setShowChat(!showChat)}
           className={`relative p-2 rounded-xl transition-colors ${showChat ? "bg-emerald-500/20 text-emerald-400" : "text-gray-400 hover:text-white hover:bg-gray-700"}`}
         >
-          <ChatDots
-            weight="BoldDuotone"
-            className="w-5 h-5"
-          />
+          <Dialog weight="BoldDuotone" className="w-5 h-5" />
         </button>
       </div>
 
@@ -710,9 +780,14 @@ const VideoCall = () => {
                   {/* Avatar when remote camera is off */}
                   {!remoteVideoEnabled && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-800">
-                      <UserCircle weight="BoldDuotone" className="w-24 h-24 text-gray-600" />
+                      <UserCircle
+                        weight="BoldDuotone"
+                        className="w-24 h-24 text-gray-600"
+                      />
                       {remoteName && (
-                        <span className="text-gray-300 text-sm font-medium">{remoteName}</span>
+                        <span className="text-gray-300 text-sm font-medium">
+                          {remoteName}
+                        </span>
                       )}
                     </div>
                   )}
@@ -1090,7 +1165,7 @@ const VideoCall = () => {
                   : "bg-gray-700 text-white hover:bg-gray-600"
             }`}
           >
-            <UploadMinimalistic weight="BoldDuotone" className="w-5 h-5" />
+            <Screencast2 weight="BoldDuotone" className="w-5 h-5" />
             <span className="text-[11px] font-medium leading-none">
               {t("videoCall.screen")}
             </span>
@@ -1153,7 +1228,10 @@ const VideoCall = () => {
           <div className="bg-gray-800 rounded-2xl p-6 w-80 shadow-2xl border border-gray-700">
             <div className="flex justify-center mb-4">
               <div className="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center">
-                <DangerTriangle weight="BoldDuotone" className="w-8 h-8 text-red-400" />
+                <DangerTriangle
+                  weight="BoldDuotone"
+                  className="w-8 h-8 text-red-400"
+                />
               </div>
             </div>
             <h3 className="text-white font-bold text-lg text-center mb-2">
@@ -1187,6 +1265,19 @@ const VideoCall = () => {
           </div>
         </div>
       )}
+
+      <LessonRatingModal
+        isOpen={showRatingModal}
+        onClose={() => {
+          setShowRatingModal(false);
+          setRatingDismissed(true);
+        }}
+        lesson={lessonInfo}
+        onSuccess={() => {
+          setShowRatingModal(false);
+          setRatingDismissed(true);
+        }}
+      />
     </div>
   );
 };

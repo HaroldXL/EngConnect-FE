@@ -1039,6 +1039,44 @@
       "maintenanceNoticeMsg": "The platform will be undergoing maintenance on Sunday 2AM-4AM UTC"
     }
   },
+  "lessonRating": {
+    "sectionTitle": "Lesson Rating",
+    "createTitle": "Rate this lesson",
+    "editTitle": "Edit your rating",
+    "subtitle": "Your feedback helps tutors improve.",
+    "tapToRate": "Tap a star to rate",
+    "labels": {
+      "1": "Poor",
+      "2": "Below average",
+      "3": "Average",
+      "4": "Good",
+      "5": "Excellent"
+    },
+    "commentLabel": "Comment (optional)",
+    "commentPlaceholder": "Share what went well or what could be better...",
+    "submit": "Submit rating",
+    "saveChanges": "Save changes",
+    "skip": "Skip",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "rateThisLesson": "Rate this lesson",
+    "noRatingYet": "No rating yet",
+    "studentEmpty": "You haven't rated this lesson yet.",
+    "tutorEmpty": "Student hasn't rated this lesson yet.",
+    "unknownTutor": "Tutor",
+    "toasts": {
+      "created": "Thanks for your rating!",
+      "updated": "Rating updated",
+      "deleted": "Rating removed"
+    },
+    "errors": {
+      "ratingRequired": "Please select at least 1 star",
+      "missingLessonData": "Missing lesson data",
+      "submitFailed": "Failed to submit rating",
+      "deleteFailed": "Failed to delete rating"
+    }
+  },
   "tutorDashboard": {
     "nav": {
       "dashboard": "Dashboard",
@@ -3019,7 +3057,8 @@
       "stats": {
         "totalLessons": "Total Lessons",
         "scheduled": "Scheduled",
-        "completed": "Completed",
+        "completed": "Completed (unpaid)",
+        "settled": "Settled",
         "cancelled": "Cancelled"
       },
       "table": {
@@ -3037,7 +3076,7 @@
         "Scheduled": "Scheduled",
         "InProgress": "In Progress",
         "Completed": "Completed",
-        "Settled": "Completed",
+        "Settled": "Settled",
         "Cancelled": "Cancelled",
         "NoStudent": "No Student",
         "NoTutor": "No Tutor",

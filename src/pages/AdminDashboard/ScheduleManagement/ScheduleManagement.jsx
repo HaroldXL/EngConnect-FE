@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded } from "@solar-icons/react"
+import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded, Wallet } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -165,11 +165,12 @@ const ScheduleManagement = () => {
     queryFn: async () => {
       const todayFrom = toApiStart(todayStr());
       const todayTo = toApiEnd(todayStr());
-      const [allR, schR, liveR, compR, canR, upcomingR] = await Promise.allSettled([
+      const [allR, schR, liveR, compR, settledR, canR, upcomingR] = await Promise.allSettled([
         studentApi.getLessons({ "page-size": 1, page: 1 }),
         studentApi.getLessons({ Status: "Scheduled", "page-size": 1, page: 1 }),
         studentApi.getLessons({ Status: "InProgress", "page-size": 10, page: 1 }),
         studentApi.getLessons({ Status: "Completed", "page-size": 1, page: 1 }),
+        studentApi.getLessons({ Status: "Settled", "page-size": 1, page: 1 }),
         studentApi.getLessons({ Status: "Cancelled", "page-size": 1, page: 1 }),
         studentApi.getLessons({ Status: "Scheduled", StartTimeFrom: todayFrom, StartTimeTo: todayTo, "page-size": 10, page: 1 }),
       ]);
@@ -179,6 +180,7 @@ const ScheduleManagement = () => {
         statsInProgress: liveR.status === "fulfilled" ? liveR.value?.data?.totalItems || 0 : 0,
         liveNow: liveR.status === "fulfilled" ? liveR.value?.data?.items || [] : [],
         statsCompleted: compR.status === "fulfilled" ? compR.value?.data?.totalItems || 0 : 0,
+        statsSettled: settledR.status === "fulfilled" ? settledR.value?.data?.totalItems || 0 : 0,
         statsCancelled: canR.status === "fulfilled" ? canR.value?.data?.totalItems || 0 : 0,
         upcomingToday: upcomingR.status === "fulfilled" ? upcomingR.value?.data?.items || [] : [],
       };
@@ -191,6 +193,7 @@ const ScheduleManagement = () => {
   const statsInProgress = overviewData?.statsInProgress ?? 0;
   const liveNow = overviewData?.liveNow ?? [];
   const statsCompleted = overviewData?.statsCompleted ?? 0;
+  const statsSettled = overviewData?.statsSettled ?? 0;
   const statsCancelled = overviewData?.statsCancelled ?? 0;
   const upcomingToday = overviewData?.upcomingToday ?? [];
 
@@ -279,11 +282,11 @@ const ScheduleManagement = () => {
     enabled: activeTab === "slots",
     staleTime: 60 * 1000,
   });
-  const schedules = slotsData?.schedules ?? [];
   const tutorMap = slotsData?.tutorMap ?? {};
 
   // ── grouped slots ──────────────────────────────────────────
   const groupedSlots = useMemo(() => {
+    const schedules = slotsData?.schedules ?? [];
     const map = {};
     schedules.forEach((s) => {
       if (!s.tutorId) return;
@@ -291,7 +294,7 @@ const ScheduleManagement = () => {
       map[s.tutorId].push(s);
     });
     return map;
-  }, [schedules]);
+  }, [slotsData]);
 
   // ── lesson table columns ───────────────────────────────────
   const lessonCols = useMemo(
@@ -322,6 +325,7 @@ const ScheduleManagement = () => {
       case "Reschedule":
         return colors.state.warning;
       case "Completed":
+        return colors.state.warning;
       case "Settled":
         return colors.state.success;
       case "MadeUp":
@@ -534,16 +538,16 @@ const ScheduleManagement = () => {
       bg: `${colors.state.warning}20`,
     },
     {
-      label: t("adminDashboard.schedule.statsInProgress"),
-      value: statsInProgress,
-      icon: Lightning,
-      color: "#f59e0b",
-      bg: "#f59e0b20",
-    },
-    {
       label: t("adminDashboard.schedule.stats.completed"),
       value: statsCompleted,
       icon: CheckCircle,
+      color: colors.state.warning,
+      bg: `${colors.state.warning}20`,
+    },
+    {
+      label: t("adminDashboard.schedule.stats.settled"),
+      value: statsSettled,
+      icon: Wallet,
       color: colors.state.success,
       bg: `${colors.state.success}20`,
     },
@@ -921,6 +925,7 @@ const ScheduleManagement = () => {
                         "Scheduled",
                         "InProgress",
                         "Completed",
+                        "Settled",
                         "Cancelled",
                         "NoStudent",
                         "NoTutor",

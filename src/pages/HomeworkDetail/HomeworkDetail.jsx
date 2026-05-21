@@ -604,7 +604,7 @@ export default function HomeworkDetail({ role }) {
           transition={{ duration: 0.15 }}
           className="lg:col-span-1"
         >
-          <div className="lg:sticky lg:top-4 space-y-4">
+          <div className="lg:sticky lg:top-[148px] space-y-4">
             {/* Tutor side panel */}
             {isTutor && (
               <Card

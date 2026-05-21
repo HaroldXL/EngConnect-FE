@@ -163,19 +163,6 @@ const StudentMyCourseDetail = () => {
   // Homework state (for this course)
   const [courseHomeworks, setCourseHomeworks] = useState([]);
 
-  // HW inline modal state
-  const [selectedHwModal, setSelectedHwModal] = useState(null);
-  const {
-    isOpen: isHwDetailOpen,
-    onOpen: onHwDetailOpen,
-    onClose: onHwDetailClose,
-  } = useDisclosure();
-  const {
-    isOpen: isHwSubmitOpen,
-    onOpen: onHwSubmitOpen,
-    onClose: onHwSubmitClose,
-  } = useDisclosure();
-
   // Enrollment state
   const [enrollment, setEnrollment] = useState(null);
   const [enrollmentChecked, setEnrollmentChecked] = useState(false);
@@ -593,19 +580,9 @@ const StudentMyCourseDetail = () => {
   };
 
   const openHwDetail = (hw) => {
-    setSelectedHwModal(hw);
-    onHwDetailOpen();
+    navigate(`/student/homework/${hw.id}`);
   };
 
-  const openHwSubmit = (hw) => {
-    setSelectedHwModal(hw);
-    onHwSubmitOpen();
-  };
-
-  const handleHwSubmitSuccess = async () => {
-    onHwDetailClose();
-    await fetchHomeworksByLessons();
-  };
 
   const formatLessonTime = (dateStr) => {
     if (!dateStr) return "";
@@ -2948,23 +2925,6 @@ const StudentMyCourseDetail = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      {/* ==================== HW DETAIL MODAL ==================== */}
-      <StudentHomeworkDetailModal
-        isOpen={isHwDetailOpen}
-        onClose={onHwDetailClose}
-        hw={selectedHwModal}
-        onSubmitClick={(hw) => openHwSubmit(hw)}
-        onTutorClick={(hw) => navigate(`/tutor-profile/${hw.tutorId}`)}
-      />
-
-      {/* ==================== HW SUBMIT MODAL ==================== */}
-      <StudentHomeworkSubmitModal
-        isOpen={isHwSubmitOpen}
-        onClose={onHwSubmitClose}
-        hw={selectedHwModal}
-        onSubmitSuccess={handleHwSubmitSuccess}
-      />
 
       {/* ==================== REFUND REQUEST MODAL ==================== */}
       <StudentRefundRequestModal

@@ -6,6 +6,7 @@ export { adminApi } from "./adminApi";
 export { supportApi } from "./supportApi";
 export { meetingApi } from "./meetingApi";
 export { lessonHomeworkApi } from "./lessonHomeworkApi";
+export { lessonRatingApi } from "./lessonRatingApi";
 export { rescheduleApi } from "./rescheduleApi";
 export { makeupApi } from "./makeupApi";
 export { paymentApi } from "./paymentApi";

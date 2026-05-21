@@ -1037,6 +1037,44 @@
       "maintenanceNoticeMsg": "Nền tảng sẽ bảo trì vào Chủ nhật từ 2AM-4AM UTC"
     }
   },
+  "lessonRating": {
+    "sectionTitle": "Đánh giá buổi học",
+    "createTitle": "Đánh giá buổi học",
+    "editTitle": "Sửa đánh giá",
+    "subtitle": "Phản hồi của bạn giúp gia sư cải thiện chất lượng.",
+    "tapToRate": "Chạm vào ngôi sao để chấm điểm",
+    "labels": {
+      "1": "Rất tệ",
+      "2": "Chưa tốt",
+      "3": "Bình thường",
+      "4": "Tốt",
+      "5": "Xuất sắc"
+    },
+    "commentLabel": "Nhận xét (không bắt buộc)",
+    "commentPlaceholder": "Chia sẻ điều bạn thấy ổn hoặc cần cải thiện...",
+    "submit": "Gửi đánh giá",
+    "saveChanges": "Lưu thay đổi",
+    "skip": "Bỏ qua",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "rateThisLesson": "Đánh giá buổi học",
+    "noRatingYet": "Chưa có đánh giá",
+    "studentEmpty": "Bạn chưa đánh giá buổi học này.",
+    "tutorEmpty": "Học viên chưa đánh giá buổi học này.",
+    "unknownTutor": "Gia sư",
+    "toasts": {
+      "created": "Cảm ơn bạn đã đánh giá!",
+      "updated": "Đã cập nhật đánh giá",
+      "deleted": "Đã xóa đánh giá"
+    },
+    "errors": {
+      "ratingRequired": "Vui lòng chọn ít nhất 1 sao",
+      "missingLessonData": "Thiếu thông tin buổi học",
+      "submitFailed": "Không thể gửi đánh giá",
+      "deleteFailed": "Không thể xóa đánh giá"
+    }
+  },
   "tutorDashboard": {
     "nav": {
       "dashboard": "Trang chủ",
@@ -3016,7 +3054,8 @@
       "stats": {
         "totalLessons": "Tổng bài học",
         "scheduled": "Đã lên lịch",
-        "completed": "Hoàn thành",
+        "completed": "Hoàn thành (chưa trả)",
+        "settled": "Đã thanh toán",
         "cancelled": "Đã hủy"
       },
       "table": {
@@ -3034,7 +3073,7 @@
         "Scheduled": "Đã lên lịch",
         "InProgress": "Đang diễn ra",
         "Completed": "Hoàn thành",
-        "Settled": "Hoàn thành",
+        "Settled": "Đã thanh toán",
         "Cancelled": "Đã hủy",
         "NoStudent": "Vắng học viên",
         "NoTutor": "Vắng gia sư",

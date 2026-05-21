@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useCallback, useMemo } from "react";
-import { AltArrowRight, BookBookmark, CheckCircle, ClockCircle, DangerTriangle, DocumentText, File, Filter, Gallery, MinimalisticMagnifier, Plain } from "@solar-icons/react"
+import { AltArrowRight, BookBookmark, ClockCircle, DangerTriangle, DocumentText, File, Filter, Gallery, MinimalisticMagnifier, Plain } from "@solar-icons/react"
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -89,6 +89,8 @@ const computeDueInfo = (dueAt, t) => {
   const now = new Date();
   const diffMs = due.getTime() - now.getTime();
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays < 0)
+    return { label: t("studentDashboard.homework.overdue"), tone: "danger" };
   if (diffDays === 0)
     return { label: t("studentDashboard.homework.dueToday"), tone: "danger" };
   if (diffDays === 1)
@@ -108,12 +110,10 @@ const computeDueInfo = (dueAt, t) => {
 };
 
 const Homework = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const colors = useThemeColors();
-  const { inputClassNames, filterInputClassNames, filterTabsClassNames } =
-    useInputStyles();
+  const { filterInputClassNames, filterTabsClassNames } = useInputStyles();
   const navigate = useNavigate();
-  const locale = i18n.language === "vi" ? "vi-VN" : "en-US";
   const user = useSelector(selectUser);
 
   const [homeworks, setHomeworks] = useState([]);
@@ -242,44 +242,6 @@ const Homework = () => {
     setSelectedHw(hw);
     submitDisclosure.onOpen();
   };
-
-  // ── Small components ──────────────────────────────────────────────────────
-  const StatCard = ({ icon: Icon, label, value, accent, alert }) => (
-    <Card
-      shadow="none"
-      style={{ backgroundColor: colors.background.light }}
-      className={alert ? "ring-2" : ""}
-    >
-      <CardBody className="p-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <p
-              className="text-xs font-medium uppercase tracking-wide mb-1"
-              style={{ color: colors.text.tertiary }}
-            >
-              {label}
-            </p>
-            <p
-              className="text-2xl font-bold"
-              style={{ color: colors.text.primary }}
-            >
-              {value}
-            </p>
-          </div>
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: `${accent}15` }}
-          >
-            <Icon
-              weight="BoldDuotone"
-              className="w-5 h-5"
-              style={{ color: accent }}
-            />
-          </div>
-        </div>
-      </CardBody>
-    </Card>
-  );
 
   const Breadcrumb = ({ hw, size = "sm", onCourseClick }) => {
     const items = [hw.courseTitle, hw.moduleTitle, hw.sessionTitle].filter(
@@ -617,8 +579,22 @@ const Homework = () => {
                           {t("homeworkAI.aiBadge")}
                         </Chip>
                       )}
+                      {hw.status === "Assigned" && hw.dueAt && new Date(hw.dueAt) < new Date() && (
+                        <Chip
+                          size="sm"
+                          startContent={
+                            <DangerTriangle weight="BoldDuotone" className="w-3 h-3 ml-1" />
+                          }
+                          style={{
+                            backgroundColor: `${colors.state.error}20`,
+                            color: colors.state.error,
+                          }}
+                        >
+                          {t("studentDashboard.homework.status.overDate")}
+                        </Chip>
+                      )}
                     </div>
-                    {hw.status === "Assigned" && (
+                    {hw.status === "Assigned" && !(hw.dueAt && new Date(hw.dueAt) < new Date()) && (
                       <div className="flex items-center gap-1.5">
                         <ClockCircle
                           weight="BoldDuotone"
