@@ -167,6 +167,12 @@ export const adminApi = {
     return response.data;
   },
 
+  // Lesson report (admin only — for Completed/Settled lessons)
+  getLessonReport: async (lessonId) => {
+    const response = await axiosInstance.get(`/lessons/${lessonId}/report`);
+    return response.data;
+  },
+
   createTutor: async (formData) => {
     const response = await axiosInstance.post("/tutors", formData, {
       headers: { "Content-Type": "multipart/form-data" },

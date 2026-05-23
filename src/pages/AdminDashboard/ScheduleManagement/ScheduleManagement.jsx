@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BookBookmark, CalendarMark, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded, Wallet } from "@solar-icons/react"
-import { useNavigate } from "react-router-dom";
+import { BookBookmark, CalendarMark, ChartSquare, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded, Wallet } from "@solar-icons/react"
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -107,12 +107,30 @@ const ScheduleManagement = () => {
   const { tableCardStyle, tableClassNames } = useTableStyles();
   const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
-  const [activeTab, setActiveTab] = useState("overview");
+  // Persist active tab + lesson status filter in URL so back-navigation
+  // from the report page restores them
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "overview";
+  const lessonStatusFilter = searchParams.get("status") || "all";
+
+  const updateSearchParam = (key, value, defaultValue) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value && value !== defaultValue) next.set(key, value);
+        else next.delete(key);
+        return next;
+      },
+      { replace: true },
+    );
+  };
+  const setActiveTab = (key) => updateSearchParam("tab", key, "overview");
+  const setLessonStatusFilter = (status) =>
+    updateSearchParam("status", status, "all");
 
   // ── Lessons ──────────────────────────────────────────────
   const [lessonSearch, setLessonSearch] = useState("");
   const [debouncedLessonSearch, setDebouncedLessonSearch] = useState("");
-  const [lessonStatusFilter, setLessonStatusFilter] = useState("all");
   const [lessonPage, setLessonPage] = useState(1);
   const lessonPageSize = 10;
 
@@ -495,20 +513,41 @@ const ScheduleManagement = () => {
             </Chip>
           </div>
         );
-      case "actions":
+      case "actions": {
+        const hasReport =
+          lesson.status === "Completed" || lesson.status === "Settled";
         return (
-          <Button
-            isIconOnly
-            variant="light"
-            size="sm"
-            onPress={() => {
-              setSelectedLesson(lesson);
-              onDetailOpen();
-            }}
-          >
-            <Eye weight="BoldDuotone" className="w-4 h-4" style={{ color: colors.text.secondary }} />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              isIconOnly
+              variant="light"
+              size="sm"
+              onPress={() => {
+                setSelectedLesson(lesson);
+                onDetailOpen();
+              }}
+              title={t("adminDashboard.schedule.viewDetail")}
+            >
+              <Eye weight="BoldDuotone" className="w-4 h-4" style={{ color: colors.text.secondary }} />
+            </Button>
+            {hasReport && (
+              <Button
+                isIconOnly
+                variant="light"
+                size="sm"
+                onPress={() => navigate(`/admin/lessons/${lesson.id}/report`)}
+                title={t("adminDashboard.schedule.viewReport")}
+              >
+                <ChartSquare
+                  weight="BoldDuotone"
+                  className="w-4 h-4"
+                  style={{ color: colors.primary.main }}
+                />
+              </Button>
+            )}
+          </div>
         );
+      }
       default:
         return null;
     }
