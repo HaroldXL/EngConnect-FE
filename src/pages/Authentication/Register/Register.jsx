@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Eye, EyeClosed } from "@solar-icons/react";
+import React, { useState, useEffect } from "react";
+import { CheckCircle, Eye, EyeClosed } from "@solar-icons/react";
 import {
   Input,
   Button,
@@ -9,6 +9,8 @@ import {
   Alert,
   addToast,
 } from "@heroui/react";
+import LegalModal from "./LegalModal";
+import { TERMS, PRIVACY } from "../../Legal/legalData";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +37,10 @@ const Register = () => {
   const { inputClassNames } = useInputStyles();
   const { loading, error } = useSelector((state) => state.auth);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -46,6 +52,10 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    if (termsAgreed && privacyAgreed) setAgreeToTerms(true);
+  }, [termsAgreed, privacyAgreed]);
 
   const validateForm = () => {
     const errors = {};
@@ -347,32 +357,45 @@ const Register = () => {
               <div className="mb-6">
                 <Checkbox
                   isSelected={agreeToTerms}
-                  onValueChange={setAgreeToTerms}
-                  size="sm"
-                  classNames={{
-                    label: "text-sm",
+                  onValueChange={(v) => {
+                    setAgreeToTerms(v);
+                    if (!v) { setTermsAgreed(false); setPrivacyAgreed(false); }
                   }}
+                  size="sm"
+                  classNames={{ label: "text-sm" }}
                 >
                   <span
                     className="leading-relaxed"
                     style={{ color: colors.text.secondary }}
                   >
                     {t("auth.register.agreeToTerms")}{" "}
-                    <Link
-                      href="#"
-                      size="sm"
-                      style={{ color: colors.primary.main }}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
+                      style={{ color: termsAgreed ? colors.state.success : colors.primary.main }}
+                      onClick={(e) => { e.stopPropagation(); setTermsOpen(true); }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); setTermsOpen(true); } }}
                     >
+                      {termsAgreed && (
+                        <CheckCircle weight="Bold" className="w-3.5 h-3.5" />
+                      )}
                       {t("auth.register.termsAndConditions")}
-                    </Link>{" "}
+                    </span>{" "}
                     {t("auth.register.and")}{" "}
-                    <Link
-                      href="#"
-                      size="sm"
-                      style={{ color: colors.primary.main }}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
+                      style={{ color: privacyAgreed ? colors.state.success : colors.primary.main }}
+                      onClick={(e) => { e.stopPropagation(); setPrivacyOpen(true); }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); setPrivacyOpen(true); } }}
                     >
+                      {privacyAgreed && (
+                        <CheckCircle weight="Bold" className="w-3.5 h-3.5" />
+                      )}
                       {t("auth.register.privacyPolicy")}
-                    </Link>
+                    </span>
                   </span>
                 </Checkbox>
               </div>
@@ -417,6 +440,21 @@ const Register = () => {
           </div>
         </motion.div>
       </div>
+
+      <LegalModal
+        isOpen={termsOpen}
+        onClose={() => setTermsOpen(false)}
+        data={TERMS}
+        onAgree={() => setTermsAgreed(true)}
+        hasAgreed={termsAgreed}
+      />
+      <LegalModal
+        isOpen={privacyOpen}
+        onClose={() => setPrivacyOpen(false)}
+        data={PRIVACY}
+        onAgree={() => setPrivacyAgreed(true)}
+        hasAgreed={privacyAgreed}
+      />
     </div>
   );
 };
