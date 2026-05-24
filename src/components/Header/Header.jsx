@@ -3,11 +3,16 @@ import {
   AltArrowRight,
   BookBookmark,
   CloseSquare,
+  Document2,
+  DocumentText,
+  Documents,
   HamburgerMenu,
   Logout,
   MinimalisticMagnifier,
   NotebookMinimalistic,
+  PresentationGraph,
   QuestionCircle,
+  ShieldUser,
   SquareAcademicCap,
 } from "@solar-icons/react";
 import {
@@ -268,7 +273,7 @@ const Header = () => {
                         radius="full"
                         className="font-semibold px-4 transition-all duration-300 text-sm"
                         startContent={
-                          <SquareAcademicCap
+                          <PresentationGraph
                             weight="BoldDuotone"
                             className="w-4 h-4"
                           />
@@ -346,6 +351,47 @@ const Header = () => {
                                 )}
                               </div>
                             </div>
+                          </DropdownItem>
+                        </DropdownSection>
+                        <DropdownSection showDivider>
+                          <DropdownItem
+                            key="terms"
+                            startContent={
+                              <DocumentText
+                                weight="BoldDuotone"
+                                className="w-6 h-6"
+                                style={{ color: colors.text.secondary }}
+                              />
+                            }
+                            onPress={() => navigate("/terms")}
+                          >
+                            {t("nav.terms")}
+                          </DropdownItem>
+                          <DropdownItem
+                            key="privacy"
+                            startContent={
+                              <ShieldUser
+                                weight="BoldDuotone"
+                                className="w-6 h-6"
+                                style={{ color: colors.text.secondary }}
+                              />
+                            }
+                            onPress={() => navigate("/privacy")}
+                          >
+                            {t("nav.privacy")}
+                          </DropdownItem>
+                          <DropdownItem
+                            key="policies"
+                            startContent={
+                              <Document2
+                                weight="BoldDuotone"
+                                className="w-6 h-6"
+                                style={{ color: colors.text.secondary }}
+                              />
+                            }
+                            onPress={() => navigate("/policies")}
+                          >
+                            {t("nav.policies")}
                           </DropdownItem>
                         </DropdownSection>
                         <DropdownSection>
@@ -582,7 +628,7 @@ const Header = () => {
                           variant="flat"
                           className="font-semibold w-full"
                           startContent={
-                            <SquareAcademicCap
+                            <PresentationGraph
                               weight="BoldDuotone"
                               className="w-5 h-5"
                             />

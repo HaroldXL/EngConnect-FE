@@ -6,6 +6,8 @@ import {
   CalendarMark,
   ChecklistMinimalistic,
   CloseSquare,
+  Document2,
+  DocumentText,
   Dollar,
   HomeSmile,
   Logout,
@@ -14,6 +16,7 @@ import {
   PenNewSquare,
   PresentationGraph,
   QuestionCircle,
+  ShieldUser,
   SquareAcademicCap,
   UserCircle,
   VerifiedCheck,
@@ -29,6 +32,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  DropdownSection,
 } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -239,43 +243,88 @@ const TutorDashboardLayout = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="User menu">
-                <DropdownItem
-                  key="profile"
-                  startContent={
-                    <UserCircle
-                      style={{ color: colors.text.secondary }}
-                      weight="BoldDuotone"
-                      className="w-6 h-6"
-                    />
-                  }
-                  onPress={() => navigate("/tutor/profile")}
-                >
-                  {t("tutorDashboard.nav.profile")}
-                </DropdownItem>
-                <DropdownItem
-                  key="help-support"
-                  startContent={
-                    <QuestionCircle
-                      style={{ color: colors.text.secondary }}
-                      weight="BoldDuotone"
-                      className="w-6 h-6"
-                    />
-                  }
-                  onPress={() => navigate("/help-support")}
-                >
-                  {t("tutorDashboard.nav.helpSupport")}
-                </DropdownItem>
-                <DropdownItem
-                  key="logout"
-                  className="text-danger"
-                  color="danger"
-                  startContent={
-                    <Logout weight="BoldDuotone" className="w-6 h-6" />
-                  }
-                  onPress={() => setLogoutModalOpen(true)}
-                >
-                  {t("tutorDashboard.nav.logout")}
-                </DropdownItem>
+                <DropdownSection showDivider>
+                  <DropdownItem
+                    key="profile"
+                    startContent={
+                      <UserCircle
+                        style={{ color: colors.text.secondary }}
+                        weight="BoldDuotone"
+                        className="w-6 h-6"
+                      />
+                    }
+                    onPress={() => navigate("/tutor/profile")}
+                  >
+                    {t("tutorDashboard.nav.profile")}
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownSection showDivider>
+                  <DropdownItem
+                    key="terms"
+                    startContent={
+                      <DocumentText
+                        style={{ color: colors.text.secondary }}
+                        weight="BoldDuotone"
+                        className="w-6 h-6"
+                      />
+                    }
+                    onPress={() => navigate("/terms")}
+                  >
+                    {t("nav.terms")}
+                  </DropdownItem>
+                  <DropdownItem
+                    key="privacy"
+                    startContent={
+                      <ShieldUser
+                        style={{ color: colors.text.secondary }}
+                        weight="BoldDuotone"
+                        className="w-6 h-6"
+                      />
+                    }
+                    onPress={() => navigate("/privacy")}
+                  >
+                    {t("nav.privacy")}
+                  </DropdownItem>
+                  <DropdownItem
+                    key="policies"
+                    startContent={
+                      <Document2
+                        style={{ color: colors.text.secondary }}
+                        weight="BoldDuotone"
+                        className="w-6 h-6"
+                      />
+                    }
+                    onPress={() => navigate("/policies")}
+                  >
+                    {t("nav.policies")}
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownSection>
+                  <DropdownItem
+                    key="help-support"
+                    startContent={
+                      <QuestionCircle
+                        style={{ color: colors.text.secondary }}
+                        weight="BoldDuotone"
+                        className="w-6 h-6"
+                      />
+                    }
+                    onPress={() => navigate("/help-support")}
+                  >
+                    {t("tutorDashboard.nav.helpSupport")}
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    className="text-danger"
+                    color="danger"
+                    startContent={
+                      <Logout weight="BoldDuotone" className="w-6 h-6" />
+                    }
+                    onPress={() => setLogoutModalOpen(true)}
+                  >
+                    {t("tutorDashboard.nav.logout")}
+                  </DropdownItem>
+                </DropdownSection>
               </DropdownMenu>
             </Dropdown>
 

@@ -67,6 +67,11 @@ import AdminCourseDetail from "../pages/AdminDashboard/CourseManagement/CourseDe
 import AdminCourseVerificationDetail from "../pages/AdminDashboard/CourseManagement/CourseVerificationDetail";
 import AdminTutorDetail from "../pages/AdminDashboard/TutorManagament/TutorDetail";
 
+// Legal Pages
+import TermsPage from "../pages/Legal/TermsPage";
+import PrivacyPage from "../pages/Legal/PrivacyPage";
+import PoliciesPage from "../pages/Legal/PoliciesPage";
+
 // Help & Support (shared by student/tutor)
 import HelpSupport from "../pages/HelpSupport/HelpSupport";
 
@@ -190,6 +195,18 @@ export const router = createBrowserRouter([
       {
         path: "help-support",
         element: <HelpSupport />,
+      },
+      {
+        path: "terms",
+        element: <TermsPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPage />,
+      },
+      {
+        path: "policies",
+        element: <PoliciesPage />,
       },
     ],
   },

@@ -28,8 +28,9 @@ const Footer = () => {
     ],
     company: [
       { name: t("footer.company.about"), href: "/about" },
-      { name: t("footer.company.blog"), href: "/blog" },
-      { name: t("footer.company.contact"), href: "/contact" },
+      { name: t("footer.company.terms"), href: "/terms" },
+      { name: t("footer.company.privacy"), href: "/privacy" },
+      { name: t("footer.company.policies"), href: "/policies" },
     ],
     support: [
       { name: t("footer.support.helpCenter"), href: "/help" },
@@ -260,7 +261,7 @@ const Footer = () => {
               {[
                 { key: "privacy", label: t("footer.bottom.privacy") },
                 { key: "terms", label: t("footer.bottom.terms") },
-                { key: "cookies", label: t("footer.bottom.cookies") },
+                { key: "policies", label: t("footer.bottom.policies") },
               ].map((item) => (
                 <Link
                   key={item.key}

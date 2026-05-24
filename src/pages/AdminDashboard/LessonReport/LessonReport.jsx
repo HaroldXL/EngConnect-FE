@@ -22,6 +22,7 @@ import {
   PenNewSquare,
   Play,
   RecordAudioCircle,
+  ShieldKeyhole,
   Star,
   Target,
   UsersGroupRounded,
@@ -31,7 +32,6 @@ import { motion } from "framer-motion";
 import { adminApi } from "../../../api";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import VideoModal from "../../../components/VideoModal/VideoModal";
-import LessonSummaryModal from "../../../components/LessonSummaryModal/LessonSummaryModal";
 
 const CDN_BASE = "https://d20854st1o56hw.cloudfront.net/";
 const withCDN = (url) => {
@@ -206,11 +206,6 @@ const LessonReport = () => {
     isOpen: isVideoOpen,
     onOpen: onVideoOpen,
     onOpenChange: onVideoOpenChange,
-  } = useDisclosure();
-  const {
-    isOpen: isSummaryOpen,
-    onOpen: onSummaryOpen,
-    onClose: onSummaryClose,
   } = useDisclosure();
   const [showFullTranscript, setShowFullTranscript] = useState(false);
 
@@ -747,31 +742,6 @@ const LessonReport = () => {
                 />
               </div>
 
-              {actual > 0 && (
-                <div>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <span
-                      className="text-sm"
-                      style={{ color: colors.text.secondary }}
-                    >
-                      {t("adminDashboard.lessonReport.recordingCoverage")}
-                    </span>
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: colors.text.primary }}
-                    >
-                      {recordingMin} / {actual}{" "}
-                      {t("adminDashboard.lessonReport.minUnit")}
-                    </span>
-                  </div>
-                  <Progress
-                    value={recordingPct}
-                    classNames={{ indicator: "!bg-current" }}
-                    style={{ color: "#0d9488" }}
-                    size="sm"
-                  />
-                </div>
-              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-5">
@@ -842,114 +812,113 @@ const LessonReport = () => {
 
       {/* ── AI Analysis ── */}
       {data.aiSummaryAvailable && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Card
-            shadow="none"
-            className="border-none lg:col-span-2"
-            style={{ backgroundColor: colors.background.light }}
-          >
-            <CardBody className="p-5">
-              <SectionTitle icon={ChartSquare} iconColor="#0d9488">
-                {t("adminDashboard.lessonReport.summary")}
-              </SectionTitle>
-              {data.summarizeText ? (
+        <Card
+          shadow="none"
+          className="border-none"
+          style={{ backgroundColor: colors.background.light }}
+        >
+          <CardBody className="p-5">
+            <div className="flex flex-col lg:flex-row lg:items-start gap-5">
+              <div className="flex-1 min-w-0">
+                <SectionTitle icon={ChartSquare} iconColor="#0d9488">
+                  {t("adminDashboard.lessonReport.summary")}
+                </SectionTitle>
+                {data.summarizeText ? (
+                  <p
+                    className="text-sm whitespace-pre-line leading-relaxed"
+                    style={{ color: colors.text.secondary }}
+                  >
+                    {data.summarizeText}
+                  </p>
+                ) : (
+                  <p
+                    className="text-sm italic"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {t("adminDashboard.lessonReport.noSummary")}
+                  </p>
+                )}
+
+                {(outcomes.Pass?.length > 0 || outcomes.Fail?.length > 0) && (
+                  <>
+                    <div className="mt-5 mb-3">
+                      <SectionTitle
+                        icon={Target}
+                        iconColor={colors.state.success}
+                      >
+                        {t("adminDashboard.lessonReport.learningOutcomes")}
+                      </SectionTitle>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {outcomes.Pass?.map((o, idx) => (
+                        <Chip
+                          key={`pass-${idx}`}
+                          size="sm"
+                          variant="flat"
+                          startContent={
+                            <VerifiedCheck
+                              weight="BoldDuotone"
+                              className="w-3 h-3"
+                            />
+                          }
+                          style={{
+                            backgroundColor: `${colors.state.success}20`,
+                            color: colors.state.success,
+                          }}
+                        >
+                          {o}
+                        </Chip>
+                      ))}
+                      {outcomes.Fail?.map((o, idx) => (
+                        <Chip
+                          key={`fail-${idx}`}
+                          size="sm"
+                          variant="flat"
+                          style={{
+                            backgroundColor: `${colors.state.warning}20`,
+                            color: colors.state.warning,
+                          }}
+                        >
+                          {o}
+                        </Chip>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div
+                className="text-center p-5 rounded-xl lg:w-64 lg:flex-shrink-0"
+                style={{ backgroundColor: colors.background.gray }}
+              >
                 <p
-                  className="text-sm whitespace-pre-line leading-relaxed"
-                  style={{ color: colors.text.secondary }}
-                >
-                  {data.summarizeText}
-                </p>
-              ) : (
-                <p
-                  className="text-sm italic"
+                  className="text-xs uppercase tracking-wider font-bold"
                   style={{ color: colors.text.tertiary }}
                 >
-                  {t("adminDashboard.lessonReport.noSummary")}
+                  {t("adminDashboard.lessonReport.contentCoverage")}
                 </p>
-              )}
-
-              {(outcomes.Pass?.length > 0 || outcomes.Fail?.length > 0) && (
-                <>
-                  <div className="mt-5 mb-3">
-                    <SectionTitle
-                      icon={Target}
-                      iconColor={colors.state.success}
-                    >
-                      {t("adminDashboard.lessonReport.learningOutcomes")}
-                    </SectionTitle>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {outcomes.Pass?.map((o, idx) => (
-                      <Chip
-                        key={`pass-${idx}`}
-                        size="sm"
-                        variant="flat"
-                        startContent={
-                          <VerifiedCheck
-                            weight="BoldDuotone"
-                            className="w-3 h-3"
-                          />
-                        }
-                        style={{
-                          backgroundColor: `${colors.state.success}20`,
-                          color: colors.state.success,
-                        }}
-                      >
-                        {o}
-                      </Chip>
-                    ))}
-                    {outcomes.Fail?.map((o, idx) => (
-                      <Chip
-                        key={`fail-${idx}`}
-                        size="sm"
-                        variant="flat"
-                        style={{
-                          backgroundColor: `${colors.state.warning}20`,
-                          color: colors.state.warning,
-                        }}
-                      >
-                        {o}
-                      </Chip>
-                    ))}
-                  </div>
-                </>
-              )}
-            </CardBody>
-          </Card>
-
-          <Card
-            shadow="none"
-            className="border-none"
-            style={{ backgroundColor: colors.background.light }}
-          >
-            <CardBody className="p-5 text-center">
-              <p
-                className="text-xs uppercase tracking-wider font-bold"
-                style={{ color: colors.text.tertiary }}
-              >
-                {t("adminDashboard.lessonReport.contentCoverage")}
-              </p>
-              <p
-                className="text-5xl font-bold my-3"
-                style={{ color: colors.primary.main }}
-              >
-                {data.coveragePercent ?? 0}%
-              </p>
-              <p
-                className="text-sm mb-4"
-                style={{ color: colors.text.secondary }}
-              >
-                {t("adminDashboard.lessonReport.sessionPlanCompleted")}
-              </p>
-              <Progress
-                value={data.coveragePercent ?? 0}
-                classNames={{ indicator: "!bg-current" }}
-                style={{ color: colors.primary.main }}
-                size="sm"
-              />
-            </CardBody>
-          </Card>
-        </div>
+                <p
+                  className="text-5xl font-bold my-3"
+                  style={{ color: colors.primary.main }}
+                >
+                  {data.coveragePercent ?? 0}%
+                </p>
+                <p
+                  className="text-sm mb-4"
+                  style={{ color: colors.text.secondary }}
+                >
+                  {t("adminDashboard.lessonReport.sessionPlanCompleted")}
+                </p>
+                <Progress
+                  value={data.coveragePercent ?? 0}
+                  classNames={{ indicator: "!bg-current" }}
+                  style={{ color: colors.primary.main }}
+                  size="sm"
+                />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       )}
 
       {/* ── Recording & Transcript ── */}
@@ -1077,8 +1046,8 @@ const LessonReport = () => {
                     {!showFullTranscript && hasMoreTranscript && "..."}
                   </p>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2 justify-end">
-                  {hasMoreTranscript && (
+                {hasMoreTranscript && (
+                  <div className="mt-3 flex justify-end">
                     <Button
                       size="sm"
                       variant="light"
@@ -1088,18 +1057,8 @@ const LessonReport = () => {
                         ? t("adminDashboard.lessonReport.showLess")
                         : t("adminDashboard.lessonReport.showFullTranscript")}
                     </Button>
-                  )}
-                  {data.summarizeText && (
-                    <Button
-                      size="sm"
-                      color="primary"
-                      variant="flat"
-                      onPress={onSummaryOpen}
-                    >
-                      {t("adminDashboard.lessonReport.viewSummary")}
-                    </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </>
             ) : (
               <p
@@ -1126,7 +1085,7 @@ const LessonReport = () => {
             </SectionTitle>
 
             {/* HW stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
               <div
                 className="p-3 rounded-xl"
                 style={{ backgroundColor: colors.background.gray }}
@@ -1178,35 +1137,6 @@ const LessonReport = () => {
                   {completionRate}%
                 </p>
               </div>
-              <div
-                className="p-3 rounded-xl"
-                style={{ backgroundColor: colors.background.gray }}
-              >
-                <p
-                  className="text-xs uppercase tracking-wide"
-                  style={{ color: colors.text.tertiary }}
-                >
-                  {t("adminDashboard.lessonReport.hwAvgScore")}
-                </p>
-                <p
-                  className="text-xl font-bold mt-1"
-                  style={{ color: colors.text.primary }}
-                >
-                  {avgScore != null ? (
-                    <>
-                      {avgScore}{" "}
-                      <span
-                        className="text-xs font-normal"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        / 10
-                      </span>
-                    </>
-                  ) : (
-                    "—"
-                  )}
-                </p>
-              </div>
             </div>
 
             {/* HW list */}
@@ -1220,10 +1150,25 @@ const LessonReport = () => {
                       : hw.status === "Assigned"
                         ? colors.state.warning
                         : colors.text.tertiary;
+
+                const showAi =
+                  hw.type === "Writing" && hw.aiDetectionScore != null;
+                let aiToneColor = colors.state.success;
+                let aiToneLabel = t("homeworkAI.detectionLow");
+                if (showAi) {
+                  if (hw.aiDetectionScore >= 70) {
+                    aiToneColor = colors.state.error;
+                    aiToneLabel = t("homeworkAI.detectionHigh");
+                  } else if (hw.aiDetectionScore >= 30) {
+                    aiToneColor = colors.state.warning;
+                    aiToneLabel = t("homeworkAI.detectionMedium");
+                  }
+                }
+
                 return (
                   <div
                     key={hw.id}
-                    className="p-3 rounded-xl flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+                    className="p-3 rounded-xl flex items-start gap-3 hover:opacity-80 transition-opacity cursor-pointer"
                     style={{ backgroundColor: colors.background.gray }}
                     role="button"
                     tabIndex={0}
@@ -1260,8 +1205,35 @@ const LessonReport = () => {
                         {hw.submittedAt &&
                           ` · ${t("adminDashboard.lessonReport.submitted")}: ${formatDateTime(hw.submittedAt, dateLocale)}`}
                       </p>
+                      {showAi && (
+                        <div className="flex items-center flex-wrap gap-2 mt-1.5">
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            startContent={
+                              <ShieldKeyhole
+                                weight="BoldDuotone"
+                                className="w-3 h-3"
+                              />
+                            }
+                            style={{
+                              backgroundColor: `${aiToneColor}15`,
+                              color: aiToneColor,
+                            }}
+                          >
+                            {t("homeworkAI.detectionTitle")}{" "}
+                            {hw.aiDetectionScore.toFixed(1)}%
+                          </Chip>
+                          <span
+                            className="text-xs"
+                            style={{ color: aiToneColor }}
+                          >
+                            {aiToneLabel}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right flex-shrink-0 flex flex-col items-end gap-1">
                       <p
                         className="text-sm font-bold"
                         style={{ color: colors.text.primary }}
@@ -1281,7 +1253,6 @@ const LessonReport = () => {
                           backgroundColor: `${hwStatusColor}20`,
                           color: hwStatusColor,
                         }}
-                        className="mt-1"
                       >
                         {hw.status}
                       </Chip>
@@ -1405,26 +1376,11 @@ const LessonReport = () => {
         </Card>
       </div>
 
-      {/* Footer */}
-      <p
-        className="text-center text-xs pt-2"
-        style={{ color: colors.text.tertiary }}
-      >
-        {t("adminDashboard.lessonReport.footer", {
-          date: new Date().toLocaleString(dateLocale),
-        })}
-      </p>
-
       {/* Modals */}
       <VideoModal
         isOpen={isVideoOpen}
         onOpenChange={onVideoOpenChange}
         videoUrl={data.recordUrl}
-      />
-      <LessonSummaryModal
-        isOpen={isSummaryOpen}
-        onClose={onSummaryClose}
-        summarizeText={data.summarizeText}
       />
     </div>
   );

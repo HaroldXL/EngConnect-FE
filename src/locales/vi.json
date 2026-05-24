@@ -35,6 +35,9 @@
     "tutorDashboard": "Gia Sư",
     "completeTutorProfile": "Hoàn thiện hồ sơ Gia sư",
     "helpSupport": "Trợ giúp & Hỗ trợ",
+    "terms": "Điều khoản sử dụng",
+    "privacy": "Chính sách bảo mật",
+    "policies": "Chính sách nền tảng",
     "logout": "Đăng xuất"
   },
   "becomeTutor": {
@@ -324,8 +327,9 @@
     },
     "company": {
       "about": "Giới thiệu",
-      "blog": "Blog",
-      "contact": "Liên hệ"
+      "terms": "Điều khoản",
+      "privacy": "Bảo mật",
+      "policies": "Chính sách"
     },
     "support": {
       "helpCenter": "Trung tâm trợ giúp",
@@ -343,7 +347,7 @@
       "rights": "Đã đăng ký bản quyền.",
       "privacy": "Bảo mật",
       "terms": "Điều khoản",
-      "cookies": "Cookie",
+      "policies": "Chính sách",
       "madeIn": "Sản xuất tại Việt Nam"
     }
   },

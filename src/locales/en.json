@@ -35,6 +35,9 @@
     "tutorDashboard": "Tutor Dashboard",
     "completeTutorProfile": "Complete Tutor Profile",
     "helpSupport": "Help & Support",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "policies": "Platform Policies",
     "logout": "Logout"
   },
   "becomeTutor": {
@@ -324,8 +327,9 @@
     },
     "company": {
       "about": "About",
-      "blog": "Blog",
-      "contact": "Contact"
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "policies": "Policies"
     },
     "support": {
       "helpCenter": "Help Center",
@@ -343,7 +347,7 @@
       "rights": "All rights reserved.",
       "privacy": "Privacy",
       "terms": "Terms",
-      "cookies": "Cookies",
+      "policies": "Policies",
       "madeIn": "Made in Vietnam"
     }
   },
