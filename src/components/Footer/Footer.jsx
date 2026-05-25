@@ -55,7 +55,8 @@ const Footer = () => {
       className="group text-base inline-flex items-center gap-1.5 transition-all duration-200"
       style={{ color: colors.text.secondary }}
     >
-      <AltArrowRight weight="BoldDuotone"
+      <AltArrowRight
+        weight="BoldDuotone"
         className="w-0 h-4 opacity-0 -ml-1 group-hover:w-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200"
         style={{ color: colors.primary.main }}
       />

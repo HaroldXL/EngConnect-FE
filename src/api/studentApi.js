@@ -139,6 +139,14 @@ export const studentApi = {
     return response.data;
   },
 
+  // Get completed/settled lessons (admin lesson reports)
+  getCompletedSettledLessons: async (params = {}) => {
+    const response = await axiosInstance.get("/lessons/completed-settled", {
+      params,
+    });
+    return response.data;
+  },
+
   // Get lesson by ID
   getLessonById: async (id) => {
     const response = await axiosInstance.get(`/lessons/${id}`);

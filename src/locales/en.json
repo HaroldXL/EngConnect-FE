@@ -2327,7 +2327,10 @@
       "commission": "Commission",
       "settings": "Settings",
       "supportTickets": "Support Tickets",
-      "schedule": "Schedule",
+      "schedule": "Lesson Schedule",
+      "lessonList": "Lesson List",
+      "lessonReports": "Lesson Reports",
+      "tutorSlots": "Tutor Slots",
       "logout": "Logout"
     },
     "search": {
@@ -3023,9 +3026,17 @@
         "Closed": "Closed"
       }
     },
+    "lessonReports": {
+      "title": "Lesson Reports",
+      "subtitle": "Quality and analytics for completed lessons"
+    },
+    "tutorSlots": {
+      "title": "Tutor Slots",
+      "subtitle": "Tutor availability and bookings across the platform"
+    },
     "schedule": {
-      "title": "Schedule Management",
-      "subtitle": "Monitor lessons and tutor schedules across the platform",
+      "title": "Lesson Management",
+      "subtitle": "Monitor and manage lesson sessions across the platform",
       "export": "Export",
       "status": "Status",
       "all": "All",
@@ -3039,6 +3050,46 @@
       "lessonDetail": "Lesson Detail",
       "overviewTab": "Overview",
       "tutorSlotsTab": "Tutor Slots",
+      "reportsTab": "Lesson Reports",
+      "reports": {
+        "searchPlaceholder": "Search by course, session, tutor or student...",
+        "noResults": "No lesson reports found",
+        "coverage": "Coverage",
+        "rating": "Rating",
+        "notRated": "Not rated",
+        "noCoverage": "No data",
+        "sortBy": "Sort by",
+        "sort": {
+          "newest": "Newest first",
+          "oldest": "Oldest first",
+          "lowCoverage": "Lowest coverage",
+          "lowRating": "Lowest rating"
+        },
+        "filters": {
+          "allStatus": "All statuses",
+          "allCoverage": "All coverage",
+          "highCoverage": "High (≥80%)",
+          "mediumCoverage": "Medium (50-79%)",
+          "lowCoverage": "Low (<50%)",
+          "noCoverage": "No data",
+          "allRating": "All ratings",
+          "rated": "Rated",
+          "unrated": "Unrated",
+          "lowRating": "Low (<3★)"
+        },
+        "stats": {
+          "totalReports": "Total Reports",
+          "avgCoverage": "Avg Coverage",
+          "avgRating": "Avg Rating",
+          "needsAttention": "Needs Attention"
+        },
+        "health": {
+          "healthy": "Healthy",
+          "review": "Review",
+          "issue": "Issue",
+          "pending": "Pending"
+        }
+      },
       "liveNow": "In Progress Now",
       "inProgressNow": "In Progress Now",
       "upcomingToday": "Upcoming Today",

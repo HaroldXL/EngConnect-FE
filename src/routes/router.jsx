@@ -61,6 +61,8 @@ import AdminCommission from "../pages/AdminDashboard/FinancialManagement/Commiss
 import AdminPayroll from "../pages/AdminDashboard/PayrollManagement/PayrollManagement";
 import AdminSupportTickets from "../pages/AdminDashboard/SupportTickets/SupportTickets";
 import AdminScheduleManagement from "../pages/AdminDashboard/ScheduleManagement/ScheduleManagement";
+import AdminLessonReports from "../pages/AdminDashboard/LessonReports/LessonReports";
+import AdminTutorSlots from "../pages/AdminDashboard/TutorSlots/TutorSlots";
 import AdminLessonReport from "../pages/AdminDashboard/LessonReport/LessonReport";
 import AdminHomeworkDetail from "../pages/AdminDashboard/HomeworkDetail/HomeworkDetail";
 import AdminCourseDetail from "../pages/AdminDashboard/CourseManagement/CourseDetail";
@@ -393,6 +395,14 @@ export const router = createBrowserRouter([
       {
         path: "schedule",
         element: <AdminScheduleManagement />,
+      },
+      {
+        path: "lesson-reports",
+        element: <AdminLessonReports />,
+      },
+      {
+        path: "tutor-slots",
+        element: <AdminTutorSlots />,
       },
       {
         path: "lessons/:id/report",

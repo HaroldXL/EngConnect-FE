@@ -2325,7 +2325,10 @@
       "commission": "Hoa hồng",
       "settings": "Cài đặt",
       "supportTickets": "Phiếu hỗ trợ",
-      "schedule": "Lịch học",
+      "schedule": "Lịch buổi học",
+      "lessonList": "Danh sách bài học",
+      "lessonReports": "Báo cáo buổi học",
+      "tutorSlots": "Lịch rảnh gia sư",
       "logout": "Đăng xuất"
     },
     "search": {
@@ -3020,9 +3023,17 @@
         "Closed": "Đã đóng"
       }
     },
+    "lessonReports": {
+      "title": "Báo cáo buổi học",
+      "subtitle": "Chất lượng và phân tích cho các buổi học đã hoàn thành"
+    },
+    "tutorSlots": {
+      "title": "Lịch rảnh gia sư",
+      "subtitle": "Lịch rảnh và đặt chỗ của gia sư trên nền tảng"
+    },
     "schedule": {
-      "title": "Quản lý lịch học",
-      "subtitle": "Giám sát bài học và lịch dạy của gia sư trên nền tảng",
+      "title": "Quản lý bài học",
+      "subtitle": "Giám sát và quản lý các buổi học trên nền tảng",
       "export": "Xuất",
       "status": "Trạng thái",
       "all": "Tất cả",
@@ -3036,6 +3047,46 @@
       "lessonDetail": "Chi tiết bài học",
       "overviewTab": "Tổng quan",
       "tutorSlotsTab": "Lịch rảnh gia sư",
+      "reportsTab": "Báo cáo buổi học",
+      "reports": {
+        "searchPlaceholder": "Tìm theo khóa học, buổi, gia sư hoặc học viên...",
+        "noResults": "Không có báo cáo buổi học nào",
+        "coverage": "Độ bao phủ",
+        "rating": "Đánh giá",
+        "notRated": "Chưa đánh giá",
+        "noCoverage": "Chưa có dữ liệu",
+        "sortBy": "Sắp xếp",
+        "sort": {
+          "newest": "Mới nhất",
+          "oldest": "Cũ nhất",
+          "lowCoverage": "Bao phủ thấp nhất",
+          "lowRating": "Đánh giá thấp nhất"
+        },
+        "filters": {
+          "allStatus": "Tất cả trạng thái",
+          "allCoverage": "Tất cả độ bao phủ",
+          "highCoverage": "Cao (≥80%)",
+          "mediumCoverage": "Trung bình (50-79%)",
+          "lowCoverage": "Thấp (<50%)",
+          "noCoverage": "Chưa có dữ liệu",
+          "allRating": "Tất cả đánh giá",
+          "rated": "Đã đánh giá",
+          "unrated": "Chưa đánh giá",
+          "lowRating": "Thấp (<3★)"
+        },
+        "stats": {
+          "totalReports": "Tổng báo cáo",
+          "avgCoverage": "Bao phủ TB",
+          "avgRating": "Đánh giá TB",
+          "needsAttention": "Cần chú ý"
+        },
+        "health": {
+          "healthy": "Tốt",
+          "review": "Cần xem xét",
+          "issue": "Có vấn đề",
+          "pending": "Chưa có dữ liệu"
+        }
+      },
       "liveNow": "Đang diễn ra",
       "inProgressNow": "Đang diễn ra",
       "upcomingToday": "Sắp diễn ra hôm nay",

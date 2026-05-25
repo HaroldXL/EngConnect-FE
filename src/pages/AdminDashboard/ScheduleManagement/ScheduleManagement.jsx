@@ -1,6 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BookBookmark, CalendarMark, ChartSquare, CheckCircle, ClockCircle, CloseCircle, CloseSquare, Eye, Filter, Hourglass, Lightning, MinimalisticMagnifier, PresentationGraph, UsersGroupRounded, Wallet } from "@solar-icons/react"
+import {
+  BookBookmark,
+  CalendarMark,
+  ChartSquare,
+  CheckCircle,
+  CloseCircle,
+  CloseSquare,
+  Eye,
+  Filter,
+  Hourglass,
+  MinimalisticMagnifier,
+  PresentationGraph,
+  UsersGroupRounded,
+  Wallet,
+} from "@solar-icons/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card,
@@ -34,7 +48,7 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
-import { studentApi, tutorApi, adminApi } from "../../../api";
+import { studentApi, adminApi } from "../../../api";
 import AdminLessonDetailModal from "../../../components/AdminLessonDetailModal/AdminLessonDetailModal";
 
 // ── constants ──────────────────────────────────────────────
@@ -43,25 +57,6 @@ const withCDN = (url) => {
   if (!url) return undefined;
   if (url.startsWith("http")) return url;
   return CDN_BASE + url;
-};
-
-const WEEKDAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-const WEEKDAY_SHORT = {
-  Monday: "Mon",
-  Tuesday: "Tue",
-  Wednesday: "Wed",
-  Thursday: "Thu",
-  Friday: "Fri",
-  Saturday: "Sat",
-  Sunday: "Sun",
 };
 
 // ── date helpers ────────────────────────────────────────────
@@ -107,8 +102,7 @@ const ScheduleManagement = () => {
   const { tableCardStyle, tableClassNames } = useTableStyles();
   const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
-  // Persist active tab + lesson status filter in URL so back-navigation
-  // from the report page restores them
+  // Persist active tab + lesson status filter in URL
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "overview";
   const lessonStatusFilter = searchParams.get("status") || "all";
@@ -134,30 +128,27 @@ const ScheduleManagement = () => {
   const [lessonPage, setLessonPage] = useState(1);
   const lessonPageSize = 10;
 
-  // Date filter
   const [datePreset, setDatePreset] = useState("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
 
-  // Tutor/Student picker filters
-  const [selectedTutor, setSelectedTutor] = useState(null); // { id, name, avatar }
+  const [selectedTutor, setSelectedTutor] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  // ── Tutor picker modal ────────────────────────────────────
+  // Picker modals
   const [tutorPickerOpen, setTutorPickerOpen] = useState(false);
   const [tutorPickerSearch, setTutorPickerSearch] = useState("");
   const [tutorPickerItems, setTutorPickerItems] = useState([]);
   const [tutorPickerLoading, setTutorPickerLoading] = useState(false);
   const [tutorPickerTemp, setTutorPickerTemp] = useState(null);
 
-  // ── Student picker modal ──────────────────────────────────
   const [studentPickerOpen, setStudentPickerOpen] = useState(false);
   const [studentPickerSearch, setStudentPickerSearch] = useState("");
   const [studentPickerItems, setStudentPickerItems] = useState([]);
   const [studentPickerLoading, setStudentPickerLoading] = useState(false);
   const [studentPickerTemp, setStudentPickerTemp] = useState(null);
 
-  // ── Lesson detail modal ───────────────────────────────────
+  // Lesson detail modal
   const {
     isOpen: isDetailOpen,
     onOpen: onDetailOpen,
@@ -165,10 +156,7 @@ const ScheduleManagement = () => {
   } = useDisclosure();
   const [selectedLesson, setSelectedLesson] = useState(null);
 
-  // ── Tutor Slots ───────────────────────────────────────────
-  const [scheduleStatusFilter, setScheduleStatusFilter] = useState("all");
-
-  // ── debounce lesson search ────────────────────────────────
+  // Debounce lesson search
   useEffect(() => {
     const t = setTimeout(() => {
       setDebouncedLessonSearch(lessonSearch);
@@ -183,15 +171,22 @@ const ScheduleManagement = () => {
     queryFn: async () => {
       const todayFrom = toApiStart(todayStr());
       const todayTo = toApiEnd(todayStr());
-      const [allR, schR, liveR, compR, settledR, canR, upcomingR] = await Promise.allSettled([
-        studentApi.getLessons({ "page-size": 1, page: 1 }),
-        studentApi.getLessons({ Status: "Scheduled", "page-size": 1, page: 1 }),
-        studentApi.getLessons({ Status: "InProgress", "page-size": 10, page: 1 }),
-        studentApi.getLessons({ Status: "Completed", "page-size": 1, page: 1 }),
-        studentApi.getLessons({ Status: "Settled", "page-size": 1, page: 1 }),
-        studentApi.getLessons({ Status: "Cancelled", "page-size": 1, page: 1 }),
-        studentApi.getLessons({ Status: "Scheduled", StartTimeFrom: todayFrom, StartTimeTo: todayTo, "page-size": 10, page: 1 }),
-      ]);
+      const [allR, schR, liveR, compR, settledR, canR, upcomingR] =
+        await Promise.allSettled([
+          studentApi.getLessons({ "page-size": 1, page: 1 }),
+          studentApi.getLessons({ Status: "Scheduled", "page-size": 1, page: 1 }),
+          studentApi.getLessons({ Status: "InProgress", "page-size": 10, page: 1 }),
+          studentApi.getLessons({ Status: "Completed", "page-size": 1, page: 1 }),
+          studentApi.getLessons({ Status: "Settled", "page-size": 1, page: 1 }),
+          studentApi.getLessons({ Status: "Cancelled", "page-size": 1, page: 1 }),
+          studentApi.getLessons({
+            Status: "Scheduled",
+            StartTimeFrom: todayFrom,
+            StartTimeTo: todayTo,
+            "page-size": 10,
+            page: 1,
+          }),
+        ]);
       return {
         statsTotal: allR.status === "fulfilled" ? allR.value?.data?.totalItems || 0 : 0,
         statsScheduled: schR.status === "fulfilled" ? schR.value?.data?.totalItems || 0 : 0,
@@ -218,18 +213,49 @@ const ScheduleManagement = () => {
   // ── lessons query ─────────────────────────────────────────
   const getLessonDateParams = () => {
     switch (datePreset) {
-      case "today": return { StartTimeFrom: toApiStart(todayStr()), StartTimeTo: toApiEnd(todayStr()) };
-      case "week": return { StartTimeFrom: toApiStart(startOfWeekStr()), StartTimeTo: toApiEnd(endOfWeekStr()) };
-      case "month": return { StartTimeFrom: toApiStart(startOfMonthStr()), StartTimeTo: toApiEnd(endOfMonthStr()) };
-      case "custom": return { ...(customFrom && { StartTimeFrom: toApiStart(customFrom) }), ...(customTo && { StartTimeTo: toApiEnd(customTo) }) };
-      default: return {};
+      case "today":
+        return {
+          StartTimeFrom: toApiStart(todayStr()),
+          StartTimeTo: toApiEnd(todayStr()),
+        };
+      case "week":
+        return {
+          StartTimeFrom: toApiStart(startOfWeekStr()),
+          StartTimeTo: toApiEnd(endOfWeekStr()),
+        };
+      case "month":
+        return {
+          StartTimeFrom: toApiStart(startOfMonthStr()),
+          StartTimeTo: toApiEnd(endOfMonthStr()),
+        };
+      case "custom":
+        return {
+          ...(customFrom && { StartTimeFrom: toApiStart(customFrom) }),
+          ...(customTo && { StartTimeTo: toApiEnd(customTo) }),
+        };
+      default:
+        return {};
     }
   };
 
   const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
-    queryKey: ["admin-lessons", lessonPage, lessonStatusFilter, debouncedLessonSearch, selectedTutor?.id, selectedStudent?.id, datePreset, customFrom, customTo],
+    queryKey: [
+      "admin-lessons",
+      lessonPage,
+      lessonStatusFilter,
+      debouncedLessonSearch,
+      selectedTutor?.id,
+      selectedStudent?.id,
+      datePreset,
+      customFrom,
+      customTo,
+    ],
     queryFn: async () => {
-      const params = { page: lessonPage, "page-size": lessonPageSize, ...getLessonDateParams() };
+      const params = {
+        page: lessonPage,
+        "page-size": lessonPageSize,
+        ...getLessonDateParams(),
+      };
       if (lessonStatusFilter !== "all") params.Status = lessonStatusFilter;
       if (debouncedLessonSearch) params["search-term"] = debouncedLessonSearch;
       if (selectedTutor) params.TutorId = selectedTutor.id;
@@ -281,39 +307,6 @@ const ScheduleManagement = () => {
     return () => clearTimeout(timer);
   }, [studentPickerSearch, studentPickerOpen]);
 
-  // ── slots query ───────────────────────────────────────────
-  const { data: slotsData, isLoading: schedulesLoading } = useQuery({
-    queryKey: ["admin-slots", scheduleStatusFilter],
-    queryFn: async () => {
-      const params = { page: 1, "page-size": 100 };
-      if (scheduleStatusFilter !== "all") params.Status = scheduleStatusFilter;
-      const res = await tutorApi.getTutorSchedules(params);
-      const items = res?.data?.items || [];
-      const uniqueIds = [...new Set(items.map((s) => s.tutorId).filter(Boolean))];
-      const results = await Promise.allSettled(uniqueIds.map((id) => adminApi.getTutorById(id)));
-      const tutorMap = {};
-      results.forEach((r, i) => {
-        if (r.status === "fulfilled") tutorMap[uniqueIds[i]] = r.value?.data;
-      });
-      return { schedules: items, tutorMap };
-    },
-    enabled: activeTab === "slots",
-    staleTime: 60 * 1000,
-  });
-  const tutorMap = slotsData?.tutorMap ?? {};
-
-  // ── grouped slots ──────────────────────────────────────────
-  const groupedSlots = useMemo(() => {
-    const schedules = slotsData?.schedules ?? [];
-    const map = {};
-    schedules.forEach((s) => {
-      if (!s.tutorId) return;
-      if (!map[s.tutorId]) map[s.tutorId] = [];
-      map[s.tutorId].push(s);
-    });
-    return map;
-  }, [slotsData]);
-
   // ── lesson table columns ───────────────────────────────────
   const lessonCols = useMemo(
     () =>
@@ -359,19 +352,6 @@ const ScheduleManagement = () => {
     }
   };
 
-  const getSlotStatusColor = (status) => {
-    switch (status) {
-      case "Open":
-        return colors.state.success;
-      case "Booked":
-        return colors.primary.main;
-      case "Pending":
-        return colors.state.warning;
-      default:
-        return colors.text.tertiary;
-    }
-  };
-
   const formatDateTime = (dateStr) => {
     if (!dateStr) return "";
     return new Date(dateStr).toLocaleDateString(dateLocale, {
@@ -381,21 +361,15 @@ const ScheduleManagement = () => {
       minute: "2-digit",
     });
   };
-
-  const formatTime = (s) => s?.slice(0, 5) || "";
-
   const formatDuration = (start, end) => {
     if (!start || !end) return "";
     const mins = Math.round((new Date(end) - new Date(start)) / 60000);
     return mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`;
   };
-
   const lessonLabel = (lesson) =>
     `${lesson.studentFirstName || ""} ${lesson.studentLastName || ""}`.trim();
   const tutorLabel = (lesson) =>
     `${lesson.tutorFirstName || ""} ${lesson.tutorLastName || ""}`.trim();
-  const tutorName = (t) =>
-    t?.user ? `${t.user.firstName || ""} ${t.user.lastName || ""}`.trim() : "";
 
   const openPicker = (type) => {
     if (type === "tutor") {
@@ -416,7 +390,6 @@ const ScheduleManagement = () => {
     setLessonPage(1);
     setTutorPickerOpen(false);
   };
-
   const confirmStudentPicker = () => {
     setSelectedStudent(studentPickerTemp);
     setLessonPage(1);
@@ -528,7 +501,11 @@ const ScheduleManagement = () => {
               }}
               title={t("adminDashboard.schedule.viewDetail")}
             >
-              <Eye weight="BoldDuotone" className="w-4 h-4" style={{ color: colors.text.secondary }} />
+              <Eye
+                weight="BoldDuotone"
+                className="w-4 h-4"
+                style={{ color: colors.text.secondary }}
+              />
             </Button>
             {hasReport && (
               <Button
@@ -648,15 +625,6 @@ const ScheduleManagement = () => {
               </div>
             }
           />
-          <Tab
-            key="slots"
-            title={
-              <div className="flex items-center gap-2">
-                <PresentationGraph weight="BoldDuotone" className="w-4 h-4" />
-                <span>{t("adminDashboard.schedule.tutorSlotsTab")}</span>
-              </div>
-            }
-          />
         </Tabs>
       </motion.div>
 
@@ -717,7 +685,6 @@ const ScheduleManagement = () => {
 
           {/* Upcoming Today + In Progress Now */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Upcoming Today */}
             <Card
               shadow="none"
               className="border-none"
@@ -791,7 +758,8 @@ const ScheduleManagement = () => {
                             {tutorLabel(lesson)} → {lessonLabel(lesson)}
                           </p>
                         </div>
-                        <Eye weight="BoldDuotone"
+                        <Eye
+                          weight="BoldDuotone"
                           size={14}
                           style={{ color: colors.text.tertiary }}
                         />
@@ -802,7 +770,6 @@ const ScheduleManagement = () => {
               </CardBody>
             </Card>
 
-            {/* In Progress Now */}
             <Card
               shadow="none"
               className="border-none"
@@ -887,7 +854,8 @@ const ScheduleManagement = () => {
                             {tutorLabel(lesson)} → {lessonLabel(lesson)}
                           </p>
                         </div>
-                        <Eye weight="BoldDuotone"
+                        <Eye
+                          weight="BoldDuotone"
                           size={14}
                           style={{ color: colors.text.tertiary }}
                         />
@@ -904,7 +872,7 @@ const ScheduleManagement = () => {
       {/* ══════════ LESSONS TAB ══════════ */}
       {activeTab === "lessons" && (
         <>
-          {/* ── Filter row ── */}
+          {/* Filter row */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -916,7 +884,6 @@ const ScheduleManagement = () => {
               style={{ backgroundColor: colors.background.light }}
             >
               <CardBody className="p-4 space-y-3">
-                {/* Row 1: search + status + tutor/student pickers */}
                 <div className="flex flex-wrap gap-2 items-center">
                   <div className="flex-1 min-w-[200px]">
                     <Input
@@ -926,7 +893,8 @@ const ScheduleManagement = () => {
                       value={lessonSearch}
                       onChange={(e) => setLessonSearch(e.target.value)}
                       startContent={
-                        <MinimalisticMagnifier weight="BoldDuotone"
+                        <MinimalisticMagnifier
+                          weight="BoldDuotone"
                           className="w-4 h-4"
                           style={{ color: colors.text.secondary }}
                         />
@@ -938,7 +906,9 @@ const ScheduleManagement = () => {
                     <DropdownTrigger>
                       <Button
                         variant="flat"
-                        startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
+                        startContent={
+                          <Filter weight="BoldDuotone" className="w-4 h-4" />
+                        }
                         className="flex-shrink-0"
                       >
                         {t("adminDashboard.schedule.status")}:{" "}
@@ -978,13 +948,11 @@ const ScheduleManagement = () => {
                     </DropdownMenu>
                   </Dropdown>
 
-                  {/* Divider */}
                   <div
                     className="w-px h-5"
                     style={{ backgroundColor: colors.border.dark }}
                   />
 
-                  {/* Tutor filter */}
                   {selectedTutor ? (
                     <Chip
                       variant="flat"
@@ -1010,7 +978,12 @@ const ScheduleManagement = () => {
                   ) : (
                     <Button
                       variant="flat"
-                      startContent={<PresentationGraph weight="BoldDuotone" className="w-4 h-4" />}
+                      startContent={
+                        <PresentationGraph
+                          weight="BoldDuotone"
+                          className="w-4 h-4"
+                        />
+                      }
                       className="h-10 rounded-xl text-sm"
                       style={{
                         backgroundColor: colors.background.gray,
@@ -1022,7 +995,6 @@ const ScheduleManagement = () => {
                     </Button>
                   )}
 
-                  {/* Student filter */}
                   {selectedStudent ? (
                     <Chip
                       variant="flat"
@@ -1048,7 +1020,12 @@ const ScheduleManagement = () => {
                   ) : (
                     <Button
                       variant="flat"
-                      startContent={<UsersGroupRounded weight="BoldDuotone" className="w-4 h-4" />}
+                      startContent={
+                        <UsersGroupRounded
+                          weight="BoldDuotone"
+                          className="w-4 h-4"
+                        />
+                      }
                       className="h-10 rounded-xl text-sm"
                       style={{
                         backgroundColor: colors.background.gray,
@@ -1061,23 +1038,13 @@ const ScheduleManagement = () => {
                   )}
                 </div>
 
-                {/* Row 2: date presets */}
                 <div className="flex flex-wrap gap-2 items-center">
                   {[
                     { key: "all", label: t("adminDashboard.schedule.allTime") },
                     { key: "today", label: t("adminDashboard.schedule.today") },
-                    {
-                      key: "week",
-                      label: t("adminDashboard.schedule.thisWeek"),
-                    },
-                    {
-                      key: "month",
-                      label: t("adminDashboard.schedule.thisMonth"),
-                    },
-                    {
-                      key: "custom",
-                      label: t("adminDashboard.schedule.customRange"),
-                    },
+                    { key: "week", label: t("adminDashboard.schedule.thisWeek") },
+                    { key: "month", label: t("adminDashboard.schedule.thisMonth") },
+                    { key: "custom", label: t("adminDashboard.schedule.customRange") },
                   ].map((p) => (
                     <Button
                       key={p.key}
@@ -1093,7 +1060,6 @@ const ScheduleManagement = () => {
                     </Button>
                   ))}
 
-                  {/* Custom date inputs */}
                   {datePreset === "custom" && (
                     <>
                       <input
@@ -1132,7 +1098,7 @@ const ScheduleManagement = () => {
             </Card>
           </motion.div>
 
-          {/* ── Lessons table ── */}
+          {/* Lessons table */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1193,239 +1159,6 @@ const ScheduleManagement = () => {
         </>
       )}
 
-      {/* ══════════ TUTOR SLOTS TAB ══════════ */}
-      {activeTab === "slots" && (
-        <>
-          {/* Status filter */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Card
-              shadow="none"
-              className="border-none"
-              style={{ backgroundColor: colors.background.light }}
-            >
-              <CardBody className="p-4">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Filter weight="BoldDuotone"
-                    className="w-4 h-4 flex-shrink-0"
-                    style={{ color: colors.text.secondary }}
-                  />
-                  <span
-                    className="text-sm"
-                    style={{ color: colors.text.secondary }}
-                  >
-                    {t("adminDashboard.schedule.status")}:
-                  </span>
-                  {["all", "Open", "Booked", "Pending", "Inactive"].map((s) => (
-                    <Button
-                      key={s}
-                      size="sm"
-                      variant="flat"
-                      style={{
-                        backgroundColor:
-                          scheduleStatusFilter === s
-                            ? colors.primary.main
-                            : colors.background.gray,
-                        color:
-                          scheduleStatusFilter === s
-                            ? "#fff"
-                            : colors.text.secondary,
-                      }}
-                      onPress={() => setScheduleStatusFilter(s)}
-                    >
-                      {s === "all"
-                        ? t("adminDashboard.schedule.all")
-                        : t(`adminDashboard.schedule.scheduleStatuses.${s}`)}
-                    </Button>
-                  ))}
-                </div>
-              </CardBody>
-            </Card>
-          </motion.div>
-
-          {/* Grouped tutor cards */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.15 }}
-          >
-            {schedulesLoading ? (
-              <div className="flex justify-center py-12">
-                <Spinner size="lg" />
-              </div>
-            ) : Object.keys(groupedSlots).length === 0 ? (
-              <p
-                className="text-sm text-center py-8"
-                style={{ color: colors.text.tertiary }}
-              >
-                {t("adminDashboard.schedule.noSchedules")}
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {Object.entries(groupedSlots).map(([tutorId, slots]) => {
-                  const tutor = tutorMap[tutorId];
-                  const name = tutorName(tutor) || tutorId.slice(0, 8) + "…";
-                  const bookedCount = slots.filter(
-                    (s) => s.status === "Booked",
-                  ).length;
-                  const openCount = slots.filter(
-                    (s) => s.status === "Open",
-                  ).length;
-
-                  // Group slots by weekday
-                  const byDay = {};
-                  WEEKDAYS.forEach((d) => (byDay[d] = []));
-                  slots.forEach((s) => {
-                    if (s.weekday && byDay[s.weekday]) byDay[s.weekday].push(s);
-                  });
-
-                  return (
-                    <Card
-                      key={tutorId}
-                      shadow="none"
-                      className="border-none"
-                      style={{ backgroundColor: colors.background.light }}
-                    >
-                      <CardBody className="p-4">
-                        {/* Tutor header */}
-                        <div className="flex items-center gap-3 mb-4 flex-wrap">
-                          <Avatar
-                            src={withCDN(tutor?.avatar)}
-                            name={name}
-                            size="md"
-                            className="flex-shrink-0 cursor-pointer"
-                            onClick={() => navigate(`/admin/tutors/${tutorId}`)}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <button
-                              type="button"
-                              className="font-semibold text-sm hover:underline text-left"
-                              style={{ color: colors.primary.main }}
-                              onClick={() =>
-                                navigate(`/admin/tutors/${tutorId}`)
-                              }
-                            >
-                              {name}
-                            </button>
-                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                              <span
-                                className="text-xs"
-                                style={{ color: colors.text.tertiary }}
-                              >
-                                {slots.length}{" "}
-                                {t("adminDashboard.schedule.totalSlots")}
-                              </span>
-                              {openCount > 0 && (
-                                <Chip
-                                  size="sm"
-                                  className="h-4"
-                                  style={{
-                                    backgroundColor: `${colors.state.success}20`,
-                                    color: colors.state.success,
-                                    fontSize: "10px",
-                                  }}
-                                >
-                                  {openCount}{" "}
-                                  {t(
-                                    "adminDashboard.schedule.scheduleStatuses.Open",
-                                  )}
-                                </Chip>
-                              )}
-                              {bookedCount > 0 && (
-                                <Chip
-                                  size="sm"
-                                  className="h-4"
-                                  style={{
-                                    backgroundColor: `${colors.primary.main}20`,
-                                    color: colors.primary.main,
-                                    fontSize: "10px",
-                                  }}
-                                >
-                                  {bookedCount}{" "}
-                                  {t(
-                                    "adminDashboard.schedule.scheduleStatuses.Booked",
-                                  )}
-                                </Chip>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Weekly grid */}
-                        <div className="grid grid-cols-7 gap-1.5">
-                          {WEEKDAYS.map((day) => {
-                            const daySlotsAll = byDay[day];
-                            const daySlots = daySlotsAll.slice(0, 3);
-                            const overflow = daySlotsAll.length - 3;
-                            return (
-                              <div key={day} className="flex flex-col gap-1">
-                                <p
-                                  className="text-center text-xs font-semibold mb-1"
-                                  style={{ color: colors.text.tertiary }}
-                                >
-                                  {WEEKDAY_SHORT[day]}
-                                </p>
-                                {daySlots.map((slot) => {
-                                  const sc = getSlotStatusColor(slot.status);
-                                  return (
-                                    <div
-                                      key={slot.id}
-                                      className="text-center px-1 py-1 rounded-md"
-                                      style={{
-                                        backgroundColor: `${sc}15`,
-                                        border: `1px solid ${sc}30`,
-                                      }}
-                                    >
-                                      <p
-                                        className="text-xs font-medium"
-                                        style={{ color: sc }}
-                                      >
-                                        {formatTime(slot.startTime)}
-                                      </p>
-                                      <p style={{ color: sc, fontSize: "9px" }}>
-                                        {t(
-                                          `adminDashboard.schedule.scheduleStatuses.${slot.status}`,
-                                        )}
-                                      </p>
-                                    </div>
-                                  );
-                                })}
-                                {overflow > 0 && (
-                                  <p
-                                    className="text-center"
-                                    style={{
-                                      color: colors.text.tertiary,
-                                      fontSize: "10px",
-                                    }}
-                                  >
-                                    +{overflow}
-                                  </p>
-                                )}
-                                {daySlotsAll.length === 0 && (
-                                  <div
-                                    className="h-8 rounded-md"
-                                    style={{
-                                      backgroundColor: colors.background.gray,
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </CardBody>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </motion.div>
-        </>
-      )}
-
       {/* ══════════ LESSON DETAIL MODAL ══════════ */}
       <AdminLessonDetailModal
         isOpen={isDetailOpen}
@@ -1449,7 +1182,8 @@ const ScheduleManagement = () => {
               value={tutorPickerSearch}
               onChange={(e) => setTutorPickerSearch(e.target.value)}
               startContent={
-                <MinimalisticMagnifier weight="BoldDuotone"
+                <MinimalisticMagnifier
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />
@@ -1562,7 +1296,8 @@ const ScheduleManagement = () => {
               value={studentPickerSearch}
               onChange={(e) => setStudentPickerSearch(e.target.value)}
               startContent={
-                <MinimalisticMagnifier weight="BoldDuotone"
+                <MinimalisticMagnifier
+                  weight="BoldDuotone"
                   className="w-4 h-4"
                   style={{ color: colors.text.secondary }}
                 />

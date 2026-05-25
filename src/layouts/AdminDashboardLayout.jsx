@@ -7,7 +7,9 @@ import {
   BillList,
   BookBookmark,
   CalendarMark,
+  ChartSquare,
   ChecklistMinimalistic,
+  ClockCircle,
   CloseSquare,
   Dollar,
   DollarMinimalistic,
@@ -117,9 +119,26 @@ const AdminDashboardLayout = () => {
       ],
     },
     {
-      path: "/admin/schedule",
+      submenuKey: "schedule",
       label: t("adminDashboard.nav.schedule"),
       icon: CalendarMark,
+      children: [
+        {
+          path: "/admin/schedule",
+          label: t("adminDashboard.nav.lessonList"),
+          icon: BookBookmark,
+        },
+        {
+          path: "/admin/lesson-reports",
+          label: t("adminDashboard.nav.lessonReports"),
+          icon: ChartSquare,
+        },
+        {
+          path: "/admin/tutor-slots",
+          label: t("adminDashboard.nav.tutorSlots"),
+          icon: ClockCircle,
+        },
+      ],
     },
     {
       submenuKey: "finance",
