@@ -780,3 +780,56 @@ export const POLICIES = {
     },
   },
 };
+
+export const OPERATIONAL = {
+  en: {
+    sections: [
+      {
+        heading: "Backup & Retention",
+        bullets: [
+          "Lesson recordings are retained for 60 days after the course ends, then permanently deleted.",
+          "All other course-related content is retained indefinitely.",
+          "Payment, refund, and tutor payout records are retained for 5 years to meet accounting and compliance obligations.",
+        ],
+      },
+      {
+        heading: "Refund / Risk / Dispute",
+        bullets: [
+          "If both tutor and student attend at least 80% of the scheduled time, the lesson is completed: no refund and full tutor payout.",
+          "If the student attends less than 80% while the tutor attends at least 80%, there is no refund and full tutor payout.",
+          "If the tutor attends less than 80% while the student attends at least 80%, the student receives a full refund for that lesson and the tutor receives no payout.",
+          "If both attend less than 80%, the lesson is treated as tutor absence for refund purposes: full refund and no payout.",
+          "Only one active refund can exist for a lesson at a time.",
+          "Automatic no-tutor refunds begin after a 3-day grace period following the lesson.",
+          "A lesson is considered completed only when both tutor and student attend at least 80% of the scheduled time; only completed lessons generate tutor earnings.",
+          "Tutor earnings are generated no earlier than 72 hours after the lesson ends; payouts require valid tutor bank details and are issued only in whole currency units.",
+        ],
+      },
+    ],
+  },
+  vi: {
+    sections: [
+      {
+        heading: "Sao lưu & Lưu trữ",
+        bullets: [
+          "Các bản ghi hình buổi học được lưu trữ trong 60 ngày sau khi khóa học kết thúc, sau đó sẽ bị xóa vĩnh viễn.",
+          "Tất cả các nội dung khác liên quan đến khóa học được lưu trữ vô thời hạn.",
+          "Hồ sơ thanh toán, hoàn tiền và chi trả cho gia sư được lưu trữ trong 5 năm để đáp ứng các nghĩa vụ về kế toán và tuân thủ.",
+        ],
+      },
+      {
+        heading: "Hoàn tiền / Rủi ro / Tranh chấp",
+        bullets: [
+          "Nếu cả gia sư và học viên tham gia ít nhất 80% thời gian theo lịch trình, buổi học được coi là hoàn thành: không hoàn tiền và chi trả toàn bộ cho gia sư.",
+          "Nếu học viên tham gia dưới 80% trong khi gia sư tham gia ít nhất 80%, sẽ không hoàn tiền và chi trả toàn bộ cho gia sư.",
+          "Nếu gia sư tham gia dưới 80% trong khi học viên tham gia ít nhất 80%, học viên sẽ được hoàn tiền 100% cho buổi học đó và gia sư không nhận khoản chi trả nào.",
+          "Nếu cả hai tham gia dưới 80%, buổi học được xử lý như trường hợp gia sư vắng mặt cho mục đích hoàn tiền: hoàn tiền 100% và không chi trả cho gia sư.",
+          "Chỉ được phép có một yêu cầu hoàn tiền đang hoạt động cho một buổi học tại một thời điểm.",
+          "Việc hoàn tiền tự động do gia sư vắng mặt sẽ bắt đầu sau thời gian ân hạn 3 ngày kể từ khi buổi học kết thúc.",
+          "Một buổi học chỉ được coi là hoàn thành khi cả gia sư và học viên tham gia ít nhất 80% thời gian theo lịch; chỉ những buổi học hoàn thành mới tạo ra thu nhập cho gia sư.",
+          "Thu nhập của gia sư được tạo ra không sớm hơn 72 giờ sau khi buổi học kết thúc; việc chi trả yêu cầu gia sư phải cung cấp chi tiết tài khoản ngân hàng hợp lệ và chỉ được phát hành bằng các đơn vị tiền tệ nguyên vẹn.",
+        ],
+      },
+    ],
+  },
+};

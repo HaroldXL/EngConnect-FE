@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { Tabs, Tab } from "@heroui/react";
-import { GraduationCap, ChalkboardTeacher } from "@phosphor-icons/react";
 import * as MotionLib from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useThemeColors } from "../../hooks/useThemeColors";
 import { useTheme } from "../../contexts/ThemeContext";
-import { POLICIES } from "./legalData";
-import { PresentationGraph, SquareAcademicCap } from "@solar-icons/react";
+import { POLICIES, OPERATIONAL } from "./legalData";
+import {
+  Hourglass,
+  PresentationGraph,
+  ShieldCheck,
+  SquareAcademicCap,
+  Wallet,
+} from "@solar-icons/react";
 
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
@@ -27,6 +32,7 @@ const PoliciesPage = () => {
   const lastUpdated = isVi ? "Tháng 5, 2025" : "May 2025";
 
   const tabData = selectedTab === "student" ? content.student : content.tutor;
+  const operational = OPERATIONAL[lang];
 
   return (
     <div
@@ -97,7 +103,7 @@ const PoliciesPage = () => {
       </section>
 
       {/* Tabs + Content */}
-      <section className="py-10 px-4 pb-20">
+      <section className="py-10 px-4 pb-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-center mb-8">
             <Tabs
@@ -152,6 +158,100 @@ const PoliciesPage = () => {
                       <span
                         className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-[0.45rem]"
                         style={{ backgroundColor: colors.primary.main }}
+                      />
+                      <span
+                        className="text-sm leading-relaxed"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {bullet}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Operational Policies */}
+      <section className="px-4 pb-20">
+        <div className="max-w-4xl mx-auto">
+          {/* Divider with label */}
+          <div className="flex items-center gap-4 mb-8">
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: colors.border.medium }}
+            />
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap"
+              style={{
+                backgroundColor: colors.background.primaryLight,
+                color: colors.primary.main,
+              }}
+            >
+              <ShieldCheck size={16} weight="BoldDuotone" />
+              {isVi ? "Chính sách Vận hành" : "Operational Policies"}
+            </span>
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: colors.border.medium }}
+            />
+          </div>
+
+          {/* stacked cards */}
+          <div className="flex flex-col gap-4">
+            {operational.sections.map((section, index) => (
+              <motion.div
+                key={section.heading}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="p-6 rounded-2xl"
+                style={{ backgroundColor: colors.background.gray }}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span
+                    className="flex items-center justify-center w-9 h-9 rounded-xl flex-shrink-0"
+                    style={{
+                      backgroundColor:
+                        index === 0
+                          ? `${colors.state.info}18`
+                          : `${colors.state.warning}18`,
+                    }}
+                  >
+                    {index === 0 ? (
+                      <Hourglass
+                        size={18}
+                        weight="BoldDuotone"
+                        style={{ color: colors.state.info }}
+                      />
+                    ) : (
+                      <Wallet
+                        size={18}
+                        weight="BoldDuotone"
+                        style={{ color: colors.state.warning }}
+                      />
+                    )}
+                  </span>
+                  <h3
+                    className="text-base font-bold"
+                    style={{ color: colors.text.primary }}
+                  >
+                    {section.heading}
+                  </h3>
+                </div>
+                <ul className="space-y-2.5">
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-3">
+                      <span
+                        className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-[0.45rem]"
+                        style={{
+                          backgroundColor:
+                            index === 0
+                              ? colors.state.info
+                              : colors.state.warning,
+                        }}
                       />
                       <span
                         className="text-sm leading-relaxed"
