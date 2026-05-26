@@ -259,11 +259,7 @@ const LessonReport = () => {
           transition={{ duration: 0.15 }}
           className="flex items-center gap-3"
         >
-          <Button
-            isIconOnly
-            variant="light"
-            onPress={() => navigate(-1)}
-          >
+          <Button isIconOnly variant="light" onPress={() => navigate(-1)}>
             <AltArrowLeft
               weight="BoldDuotone"
               size={20}
@@ -283,10 +279,7 @@ const LessonReport = () => {
           style={{ backgroundColor: colors.background.light }}
         >
           <CardBody className="p-8 text-center">
-            <p
-              className="text-base"
-              style={{ color: colors.text.secondary }}
-            >
+            <p className="text-base" style={{ color: colors.text.secondary }}>
               {t("adminDashboard.lessonReport.notFound")}
             </p>
           </CardBody>
@@ -332,36 +325,21 @@ const LessonReport = () => {
 
   return (
     <div className="space-y-6">
-      {/* ── Back + Title ── */}
+      {/* ── Back ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15 }}
-        className="flex items-center gap-3"
       >
-        <Button isIconOnly variant="light" onPress={() => navigate(-1)}>
-          <AltArrowLeft
-            weight="BoldDuotone"
-            size={20}
-            style={{ color: colors.text.primary }}
-          />
+        <Button
+          variant="light"
+          size="sm"
+          startContent={<AltArrowLeft weight="BoldDuotone" size={16} />}
+          onPress={() => navigate(-1)}
+          style={{ color: colors.text.secondary }}
+        >
+          {t("common.back", { defaultValue: "Back" })}
         </Button>
-        <div>
-          <h1
-            className="text-2xl lg:text-3xl font-bold"
-            style={{ color: colors.text.primary }}
-          >
-            {t("adminDashboard.lessonReport.title")}
-          </h1>
-          <p
-            className="text-sm mt-0.5"
-            style={{ color: colors.text.secondary }}
-          >
-            {t("adminDashboard.lessonReport.generated", {
-              date: new Date().toLocaleDateString(dateLocale),
-            })}
-          </p>
-        </div>
       </motion.div>
 
       {/* ── Lesson summary card ── */}
@@ -397,10 +375,7 @@ const LessonReport = () => {
                 >
                   {data.sessionTitle || "—"}
                 </h2>
-                <p
-                  className="text-sm"
-                  style={{ color: colors.text.secondary }}
-                >
+                <p className="text-sm" style={{ color: colors.text.secondary }}>
                   {data.courseTitle}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
@@ -418,10 +393,7 @@ const LessonReport = () => {
                     className="text-xs flex items-center gap-1.5"
                     style={{ color: colors.text.secondary }}
                   >
-                    <ClockCircle
-                      weight="BoldDuotone"
-                      className="w-3.5 h-3.5"
-                    />
+                    <ClockCircle weight="BoldDuotone" className="w-3.5 h-3.5" />
                     {formatTime(data.startTime, dateLocale)} –{" "}
                     {formatTime(data.endTime, dateLocale)}
                   </span>
@@ -460,10 +432,7 @@ const LessonReport = () => {
                 >
                   <Avatar
                     src={withCDN(data.studentAvatar)}
-                    name={initials(
-                      data.studentFirstName,
-                      data.studentLastName,
-                    )}
+                    name={initials(data.studentFirstName, data.studentLastName)}
                     size="sm"
                   />
                   <div>
@@ -741,7 +710,6 @@ const LessonReport = () => {
                   size="sm"
                 />
               </div>
-
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-5">
@@ -1174,8 +1142,7 @@ const LessonReport = () => {
                     tabIndex={0}
                     onClick={() => navigate(`/admin/homework/${hw.id}`)}
                     onKeyDown={(e) =>
-                      e.key === "Enter" &&
-                      navigate(`/admin/homework/${hw.id}`)
+                      e.key === "Enter" && navigate(`/admin/homework/${hw.id}`)
                     }
                   >
                     <div
@@ -1364,9 +1331,7 @@ const LessonReport = () => {
                 {data.sessionTitle}
               </InfoRow>
               <InfoRow label={t("adminDashboard.lessonReport.enrollmentId")}>
-                <span className="font-mono text-xs">
-                  {data.enrollmentId}
-                </span>
+                <span className="font-mono text-xs">{data.enrollmentId}</span>
               </InfoRow>
               <InfoRow label={t("adminDashboard.lessonReport.createdAt")}>
                 {formatDateTime(data.createdAt, dateLocale)}

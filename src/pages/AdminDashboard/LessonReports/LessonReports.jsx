@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChartSquare, MinimalisticMagnifier } from "@solar-icons/react";
+import {
+  AltArrowRight,
+  ChartSquare,
+  MinimalisticMagnifier,
+  Star,
+} from "@solar-icons/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card,
@@ -16,7 +21,6 @@ import {
   Pagination,
   Spinner,
 } from "@heroui/react";
-import { Rate } from "antd";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
@@ -314,26 +318,65 @@ const LessonReports = () => {
                         )}
                       />
 
-                      <div className="flex -space-x-2 flex-shrink-0">
-                        <Avatar
-                          src={withCDN(item.tutorAvatar)}
-                          size="sm"
-                          className="w-8 h-8 border-2 border-white"
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <Avatar
+                            src={withCDN(item.tutorAvatar)}
+                            size="sm"
+                            className="w-8 h-8"
+                          />
+                          <span
+                            className="text-[9px] font-semibold leading-none"
+                            style={{ color: colors.primary.main }}
+                          >
+                            Tutor
+                          </span>
+                        </div>
+                        <AltArrowRight
+                          size={10}
+                          weight="BoldDuotone"
+                          style={{
+                            color: colors.text.tertiary,
+                            flexShrink: 0,
+                            marginBottom: 8,
+                          }}
                         />
-                        <Avatar
-                          src={withCDN(item.studentAvatar)}
-                          size="sm"
-                          className="w-8 h-8 border-2 border-white"
-                        />
+                        <div className="flex flex-col items-center gap-0.5">
+                          <Avatar
+                            src={withCDN(item.studentAvatar)}
+                            size="sm"
+                            className="w-8 h-8"
+                          />
+                          <span
+                            className="text-[9px] font-semibold leading-none"
+                            style={{ color: colors.state.success }}
+                          >
+                            Student
+                          </span>
+                        </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p
-                          className="text-sm font-semibold truncate"
-                          style={{ color: colors.text.primary }}
-                        >
-                          {tutorLabel(item)} → {lessonLabel(item)}
-                        </p>
+                        <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0 truncate">
+                          <span
+                            className="text-sm font-semibold"
+                            style={{ color: colors.text.primary }}
+                          >
+                            {tutorLabel(item)}
+                          </span>
+                          <span
+                            className="text-[10px] flex-shrink-0"
+                            style={{ color: colors.text.tertiary }}
+                          >
+                            →
+                          </span>
+                          <span
+                            className="text-sm font-semibold truncate"
+                            style={{ color: colors.text.primary }}
+                          >
+                            {lessonLabel(item)}
+                          </span>
+                        </div>
                         <p
                           className="text-xs truncate"
                           style={{ color: colors.text.secondary }}
@@ -383,17 +426,24 @@ const LessonReports = () => {
                         </p>
                         {item.rating != null ? (
                           <div className="flex items-center gap-1">
-                            <Rate
-                              value={item.rating}
-                              disabled
-                              style={{ fontSize: 12, color: ratingColor }}
-                              count={5}
+                            <Star
+                              weight="BoldDuotone"
+                              size={15}
+                              style={{ color: "#f59e0b", flexShrink: 0 }}
                             />
                             <span
-                              className="text-xs font-semibold"
-                              style={{ color: ratingColor }}
+                              className="text-sm font-bold"
+                              style={{ color: "#f59e0b" }}
                             >
-                              {item.rating}
+                              {Number.isInteger(item.rating)
+                                ? item.rating
+                                : item.rating.toFixed(1)}
+                            </span>
+                            <span
+                              className="text-xs"
+                              style={{ color: colors.text.tertiary }}
+                            >
+                              /5
                             </span>
                           </div>
                         ) : (
