@@ -6,6 +6,7 @@ import {
   Copy,
   MusicNotes,
   Notebook,
+  RadioMinimalistic,
   RefreshCircle,
 } from "@solar-icons/react";
 import { useTranslation } from "react-i18next";
@@ -117,7 +118,7 @@ export default function ListeningTranscriptCard({
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{ backgroundColor: `${colors.primary.main}15` }}
             >
-              <MusicNotes
+              <RadioMinimalistic
                 weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
@@ -130,10 +131,7 @@ export default function ListeningTranscriptCard({
               >
                 {t("homeworkAI.listeningTranscriptTitle")}
               </h3>
-              <p
-                className="text-xs"
-                style={{ color: colors.text.tertiary }}
-              >
+              <p className="text-xs" style={{ color: colors.text.tertiary }}>
                 {t("homeworkAI.listeningTranscriptSubtitle")}
               </p>
             </div>
@@ -174,10 +172,7 @@ export default function ListeningTranscriptCard({
                 className="mt-2"
                 startContent={
                   !refreshing ? (
-                    <RefreshCircle
-                      weight="BoldDuotone"
-                      className="w-4 h-4"
-                    />
+                    <RefreshCircle weight="BoldDuotone" className="w-4 h-4" />
                   ) : null
                 }
                 isLoading={refreshing}
@@ -223,7 +218,7 @@ export default function ListeningTranscriptCard({
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{ backgroundColor: `${colors.primary.main}15` }}
             >
-              <MusicNotes
+              <RadioMinimalistic
                 weight="BoldDuotone"
                 className="w-5 h-5"
                 style={{ color: colors.primary.main }}
@@ -247,9 +242,7 @@ export default function ListeningTranscriptCard({
           <Button
             size="sm"
             variant="light"
-            startContent={
-              <Copy weight="BoldDuotone" className="w-4 h-4" />
-            }
+            startContent={<Copy weight="BoldDuotone" className="w-4 h-4" />}
             onPress={handleCopy}
             style={{ color: colors.text.secondary }}
           >

@@ -128,17 +128,6 @@ const Homework = () => {
   const [selectedHw, setSelectedHw] = useState(null);
   const [assigningId, setAssigningId] = useState(null);
 
-  // Edit modal
-  const editDisclosure = useDisclosure();
-  const [editForm, setEditForm] = useState({
-    id: "",
-    title: "",
-    description: "",
-    maxScore: "",
-  });
-  const [editErrors, setEditErrors] = useState({});
-  const [saving, setSaving] = useState(false);
-
   // Grade modal
   const gradeDisclosure = useDisclosure();
   const [gradeForm, setGradeForm] = useState({ score: "", tutorFeedback: "" });
@@ -207,8 +196,10 @@ const Homework = () => {
       scored: "Scored",
     };
     let result = homeworks;
-    if (selectedTab !== "all") result = result.filter((h) => h.status === statusMap[selectedTab]);
-    if (selectedStudentId) result = result.filter((h) => h.studentId === selectedStudentId);
+    if (selectedTab !== "all")
+      result = result.filter((h) => h.status === statusMap[selectedTab]);
+    if (selectedStudentId)
+      result = result.filter((h) => h.studentId === selectedStudentId);
     return result;
   }, [homeworks, selectedTab, selectedStudentId]);
 
@@ -275,52 +266,7 @@ const Homework = () => {
 
   // ==================== EDIT ====================
   const openEdit = (hw) => {
-    setEditForm({
-      id: hw.id,
-      title: hw.title || "",
-      description: hw.description || "",
-      maxScore: String(hw.maxScore ?? ""),
-    });
-    setEditErrors({});
-    editDisclosure.onOpen();
-  };
-
-  const handleSaveEdit = async () => {
-    const errs = {};
-    if (!editForm.description.trim())
-      errs.description = t("tutorDashboard.homework.descriptionRequired");
-    if (!editForm.maxScore || Number(editForm.maxScore) <= 0)
-      errs.maxScore = t("tutorDashboard.homework.maxScoreRequired");
-    setEditErrors(errs);
-    if (Object.keys(errs).length > 0) return;
-
-    try {
-      setSaving(true);
-      await lessonHomeworkApi.updateHomework(editForm.id, {
-        id: editForm.id,
-        title: editForm.title,
-        description: editForm.description.trim(),
-        submissionUrl: null,
-        score: null,
-        maxScore: Number(editForm.maxScore),
-      });
-      addToast({
-        title: t("tutorDashboard.homework.updateSuccess"),
-        color: "success",
-        timeout: 3000,
-      });
-      editDisclosure.onClose();
-      fetchHomeworks();
-    } catch (err) {
-      console.error("Failed to update homework:", err);
-      addToast({
-        title: t("tutorDashboard.homework.updateError"),
-        color: "danger",
-        timeout: 3000,
-      });
-    } finally {
-      setSaving(false);
-    }
+    navigate(`/tutor/homework/${hw.id}/edit`);
   };
 
   // ==================== GRADE ====================
@@ -676,7 +622,9 @@ const Homework = () => {
           {selectedStudentId ? (
             (() => {
               const s = studentOptions.find((o) => o.id === selectedStudentId);
-              const name = `${s?.student?.firstName || ""} ${s?.student?.lastName || ""}`.trim() || "—";
+              const name =
+                `${s?.student?.firstName || ""} ${s?.student?.lastName || ""}`.trim() ||
+                "—";
               return (
                 <Chip
                   avatar={
@@ -704,9 +652,7 @@ const Homework = () => {
               size="sm"
               variant="flat"
               className="text-xs h-9 px-3"
-              startContent={
-                <Filter weight="BoldDuotone" className="w-4 h-4" />
-              }
+              startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
               style={{
                 backgroundColor: `${colors.primary.main}12`,
                 color: colors.primary.main,
@@ -808,10 +754,7 @@ const Homework = () => {
                       <Button
                         size="sm"
                         startContent={
-                          <Plain
-                            weight="BoldDuotone"
-                            className="w-4 h-4"
-                          />
+                          <Plain weight="BoldDuotone" className="w-4 h-4" />
                         }
                         isLoading={assigningId === hw.id}
                         onPress={() => handleAssign(hw)}
@@ -1029,15 +972,17 @@ const Homework = () => {
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu>
-                          <DropdownItem
-                            key="edit"
-                            startContent={
-                              <Pen weight="BoldDuotone" className="w-4 h-4" />
-                            }
-                            onPress={() => openEdit(hw)}
-                          >
-                            {t("tutorDashboard.homework.edit")}
-                          </DropdownItem>
+                          {hw.status === "NotStarted" && (
+                            <DropdownItem
+                              key="edit"
+                              startContent={
+                                <Pen weight="BoldDuotone" className="w-4 h-4" />
+                              }
+                              onPress={() => openEdit(hw)}
+                            >
+                              {t("tutorDashboard.homework.edit")}
+                            </DropdownItem>
+                          )}
                           <DropdownItem
                             key="delete"
                             className="text-danger"
@@ -1062,82 +1007,6 @@ const Homework = () => {
           })}
         </motion.div>
       )}
-
-      {/* ==================== EDIT MODAL ==================== */}
-      <Modal
-        isOpen={editDisclosure.isOpen}
-        onClose={editDisclosure.onClose}
-        size="2xl"
-        scrollBehavior="inside"
-        isDismissable={!saving}
-      >
-        <ModalContent style={{ backgroundColor: colors.background.light }}>
-          <ModalHeader style={{ color: colors.text.primary }}>
-            {t("tutorDashboard.homework.editModalTitle")}
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              <Input
-                label="Title"
-                labelPlacement="outside"
-                value={editForm.title}
-                onValueChange={(v) => setEditForm((p) => ({ ...p, title: v }))}
-                classNames={inputClassNames}
-              />
-              <Textarea
-                label={t("tutorDashboard.homework.descriptionLabel")}
-                labelPlacement="outside"
-                value={editForm.description}
-                onValueChange={(v) => {
-                  setEditForm((p) => ({ ...p, description: v }));
-                  if (editErrors.description)
-                    setEditErrors((p) => ({ ...p, description: undefined }));
-                }}
-                minRows={3}
-                isInvalid={!!editErrors.description}
-                errorMessage={editErrors.description}
-                classNames={textareaClassNames}
-              />
-              <Input
-                type="number"
-                label={t("tutorDashboard.homework.maxScoreLabel")}
-                labelPlacement="outside"
-                value={editForm.maxScore}
-                onValueChange={(v) => {
-                  setEditForm((p) => ({ ...p, maxScore: v }));
-                  if (editErrors.maxScore)
-                    setEditErrors((p) => ({ ...p, maxScore: undefined }));
-                }}
-                isInvalid={!!editErrors.maxScore}
-                errorMessage={editErrors.maxScore}
-                min={1}
-                classNames={inputClassNames}
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="light"
-              onPress={editDisclosure.onClose}
-              isDisabled={saving}
-            >
-              {t("tutorDashboard.homework.cancel")}
-            </Button>
-            <Button
-              onPress={handleSaveEdit}
-              isLoading={saving}
-              style={{
-                backgroundColor: colors.primary.main,
-                color: colors.text.white,
-              }}
-            >
-              {saving
-                ? t("tutorDashboard.homework.saving")
-                : t("tutorDashboard.homework.saveBtn")}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* ==================== GRADE MODAL ==================== */}
       <Modal
@@ -1316,7 +1185,8 @@ const Homework = () => {
               <ModalHeader style={{ color: colors.text.primary }}>
                 <div className="flex items-center gap-2">
                   <Filter weight="BoldDuotone" className="w-5 h-5" />
-                  {t("tutorDashboard.homework.filterByStudent") || "Filter student"}
+                  {t("tutorDashboard.homework.filterByStudent") ||
+                    "Filter student"}
                 </div>
               </ModalHeader>
               <ModalBody className="pb-4">
@@ -1338,7 +1208,8 @@ const Homework = () => {
                     }}
                     onMouseLeave={(e) => {
                       if (selectedStudentId)
-                        e.currentTarget.style.backgroundColor = colors.background.gray;
+                        e.currentTarget.style.backgroundColor =
+                          colors.background.gray;
                     }}
                     onClick={() => {
                       setSelectedStudentId(null);
@@ -1371,12 +1242,15 @@ const Homework = () => {
                           : colors.text.primary,
                       }}
                     >
-                      {t("tutorDashboard.homework.allStudents") || "All students"}
+                      {t("tutorDashboard.homework.allStudents") ||
+                        "All students"}
                     </span>
                   </button>
 
                   {studentOptions.map(({ id, student }) => {
-                    const name = `${student?.firstName || ""} ${student?.lastName || ""}`.trim() || "—";
+                    const name =
+                      `${student?.firstName || ""} ${student?.lastName || ""}`.trim() ||
+                      "—";
                     const isSelected = selectedStudentId === id;
                     return (
                       <button
@@ -1396,7 +1270,8 @@ const Homework = () => {
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected)
-                            e.currentTarget.style.backgroundColor = colors.background.gray;
+                            e.currentTarget.style.backgroundColor =
+                              colors.background.gray;
                         }}
                         onClick={() => {
                           setSelectedStudentId(id);
@@ -1412,7 +1287,9 @@ const Homework = () => {
                         <span
                           className="text-sm font-medium truncate"
                           style={{
-                            color: isSelected ? colors.primary.main : colors.text.primary,
+                            color: isSelected
+                              ? colors.primary.main
+                              : colors.text.primary,
                           }}
                         >
                           {name}
@@ -1426,7 +1303,6 @@ const Homework = () => {
           )}
         </ModalContent>
       </Modal>
-
 
       {/* ==================== DELETE MODAL ==================== */}
       <Modal

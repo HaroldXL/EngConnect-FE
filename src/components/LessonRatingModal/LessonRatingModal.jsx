@@ -153,7 +153,7 @@ const LessonRatingModal = ({
       backdrop="blur"
       isDismissable={!submitting && !deleting}
     >
-      <ModalContent>
+      <ModalContent style={{ backgroundColor: colors.background.card }}>
         <ModalHeader className="flex flex-col gap-1">
           <span style={{ color: colors.text.primary }}>
             {isEdit
@@ -275,9 +275,7 @@ const LessonRatingModal = ({
             </Button>
             <Button
               color="primary"
-              startContent={
-                <Star weight="BoldDuotone" className="w-4 h-4" />
-              }
+              startContent={<Star weight="BoldDuotone" className="w-4 h-4" />}
               onPress={handleSubmit}
               isLoading={submitting}
               isDisabled={deleting || rating < 1}

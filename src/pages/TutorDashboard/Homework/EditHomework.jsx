@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import {
   AltArrowLeft,
   ClipboardAdd,
@@ -8,17 +8,14 @@ import {
   Eye,
   Gallery,
   LinkMinimalistic,
-  MusicNotes,
-  UserRounded,
-  BookBookmark,
   PlayCircle,
-  UploadMinimalistic,
   RadioMinimalistic,
-  Plain2,
+  UploadMinimalistic,
 } from "@solar-icons/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+
 import {
   Card,
   CardBody,
@@ -27,15 +24,13 @@ import {
   Textarea,
   Select,
   SelectItem,
-  Avatar,
-  Chip,
   Spinner,
   addToast,
 } from "@heroui/react";
 
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import useInputStyles from "../../../hooks/useInputStyles";
-import { coursesApi, studentApi, lessonHomeworkApi } from "../../../api";
+import { lessonHomeworkApi } from "../../../api";
 
 const HOMEWORK_TYPES = ["Reading", "Writing", "Listening", "Other"];
 const WRITING_SUB_TYPES = [
@@ -45,147 +40,68 @@ const WRITING_SUB_TYPES = [
   "EmailFormal",
 ];
 
-const formatDateTime = (iso, locale) => {
-  if (!iso) return "";
-  return new Date(iso).toLocaleString(locale, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-const CreateHomework = () => {
-  const { t, i18n } = useTranslation();
+const EditHomework = () => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
+  const { id } = useParams();
   const { inputClassNames, textareaClassNames, selectClassNames } =
     useInputStyles();
-  const locale = i18n.language === "vi" ? "vi-VN" : "en-US";
 
-  // Cascade data
-  const [students, setStudents] = useState([]);
-  const [studentsLoading, setStudentsLoading] = useState(true);
-  const [lessons, setLessons] = useState([]);
-  const [lessonsLoading, setLessonsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Form
-  const [studentId, setStudentId] = useState("");
-  const [enrollmentId, setEnrollmentId] = useState("");
-  const [lessonId, setLessonId] = useState("");
+  // Form state
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [writingSubType, setWritingSubType] = useState("");
   const [description, setDescription] = useState("");
-  const [maxScore, setMaxScore] = useState("100");
+  const [maxScore, setMaxScore] = useState("");
   const [dueAt, setDueAt] = useState("");
 
-  // Resource (text or file)
-  const [resourceMode, setResourceMode] = useState("file"); // "file" | "url"
+  const [resourceMode, setResourceMode] = useState("file");
   const [resourceFile, setResourceFile] = useState(null);
   const [resourceUrl, setResourceUrl] = useState("");
 
-  // Media (only Listening)
-  const [mediaMode, setMediaMode] = useState("file"); // "file" | "url"
+  const [mediaMode, setMediaMode] = useState("file");
   const [mediaFile, setMediaFile] = useState(null);
   const [mediaUrl, setMediaUrl] = useState("");
 
-  const [submittingAs, setSubmittingAs] = useState(null); // null | "draft" | "assign"
-  const [errors, setErrors] = useState({});
-
-  // ─── Load students with enrollments ─────────────────────────────
+  // ─── Load existing homework ─────────────────────────────────────
   useEffect(() => {
-    const fetchStudents = async () => {
+    const loadHomework = async () => {
       try {
-        setStudentsLoading(true);
-        const res = await coursesApi.getMyStudentEnrollments({
-          Status: "InProgress,Completed",
-          "page-size": 200,
-        });
-        setStudents(res?.data?.items || []);
+        setPageLoading(true);
+        const res = await lessonHomeworkApi.getHomeworkById(id);
+        const hw = res?.data;
+        if (!hw) {
+          navigate("/tutor/homework");
+          return;
+        }
+        setTitle(hw.title || "");
+        setType(hw.type || "");
+        setWritingSubType(hw.writingSubType || "");
+        setDescription(hw.description || "");
+        setMaxScore(String(hw.maxScore ?? ""));
+        setDueAt(hw.dueAt ? new Date(hw.dueAt).toISOString().slice(0, 16) : "");
+        setResourceMode(hw.resourceUrl ? "url" : "file");
+        setResourceUrl(hw.resourceUrl || "");
+        setMediaMode(hw.mediaUrl ? "url" : "file");
+        setMediaUrl(hw.mediaUrl || "");
       } catch (err) {
-        console.error("Failed to load students:", err);
-        setStudents([]);
+        console.error("Failed to load homework:", err);
+        navigate("/tutor/homework");
       } finally {
-        setStudentsLoading(false);
+        setPageLoading(false);
       }
     };
-    fetchStudents();
-  }, []);
+    loadHomework();
+  }, [id, navigate]);
 
-  const selectedStudent = useMemo(
-    () => students.find((s) => s.studentId === studentId) || null,
-    [students, studentId],
-  );
-
-  const courseOptions = useMemo(
-    () => selectedStudent?.enrollments || [],
-    [selectedStudent],
-  );
-
-  const selectedEnrollment = useMemo(
-    () => courseOptions.find((e) => e.id === enrollmentId) || null,
-    [courseOptions, enrollmentId],
-  );
-
-  const selectedLesson = useMemo(
-    () => lessons.find((l) => l.id === lessonId) || null,
-    [lessons, lessonId],
-  );
-
-  // ─── Load lessons when enrollment changes ──────────────────────
-  useEffect(() => {
-    if (!enrollmentId) {
-      setLessons([]);
-      return;
-    }
-    const fetchLessons = async () => {
-      try {
-        setLessonsLoading(true);
-        const res = await studentApi.getLessons({
-          EnrollmentId: enrollmentId,
-          "page-size": 200,
-          "sort-params": "StartTime-asc",
-        });
-        setLessons(res?.data?.items || []);
-      } catch (err) {
-        console.error("Failed to load lessons:", err);
-        setLessons([]);
-      } finally {
-        setLessonsLoading(false);
-      }
-    };
-    fetchLessons();
-  }, [enrollmentId]);
-
-  // ─── Handlers for cascade reset ─────────────────────────────────
-  const handleStudentChange = (id) => {
-    setStudentId(id);
-    setEnrollmentId("");
-    setLessonId("");
-    setLessons([]);
-    setErrors((p) => ({ ...p, studentId: undefined }));
-  };
-
-  const handleCourseChange = (id) => {
-    setEnrollmentId(id);
-    setLessonId("");
-    setErrors((p) => ({ ...p, enrollmentId: undefined }));
-  };
-
-  const handleLessonChange = (id) => {
-    setLessonId(id);
-    setErrors((p) => ({ ...p, lessonId: undefined }));
-  };
-
+  // ─── Handlers ───────────────────────────────────────────────────
   const handleTypeChange = (newType) => {
     setType(newType);
-    if (newType !== "Writing") setWritingSubType("");
-    if (newType !== "Listening") {
-      setMediaFile(null);
-      setMediaUrl("");
-    }
     setErrors((p) => ({
       ...p,
       type: undefined,
@@ -194,13 +110,8 @@ const CreateHomework = () => {
     }));
   };
 
-  // ─── Validate + submit ─────────────────────────────────────────
   const validate = () => {
     const e = {};
-    if (!studentId) e.studentId = t("tutorDashboard.homework.studentRequired");
-    if (!enrollmentId)
-      e.enrollmentId = t("tutorDashboard.homework.courseRequired");
-    if (!lessonId) e.lessonId = t("tutorDashboard.homework.lessonRequired");
     if (!title.trim()) e.title = t("tutorDashboard.homework.titleRequired");
     if (!type) e.type = t("tutorDashboard.homework.typeRequired");
     if (type === "Writing" && !writingSubType)
@@ -209,68 +120,56 @@ const CreateHomework = () => {
       e.description = t("tutorDashboard.homework.descriptionRequired");
     if (!maxScore || Number(maxScore) <= 0)
       e.maxScore = t("tutorDashboard.homework.maxScoreRequired");
-
-    // Resource: must have either file or url
-    if (resourceMode === "file" && !resourceFile)
-      e.resource = t("tutorDashboard.homework.resourceFileRequired");
     if (resourceMode === "url" && !resourceUrl.trim())
       e.resource = t("tutorDashboard.homework.resourceUrlRequired");
-
-    // Media (Listening only)
-    if (type === "Listening") {
-      if (mediaMode === "file" && !mediaFile)
-        e.media = t("tutorDashboard.homework.mediaFileRequired");
-      if (mediaMode === "url" && !mediaUrl.trim())
-        e.media = t("tutorDashboard.homework.mediaUrlRequired");
-    }
-
+    if (type === "Listening" && mediaMode === "url" && !mediaUrl.trim())
+      e.media = t("tutorDashboard.homework.mediaUrlRequired");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = async (isAssign) => {
+  const handleSubmit = async () => {
     if (!validate()) return;
     try {
-      setSubmittingAs(isAssign ? "assign" : "draft");
-      await lessonHomeworkApi.createHomework({
-        lessonId,
+      setSubmitting(true);
+      await lessonHomeworkApi.updateHomework(id, {
+        id,
         title: title.trim(),
         type,
+        clearWritingSubType: type !== "Writing",
         writingSubType: type === "Writing" ? writingSubType : undefined,
-        resourceFile: resourceMode === "file" ? resourceFile : undefined,
+        description: description.trim(),
+        maxScore: Number(maxScore),
+        dueAt: dueAt ? new Date(dueAt).toISOString() : undefined,
         resourceUrl: resourceMode === "url" ? resourceUrl.trim() : undefined,
-        mediaFile:
-          type === "Listening" && mediaMode === "file" ? mediaFile : undefined,
+        resourceFile: resourceMode === "file" ? resourceFile : undefined,
+        clearMedia: type !== "Listening",
         mediaUrl:
           type === "Listening" && mediaMode === "url"
             ? mediaUrl.trim()
             : undefined,
-        description: description.trim(),
-        maxScore: Number(maxScore),
-        dueAt: dueAt ? new Date(dueAt).toISOString() : undefined,
-        isAssign,
+        mediaFile:
+          type === "Listening" && mediaMode === "file" ? mediaFile : undefined,
       });
       addToast({
-        title: isAssign
-          ? t("tutorDashboard.homework.assignSuccess")
-          : t("tutorDashboard.homework.createSuccess"),
+        title: t("tutorDashboard.homework.updateSuccess"),
         color: "success",
         timeout: 3000,
       });
       navigate("/tutor/homework");
     } catch (err) {
-      console.error("Failed to create homework:", err);
+      console.error("Failed to update homework:", err);
       addToast({
-        title: t("tutorDashboard.homework.createError"),
+        title: t("tutorDashboard.homework.updateError"),
         color: "danger",
         timeout: 3000,
       });
     } finally {
-      setSubmittingAs(null);
+      setSubmitting(false);
     }
   };
 
-  // ─── Type / SubType labels ──────────────────────────────────────
+  // ─── Helpers ────────────────────────────────────────────────────
   const typeLabel = (val) =>
     t(
       `tutorDashboard.homework.type.${val.charAt(0).toLowerCase() + val.slice(1)}`,
@@ -280,7 +179,6 @@ const CreateHomework = () => {
       `tutorDashboard.homework.writingSubType.${val.charAt(0).toLowerCase() + val.slice(1)}`,
     );
 
-  // ─── Render ────────────────────────────────────────────────────
   const sectionCard = (children) => (
     <Card
       shadow="none"
@@ -308,7 +206,6 @@ const CreateHomework = () => {
     </div>
   );
 
-  // File upload UI
   const fileUpload = (file, setFile, accept, errKey) => (
     <div
       className="rounded-xl p-4 border-2 border-dashed transition-colors"
@@ -395,6 +292,16 @@ const CreateHomework = () => {
     </div>
   );
 
+  // ─── Loading state ──────────────────────────────────────────────
+  if (pageLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // ─── Render ────────────────────────────────────────────────────
   return (
     <div className="space-y-6 pb-8">
       <Button
@@ -416,193 +323,19 @@ const CreateHomework = () => {
           className="text-2xl font-bold"
           style={{ color: colors.text.primary }}
         >
-          {t("tutorDashboard.homework.createPageTitle")}
+          {t("tutorDashboard.homework.editPageTitle", {
+            defaultValue: "Edit Homework",
+          })}
         </h1>
         <p style={{ color: colors.text.secondary }}>
-          {t("tutorDashboard.homework.createPageSubtitle")}
+          {t("tutorDashboard.homework.editPageSubtitle", {
+            defaultValue:
+              "Update homework details before assigning to students.",
+          })}
         </p>
       </motion.div>
 
-      {/* Step 1: Target (Student → Course → Lesson) */}
-      {sectionCard(
-        <>
-          {sectionTitle(
-            <UserRounded
-              weight="BoldDuotone"
-              className="w-5 h-5"
-              style={{ color: colors.primary.main }}
-            />,
-            t("tutorDashboard.homework.targetSection"),
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Select
-              label={t("tutorDashboard.homework.studentLabel")}
-              labelPlacement="outside"
-              placeholder={
-                studentsLoading
-                  ? t("tutorDashboard.homework.loadingStudents")
-                  : t("tutorDashboard.homework.studentPlaceholder")
-              }
-              selectedKeys={studentId ? [studentId] : []}
-              onSelectionChange={(keys) => {
-                handleStudentChange(Array.from(keys)[0] || "");
-              }}
-              isLoading={studentsLoading}
-              isInvalid={!!errors.studentId}
-              errorMessage={errors.studentId}
-              classNames={selectClassNames}
-              renderValue={() => {
-                if (!selectedStudent) return null;
-                return (
-                  <div className="flex items-center gap-2">
-                    <Avatar
-                      src={selectedStudent.studentAvatar}
-                      name={selectedStudent.studentName}
-                      size="sm"
-                      className="w-6 h-6 flex-shrink-0"
-                    />
-                    <span className="truncate">
-                      {selectedStudent.studentName}
-                    </span>
-                  </div>
-                );
-              }}
-            >
-              {students.map((s) => (
-                <SelectItem key={s.studentId} textValue={s.studentName}>
-                  <div className="flex items-center gap-2">
-                    <Avatar
-                      src={s.studentAvatar}
-                      name={s.studentName}
-                      size="sm"
-                      className="w-7 h-7 flex-shrink-0"
-                    />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-medium truncate">
-                        {s.studentName}
-                      </span>
-                      <span
-                        className="text-xs truncate"
-                        style={{ color: colors.text.tertiary }}
-                      >
-                        {s.enrollments?.length || 0}{" "}
-                        {t("tutorDashboard.homework.coursesShort")}
-                      </span>
-                    </div>
-                  </div>
-                </SelectItem>
-              ))}
-            </Select>
-
-            <Select
-              label={t("tutorDashboard.homework.courseLabel")}
-              labelPlacement="outside"
-              placeholder={
-                !studentId
-                  ? t("tutorDashboard.homework.coursePickStudentFirst")
-                  : courseOptions.length === 0
-                    ? t("tutorDashboard.homework.courseNone")
-                    : t("tutorDashboard.homework.coursePlaceholder")
-              }
-              selectedKeys={enrollmentId ? [enrollmentId] : []}
-              onSelectionChange={(keys) => {
-                handleCourseChange(Array.from(keys)[0] || "");
-              }}
-              isDisabled={!studentId || courseOptions.length === 0}
-              isInvalid={!!errors.enrollmentId}
-              errorMessage={errors.enrollmentId}
-              classNames={selectClassNames}
-            >
-              {courseOptions.map((c) => (
-                <SelectItem key={c.id} textValue={c.courseName}>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium truncate">
-                      {c.courseName}
-                    </span>
-                    <span
-                      className="text-xs"
-                      style={{ color: colors.text.tertiary }}
-                    >
-                      {c.numOfCompleteSession}/{c.numsOfSession}{" "}
-                      {t("tutorDashboard.homework.lessonsShort")}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </Select>
-
-            <Select
-              label={t("tutorDashboard.homework.lessonLabel")}
-              labelPlacement="outside"
-              placeholder={
-                !enrollmentId
-                  ? t("tutorDashboard.homework.lessonPickCourseFirst")
-                  : lessonsLoading
-                    ? t("tutorDashboard.homework.loadingLessons")
-                    : lessons.length === 0
-                      ? t("tutorDashboard.homework.lessonNone")
-                      : t("tutorDashboard.homework.lessonPlaceholder")
-              }
-              selectedKeys={lessonId ? [lessonId] : []}
-              onSelectionChange={(keys) => {
-                handleLessonChange(Array.from(keys)[0] || "");
-              }}
-              isDisabled={!enrollmentId || lessons.length === 0}
-              isLoading={lessonsLoading}
-              isInvalid={!!errors.lessonId}
-              errorMessage={errors.lessonId}
-              classNames={selectClassNames}
-            >
-              {lessons.map((l) => (
-                <SelectItem key={l.id} textValue={l.sessionTitle || "Lesson"}>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium truncate">
-                      {l.sessionTitle || "Lesson"}
-                    </span>
-                    <span
-                      className="text-xs"
-                      style={{ color: colors.text.tertiary }}
-                    >
-                      {formatDateTime(l.startTime, locale)}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-
-          {selectedLesson && (
-            <div
-              className="mt-4 p-3 rounded-xl flex items-center gap-3"
-              style={{ backgroundColor: `${colors.primary.main}10` }}
-            >
-              <BookBookmark
-                weight="BoldDuotone"
-                className="w-5 h-5 flex-shrink-0"
-                style={{ color: colors.primary.main }}
-              />
-              <div className="flex-1 min-w-0">
-                <p
-                  className="text-sm font-medium truncate"
-                  style={{ color: colors.text.primary }}
-                >
-                  {selectedLesson.sessionTitle}
-                </p>
-                <p
-                  className="text-xs truncate"
-                  style={{ color: colors.text.tertiary }}
-                >
-                  {selectedEnrollment?.courseName} ·{" "}
-                  {formatDateTime(selectedLesson.startTime, locale)}
-                </p>
-              </div>
-            </div>
-          )}
-        </>,
-      )}
-
-      {/* Step 2: Type */}
+      {/* Details */}
       {sectionCard(
         <>
           {sectionTitle(
@@ -687,7 +420,10 @@ const CreateHomework = () => {
                     onSelectionChange={(keys) => {
                       setWritingSubType(Array.from(keys)[0] || "");
                       if (errors.writingSubType)
-                        setErrors((p) => ({ ...p, writingSubType: undefined }));
+                        setErrors((p) => ({
+                          ...p,
+                          writingSubType: undefined,
+                        }));
                     }}
                     isInvalid={!!errors.writingSubType}
                     errorMessage={errors.writingSubType}
@@ -750,11 +486,6 @@ const CreateHomework = () => {
                     backgroundColor: colors.background.input,
                     color: colors.text.primary,
                   }}
-                  min={new Date(
-                    Date.now() - new Date().getTimezoneOffset() * 60000,
-                  )
-                    .toISOString()
-                    .slice(0, 16)}
                   value={dueAt}
                   onChange={(e) => setDueAt(e.target.value)}
                 />
@@ -770,7 +501,7 @@ const CreateHomework = () => {
         </>,
       )}
 
-      {/* Step 3: Resource */}
+      {/* Resource */}
       {sectionCard(
         <>
           {sectionTitle(
@@ -881,7 +612,7 @@ const CreateHomework = () => {
         </>,
       )}
 
-      {/* Step 4: Media (Listening only) */}
+      {/* Media (Listening only) */}
       {type === "Listening" &&
         sectionCard(
           <>
@@ -1002,53 +733,33 @@ const CreateHomework = () => {
           size="lg"
           variant="light"
           onPress={() => navigate("/tutor/homework")}
-          isDisabled={!!submittingAs}
+          isDisabled={submitting}
         >
           {t("tutorDashboard.homework.cancel")}
         </Button>
         <Button
           size="lg"
-          variant="bordered"
           startContent={
-            submittingAs === "draft" ? null : (
-              <DocumentText weight="BoldDuotone" className="w-6 h-6" />
-            )
+            !submitting ? (
+              <ClipboardAdd weight="BoldDuotone" className="w-5 h-5" />
+            ) : null
           }
-          onPress={() => handleSubmit(false)}
-          isLoading={submittingAs === "draft"}
-          isDisabled={submittingAs === "assign"}
-          style={{
-            border: "none",
-            color: colors.button.primaryLight.text,
-            backgroundColor: colors.button.primaryLight.background,
-          }}
-        >
-          {submittingAs === "draft"
-            ? t("tutorDashboard.homework.savingDraft")
-            : t("tutorDashboard.homework.saveAsDraft")}
-        </Button>
-        <Button
-          size="lg"
-          startContent={
-            submittingAs === "assign" ? null : (
-              <Plain2 weight="BoldDuotone" className="w-6 h-6" />
-            )
-          }
-          onPress={() => handleSubmit(true)}
-          isLoading={submittingAs === "assign"}
-          isDisabled={submittingAs === "draft"}
+          onPress={handleSubmit}
+          isLoading={submitting}
           style={{
             backgroundColor: colors.primary.main,
             color: colors.text.white,
           }}
         >
-          {submittingAs === "assign"
-            ? t("tutorDashboard.homework.assigning")
-            : t("tutorDashboard.homework.assignToStudent")}
+          {submitting
+            ? t("tutorDashboard.homework.saving")
+            : t("tutorDashboard.homework.saveBtn", {
+                defaultValue: "Save Changes",
+              })}
         </Button>
       </div>
     </div>
   );
 };
 
-export default CreateHomework;
+export default EditHomework;

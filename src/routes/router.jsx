@@ -85,6 +85,7 @@ import NotFound from "../pages/NotFound/NotFound";
 import Test from "../pages/Test/test";
 import TutorHomework from "../pages/TutorDashboard/Homework/Homework";
 import TutorCreateHomework from "../pages/TutorDashboard/Homework/CreateHomework";
+import TutorEditHomework from "../pages/TutorDashboard/Homework/EditHomework";
 import StudentHomework from "../pages/StudentDashboard/Homework/Homework";
 import StudentOrders from "../pages/StudentDashboard/Orders/Orders";
 import HomeworkDetail from "../pages/HomeworkDetail/HomeworkDetail";
@@ -313,6 +314,10 @@ export const router = createBrowserRouter([
       {
         path: "homework/create",
         element: <TutorCreateHomework />,
+      },
+      {
+        path: "homework/:id/edit",
+        element: <TutorEditHomework />,
       },
       {
         path: "homework/:id",

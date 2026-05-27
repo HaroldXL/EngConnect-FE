@@ -36,6 +36,7 @@ export const lessonHomeworkApi = {
     if (body.maxScore !== undefined && body.maxScore !== null && body.maxScore !== "")
       formData.append("MaxScore", String(body.maxScore));
     appendIfDefined("DueAt", body.dueAt);
+    formData.append("IsAssign", body.isAssign ? "true" : "false");
     if (body.resourceFile instanceof File)
       formData.append("ResourceFile", body.resourceFile, body.resourceFile.name);
     if (body.mediaFile instanceof File)
@@ -48,10 +49,39 @@ export const lessonHomeworkApi = {
     return response.data;
   },
 
-  // Tutor edits homework
-  // body: { id, title, description, submissionUrl, score, maxScore }
+  // Tutor edits homework (multipart/form-data to support file uploads)
+  // body: { id, title, description, maxScore, type, writingSubType, dueAt,
+  //         resourceFile (File), resourceUrl, mediaFile (File), mediaUrl }
   updateHomework: async (id, body) => {
-    const response = await axiosInstance.put(`/lesson-homeworks/${id}`, body);
+    const formData = new FormData();
+    const appendIfDefined = (key, value) => {
+      if (value === undefined || value === null || value === "") return;
+      formData.append(key, value);
+    };
+    appendIfDefined("Id", body.id || id);
+    appendIfDefined("Title", body.title);
+    appendIfDefined("Description", body.description);
+    appendIfDefined("SubmissionUrl", body.submissionUrl);
+    if (body.maxScore !== undefined && body.maxScore !== null && body.maxScore !== "")
+      formData.append("MaxScore", String(body.maxScore));
+    appendIfDefined("Type", body.type);
+    appendIfDefined("WritingSubType", body.writingSubType);
+    appendIfDefined("DueAt", body.dueAt);
+    appendIfDefined("ResourceUrl", body.resourceUrl);
+    // If clearMedia is true (type switched away from Listening), explicitly send empty string to erase old audio
+    if (body.clearMedia) {
+      formData.append("MediaUrl", "");
+    } else {
+      appendIfDefined("MediaUrl", body.mediaUrl);
+      if (body.mediaFile instanceof File)
+        formData.append("MediaFile", body.mediaFile, body.mediaFile.name);
+    }
+    if (body.resourceFile instanceof File)
+      formData.append("ResourceFile", body.resourceFile, body.resourceFile.name);
+    const response = await axiosInstance.put(`/lesson-homeworks/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 120000,
+    });
     return response.data;
   },
 
