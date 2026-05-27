@@ -3277,6 +3277,47 @@
         "Submitted": "Đã nộp",
         "Scored": "Đã chấm"
       }
+    },
+    "promptManagement": {
+      "title": "Prompt AI",
+      "subtitle": "Quản lý các prompt template cho từng tính năng AI",
+      "stats": {
+        "total": "Tổng định nghĩa",
+        "active": "Đang hoạt động",
+        "inactive": "Tắt"
+      },
+      "searchPlaceholder": "Tìm theo code hoặc tính năng...",
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "view": "Xem",
+      "noData": "Không có dữ liệu",
+      "table": {
+        "code": "CODE",
+        "feature": "TÍNH NĂNG",
+        "status": "TRẠNG THÁI",
+        "createdAt": "NGÀY TẠO",
+        "actions": "HÀNH ĐỘNG"
+      },
+      "detail": {
+        "subtitle": "Chi tiết định nghĩa prompt",
+        "feature": "Tính năng",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Cập nhật lần cuối",
+        "versions": "Prompt Versions",
+        "noVersions": "Chưa có prompt version nào",
+        "version": "Version",
+        "priority": "Priority",
+        "publishedAt": "Published",
+        "published": "Published",
+        "draft": "Draft",
+        "default": "Default",
+        "created": "Tạo",
+        "placeholders": "Placeholders",
+        "viewTemplate": "Xem Template",
+        "templateTitle": "Template Body",
+        "close": "Đóng"
+      }
     }
   },
   "videoCall": {

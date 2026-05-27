@@ -68,6 +68,8 @@ import AdminHomeworkDetail from "../pages/AdminDashboard/HomeworkDetail/Homework
 import AdminCourseDetail from "../pages/AdminDashboard/CourseManagement/CourseDetail";
 import AdminCourseVerificationDetail from "../pages/AdminDashboard/CourseManagement/CourseVerificationDetail";
 import AdminTutorDetail from "../pages/AdminDashboard/TutorManagament/TutorDetail";
+import AdminPromptManagement from "../pages/AdminDashboard/PromptManagement/PromptManagement";
+import AdminPromptDetail from "../pages/AdminDashboard/PromptManagement/PromptDetail";
 
 // Legal Pages
 import TermsPage from "../pages/Legal/TermsPage";
@@ -420,6 +422,14 @@ export const router = createBrowserRouter([
       {
         path: "payroll",
         element: <AdminPayroll />,
+      },
+      {
+        path: "ai-prompts",
+        element: <AdminPromptManagement />,
+      },
+      {
+        path: "ai-prompts/:id",
+        element: <AdminPromptDetail />,
       },
     ],
   },

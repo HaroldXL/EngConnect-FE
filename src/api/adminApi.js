@@ -269,4 +269,26 @@ export const adminApi = {
     const response = await axiosInstance.get("/admin-dashboard/tutor-monthly-salary", { params });
     return response.data;
   },
+
+  // Prompt Definitions
+  getPromptDefinitions: async (params = {}) => {
+    const response = await axiosInstance.get("/prompt-definitions", { params });
+    return response.data;
+  },
+
+  getPromptDefinitionById: async (id) => {
+    const response = await axiosInstance.get(`/prompt-definitions/${id}`);
+    return response.data;
+  },
+
+  // Prompt Versions
+  getPromptVersions: async (params = {}) => {
+    const response = await axiosInstance.get("/prompt-versions", { params });
+    return response.data;
+  },
+
+  getPromptVersionById: async (id) => {
+    const response = await axiosInstance.get(`/prompt-versions/${id}`);
+    return response.data;
+  },
 };

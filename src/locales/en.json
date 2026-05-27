@@ -3280,6 +3280,47 @@
         "Submitted": "Submitted",
         "Scored": "Scored"
       }
+    },
+    "promptManagement": {
+      "title": "AI Prompts",
+      "subtitle": "Manage prompt templates for each AI feature",
+      "stats": {
+        "total": "Total Definitions",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "searchPlaceholder": "Search by code or feature...",
+      "status": "Status",
+      "all": "All",
+      "view": "View",
+      "noData": "No data",
+      "table": {
+        "code": "CODE",
+        "feature": "FEATURE",
+        "status": "STATUS",
+        "createdAt": "CREATED AT",
+        "actions": "ACTIONS"
+      },
+      "detail": {
+        "subtitle": "Prompt definition detail",
+        "feature": "Feature",
+        "status": "Status",
+        "createdAt": "Created At",
+        "updatedAt": "Last Updated",
+        "versions": "Prompt Versions",
+        "noVersions": "No prompt versions yet",
+        "version": "Version",
+        "priority": "Priority",
+        "publishedAt": "Published",
+        "published": "Published",
+        "draft": "Draft",
+        "default": "Default",
+        "created": "Created",
+        "placeholders": "Placeholders",
+        "viewTemplate": "View Template",
+        "templateTitle": "Template Body",
+        "close": "Close"
+      }
     }
   },
   "videoCall": {
