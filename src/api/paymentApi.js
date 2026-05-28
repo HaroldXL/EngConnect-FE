@@ -60,6 +60,14 @@ export const paymentApi = {
     const response = await axiosInstance.get("/payments/v1/student-refunds", { params });
     return response.data;
   },
+  getStudentRefundDetails: async (params = {}) => {
+    const response = await axiosInstance.get("/payments/v1/student-refunds/details", { params });
+    return response.data;
+  },
+  getStudentRefundDetail: async (id) => {
+    const response = await axiosInstance.get(`/payments/v1/student-refunds/${id}/detail`);
+    return response.data;
+  },
 
   // ── Commission Configs ────────────────────────────────
   getCommissionConfigs: async (params = {}) => {

@@ -10,6 +10,7 @@ import {
   GraphUp,
   Hourglass,
   Lightning,
+  Restart,
   SquareAltArrowRight,
   SquareBottomUp,
   Wallet,
@@ -112,6 +113,16 @@ const Earnings = () => {
   const [payoutItems, setPayoutItems] = useState([]);
   const [payoutItemsLoading, setPayoutItemsLoading] = useState(false);
   const [payoutDetailOpen, setPayoutDetailOpen] = useState(false);
+
+  // Student refunds tab
+  const [refunds, setRefunds] = useState([]);
+  const [refundsLoading, setRefundsLoading] = useState(false);
+  const [refundsPage, setRefundsPage] = useState(1);
+  const [refundsTotalPages, setRefundsTotalPages] = useState(1);
+  const [refundStatusFilter, setRefundStatusFilter] = useState("");
+  const [refundTypeFilter, setRefundTypeFilter] = useState("");
+  const [selectedRefund, setSelectedRefund] = useState(null);
+  const [refundDetailOpen, setRefundDetailOpen] = useState(false);
 
   // ── Fetchers ────────────────────────────────────────
   useEffect(() => {
@@ -228,6 +239,26 @@ const Earnings = () => {
     if (activeTab === "course-sales") fetchSales();
   }, [activeTab, fetchSales]);
 
+  const fetchRefunds = useCallback(async () => {
+    setRefundsLoading(true);
+    try {
+      const params = { page: refundsPage, "page-size": 10 };
+      if (refundStatusFilter) params.Status = refundStatusFilter;
+      if (refundTypeFilter) params.RefundType = refundTypeFilter;
+      const res = await paymentApi.getStudentRefundDetails(params);
+      setRefunds(res?.data?.items || []);
+      setRefundsTotalPages(res?.data?.totalPages || 1);
+    } catch {
+      setRefunds([]);
+    } finally {
+      setRefundsLoading(false);
+    }
+  }, [refundsPage, refundStatusFilter, refundTypeFilter]);
+
+  useEffect(() => {
+    if (activeTab === "refunds") fetchRefunds();
+  }, [activeTab, fetchRefunds]);
+
   const openPayoutDetail = async (payout) => {
     setSelectedPayout(payout);
     setPayoutDetailOpen(true);
@@ -284,6 +315,28 @@ const Earnings = () => {
         return colors.state.error;
       default:
         return colors.text.tertiary;
+    }
+  };
+
+  const getRefundStatusColor = (status) => {
+    switch (status) {
+      case "Paid":
+        return colors.state.success;
+      case "Failed":
+        return colors.state.error;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
+  const getRefundStatusIcon = (status) => {
+    switch (status) {
+      case "Paid":
+        return CheckCircle;
+      case "Failed":
+        return CloseCircle;
+      default:
+        return Hourglass;
     }
   };
 
@@ -483,6 +536,15 @@ const Earnings = () => {
             <div className="flex items-center gap-2">
               <CourseUp weight="BoldDuotone" className="w-5 h-5" />
               <span>{t("tutorDashboard.earnings.courseSalesTab")}</span>
+            </div>
+          }
+        />
+        <Tab
+          key="refunds"
+          title={
+            <div className="flex items-center gap-2">
+              <Restart weight="BoldDuotone" className="w-5 h-5" />
+              <span>{t("tutorDashboard.earnings.refundsTab")}</span>
             </div>
           }
         />
@@ -1074,6 +1136,221 @@ const Earnings = () => {
         </Card>
       )}
 
+      {activeTab === "refunds" && (
+        <Card shadow="none" className="border-none" style={tableCardStyle}>
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <h2
+                className="text-lg font-semibold flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <Restart
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.state.error }}
+                />
+                {t("tutorDashboard.earnings.refundsList")}
+              </h2>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Select
+                  size="sm"
+                  className="w-44"
+                  placeholder={t("tutorDashboard.earnings.allTypes")}
+                  selectedKeys={refundTypeFilter ? [refundTypeFilter] : []}
+                  classNames={selectClassNames}
+                  onSelectionChange={(keys) => {
+                    const v = [...keys][0] || "";
+                    setRefundTypeFilter(v);
+                    setRefundsPage(1);
+                  }}
+                >
+                  <SelectItem key="NoTutorLesson">
+                    {t("tutorDashboard.earnings.refundTypes.NoTutorLesson")}
+                  </SelectItem>
+                  <SelectItem key="Other">
+                    {t("tutorDashboard.earnings.refundTypes.Other")}
+                  </SelectItem>
+                </Select>
+                <Select
+                  size="sm"
+                  className="w-44"
+                  placeholder={t("tutorDashboard.earnings.allStatuses")}
+                  selectedKeys={refundStatusFilter ? [refundStatusFilter] : []}
+                  classNames={selectClassNames}
+                  onSelectionChange={(keys) => {
+                    const v = [...keys][0] || "";
+                    setRefundStatusFilter(v);
+                    setRefundsPage(1);
+                  }}
+                >
+                  {["Paid", "Failed"].map((s) => (
+                    <SelectItem key={s}>
+                      {t(`tutorDashboard.earnings.refundStatuses.${s}`)}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <Table
+              aria-label="Student Refunds"
+              classNames={tableClassNames}
+              removeWrapper
+            >
+              <TableHeader>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.student")}
+                </TableColumn>
+                <TableColumn>{t("tutorDashboard.earnings.course")}</TableColumn>
+                <TableColumn>{t("tutorDashboard.earnings.amount")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.refundType")}
+                </TableColumn>
+                <TableColumn>{t("tutorDashboard.earnings.status")}</TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.requestedAt")}
+                </TableColumn>
+                <TableColumn>
+                  {t("tutorDashboard.earnings.actions")}
+                </TableColumn>
+              </TableHeader>
+              <TableBody
+                isLoading={refundsLoading}
+                loadingContent={<Spinner />}
+                emptyContent={
+                  <p
+                    className="py-8 text-center"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {t("tutorDashboard.earnings.noRefunds")}
+                  </p>
+                }
+              >
+                {refunds.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell>
+                      <div>
+                        <p
+                          className="text-sm font-medium"
+                          style={{ color: colors.text.primary }}
+                        >
+                          {r.studentName}
+                        </p>
+                        <p
+                          className="text-xs"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {r.studentEmail}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className="text-sm"
+                        style={{ color: colors.text.primary }}
+                      >
+                        {r.courseName}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className="font-semibold"
+                        style={{ color: colors.state.error }}
+                      >
+                        -{formatVND(r.totalAmount)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        style={{
+                          backgroundColor: `${colors.state.warning}15`,
+                          color: colors.state.warning,
+                        }}
+                      >
+                        {t(
+                          `tutorDashboard.earnings.refundTypes.${r.refundType}`,
+                          {
+                            defaultValue: r.refundType,
+                          },
+                        )}
+                      </Chip>
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const RefundIcon = getRefundStatusIcon(r.status);
+                        return (
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            startContent={
+                              <RefundIcon
+                                weight="BoldDuotone"
+                                className="w-3.5 h-3.5"
+                              />
+                            }
+                            style={{
+                              backgroundColor: `${getRefundStatusColor(r.status)}15`,
+                              color: getRefundStatusColor(r.status),
+                            }}
+                          >
+                            {t(
+                              `tutorDashboard.earnings.refundStatuses.${r.status}`,
+                              { defaultValue: r.status },
+                            )}
+                          </Chip>
+                        );
+                      })()}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className="text-sm"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        {formatDate(r.requestedAt)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        startContent={
+                          <SquareBottomUp
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                          />
+                        }
+                        onPress={() => {
+                          setSelectedRefund(r);
+                          setRefundDetailOpen(true);
+                        }}
+                        style={{
+                          backgroundColor: `${colors.primary.main}15`,
+                          color: colors.primary.main,
+                        }}
+                      >
+                        {t("tutorDashboard.earnings.viewItems")}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {refundsTotalPages > 1 && (
+              <div className="flex justify-center mt-4">
+                <Pagination
+                  total={refundsTotalPages}
+                  page={refundsPage}
+                  onChange={setRefundsPage}
+                  showControls
+                  color="primary"
+                />
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      )}
+
       {/* Withdraw Ticket Modal */}
       <TutorWithdrawTicketModal
         isOpen={withdrawOpen}
@@ -1486,6 +1763,227 @@ const Earnings = () => {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Refund Detail Modal */}
+      <Modal
+        isOpen={refundDetailOpen}
+        onOpenChange={setRefundDetailOpen}
+        size="2xl"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          <ModalHeader
+            className="flex items-center gap-2"
+            style={{ color: colors.text.primary }}
+          >
+            <CloseCircle
+              weight="BoldDuotone"
+              className="w-5 h-5"
+              style={{ color: colors.state.error }}
+            />
+            {t("tutorDashboard.earnings.refundDetail")}
+          </ModalHeader>
+          <ModalBody className="pb-6">
+            {selectedRefund && (
+              <div className="space-y-4">
+                {/* Student + Course */}
+                <div
+                  className="p-3 rounded-xl"
+                  style={{ backgroundColor: colors.background.gray }}
+                >
+                  <p
+                    className="text-base font-semibold"
+                    style={{ color: colors.text.primary }}
+                  >
+                    {selectedRefund.courseName}
+                  </p>
+                  <p
+                    className="text-sm mt-0.5"
+                    style={{ color: colors.text.secondary }}
+                  >
+                    {selectedRefund.studentName}
+                  </p>
+                  <p
+                    className="text-xs"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {selectedRefund.studentEmail}
+                  </p>
+                </div>
+
+                {/* Summary grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.amount")}
+                    </p>
+                    <p
+                      className="text-base font-semibold mt-0.5"
+                      style={{ color: colors.state.error }}
+                    >
+                      -{formatVND(selectedRefund.totalAmount)}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.status")}
+                    </p>
+                    {(() => {
+                      const RefundIcon = getRefundStatusIcon(
+                        selectedRefund.status,
+                      );
+                      return (
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          className="mt-1"
+                          startContent={
+                            <RefundIcon
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
+                          }
+                          style={{
+                            backgroundColor: `${getRefundStatusColor(selectedRefund.status)}15`,
+                            color: getRefundStatusColor(selectedRefund.status),
+                          }}
+                        >
+                          {t(
+                            `tutorDashboard.earnings.refundStatuses.${selectedRefund.status}`,
+                            { defaultValue: selectedRefund.status },
+                          )}
+                        </Chip>
+                      );
+                    })()}
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.requestedAt")}
+                    </p>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {formatDateTime(selectedRefund.requestedAt)}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("tutorDashboard.earnings.approvedAt")}
+                    </p>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {formatDateTime(selectedRefund.approvedAt)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Refund Items */}
+                {selectedRefund.refundItems?.length > 0 && (
+                  <div>
+                    <p
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {t("tutorDashboard.earnings.refundItemsLabel")} (
+                      {selectedRefund.refundItems.length})
+                    </p>
+                    <div className="space-y-2">
+                      {selectedRefund.refundItems.map((item) => (
+                        <div
+                          key={item.id}
+                          className="p-3 rounded-xl"
+                          style={{ backgroundColor: colors.background.gray }}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className="text-sm font-medium"
+                                style={{ color: colors.text.primary }}
+                              >
+                                {formatDateTime(item.lessonStartTime)} —{" "}
+                                {formatDateTime(item.lessonEndTime)}
+                              </p>
+                              {item.note && (
+                                <p
+                                  className="text-xs mt-0.5 line-clamp-2"
+                                  style={{ color: colors.text.secondary }}
+                                >
+                                  {item.note}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span
+                                className="text-sm font-semibold"
+                                style={{ color: colors.state.error }}
+                              >
+                                -{formatVND(item.amount)}
+                              </span>
+                              {(() => {
+                                const RefundIcon = getRefundStatusIcon(
+                                  item.status,
+                                );
+                                return (
+                                  <Chip
+                                    size="sm"
+                                    variant="flat"
+                                    startContent={
+                                      <RefundIcon
+                                        weight="BoldDuotone"
+                                        className="w-3.5 h-3.5"
+                                      />
+                                    }
+                                    style={{
+                                      backgroundColor: `${getRefundStatusColor(item.status)}15`,
+                                      color: getRefundStatusColor(item.status),
+                                    }}
+                                  >
+                                    {t(
+                                      `tutorDashboard.earnings.refundStatuses.${item.status}`,
+                                      { defaultValue: item.status },
+                                    )}
+                                  </Chip>
+                                );
+                              })()}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </ModalBody>

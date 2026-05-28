@@ -1804,6 +1804,21 @@
         "InProgress": "In Progress",
         "Pending": "Pending",
         "Cancelled": "Cancelled"
+      },
+      "refundsTab": "Student Refunds",
+      "refundsList": "Student Refund Records",
+      "noRefunds": "No refund records",
+      "refundDetail": "Refund Detail",
+      "approvedAt": "Approved At",
+      "refundItemsLabel": "Refund Items",
+      "refundType": "Refund Type",
+      "refundStatuses": {
+        "Paid": "Paid",
+        "Failed": "Failed"
+      },
+      "refundTypes": {
+        "NoTutorLesson": "Tutor No-Show",
+        "Other": "Other"
       }
     },
     "community": {

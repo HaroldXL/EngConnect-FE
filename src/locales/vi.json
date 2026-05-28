@@ -1802,6 +1802,21 @@
         "InProgress": "Đang học",
         "Pending": "Chờ xác nhận",
         "Cancelled": "Đã hủy"
+      },
+      "refundsTab": "Hoàn tiền học viên",
+      "refundsList": "Lịch sử hoàn tiền học viên",
+      "noRefunds": "Không có bản ghi hoàn tiền",
+      "refundDetail": "Chi tiết hoàn tiền",
+      "approvedAt": "Ngày duyệt",
+      "refundItemsLabel": "Buổi học được hoàn tiền",
+      "refundType": "Loại hoàn tiền",
+      "refundStatuses": {
+        "Paid": "Đã hoàn tiền",
+        "Failed": "Thất bại"
+      },
+      "refundTypes": {
+        "NoTutorLesson": "Gia sư vắng mặt",
+        "Other": "Lý do khác"
       }
     },
     "community": {
