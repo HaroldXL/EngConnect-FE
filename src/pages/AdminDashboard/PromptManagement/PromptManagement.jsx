@@ -234,7 +234,9 @@ const PromptManagement = () => {
                 >
                   <DropdownItem key="all">{p("all")}</DropdownItem>
                   <DropdownItem key="active">{p("stats.active")}</DropdownItem>
-                  <DropdownItem key="inactive">{p("stats.inactive")}</DropdownItem>
+                  <DropdownItem key="inactive">
+                    {p("stats.inactive")}
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -303,7 +305,9 @@ const PromptManagement = () => {
                         color={item.isActive ? "success" : "danger"}
                         variant="flat"
                       >
-                        {item.isActive ? p("stats.active") : p("stats.inactive")}
+                        {item.isActive
+                          ? p("stats.active")
+                          : p("stats.inactive")}
                       </Chip>
                     </TableCell>
                     <TableCell>

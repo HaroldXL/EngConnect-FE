@@ -204,7 +204,9 @@ const PromptDetail = () => {
                       color={definition?.isActive ? "success" : "danger"}
                       variant="flat"
                     >
-                      {definition?.isActive ? p("stats.active") : p("stats.inactive")}
+                      {definition?.isActive
+                        ? p("stats.active")
+                        : p("stats.inactive")}
                     </Chip>
                   </div>
                 </div>
@@ -455,7 +457,8 @@ const PromptDetail = () => {
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
             <span style={{ color: colors.text.primary }}>
-              {p("detail.templateTitle")} — {p("detail.version")} {selectedVersion?.versionNumber}
+              {p("detail.templateTitle")} — {p("detail.version")}{" "}
+              {selectedVersion?.versionNumber}
             </span>
             <div className="flex gap-2 flex-wrap">
               <span
