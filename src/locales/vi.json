@@ -2172,6 +2172,22 @@
       "courseSchedule": "Lịch học",
       "progress": "Tiến độ",
       "sessionsCompleted": "buổi đã hoàn thành",
+      "courseRefund": {
+        "requestBtn": "Yêu cầu hoàn tiền khóa học",
+        "modalTitle": "Hoàn tiền hủy khóa học",
+        "fullRefundLabel": "Hoàn tiền toàn bộ",
+        "fullRefundHint": "Bạn chỉ mới học buổi học thử. Bạn đủ điều kiện nhận hoàn tiền toàn bộ học phí.",
+        "partialRefundLabel": "Hoàn tiền một phần",
+        "partialRefundHint": "Bạn đã hoàn thành {{completed}} trên {{total}} buổi. Bạn sẽ được hoàn tiền cho các buổi chưa học.",
+        "noteLabel": "Ghi chú (tùy chọn)",
+        "notePlaceholder": "Thêm thông tin cho quản trị viên...",
+        "submitBtn": "Gửi yêu cầu hoàn tiền",
+        "submitSuccess": "Yêu cầu hoàn tiền khóa học đã được gửi thành công",
+        "submitFailed": "Gửi yêu cầu hoàn tiền khóa học thất bại",
+        "adminPreviewTitle": "Admin sẽ nhận được",
+        "adminPreviewCourse": "Khóa học:",
+        "adminPreviewType": "Loại hoàn tiền:"
+      },
       "noScheduledLessons": "Chưa có buổi học nào được lên lịch",
       "scheduleToday": "Hôm nay",
       "scheduleUpcoming": "Sắp tới",
@@ -3006,6 +3022,13 @@
         "approveSuccess": "Đã xử lý hoàn tiền thành công",
         "approveFailed": "Xử lý hoàn tiền thất bại",
         "lessonIdNotFound": "Không tìm thấy Lesson ID trong mô tả phiếu"
+      },
+      "courseRefund": {
+        "enrollmentLabel": "Enrollment ID",
+        "hint": "Học viên yêu cầu hoàn tiền hủy khóa học. Nhập mật khẩu admin để xử lý hoàn tiền cho các buổi còn lại.",
+        "enrollmentIdNotFound": "Không tìm thấy Enrollment ID trong mô tả phiếu",
+        "approveSuccess": "Đã xử lý hoàn tiền khóa học thành công",
+        "approveFailed": "Xử lý hoàn tiền khóa học thất bại"
       },
       "payout": {
         "title": "Duyệt thanh toán thủ công",

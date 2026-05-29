@@ -89,8 +89,7 @@ const Students = () => {
       setLoading(true);
       try {
         const params = { "page-size": 50, page: 1 };
-        params.Status =
-          selectedTab === "all" ? "InProgress,Completed" : selectedTab;
+        params.Status = selectedTab === "all" ? "" : selectedTab;
         if (searchQuery.trim()) params["search-term"] = searchQuery.trim();
         const data = await coursesApi.getMyStudentEnrollments(params);
         setStudents(data?.data?.items ?? []);

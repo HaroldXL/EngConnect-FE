@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { AltArrowLeft, CalendarMark, CheckCircle, ClockCircle, CloseCircle, DangerTriangle } from "@solar-icons/react"
+import {
+  AltArrowLeft,
+  CalendarMark,
+  CheckCircle,
+  ClockCircle,
+  CloseCircle,
+  DangerTriangle,
+} from "@solar-icons/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody, Button, Chip, Divider, Spinner } from "@heroui/react";
@@ -84,8 +91,15 @@ const Checkout = () => {
 
   const parseConflictSlots = (message, slotList) => {
     // message: "...: Thursday 15:30 - 17:00; Tuesday 14:30 - 16:00."
-    const afterColon = message.split(": ").slice(1).join(": ").replace(/\.$/, "");
-    const parts = afterColon.split("; ").map((s) => s.trim()).filter(Boolean);
+    const afterColon = message
+      .split(": ")
+      .slice(1)
+      .join(": ")
+      .replace(/\.$/, "");
+    const parts = afterColon
+      .split("; ")
+      .map((s) => s.trim())
+      .filter(Boolean);
     const ids = new Set();
     parts.forEach((part) => {
       // part: "Thursday 15:30 - 17:00"
@@ -301,7 +315,10 @@ const Checkout = () => {
                         border: `1px solid ${colors.state.error}30`,
                       }}
                     >
-                      <CloseCircle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <CloseCircle
+                        weight="BoldDuotone"
+                        className="w-4 h-4 flex-shrink-0 mt-0.5"
+                      />
                       <span>{t("checkout.slotConflict")}</span>
                     </div>
                   )}
@@ -314,7 +331,10 @@ const Checkout = () => {
                         border: `1px solid ${colors.state.error}30`,
                       }}
                     >
-                      <DangerTriangle weight="BoldDuotone" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <DangerTriangle
+                        weight="BoldDuotone"
+                        className="w-4 h-4 flex-shrink-0 mt-0.5"
+                      />
                       <span>{checkoutError}</span>
                     </div>
                   )}
@@ -325,7 +345,10 @@ const Checkout = () => {
                       className="text-center py-8"
                       style={{ color: colors.text.tertiary }}
                     >
-                      <CalendarMark weight="BoldDuotone" className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <CalendarMark
+                        weight="BoldDuotone"
+                        className="w-12 h-12 mx-auto mb-2 opacity-50"
+                      />
                       <p>{t("checkout.noSlots")}</p>
                     </div>
                   ) : (
@@ -342,7 +365,9 @@ const Checkout = () => {
                           </h3>
                           <div className="flex flex-wrap gap-2">
                             {slots.map((slot) => {
-                              const isSelected = selectedSlots.includes(slot.id);
+                              const isSelected = selectedSlots.includes(
+                                slot.id,
+                              );
                               const isConflict = conflictSlotIds.has(slot.id);
                               const isDisabled =
                                 !isSelected &&
@@ -358,28 +383,40 @@ const Checkout = () => {
                                     backgroundColor: isConflict
                                       ? `${colors.state.error}18`
                                       : isSelected
-                                      ? colors.primary.main
-                                      : colors.background.light,
+                                        ? colors.primary.main
+                                        : colors.background.gray,
                                     color: isConflict
                                       ? colors.state.error
                                       : isSelected
-                                      ? "#fff"
-                                      : colors.text.primary,
-                                    border: isConflict
-                                      ? `2px solid ${colors.state.error}`
-                                      : isSelected
-                                      ? `2px solid ${colors.primary.main}`
-                                      : `1px solid ${colors.border.light}`,
+                                        ? "#fff"
+                                        : colors.text.primary,
+                                    // border: isConflict
+                                    //   ? `2px solid ${colors.state.error}`
+                                    //   : isSelected
+                                    //     ? `2px solid ${colors.primary.main}`
+                                    //     : `1px solid ${colors.border.light}`,
                                     opacity: isDisabled ? 0.5 : 1,
-                                    cursor: isDisabled ? "not-allowed" : "pointer",
+                                    cursor: isDisabled
+                                      ? "not-allowed"
+                                      : "pointer",
                                   }}
                                 >
                                   {isConflict ? (
-                                    <CloseCircle weight="BoldDuotone" className="w-4 h-4" />
+                                    <CloseCircle
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   ) : isSelected ? (
-                                    <CheckCircle weight="BoldDuotone" className="w-4 h-4" />
+                                    <CheckCircle
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                    />
                                   ) : (
-                                    <ClockCircle weight="BoldDuotone" className="w-4 h-4" />
+                                    <ClockCircle
+                                      weight="BoldDuotone"
+                                      className="w-4 h-4"
+                                      style={{ color: colors.text.secondary }}
+                                    />
                                   )}
                                   {formatTime(slot.startTime)} —{" "}
                                   {formatTime(slot.endTime)}

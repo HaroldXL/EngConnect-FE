@@ -2178,6 +2178,22 @@
       "viewAllSchedule": "View All Schedule",
       "progress": "Progress",
       "sessionsCompleted": "sessions completed",
+      "courseRefund": {
+        "requestBtn": "Request Course Refund",
+        "modalTitle": "Course Cancellation Refund",
+        "fullRefundLabel": "Full Refund",
+        "fullRefundHint": "You completed only the trial lesson. You are eligible for a full refund of the course fee.",
+        "partialRefundLabel": "Partial Refund",
+        "partialRefundHint": "You completed {{completed}} of {{total}} sessions. A refund will be issued for the remaining unattended sessions.",
+        "noteLabel": "Note (optional)",
+        "notePlaceholder": "Add any additional details for the admin...",
+        "submitBtn": "Submit Refund Request",
+        "submitSuccess": "Course refund request submitted successfully",
+        "submitFailed": "Failed to submit course refund request",
+        "adminPreviewTitle": "Admin will receive",
+        "adminPreviewCourse": "Course:",
+        "adminPreviewType": "Refund type:"
+      },
       "studentReviews": "Student Reviews",
       "noReviews": "No reviews yet.",
       "anonymous": "Anonymous",
@@ -3009,6 +3025,13 @@
         "approveSuccess": "Refund processed successfully",
         "approveFailed": "Failed to process refund",
         "lessonIdNotFound": "Could not find Lesson ID in ticket description"
+      },
+      "courseRefund": {
+        "enrollmentLabel": "Enrollment ID",
+        "hint": "Student requested a course cancellation refund. Enter your admin password to process the refund for the remaining sessions.",
+        "enrollmentIdNotFound": "Could not find Enrollment ID in ticket description",
+        "approveSuccess": "Course refund processed successfully",
+        "approveFailed": "Failed to process course refund"
       },
       "payout": {
         "title": "Manual Payout Approval",

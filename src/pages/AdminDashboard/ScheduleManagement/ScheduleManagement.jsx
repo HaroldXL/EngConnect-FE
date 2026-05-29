@@ -174,11 +174,27 @@ const ScheduleManagement = () => {
       const [allR, schR, liveR, compR, settledR, canR, upcomingR] =
         await Promise.allSettled([
           studentApi.getLessons({ "page-size": 1, page: 1 }),
-          studentApi.getLessons({ Status: "Scheduled", "page-size": 1, page: 1 }),
-          studentApi.getLessons({ Status: "InProgress", "page-size": 10, page: 1 }),
-          studentApi.getLessons({ Status: "Completed", "page-size": 1, page: 1 }),
+          studentApi.getLessons({
+            Status: "Scheduled",
+            "page-size": 1,
+            page: 1,
+          }),
+          studentApi.getLessons({
+            Status: "InProgress",
+            "page-size": 10,
+            page: 1,
+          }),
+          studentApi.getLessons({
+            Status: "Completed",
+            "page-size": 1,
+            page: 1,
+          }),
           studentApi.getLessons({ Status: "Settled", "page-size": 1, page: 1 }),
-          studentApi.getLessons({ Status: "Cancelled", "page-size": 1, page: 1 }),
+          studentApi.getLessons({
+            Status: "Cancelled",
+            "page-size": 1,
+            page: 1,
+          }),
           studentApi.getLessons({
             Status: "Scheduled",
             StartTimeFrom: todayFrom,
@@ -188,14 +204,26 @@ const ScheduleManagement = () => {
           }),
         ]);
       return {
-        statsTotal: allR.status === "fulfilled" ? allR.value?.data?.totalItems || 0 : 0,
-        statsScheduled: schR.status === "fulfilled" ? schR.value?.data?.totalItems || 0 : 0,
-        statsInProgress: liveR.status === "fulfilled" ? liveR.value?.data?.totalItems || 0 : 0,
-        liveNow: liveR.status === "fulfilled" ? liveR.value?.data?.items || [] : [],
-        statsCompleted: compR.status === "fulfilled" ? compR.value?.data?.totalItems || 0 : 0,
-        statsSettled: settledR.status === "fulfilled" ? settledR.value?.data?.totalItems || 0 : 0,
-        statsCancelled: canR.status === "fulfilled" ? canR.value?.data?.totalItems || 0 : 0,
-        upcomingToday: upcomingR.status === "fulfilled" ? upcomingR.value?.data?.items || [] : [],
+        statsTotal:
+          allR.status === "fulfilled" ? allR.value?.data?.totalItems || 0 : 0,
+        statsScheduled:
+          schR.status === "fulfilled" ? schR.value?.data?.totalItems || 0 : 0,
+        statsInProgress:
+          liveR.status === "fulfilled" ? liveR.value?.data?.totalItems || 0 : 0,
+        liveNow:
+          liveR.status === "fulfilled" ? liveR.value?.data?.items || [] : [],
+        statsCompleted:
+          compR.status === "fulfilled" ? compR.value?.data?.totalItems || 0 : 0,
+        statsSettled:
+          settledR.status === "fulfilled"
+            ? settledR.value?.data?.totalItems || 0
+            : 0,
+        statsCancelled:
+          canR.status === "fulfilled" ? canR.value?.data?.totalItems || 0 : 0,
+        upcomingToday:
+          upcomingR.status === "fulfilled"
+            ? upcomingR.value?.data?.items || []
+            : [],
       };
     },
     enabled: activeTab === "overview",
@@ -938,6 +966,7 @@ const ScheduleManagement = () => {
                         "Cancelled",
                         "NoStudent",
                         "NoTutor",
+                        "Refund",
                         "Rescheduled",
                         "MadeUp",
                       ].map((s) => (
@@ -1042,9 +1071,18 @@ const ScheduleManagement = () => {
                   {[
                     { key: "all", label: t("adminDashboard.schedule.allTime") },
                     { key: "today", label: t("adminDashboard.schedule.today") },
-                    { key: "week", label: t("adminDashboard.schedule.thisWeek") },
-                    { key: "month", label: t("adminDashboard.schedule.thisMonth") },
-                    { key: "custom", label: t("adminDashboard.schedule.customRange") },
+                    {
+                      key: "week",
+                      label: t("adminDashboard.schedule.thisWeek"),
+                    },
+                    {
+                      key: "month",
+                      label: t("adminDashboard.schedule.thisMonth"),
+                    },
+                    {
+                      key: "custom",
+                      label: t("adminDashboard.schedule.customRange"),
+                    },
                   ].map((p) => (
                     <Button
                       key={p.key}

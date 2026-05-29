@@ -1,6 +1,21 @@
 ﻿import { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AltArrowLeft, Card as CardIcon, ChatRoundDots, CheckCircle, Dollar, Eye, Letter, MinimalisticMagnifier, Restart, Plain, ShieldCheck, TrashBinMinimalistic, UserCircle, Wallet } from "@solar-icons/react"
+import {
+  AltArrowLeft,
+  Card as CardIcon,
+  ChatRoundDots,
+  CheckCircle,
+  Dollar,
+  Eye,
+  Letter,
+  MinimalisticMagnifier,
+  Restart,
+  Plain,
+  ShieldCheck,
+  TrashBinMinimalistic,
+  UserCircle,
+  Wallet,
+} from "@solar-icons/react";
 import {
   Card,
   CardBody,
@@ -41,7 +56,6 @@ import { paymentApi } from "../../../api/paymentApi";
 import AdminLessonDetailModal from "../../../components/AdminLessonDetailModal/AdminLessonDetailModal";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-
 
 const TICKET_TYPES = [
   "Error",
@@ -123,6 +137,7 @@ const SupportTickets = () => {
   const [refundLessonId, setRefundLessonId] = useState(null);
   const [refundLesson, setRefundLesson] = useState(null);
   const [refundLessonLoading, setRefundLessonLoading] = useState(false);
+  const [refundEnrollmentId, setRefundEnrollmentId] = useState(null);
   const [refundPasswordOpen, setRefundPasswordOpen] = useState(false);
   const [refundPassword, setRefundPassword] = useState("");
   const [refundNote, setRefundNote] = useState("");
@@ -200,6 +215,7 @@ const SupportTickets = () => {
     setPayoutSummary(null);
     setRefundLessonId(null);
     setRefundLesson(null);
+    setRefundEnrollmentId(null);
     try {
       const res = await supportApi.getTicketById(ticket.id);
       if (res.isSuccess) {
@@ -221,11 +237,14 @@ const SupportTickets = () => {
         }
         // Auto-fetch lesson for Refund tickets
         if (res.data.type === "Refund") {
-          const match = res.data.description?.match(
+          const lessonMatch = res.data.description?.match(
             /\[LessonId\]:\s*([0-9a-f-]{36})/i,
           );
-          if (match) {
-            const lid = match[1];
+          const enrollmentMatch = res.data.description?.match(
+            /\[EnrollmentId\]:\s*([0-9a-f-]{36})/i,
+          );
+          if (lessonMatch) {
+            const lid = lessonMatch[1];
             setRefundLessonId(lid);
             setRefundLessonLoading(true);
             studentApi
@@ -233,6 +252,8 @@ const SupportTickets = () => {
               .then((r) => setRefundLesson(r?.data ?? null))
               .catch(() => {})
               .finally(() => setRefundLessonLoading(false));
+          } else if (enrollmentMatch) {
+            setRefundEnrollmentId(enrollmentMatch[1]);
           }
         }
         // Auto-fetch tutor earning summary for Payout tickets
@@ -443,6 +464,55 @@ const SupportTickets = () => {
     }
   };
 
+  const handleApproveCourseRefund = async () => {
+    if (!refundEnrollmentId) {
+      setRefundError(
+        t("adminDashboard.supportTickets.courseRefund.enrollmentIdNotFound"),
+      );
+      return;
+    }
+    if (!refundPassword) {
+      setRefundError(
+        t("adminDashboard.supportTickets.refund.passwordRequired"),
+      );
+      return;
+    }
+    setProcessingRefund(true);
+    setRefundError("");
+    try {
+      await paymentApi.approveStudentRefundCourseCancellation({
+        enrollmentId: refundEnrollmentId,
+        ticketId: selectedTicket.id,
+        password: refundPassword,
+        note: refundNote.trim() || undefined,
+      });
+      await supportApi.updateTicketStatus(selectedTicket.id, "Resolved");
+      setSelectedTicket((prev) => ({ ...prev, status: "Resolved" }));
+      setRefundPasswordOpen(false);
+      setRefundPassword("");
+      setRefundNote("");
+      queryClient.invalidateQueries({ queryKey: ["admin-tickets"] });
+      addToast({
+        title: t("adminDashboard.supportTickets.courseRefund.approveSuccess"),
+        color: "success",
+      });
+    } catch (err) {
+      const code = err?.response?.data?.error?.code;
+      if (code === "User.InvalidPassword") {
+        setRefundError(
+          t("adminDashboard.supportTickets.refund.invalidPassword"),
+        );
+      } else {
+        setRefundError(
+          err?.response?.data?.error?.message ||
+            t("adminDashboard.supportTickets.courseRefund.approveFailed"),
+        );
+      }
+    } finally {
+      setProcessingRefund(false);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedTicket) return;
     setSending(true);
@@ -501,7 +571,9 @@ const SupportTickets = () => {
         >
           <Button
             variant="light"
-            startContent={<AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />}
+            startContent={
+              <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+            }
             onPress={() => {
               setView("list");
               setSelectedTicket(null);
@@ -736,28 +808,6 @@ const SupportTickets = () => {
                           )}
                         </p>
                       </div>
-                    ) : selectedTicket.status === "InProgress" ? (
-                      <div
-                        className="flex items-center gap-2 p-3 rounded-xl"
-                        style={{
-                          backgroundColor: `${colors.state.success}12`,
-                          border: `1px solid ${colors.state.success}30`,
-                        }}
-                      >
-                        <CheckCircle
-                          weight="BoldDuotone"
-                          className="w-4 h-4"
-                          style={{ color: colors.state.success }}
-                        />
-                        <p
-                          className="text-sm"
-                          style={{ color: colors.state.success }}
-                        >
-                          {t(
-                            "adminDashboard.supportTickets.reschedule.alreadyApproved",
-                          )}
-                        </p>
-                      </div>
                     ) : (
                       <div className="flex items-center gap-3">
                         <Button
@@ -848,7 +898,10 @@ const SupportTickets = () => {
                             className="text-xs flex items-center gap-1"
                             style={{ color: colors.text.secondary }}
                           >
-                            <Wallet weight="BoldDuotone" className="w-3.5 h-3.5" />
+                            <Wallet
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
                             {t(
                               "adminDashboard.supportTickets.payout.availableBalance",
                             )}
@@ -904,8 +957,7 @@ const SupportTickets = () => {
                     </p>
 
                     {/* Action */}
-                    {selectedTicket.status === "InProgress" ||
-                    selectedTicket.status === "Resolved" ||
+                    {selectedTicket.status === "Resolved" ||
                     selectedTicket.status === "Closed" ? (
                       <div
                         className="flex items-center gap-2 p-3 rounded-xl"
@@ -982,7 +1034,28 @@ const SupportTickets = () => {
                     </div>
 
                     {/* Lesson info */}
-                    {refundLessonLoading ? (
+                    {refundEnrollmentId ? (
+                      /* ── Course Cancellation Refund ── */
+                      <div
+                        className="p-3 rounded-xl"
+                        style={{ backgroundColor: colors.background.gray }}
+                      >
+                        <p
+                          className="text-sm font-semibold"
+                          style={{ color: colors.text.primary }}
+                        >
+                          {t(
+                            "adminDashboard.supportTickets.courseRefund.enrollmentLabel",
+                          )}
+                        </p>
+                        <p
+                          className="text-xs mt-1 font-mono break-all"
+                          style={{ color: colors.text.secondary }}
+                        >
+                          {refundEnrollmentId}
+                        </p>
+                      </div>
+                    ) : refundLessonLoading ? (
                       <div className="space-y-2">
                         <Skeleton className="h-5 w-2/3 rounded-lg" />
                         <Skeleton className="h-4 w-1/2 rounded-lg" />
@@ -1055,11 +1128,12 @@ const SupportTickets = () => {
                       className="text-sm"
                       style={{ color: colors.text.secondary }}
                     >
-                      {t("adminDashboard.supportTickets.refund.hint")}
+                      {refundEnrollmentId
+                        ? t("adminDashboard.supportTickets.courseRefund.hint")
+                        : t("adminDashboard.supportTickets.refund.hint")}
                     </p>
 
-                    {selectedTicket.status === "InProgress" ||
-                    selectedTicket.status === "Resolved" ||
+                    {selectedTicket.status === "Resolved" ||
                     selectedTicket.status === "Closed" ? (
                       <div
                         className="flex items-center gap-2 p-3 rounded-xl"
@@ -1087,7 +1161,7 @@ const SupportTickets = () => {
                         startContent={
                           <Dollar weight="BoldDuotone" className="w-4 h-4" />
                         }
-                        isDisabled={!refundLessonId}
+                        isDisabled={!refundLessonId && !refundEnrollmentId}
                         onPress={() => {
                           setRefundPassword("");
                           setRefundNote("");
@@ -1573,7 +1647,11 @@ const SupportTickets = () => {
               <Button
                 isLoading={processingRefund}
                 isDisabled={!refundPassword}
-                onPress={handleApproveRefund}
+                onPress={
+                  refundEnrollmentId
+                    ? handleApproveCourseRefund
+                    : handleApproveRefund
+                }
                 style={{ backgroundColor: colors.state.error, color: "#fff" }}
               >
                 {t("adminDashboard.supportTickets.refund.confirmBtn")}
@@ -1625,7 +1703,10 @@ const SupportTickets = () => {
                   "adminDashboard.supportTickets.searchPlaceholder",
                 )}
                 startContent={
-                  <MinimalisticMagnifier weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
+                  <MinimalisticMagnifier
+                    weight="BoldDuotone"
+                    className="w-4 h-4 text-gray-400"
+                  />
                 }
                 classNames={inputClassNames}
                 className="flex-1"
@@ -1766,7 +1847,9 @@ const SupportTickets = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<Eye weight="BoldDuotone" className="w-4 h-4" />}
+                          startContent={
+                            <Eye weight="BoldDuotone" className="w-4 h-4" />
+                          }
                           onPress={() => openDetail(ticket)}
                           style={{
                             backgroundColor: `${colors.primary.main}15`,
@@ -1778,7 +1861,12 @@ const SupportTickets = () => {
                         <Button
                           size="sm"
                           variant="flat"
-                          startContent={<TrashBinMinimalistic weight="BoldDuotone" className="w-4 h-4" />}
+                          startContent={
+                            <TrashBinMinimalistic
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
+                          }
                           onPress={() => {
                             setDeleteId(ticket.id);
                             setDeleteOpen(true);

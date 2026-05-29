@@ -211,6 +211,11 @@ const StudentMyCourseDetail = () => {
   const [submittingRefund, setSubmittingRefund] = useState(false);
   const [noBankModalOpen, setNoBankModalOpen] = useState(false);
 
+  // Course cancellation refund state
+  const [courseRefundModalOpen, setCourseRefundModalOpen] = useState(false);
+  const [courseRefundNote, setCourseRefundNote] = useState("");
+  const [submittingCourseRefund, setSubmittingCourseRefund] = useState(false);
+
   // Review state
   const [existingReview, setExistingReview] = useState(null);
   const [reviewLoading, setReviewLoading] = useState(true);
@@ -288,6 +293,58 @@ const StudentMyCourseDetail = () => {
       });
     } finally {
       setSubmittingRefund(false);
+    }
+  };
+
+  const handleOpenCourseRefundRequest = async () => {
+    try {
+      const res = await studentApi.getStudentProfile();
+      const profile = res?.data;
+      if (
+        !profile?.bankCode ||
+        !profile?.bankAccountNumber ||
+        !profile?.bankAccountName
+      ) {
+        setNoBankModalOpen(true);
+        return;
+      }
+    } catch {
+      // If check fails, allow proceeding
+    }
+    setCourseRefundNote("");
+    setCourseRefundModalOpen(true);
+  };
+
+  const handleSubmitCourseRefundTicket = async () => {
+    if (!enrollment?.id || !user?.userId) return;
+    setSubmittingCourseRefund(true);
+    const completed = enrollment.numOfCompleteSession ?? 0;
+    const refundType = completed <= 1 ? "Full" : "Partial";
+    try {
+      const description =
+        `Student course cancellation refund request.\n` +
+        `Course: ${course?.title || "—"}\n` +
+        `Refund type: ${refundType} (${completed} session(s) completed)\n` +
+        (courseRefundNote.trim() ? `Note: ${courseRefundNote.trim()}\n` : "") +
+        `\n[EnrollmentId]: ${enrollment.id}`;
+      await supportApi.createTicket({
+        createdBy: user.userId,
+        subject: `Course Refund Request — ${course?.title || "—"} (${refundType})`,
+        description,
+        type: "Refund",
+      });
+      addToast({
+        title: t("courses.detail.courseRefund.submitSuccess"),
+        color: "success",
+      });
+      setCourseRefundModalOpen(false);
+    } catch {
+      addToast({
+        title: t("courses.detail.courseRefund.submitFailed"),
+        color: "danger",
+      });
+    } finally {
+      setSubmittingCourseRefund(false);
     }
   };
 
@@ -583,7 +640,6 @@ const StudentMyCourseDetail = () => {
     navigate(`/student/homework/${hw.id}`);
   };
 
-
   const formatLessonTime = (dateStr) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -840,6 +896,12 @@ const StudentMyCourseDetail = () => {
     totalSessionsFromEnrollment > 0
       ? Math.round((completedSessions / totalSessionsFromEnrollment) * 100)
       : 0;
+
+  const courseRefundEligible =
+    enrollment?.status === "InProgress" &&
+    completedSessions >= 1 &&
+    completedSessions < totalSessionsFromEnrollment;
+  const isCourseFullRefund = completedSessions === 1;
 
   // ---- Lesson Action Buttons renderer ----
   const LessonActions = ({ lesson, size = "sm", onOpenDetail }) => {
@@ -2620,6 +2682,23 @@ const StudentMyCourseDetail = () => {
                   </div>
                 )}
 
+                {courseRefundEligible && (
+                  <Button
+                    size="sm"
+                    className="w-full font-semibold"
+                    style={{
+                      backgroundColor: `${colors.state.warning}20`,
+                      color: colors.state.warning,
+                    }}
+                    startContent={
+                      <CircleBottomUp size={16} weight="BoldDuotone" />
+                    }
+                    onPress={handleOpenCourseRefundRequest}
+                  >
+                    {t("courses.detail.courseRefund.requestBtn")}
+                  </Button>
+                )}
+
                 <Divider />
 
                 {/* Meta */}
@@ -2983,6 +3062,156 @@ const StudentMyCourseDetail = () => {
                   }}
                 >
                   {t("studentDashboard.schedule.refundRequest.goToProfile")}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* ==================== COURSE REFUND MODAL ==================== */}
+      <Modal
+        isOpen={courseRefundModalOpen}
+        onOpenChange={(open) => {
+          if (!submittingCourseRefund) {
+            setCourseRefundModalOpen(open);
+            if (!open) setCourseRefundNote("");
+          }
+        }}
+        size="md"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          {(onClose) => (
+            <>
+              <ModalHeader
+                className="flex items-center gap-2"
+                style={{ color: colors.text.primary }}
+              >
+                <CircleBottomUp
+                  weight="BoldDuotone"
+                  className="w-5 h-5"
+                  style={{ color: colors.state.warning }}
+                />
+                {t("courses.detail.courseRefund.modalTitle")}
+              </ModalHeader>
+              <ModalBody className="space-y-4">
+                {/* Refund type badge */}
+                <div
+                  className="rounded-lg p-3 flex items-start gap-3"
+                  style={{ backgroundColor: `${colors.state.warning}15` }}
+                >
+                  <DangerTriangle
+                    weight="BoldDuotone"
+                    className="w-5 h-5 mt-0.5 shrink-0"
+                    style={{ color: colors.state.warning }}
+                  />
+                  <div>
+                    <p
+                      className="text-sm font-semibold mb-1"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {isCourseFullRefund
+                        ? t("courses.detail.courseRefund.fullRefundLabel")
+                        : t("courses.detail.courseRefund.partialRefundLabel")}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {isCourseFullRefund
+                        ? t("courses.detail.courseRefund.fullRefundHint")
+                        : t("courses.detail.courseRefund.partialRefundHint", {
+                            completed: completedSessions,
+                            total: totalSessionsFromEnrollment,
+                          })}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Note input */}
+                <Textarea
+                  label={t("courses.detail.courseRefund.noteLabel")}
+                  placeholder={t("courses.detail.courseRefund.notePlaceholder")}
+                  value={courseRefundNote}
+                  classNames={textareaClassNames}
+                  onValueChange={setCourseRefundNote}
+                  minRows={3}
+                  maxRows={6}
+                />
+
+                {/* Admin preview */}
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{
+                    backgroundColor: `${colors.primary.main}08`,
+                    border: `1px solid ${colors.primary.main}20`,
+                  }}
+                >
+                  <div className="px-3 py-2.5 space-y-1">
+                    <p
+                      className="text-xs font-semibold mb-2"
+                      style={{ color: colors.primary.main }}
+                    >
+                      {t("courses.detail.courseRefund.adminPreviewTitle")}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("courses.detail.courseRefund.adminPreviewCourse")}{" "}
+                      <span style={{ color: colors.text.primary }}>
+                        {course?.title || "—"}
+                      </span>
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {t("courses.detail.courseRefund.adminPreviewType")}{" "}
+                      <span style={{ color: colors.text.primary }}>
+                        {isCourseFullRefund
+                          ? t("courses.detail.courseRefund.fullRefundLabel")
+                          : t(
+                              "courses.detail.courseRefund.partialRefundLabel",
+                            )}{" "}
+                        ({completedSessions}/{totalSessionsFromEnrollment}{" "}
+                        {t("courses.detail.sessionsCompleted")})
+                      </span>
+                    </p>
+                    <p
+                      className="text-[11px] font-mono break-all"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      [EnrollmentId]: {enrollment?.id}
+                    </p>
+                    {courseRefundNote.trim() && (
+                      <p
+                        className="text-xs italic"
+                        style={{ color: colors.text.secondary }}
+                      >
+                        Note: {courseRefundNote.trim()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  variant="light"
+                  onPress={onClose}
+                  isDisabled={submittingCourseRefund}
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  isLoading={submittingCourseRefund}
+                  style={{
+                    backgroundColor: colors.state.warning,
+                    color: "#fff",
+                  }}
+                  onPress={handleSubmitCourseRefundTicket}
+                >
+                  {t("courses.detail.courseRefund.submitBtn")}
                 </Button>
               </ModalFooter>
             </>

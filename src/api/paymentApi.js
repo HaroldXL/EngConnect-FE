@@ -56,6 +56,10 @@ export const paymentApi = {
     const response = await axiosInstance.post("/payments/v1/student-refunds/no-tutor", data);
     return response.data;
   },
+  approveStudentRefundCourseCancellation: async (data) => {
+    const response = await axiosInstance.post("/payments/v1/student-refunds/course-cancellation", data);
+    return response.data;
+  },
   getStudentRefunds: async (params = {}) => {
     const response = await axiosInstance.get("/payments/v1/student-refunds", { params });
     return response.data;
