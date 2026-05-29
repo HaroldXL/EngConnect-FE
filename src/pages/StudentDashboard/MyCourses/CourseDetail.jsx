@@ -143,6 +143,8 @@ const StudentMyCourseDetail = () => {
   const { textareaClassNames } = useInputStyles();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  // courseId derived from loaded course; used in lesson/review fetches
+  const courseId = course?.id;
   const [expandedModules, setExpandedModules] = useState({});
   const [tutorInfo, setTutorInfo] = useState(null);
   const [videoOpen, setVideoOpen] = useState(false);
@@ -377,64 +379,41 @@ const StudentMyCourseDetail = () => {
   );
 
   useEffect(() => {
-    const fetchCourse = async () => {
+    const fetchCourseAndEnrollment = async () => {
+      if (!id) return;
       try {
         setLoading(true);
-        const res = await coursesApi.getCourseById(id);
-        setCourse(res.data);
-        if (res.data?.tutorId) {
+        const res = await coursesApi.getCourseEnrollmentById(id);
+        const enrollmentData = res.data;
+        setCourse(enrollmentData.course);
+        setEnrollment(enrollmentData);
+        if (enrollmentData.course?.tutorId) {
           try {
-            const tutorRes = await tutorApi.getTutorById(res.data.tutorId);
+            const tutorRes = await tutorApi.getTutorById(enrollmentData.course.tutorId);
             setTutorInfo(tutorRes.data);
           } catch (tutorErr) {
             console.error("Failed to fetch tutor:", tutorErr);
           }
         }
       } catch (err) {
-        console.error("Failed to fetch course:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourse();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchEnrollment = async () => {
-      if (!user?.studentId || !id) return;
-      try {
-        const res = await coursesApi.getAllCourseEnrollments({
-          StudentId: user.studentId,
-          CourseId: id,
-          Status: "InProgress, Completed",
-          "page-size": 1,
-        });
-        const item = res?.data?.items?.[0];
-        if (item) {
-          setEnrollment(item);
-        } else {
-          navigate("/student/my-courses", { replace: true });
-          return;
-        }
-      } catch (err) {
         console.error("Failed to fetch enrollment:", err);
         navigate("/student/my-courses", { replace: true });
-        return;
       } finally {
+        setLoading(false);
         setEnrollmentChecked(true);
       }
     };
-    fetchEnrollment();
-  }, [user?.studentId, id]);
+    fetchCourseAndEnrollment();
+  }, [id]);
 
   useEffect(() => {
     const fetchLessons = async () => {
-      if (!user?.studentId || !id) return;
+      if (!user?.studentId || !courseId) return;
       try {
         setLessonsLoading(true);
         const res = await studentApi.getLessons({
           StudentId: user.studentId,
-          CourseId: id,
+          CourseId: courseId,
           "page-size": 200,
           "sort-params": "StartTime-asc",
         });
@@ -446,7 +425,7 @@ const StudentMyCourseDetail = () => {
       }
     };
     fetchLessons();
-  }, [user?.studentId, id]);
+  }, [user?.studentId, courseId]);
 
   // Recording became available — inject URL directly without refetch
   useEffect(() => {
@@ -468,7 +447,7 @@ const StudentMyCourseDetail = () => {
 
   // AI summary became available — refetch to get summarizeText
   useEffect(() => {
-    if (!lastAiSummaryAvailable || !user?.studentId || !id) return;
+    if (!lastAiSummaryAvailable || !user?.studentId || !courseId) return;
     const isInThisCourse = lessons.some(
       (l) => l.id === lastAiSummaryAvailable.LessonId,
     );
@@ -476,7 +455,7 @@ const StudentMyCourseDetail = () => {
     studentApi
       .getLessons({
         StudentId: user.studentId,
-        CourseId: id,
+        CourseId: courseId,
         "page-size": 200,
         "sort-params": "StartTime-asc",
       })
@@ -528,11 +507,11 @@ const StudentMyCourseDetail = () => {
 
   useEffect(() => {
     const fetchReview = async () => {
-      if (!user?.studentId || !id) return;
+      if (!user?.studentId || !courseId) return;
       try {
         setReviewLoading(true);
         const res = await coursesApi.getCourseReviews({
-          CourseId: id,
+          CourseId: courseId,
           "page-size": 100,
         });
         const myReview = res?.data?.items?.find(
@@ -550,7 +529,7 @@ const StudentMyCourseDetail = () => {
       }
     };
     fetchReview();
-  }, [user?.studentId, id]);
+  }, [user?.studentId, courseId]);
 
   const courseProgress =
     enrollment?.numsOfSession > 0
@@ -573,7 +552,7 @@ const StudentMyCourseDetail = () => {
         setIsEditingReview(false);
       } else {
         const res = await coursesApi.createCourseReview({
-          courseId: id,
+          courseId: courseId,
           studentId: user.studentId,
           tutorId: course.tutorId,
           enrollmentId: enrollment.id,
@@ -1106,17 +1085,6 @@ const StudentMyCourseDetail = () => {
           style={{ color: colors.text.secondary }}
         >
           {t("studentDashboard.myCourses.backToMyCourses")}
-        </Button>
-        <Button
-          variant="flat"
-          size="sm"
-          onPress={() => navigate("/student/homework")}
-          style={{
-            backgroundColor: `${colors.primary.main}15`,
-            color: colors.primary.main,
-          }}
-        >
-          {t("studentDashboard.nav.homework")}
         </Button>
       </motion.div>
 

@@ -1,5 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { AltArrowDown, Card as CardIcon, CheckCircle, ClipboardList, ClockCircle, CloseCircle, Eye, Filter, Restart, SquareAltArrowRight } from "@solar-icons/react"
+import {
+  AltArrowDown,
+  CheckCircle,
+  ClipboardList,
+  ClockCircle,
+  CloseCircle,
+  Eye,
+  Filter,
+  Hourglass,
+  Restart,
+  SquareAltArrowRight,
+} from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -31,6 +42,7 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 import { studentApi, coursesApi, paymentApi } from "../../../api";
+import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
 import { selectUser } from "../../../store";
 
 const PAGE_SIZE = 10;
@@ -59,24 +71,9 @@ const ORDER_STATUSES = ["All", "Paid", "Pending", "Failed", "Cancelled"];
 
 const REFUND_TYPE_LABEL = {
   NoTutorLesson: "No-Tutor Lesson",
+  CourseCancellation: "Course Cancellation",
   StudentRequest: "Student Request",
   TutorCancellation: "Tutor Cancellation",
-};
-
-const statusColor = (s) => {
-  if (s === "Paid") return "success";
-  if (s === "Pending") return "warning";
-  if (s === "Failed") return "danger";
-  if (s === "Cancelled") return "danger";
-  return "default";
-};
-
-const statusIcon = (s) => {
-  if (s === "Paid") return <CheckCircle className="w-4 h-4" weight="BoldDuotone" />;
-  if (s === "Pending") return <ClockCircle className="w-4 h-4" weight="BoldDuotone" />;
-  if (s === "Failed") return <CloseCircle className="w-4 h-4" weight="BoldDuotone" />;
-  if (s === "Cancelled") return <CloseCircle className="w-4 h-4" weight="BoldDuotone" />;
-  return null;
 };
 
 const DetailRow = ({ label, children }) => {
@@ -100,6 +97,72 @@ const Orders = () => {
   const navigate = useNavigate();
   const colors = useThemeColors();
   const { tableCardStyle, tableClassNames } = useTableStyles();
+
+  const getOrderStatusColor = (s) => {
+    switch (s) {
+      case "Paid":
+        return colors.state.success;
+      case "Pending":
+        return colors.state.warning;
+      case "Failed":
+      case "Cancelled":
+        return colors.state.error;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
+  const getOrderStatusIcon = (s) => {
+    switch (s) {
+      case "Paid":
+        return CheckCircle;
+      case "Pending":
+        return Hourglass;
+      case "Failed":
+      case "Cancelled":
+        return CloseCircle;
+      default:
+        return Hourglass;
+    }
+  };
+
+  const getRefundStatusColor = (s) => {
+    switch (s) {
+      case "Paid":
+        return colors.state.success;
+      case "Failed":
+        return colors.state.error;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
+  const getRefundStatusIcon = (s) => {
+    switch (s) {
+      case "Paid":
+        return CheckCircle;
+      case "Failed":
+        return CloseCircle;
+      default:
+        return Hourglass;
+    }
+  };
+
+  const getRefundTypeColor = (type) => {
+    switch (type) {
+      case "CourseCancellation":
+        return colors.state.warning;
+      case "NoTutorLesson":
+        return colors.state.info;
+      case "TutorCancellation":
+        return colors.state.error;
+      case "StudentRequest":
+        return colors.primary.main;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
   const user = useSelector(selectUser);
 
   const [orders, setOrders] = useState([]);
@@ -117,6 +180,13 @@ const Orders = () => {
   const [refundsTotalPages, setRefundsTotalPages] = useState(1);
   const [refundsLoading, setRefundsLoading] = useState(false);
   const [selectedRefund, setSelectedRefund] = useState(null);
+  const [refundSubjectMap, setRefundSubjectMap] = useState({});
+  const [selectedLessonForDetail, setSelectedLessonForDetail] = useState(null);
+  const {
+    isOpen: isLessonDetailOpen,
+    onOpen: onLessonDetailOpen,
+    onClose: onLessonDetailClose,
+  } = useDisclosure();
   const {
     isOpen: isRefundOpen,
     onOpen: onRefundOpen,
@@ -175,6 +245,61 @@ const Orders = () => {
   useEffect(() => {
     if (activeTab === "refunds") fetchRefunds();
   }, [activeTab, fetchRefunds]);
+
+  // Fetch subject info (course or lesson) for each refund
+  useEffect(() => {
+    if (!refunds.length) return;
+    const pending = refunds.filter((r) => !refundSubjectMap[r.id]);
+    if (!pending.length) return;
+    Promise.all(
+      pending.map(async (refund) => {
+        if (refund.refundType === "CourseCancellation" && refund.enrollmentId) {
+          try {
+            const res = await coursesApi.getCourseEnrollmentById(
+              refund.enrollmentId,
+            );
+            const enrollment = res.data || {};
+            return {
+              id: refund.id,
+              courseTitle: enrollment.course?.title || "Unknown Course",
+              tutorName:
+                `${enrollment.course?.tutorFirstName || ""} ${enrollment.course?.tutorLastName || ""}`.trim(),
+              completedSessions: enrollment.numOfCompleteSession ?? 0,
+              totalSessions: enrollment.numsOfSession ?? 0,
+              courseId: enrollment.courseId,
+            };
+          } catch {
+            return { id: refund.id, courseTitle: "Unknown Course" };
+          }
+        }
+        if (refund.refundType === "NoTutorLesson" && refund.lessonId) {
+          try {
+            const res = await studentApi.getLessonById(refund.lessonId);
+            const lesson = res.data || {};
+            return {
+              id: refund.id,
+              sessionTitle: lesson.sessionTitle || "Lesson",
+              lessonStart: lesson.startTime,
+              lessonEnd: lesson.endTime,
+              lessonStatus: lesson.status,
+              lessonData: lesson,
+            };
+          } catch {
+            return { id: refund.id, sessionTitle: "Unknown Lesson" };
+          }
+        }
+        return { id: refund.id };
+      }),
+    ).then((results) => {
+      setRefundSubjectMap((prev) => {
+        const next = { ...prev };
+        results.forEach((r) => {
+          if (r) next[r.id] = r;
+        });
+        return next;
+      });
+    });
+  }, [refunds]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Resolve course names
   useEffect(() => {
@@ -323,8 +448,12 @@ const Orders = () => {
                 <DropdownTrigger>
                   <Button
                     variant="flat"
-                    startContent={<Filter weight="BoldDuotone" className="w-4 h-4" />}
-                    endContent={<AltArrowDown weight="BoldDuotone" className="w-4 h-4" />}
+                    startContent={
+                      <Filter weight="BoldDuotone" className="w-4 h-4" />
+                    }
+                    endContent={
+                      <AltArrowDown weight="BoldDuotone" className="w-4 h-4" />
+                    }
                     style={{ color: colors.text.primary }}
                   >
                     Status: {statusFilter}
@@ -391,7 +520,8 @@ const Orders = () => {
                       emptyContent={
                         !loading && (
                           <div className="flex flex-col items-center gap-2 py-8">
-                            <ClipboardList weight="BoldDuotone"
+                            <ClipboardList
+                              weight="BoldDuotone"
                               className="w-10 h-10"
                               style={{ color: colors.text.tertiary }}
                             />
@@ -452,14 +582,29 @@ const Orders = () => {
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Chip
-                                size="sm"
-                                variant="flat"
-                                color={statusColor(order.status)}
-                                startContent={statusIcon(order.status)}
-                              >
-                                {order.status}
-                              </Chip>
+                              {(() => {
+                                const OrderStatusIcon = getOrderStatusIcon(
+                                  order.status,
+                                );
+                                return (
+                                  <Chip
+                                    size="sm"
+                                    variant="flat"
+                                    startContent={
+                                      <OrderStatusIcon
+                                        weight="BoldDuotone"
+                                        className="w-3.5 h-3.5"
+                                      />
+                                    }
+                                    style={{
+                                      backgroundColor: `${getOrderStatusColor(order.status)}15`,
+                                      color: getOrderStatusColor(order.status),
+                                    }}
+                                  >
+                                    {order.status}
+                                  </Chip>
+                                );
+                              })()}
                             </TableCell>
                             <TableCell>
                               <span
@@ -479,7 +624,8 @@ const Orders = () => {
                                   onOpen();
                                 }}
                               >
-                                <Eye weight="BoldDuotone"
+                                <Eye
+                                  weight="BoldDuotone"
                                   className="w-4 h-4"
                                   style={{ color: colors.text.secondary }}
                                 />
@@ -535,8 +681,8 @@ const Orders = () => {
                 >
                   <TableHeader>
                     <TableColumn>Type</TableColumn>
+                    <TableColumn>Subject</TableColumn>
                     <TableColumn>Amount</TableColumn>
-                    <TableColumn>Card</TableColumn>
                     <TableColumn>Account</TableColumn>
                     <TableColumn>Paid On</TableColumn>
                     <TableColumn> </TableColumn>
@@ -547,7 +693,8 @@ const Orders = () => {
                     emptyContent={
                       !refundsLoading && (
                         <div className="flex flex-col items-center gap-2 py-8">
-                          <Restart weight="BoldDuotone"
+                          <Restart
+                            weight="BoldDuotone"
                             className="w-10 h-10"
                             style={{ color: colors.text.tertiary }}
                           />
@@ -558,64 +705,97 @@ const Orders = () => {
                       )
                     }
                   >
-                    {refunds.map((refund) => (
-                      <TableRow key={refund.id}>
-                        <TableCell>
-                          <Chip size="sm" variant="flat" color="secondary">
-                            {REFUND_TYPE_LABEL[refund.refundType] ||
-                              refund.refundType}
-                          </Chip>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className="font-semibold text-sm"
-                            style={{ color: colors.state.success }}
-                          >
-                            +{formatAmount(refund.totalAmount, refund.currency)}
+                    {refunds.map((refund) => {
+                      const subject = refundSubjectMap[refund.id];
+
+                      let subjectCell;
+                      if (!subject) {
+                        subjectCell = (
+                          <span style={{ color: colors.text.tertiary }}>
+                            Loading...
                           </span>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className="text-sm"
-                            style={{ color: colors.text.secondary }}
-                          >
-                            {refund.bankCode || "—"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className="text-sm font-mono"
-                            style={{ color: colors.text.primary }}
-                          >
-                            {refund.bankAccountNumber || "—"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className="text-sm"
-                            style={{ color: colors.text.tertiary }}
-                          >
-                            {refund.paidAt ? formatDate(refund.paidAt) : "—"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            onPress={() => {
-                              setSelectedRefund(refund);
-                              onRefundOpen();
-                            }}
-                          >
-                            <Eye weight="BoldDuotone"
-                              className="w-4 h-4"
-                              style={{ color: colors.text.secondary }}
-                            />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                        );
+                      } else if (refund.refundType === "CourseCancellation") {
+                        subjectCell = <span>{subject.courseTitle || "—"}</span>;
+                      } else if (refund.refundType === "NoTutorLesson") {
+                        subjectCell = (
+                          <span>{subject.sessionTitle || "—"}</span>
+                        );
+                      } else {
+                        subjectCell = <span>—</span>;
+                      }
+
+                      return (
+                        <TableRow key={refund.id}>
+                          <TableCell>
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              style={{
+                                backgroundColor: `${getRefundTypeColor(refund.refundType)}15`,
+                                color: getRefundTypeColor(refund.refundType),
+                              }}
+                            >
+                              {REFUND_TYPE_LABEL[refund.refundType] ||
+                                refund.refundType}
+                            </Chip>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className="text-sm"
+                              style={{ color: colors.text.primary }}
+                            >
+                              {subjectCell}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className="font-semibold text-sm"
+                              style={{ color: colors.state.success }}
+                            >
+                              +
+                              {formatAmount(
+                                refund.totalAmount,
+                                refund.currency,
+                              )}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className="text-sm font-mono"
+                              style={{ color: colors.text.primary }}
+                            >
+                              {refund.bankAccountNumber || "—"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className="text-sm"
+                              style={{ color: colors.text.tertiary }}
+                            >
+                              {refund.paidAt ? formatDate(refund.paidAt) : "—"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onPress={() => {
+                                setSelectedRefund(refund);
+                                onRefundOpen();
+                              }}
+                            >
+                              <Eye
+                                weight="BoldDuotone"
+                                className="w-4 h-4"
+                                style={{ color: colors.text.secondary }}
+                              />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardBody>
@@ -639,14 +819,27 @@ const Orders = () => {
             {selected && (
               <div className="space-y-4">
                 <DetailRow label="Status">
-                  <Chip
-                    size="sm"
-                    variant="flat"
-                    color={statusColor(selected.status)}
-                    startContent={statusIcon(selected.status)}
-                  >
-                    {selected.status}
-                  </Chip>
+                  {(() => {
+                    const OrderStatusIcon = getOrderStatusIcon(selected.status);
+                    return (
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        startContent={
+                          <OrderStatusIcon
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
+                        }
+                        style={{
+                          backgroundColor: `${getOrderStatusColor(selected.status)}15`,
+                          color: getOrderStatusColor(selected.status),
+                        }}
+                      >
+                        {selected.status}
+                      </Chip>
+                    );
+                  })()}
                 </DetailRow>
 
                 {selectedMeta.courseId && (
@@ -661,7 +854,10 @@ const Orders = () => {
                     >
                       {courseMap[selectedMeta.courseId] ||
                         selectedMeta.courseId}
-                      <SquareAltArrowRight weight="BoldDuotone" className="w-3.5 h-3.5" />
+                      <SquareAltArrowRight
+                        weight="BoldDuotone"
+                        className="w-3.5 h-3.5"
+                      />
                     </button>
                   </DetailRow>
                 )}
@@ -720,94 +916,210 @@ const Orders = () => {
             className="flex items-center gap-2"
             style={{ color: colors.text.primary }}
           >
-            <Restart weight="BoldDuotone"
+            <Restart
+              weight="BoldDuotone"
               className="w-5 h-5"
               style={{ color: colors.state.success }}
             />
             Refund Details
           </ModalHeader>
           <ModalBody className="pb-6">
-            {selectedRefund && (
-              <div className="space-y-4">
-                <DetailRow label="Type">
-                  <Chip size="sm" variant="flat" color="secondary">
-                    {REFUND_TYPE_LABEL[selectedRefund.refundType] ||
-                      selectedRefund.refundType}
-                  </Chip>
-                </DetailRow>
+            {selectedRefund &&
+              (() => {
+                const subject = refundSubjectMap[selectedRefund.id];
+                return (
+                  <div className="space-y-4">
+                    <DetailRow label="Type">
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        style={{
+                          backgroundColor: `${getRefundTypeColor(selectedRefund.refundType)}15`,
+                          color: getRefundTypeColor(selectedRefund.refundType),
+                          fontWeight: 600,
+                        }}
+                      >
+                        {REFUND_TYPE_LABEL[selectedRefund.refundType] ||
+                          selectedRefund.refundType}
+                      </Chip>
+                    </DetailRow>
 
-                <DetailRow label="Status">
-                  <Chip
-                    size="sm"
-                    variant="flat"
-                    color="success"
-                    startContent={
-                      <CheckCircle className="w-4 h-4" weight="BoldDuotone" />
-                    }
-                  >
-                    {selectedRefund.status}
-                  </Chip>
-                </DetailRow>
-
-                <DetailRow label="Amount">
-                  <span
-                    className="font-semibold text-base"
-                    style={{ color: colors.state.success }}
-                  >
-                    +
-                    {formatAmount(
-                      selectedRefund.totalAmount,
-                      selectedRefund.currency,
+                    {/* CourseCancellation — show course info */}
+                    {selectedRefund.refundType === "CourseCancellation" && (
+                      <DetailRow label="Course">
+                        {subject?.courseTitle ? (
+                          <button
+                            className="flex items-center gap-1 font-medium hover:underline"
+                            style={{ color: colors.primary.main }}
+                            onClick={() => {
+                              onRefundClose();
+                              if (subject.courseId)
+                                navigate(`/courses/${subject.courseId}`);
+                            }}
+                          >
+                            {subject.courseTitle}
+                            <SquareAltArrowRight
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
+                          </button>
+                        ) : (
+                          <span style={{ color: colors.text.tertiary }}>
+                            Loading...
+                          </span>
+                        )}
+                      </DetailRow>
                     )}
-                  </span>
-                </DetailRow>
 
-                <DetailRow label="Card">
-                  <div className="flex items-center gap-1.5">
-                    <Card
-                      className="w-4 h-4"
-                      style={{ color: colors.text.secondary }}
-                    />
-                    {selectedRefund.bankCode || "—"}
+                    {selectedRefund.refundType === "CourseCancellation" &&
+                      subject?.tutorName && (
+                        <DetailRow label="Tutor">{subject.tutorName}</DetailRow>
+                      )}
+
+                    {selectedRefund.refundType === "CourseCancellation" &&
+                      subject && (
+                        <DetailRow label="Sessions Completed">
+                          {subject.completedSessions} / {subject.totalSessions}
+                        </DetailRow>
+                      )}
+
+                    {/* NoTutorLesson — show lesson info */}
+                    {selectedRefund.refundType === "NoTutorLesson" && (
+                      <DetailRow label="Lesson">
+                        {subject?.sessionTitle ? (
+                          <button
+                            className="flex items-center gap-1 font-medium hover:underline"
+                            style={{ color: colors.primary.main }}
+                            onClick={() => {
+                              if (subject.lessonData) {
+                                setSelectedLessonForDetail(subject.lessonData);
+                                onLessonDetailOpen();
+                              }
+                            }}
+                          >
+                            {subject.sessionTitle}
+                            <SquareAltArrowRight
+                              weight="BoldDuotone"
+                              className="w-3.5 h-3.5"
+                            />
+                          </button>
+                        ) : (
+                          <span style={{ color: colors.text.tertiary }}>
+                            Loading...
+                          </span>
+                        )}
+                      </DetailRow>
+                    )}
+
+                    {selectedRefund.refundType === "NoTutorLesson" &&
+                      subject?.lessonStart &&
+                      subject?.lessonEnd && (
+                        <DetailRow label="Time">
+                          {new Date(subject.lessonStart).toLocaleString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
+                          {" – "}
+                          {new Date(subject.lessonEnd).toLocaleTimeString(
+                            "en-GB",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
+                        </DetailRow>
+                      )}
+
+                    <DetailRow label="Status">
+                      {(() => {
+                        const RefundStatusIcon = getRefundStatusIcon(
+                          selectedRefund.status,
+                        );
+                        return (
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            startContent={
+                              <RefundStatusIcon
+                                weight="BoldDuotone"
+                                className="w-3.5 h-3.5"
+                              />
+                            }
+                            style={{
+                              backgroundColor: `${getRefundStatusColor(selectedRefund.status)}15`,
+                              color: getRefundStatusColor(
+                                selectedRefund.status,
+                              ),
+                            }}
+                          >
+                            {selectedRefund.status}
+                          </Chip>
+                        );
+                      })()}
+                    </DetailRow>
+
+                    <DetailRow label="Amount">
+                      <span
+                        className="font-semibold text-base"
+                        style={{ color: colors.state.success }}
+                      >
+                        +
+                        {formatAmount(
+                          selectedRefund.totalAmount,
+                          selectedRefund.currency,
+                        )}
+                      </span>
+                    </DetailRow>
+
+                    <DetailRow label="Account Number">
+                      <span className="font-mono">
+                        {selectedRefund.bankAccountNumber || "—"}
+                      </span>
+                    </DetailRow>
+
+                    <DetailRow label="Account Name">
+                      {selectedRefund.bankAccountName || "—"}
+                    </DetailRow>
+
+                    {selectedRefund.note && (
+                      <DetailRow label="Note">{selectedRefund.note}</DetailRow>
+                    )}
+
+                    {selectedRefund.externalTransactionId && (
+                      <DetailRow label="Transaction ID">
+                        <span className="font-mono text-xs break-all">
+                          {selectedRefund.externalTransactionId}
+                        </span>
+                      </DetailRow>
+                    )}
+
+                    <DetailRow label="Requested On">
+                      {formatDate(selectedRefund.requestedAt)}
+                    </DetailRow>
+
+                    {selectedRefund.paidAt && (
+                      <DetailRow label="Paid On">
+                        {formatDate(selectedRefund.paidAt)}
+                      </DetailRow>
+                    )}
                   </div>
-                </DetailRow>
-
-                <DetailRow label="Account Number">
-                  <span className="font-mono">
-                    {selectedRefund.bankAccountNumber || "—"}
-                  </span>
-                </DetailRow>
-
-                <DetailRow label="Account Name">
-                  {selectedRefund.bankAccountName || "—"}
-                </DetailRow>
-
-                {selectedRefund.note && (
-                  <DetailRow label="Note">{selectedRefund.note}</DetailRow>
-                )}
-
-                {selectedRefund.externalTransactionId && (
-                  <DetailRow label="Transaction ID">
-                    <span className="font-mono text-xs break-all">
-                      {selectedRefund.externalTransactionId}
-                    </span>
-                  </DetailRow>
-                )}
-
-                <DetailRow label="Requested On">
-                  {formatDate(selectedRefund.requestedAt)}
-                </DetailRow>
-
-                {selectedRefund.paidAt && (
-                  <DetailRow label="Paid On">
-                    {formatDate(selectedRefund.paidAt)}
-                  </DetailRow>
-                )}
-              </div>
-            )}
+                );
+              })()}
           </ModalBody>
         </ModalContent>
       </Modal>
+      <LessonDetailModal
+        isOpen={isLessonDetailOpen}
+        onClose={onLessonDetailClose}
+        lesson={selectedLessonForDetail}
+        role="student"
+      />
     </div>
   );
 };

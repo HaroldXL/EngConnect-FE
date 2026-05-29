@@ -20,6 +20,7 @@ const CourseCard = ({
   statusBadge = null,
   topRightAction = null,
   basePath = "/courses",
+  linkId = null, // when provided, use this instead of course.id for navigation
   style: customStyle = {},
   progress = null, // { completed, total } — when provided, shows progress bar instead of stats
 }) => {
@@ -37,7 +38,7 @@ const CourseCard = ({
   return (
     <Card
       isPressable
-      onPress={() => navigate(`${basePath}/${course.id}`)}
+      onPress={() => navigate(`${basePath}/${linkId ?? course.id}`)}
       className="h-full w-full shadow-none"
       style={{
         backgroundColor: colors.background.light,

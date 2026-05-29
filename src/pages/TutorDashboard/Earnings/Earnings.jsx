@@ -340,6 +340,21 @@ const Earnings = () => {
     }
   };
 
+  const getRefundTypeColor = (type) => {
+    switch (type) {
+      case "CourseCancellation":
+        return colors.state.warning;
+      case "NoTutorLesson":
+        return colors.state.info;
+      case "TutorCancellation":
+        return colors.state.error;
+      case "StudentRequest":
+        return colors.primary.main;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
   const getPayoutStatusIcon = (status) => {
     switch (status) {
       case "Paid":
@@ -1164,12 +1179,10 @@ const Earnings = () => {
                     setRefundsPage(1);
                   }}
                 >
-                  <SelectItem key="NoTutorLesson">
-                    {t("tutorDashboard.earnings.refundTypes.NoTutorLesson")}
+                  <SelectItem key="CourseCancellation">
+                    Course Cancellation
                   </SelectItem>
-                  <SelectItem key="Other">
-                    {t("tutorDashboard.earnings.refundTypes.Other")}
-                  </SelectItem>
+                  <SelectItem key="NoTutorLesson">Tutor No-Show</SelectItem>
                 </Select>
                 <Select
                   size="sm"
@@ -1264,8 +1277,9 @@ const Earnings = () => {
                         size="sm"
                         variant="flat"
                         style={{
-                          backgroundColor: `${colors.state.warning}15`,
-                          color: colors.state.warning,
+                          backgroundColor: `${getRefundTypeColor(r.refundType)}15`,
+                          color: getRefundTypeColor(r.refundType),
+                          fontWeight: 600,
                         }}
                       >
                         {t(
