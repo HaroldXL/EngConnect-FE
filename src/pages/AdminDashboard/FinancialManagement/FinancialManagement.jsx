@@ -8,6 +8,7 @@ import {
   Eye,
   Filter,
   MinimalisticMagnifier,
+  Restart,
   SortHorizontal,
   SquareAltArrowRight,
   SquareBottomUp,
@@ -44,7 +45,7 @@ import { useThemeColors } from "../../../hooks/useThemeColors";
 import useTableStyles from "../../../hooks/useTableStyles";
 import useInputStyles from "../../../hooks/useInputStyles";
 import { motion } from "framer-motion";
-import { adminApi, coursesApi } from "../../../api";
+import { adminApi, coursesApi, paymentApi } from "../../../api";
 
 const PAGE_SIZE = 10;
 
@@ -77,6 +78,21 @@ const formatSlots = (slots = []) =>
 
 const ORDER_STATUSES = ["All", "Paid", "Pending", "Cancelled"];
 const TXN_STATUSES = ["All", "Success", "Pending", "Failed"];
+const REFUND_TYPES = ["All", "CourseCancellation", "NoTutorLesson"];
+const REFUND_STATUSES = ["All", "Paid", "Failed"];
+
+const REFUND_TYPE_COLORS = {
+  CourseCancellation: "#F59E0B",
+  NoTutorLesson: "#3B82F6",
+  TutorCancellation: "#EF4444",
+  StudentRequest: "#6366F1",
+};
+
+const refundStatusColor = (s) => {
+  if (s === "Paid") return "success";
+  if (s === "Failed") return "danger";
+  return "default";
+};
 
 const orderStatusColor = (s) => {
   if (s === "Paid") return "success";
@@ -130,6 +146,12 @@ const FinancialManagement = () => {
   const [txnsDebSearch, setTxnsDebSearch] = useState("");
   const [txnsStatus, setTxnsStatus] = useState("All");
 
+  // Refunds tab state
+  const [refundsPage, setRefundsPage] = useState(1);
+  const [refundsStatus, setRefundsStatus] = useState("All");
+  const [refundsType, setRefundsType] = useState("All");
+  const [refundsTutorId, setRefundsTutorId] = useState("");
+
   // Lookup caches
   const [courseMap, setCourseMap] = useState({});
   const [studentMap, setStudentMap] = useState({});
@@ -145,8 +167,14 @@ const FinancialManagement = () => {
     onOpen: onTxnOpen,
     onClose: onTxnClose,
   } = useDisclosure();
+  const {
+    isOpen: isRefundOpen,
+    onOpen: onRefundOpen,
+    onClose: onRefundClose,
+  } = useDisclosure();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedTxn, setSelectedTxn] = useState(null);
+  const [selectedRefund, setSelectedRefund] = useState(null);
 
   // Debounce orders search
   useEffect(() => {
@@ -166,14 +194,25 @@ const FinancialManagement = () => {
     return () => clearTimeout(t);
   }, [txnsSearch]);
 
-  const { data: stats = { totalOrders: 0, paidOrders: 0, totalTxns: 0, failedTxns: 0 } } = useQuery({
+  const {
+    data: stats = {
+      totalOrders: 0,
+      paidOrders: 0,
+      totalTxns: 0,
+      failedTxns: 0,
+    },
+  } = useQuery({
     queryKey: ["admin-financial-stats"],
     queryFn: () =>
       Promise.all([
         adminApi.getPaymentOrders({ page: 1, "page-size": 1 }),
         adminApi.getPaymentOrders({ page: 1, "page-size": 1, Status: "Paid" }),
         adminApi.getPaymentTransactions({ page: 1, "page-size": 1 }),
-        adminApi.getPaymentTransactions({ page: 1, "page-size": 1, Status: "Failed" }),
+        adminApi.getPaymentTransactions({
+          page: 1,
+          "page-size": 1,
+          Status: "Failed",
+        }),
       ]).then(([allOrders, paidOrders, allTxns, failedTxns]) => ({
         totalOrders: allOrders.data?.totalItems || 0,
         paidOrders: paidOrders.data?.totalItems || 0,
@@ -186,7 +225,11 @@ const FinancialManagement = () => {
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
     queryKey: ["admin-orders", ordersPage, ordersDebSearch, ordersStatus],
     queryFn: async () => {
-      const params = { page: ordersPage, "page-size": PAGE_SIZE, "sort-params": "OrderNo-asc" };
+      const params = {
+        page: ordersPage,
+        "page-size": PAGE_SIZE,
+        "sort-params": "OrderNo-asc",
+      };
       if (ordersDebSearch) params["search-term"] = ordersDebSearch;
       if (ordersStatus !== "All") params.Status = ordersStatus;
       const res = await adminApi.getPaymentOrders(params);
@@ -201,7 +244,11 @@ const FinancialManagement = () => {
   const { data: txnsData, isLoading: txnsLoading } = useQuery({
     queryKey: ["admin-txns", txnsPage, txnsDebSearch, txnsStatus],
     queryFn: async () => {
-      const params = { page: txnsPage, "page-size": PAGE_SIZE, "sort-params": "OrderNo-asc" };
+      const params = {
+        page: txnsPage,
+        "page-size": PAGE_SIZE,
+        "sort-params": "OrderNo-asc",
+      };
       if (txnsDebSearch) params["search-term"] = txnsDebSearch;
       if (txnsStatus !== "All") params.Status = txnsStatus;
       const res = await adminApi.getPaymentTransactions(params);
@@ -212,6 +259,29 @@ const FinancialManagement = () => {
   });
   const txns = txnsData?.items ?? [];
   const txnsTotal = txnsData?.totalPages ?? 1;
+
+  const { data: refundsData, isLoading: refundsLoading } = useQuery({
+    queryKey: [
+      "admin-refunds",
+      refundsPage,
+      refundsStatus,
+      refundsType,
+      refundsTutorId,
+    ],
+    queryFn: async () => {
+      const params = { page: refundsPage, "page-size": PAGE_SIZE };
+      if (refundsStatus !== "All") params.Status = refundsStatus;
+      if (refundsType !== "All") params.RefundType = refundsType;
+      if (refundsTutorId.trim()) params.TutorId = refundsTutorId.trim();
+      const res = await paymentApi.getStudentRefundDetails(params);
+      return res.data || {};
+    },
+    enabled: activeTab === "refunds",
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 1000,
+  });
+  const refunds = refundsData?.items ?? [];
+  const refundsTotal = refundsData?.totalPages ?? 1;
 
   // Resolve course names
   useEffect(() => {
@@ -288,6 +358,11 @@ const FinancialManagement = () => {
   const handleViewTxn = (txn) => {
     setSelectedTxn(txn);
     onTxnOpen();
+  };
+
+  const handleViewRefund = (refund) => {
+    setSelectedRefund(refund);
+    onRefundOpen();
   };
 
   const statCards = [
@@ -408,6 +483,15 @@ const FinancialManagement = () => {
         >
           <Tab key="orders" title="Orders" />
           <Tab key="transactions" title="Transactions" />
+          <Tab
+            key="refunds"
+            title={
+              <div className="flex items-center gap-1.5">
+                <Restart weight="BoldDuotone" className="w-4 h-4" />
+                <span>Student Refunds</span>
+              </div>
+            }
+          />
         </Tabs>
       </motion.div>
 
@@ -771,6 +855,231 @@ const FinancialManagement = () => {
         </motion.div>
       )}
 
+      {/* Student Refunds Tab */}
+      {activeTab === "refunds" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.15 }}
+          className="space-y-4"
+        >
+          <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+            <Input
+              placeholder="Filter by Tutor ID..."
+              value={refundsTutorId}
+              onValueChange={(v) => {
+                setRefundsTutorId(v);
+                setRefundsPage(1);
+              }}
+              startContent={
+                <MinimalisticMagnifier
+                  weight="BoldDuotone"
+                  className="w-4 h-4"
+                  style={{ color: colors.text.tertiary }}
+                />
+              }
+              classNames={inputClassNames}
+              className="max-w-xs"
+            />
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  variant="flat"
+                  startContent={
+                    <Filter weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  endContent={
+                    <AltArrowDown weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  style={{ color: colors.text.primary }}
+                >
+                  Type:{" "}
+                  {refundsType === "All"
+                    ? "All"
+                    : refundsType.replace(/([A-Z])/g, " $1").trim()}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Refund type filter"
+                selectedKeys={[refundsType]}
+                selectionMode="single"
+                onAction={(key) => {
+                  setRefundsType(key);
+                  setRefundsPage(1);
+                }}
+              >
+                {REFUND_TYPES.map((t) => (
+                  <DropdownItem key={t}>
+                    {t === "All"
+                      ? "All Types"
+                      : t.replace(/([A-Z])/g, " $1").trim()}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  variant="flat"
+                  startContent={
+                    <Filter weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  endContent={
+                    <AltArrowDown weight="BoldDuotone" className="w-4 h-4" />
+                  }
+                  style={{ color: colors.text.primary }}
+                >
+                  Status: {refundsStatus}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Refund status filter"
+                selectedKeys={[refundsStatus]}
+                selectionMode="single"
+                onAction={(key) => {
+                  setRefundsStatus(key);
+                  setRefundsPage(1);
+                }}
+              >
+                {REFUND_STATUSES.map((s) => (
+                  <DropdownItem key={s}>
+                    {s === "All" ? "All Statuses" : s}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+
+          <Card shadow="none" className="border-none" style={tableCardStyle}>
+            <CardBody className="p-0">
+              <Table
+                aria-label="Student refunds"
+                classNames={tableClassNames}
+                bottomContent={
+                  refundsTotal > 1 && (
+                    <div className="flex w-full justify-center py-4">
+                      <Pagination
+                        isCompact
+                        showControls
+                        showShadow
+                        color="primary"
+                        page={refundsPage}
+                        total={refundsTotal}
+                        onChange={setRefundsPage}
+                      />
+                    </div>
+                  )
+                }
+              >
+                <TableHeader>
+                  <TableColumn>Student</TableColumn>
+                  <TableColumn>Course</TableColumn>
+                  <TableColumn>Amount</TableColumn>
+                  <TableColumn>Refund Type</TableColumn>
+                  <TableColumn>Status</TableColumn>
+                  <TableColumn>Requested At</TableColumn>
+                  <TableColumn> </TableColumn>
+                </TableHeader>
+                <TableBody
+                  isLoading={refundsLoading}
+                  loadingContent={<Spinner color="primary" />}
+                  emptyContent={
+                    !refundsLoading && (
+                      <span style={{ color: colors.text.tertiary }}>
+                        No refunds found.
+                      </span>
+                    )
+                  }
+                >
+                  {refunds.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell>
+                        <div>
+                          <p
+                            className="text-sm font-medium"
+                            style={{ color: colors.text.primary }}
+                          >
+                            {r.studentName}
+                          </p>
+                          <p
+                            className="text-xs"
+                            style={{ color: colors.text.tertiary }}
+                          >
+                            {r.studentEmail}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className="text-sm"
+                          style={{ color: colors.text.primary }}
+                        >
+                          {r.courseName}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className="font-semibold text-sm"
+                          style={{ color: colors.state.error }}
+                        >
+                          -{formatAmount(r.totalAmount, r.currency)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          style={{
+                            backgroundColor: `${REFUND_TYPE_COLORS[r.refundType] ?? colors.primary.main}20`,
+                            color:
+                              REFUND_TYPE_COLORS[r.refundType] ??
+                              colors.primary.main,
+                            fontWeight: 600,
+                          }}
+                        >
+                          {r.refundType.replace(/([A-Z])/g, " $1").trim()}
+                        </Chip>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          color={refundStatusColor(r.status)}
+                        >
+                          {r.status}
+                        </Chip>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className="text-sm"
+                          style={{ color: colors.text.tertiary }}
+                        >
+                          {formatDate(r.requestedAt)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          onPress={() => handleViewRefund(r)}
+                        >
+                          <Eye
+                            weight="BoldDuotone"
+                            className="w-4 h-4"
+                            style={{ color: colors.text.secondary }}
+                          />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
+
       {/* Order Detail Modal */}
       <Modal
         isOpen={isOrderOpen}
@@ -957,6 +1266,291 @@ const FinancialManagement = () => {
                 <DetailRow label="Updated At">
                   {formatDate(selectedTxn.updatedAt)}
                 </DetailRow>
+              </div>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Refund Detail Modal */}
+      <Modal
+        isOpen={isRefundOpen}
+        onClose={onRefundClose}
+        size="lg"
+        scrollBehavior="inside"
+      >
+        <ModalContent style={{ backgroundColor: colors.background.light }}>
+          <ModalHeader
+            className="flex items-center gap-2"
+            style={{ color: colors.text.primary }}
+          >
+            <Restart
+              weight="BoldDuotone"
+              className="w-5 h-5"
+              style={{ color: colors.state.error }}
+            />
+            Refund Detail
+          </ModalHeader>
+          <ModalBody className="pb-6">
+            {selectedRefund && (
+              <div className="space-y-4">
+                {/* Course + Student */}
+                <div
+                  className="p-3 rounded-xl"
+                  style={{ backgroundColor: colors.background.gray }}
+                >
+                  <p
+                    className="text-base font-semibold"
+                    style={{ color: colors.text.primary }}
+                  >
+                    {selectedRefund.courseName}
+                  </p>
+                  <p
+                    className="text-sm mt-0.5 font-medium"
+                    style={{ color: colors.text.secondary }}
+                  >
+                    {selectedRefund.studentName}
+                  </p>
+                  <p
+                    className="text-xs"
+                    style={{ color: colors.text.tertiary }}
+                  >
+                    {selectedRefund.studentEmail}
+                  </p>
+                </div>
+
+                {/* Summary grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Amount
+                    </p>
+                    <p
+                      className="text-base font-semibold mt-0.5"
+                      style={{ color: colors.state.error }}
+                    >
+                      -
+                      {formatAmount(
+                        selectedRefund.totalAmount,
+                        selectedRefund.currency,
+                      )}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Status
+                    </p>
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      className="mt-1"
+                      color={refundStatusColor(selectedRefund.status)}
+                    >
+                      {selectedRefund.status}
+                    </Chip>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Refund Type
+                    </p>
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      className="mt-1"
+                      style={{
+                        backgroundColor: `${REFUND_TYPE_COLORS[selectedRefund.refundType] ?? colors.primary.main}20`,
+                        color:
+                          REFUND_TYPE_COLORS[selectedRefund.refundType] ??
+                          colors.primary.main,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {selectedRefund.refundType
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()}
+                    </Chip>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Price / Session
+                    </p>
+                    <p
+                      className="text-sm font-medium mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {formatAmount(
+                        selectedRefund.pricePerSession,
+                        selectedRefund.currency,
+                      )}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Requested At
+                    </p>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {formatDate(selectedRefund.requestedAt)}
+                    </p>
+                  </div>
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      Paid At
+                    </p>
+                    <p
+                      className="text-sm mt-0.5"
+                      style={{ color: colors.text.primary }}
+                    >
+                      {selectedRefund.paidAt
+                        ? formatDate(selectedRefund.paidAt)
+                        : "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bank Info */}
+                {selectedRefund.bankCode && (
+                  <div
+                    className="p-3 rounded-xl space-y-1"
+                    style={{ backgroundColor: colors.background.gray }}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide mb-2"
+                      style={{ color: colors.text.tertiary }}
+                    >
+                      Student Bank Account
+                    </p>
+                    <DetailRow label="Bank Code">
+                      {selectedRefund.bankCode}
+                    </DetailRow>
+                    <DetailRow label="Account No">
+                      {selectedRefund.bankAccountNumber}
+                    </DetailRow>
+                    <DetailRow label="Account Name">
+                      {selectedRefund.bankAccountName}
+                    </DetailRow>
+                  </div>
+                )}
+
+                {/* Failure reason */}
+                {selectedRefund.note && (
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{
+                      backgroundColor: `${colors.state.error}10`,
+                      border: `1px solid ${colors.state.error}30`,
+                    }}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide mb-1"
+                      style={{ color: colors.state.error }}
+                    >
+                      Failure Reason
+                    </p>
+                    <p
+                      className="text-sm"
+                      style={{ color: colors.text.secondary }}
+                    >
+                      {selectedRefund.note}
+                    </p>
+                  </div>
+                )}
+
+                {/* Refund Items (Lessons) */}
+                {selectedRefund.refundItems?.length > 0 && (
+                  <div>
+                    <p
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: colors.text.primary }}
+                    >
+                      Refunded Lessons ({selectedRefund.refundItems.length})
+                    </p>
+                    <div className="space-y-2">
+                      {selectedRefund.refundItems.map((item) => (
+                        <div
+                          key={item.id}
+                          className="p-3 rounded-xl flex items-start justify-between gap-2"
+                          style={{ backgroundColor: colors.background.gray }}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="text-sm font-medium"
+                              style={{ color: colors.text.primary }}
+                            >
+                              {formatDate(item.lessonStartTime)} —{" "}
+                              {formatDate(item.lessonEndTime)}
+                            </p>
+                            {item.note && (
+                              <p
+                                className="text-xs mt-0.5 line-clamp-2"
+                                style={{ color: colors.text.secondary }}
+                              >
+                                {item.note}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span
+                              className="text-sm font-semibold"
+                              style={{ color: colors.state.error }}
+                            >
+                              -
+                              {formatAmount(
+                                item.amount,
+                                selectedRefund.currency,
+                              )}
+                            </span>
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              color={refundStatusColor(item.status)}
+                            >
+                              {item.status}
+                            </Chip>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </ModalBody>

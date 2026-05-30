@@ -389,7 +389,9 @@ const StudentMyCourseDetail = () => {
         setEnrollment(enrollmentData);
         if (enrollmentData.course?.tutorId) {
           try {
-            const tutorRes = await tutorApi.getTutorById(enrollmentData.course.tutorId);
+            const tutorRes = await tutorApi.getTutorById(
+              enrollmentData.course.tutorId,
+            );
             setTutorInfo(tutorRes.data);
           } catch (tutorErr) {
             console.error("Failed to fetch tutor:", tutorErr);

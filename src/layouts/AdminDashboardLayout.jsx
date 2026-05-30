@@ -11,6 +11,7 @@ import {
   ChecklistMinimalistic,
   ClockCircle,
   CloseSquare,
+  CodeSquare,
   Dollar,
   DollarMinimalistic,
   HomeSmile,
@@ -166,6 +167,11 @@ const AdminDashboardLayout = () => {
       path: "/admin/support-tickets",
       label: t("adminDashboard.nav.supportTickets"),
       icon: Ticket,
+    },
+    {
+      path: "/admin/ai-prompts",
+      label: t("adminDashboard.nav.aiPrompts"),
+      icon: CodeSquare,
     },
   ];
 
