@@ -1,6 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AltArrowDown, AltArrowUp, CloseSquare, Diploma, Filter, GraphUp, Lightning, MinimalisticMagnifier, Target } from "@solar-icons/react"
+import {
+  AltArrowDown,
+  AltArrowRight,
+  AltArrowUp,
+  CloseSquare,
+  Diploma,
+  Filter,
+  GraphUp,
+  Lightning,
+  MagicStick,
+  MinimalisticMagnifier,
+  Stars2,
+  Target,
+} from "@solar-icons/react";
 import {
   Button,
   Card,
@@ -22,6 +35,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import useInputStyles from "../../hooks/useInputStyles";
 import { coursesApi } from "../../api";
 
+import CourseQuizModal from "../../components/CourseQuizModal/CourseQuizModal";
 import readingImage from "../../assets/illustrations/boy-and-laptop.avif";
 import searchImage from "../../assets/illustrations/search.avif";
 
@@ -47,7 +61,10 @@ const Courses = () => {
   const [searchInput, setSearchInput] = useState(initialQ);
   const [searchQuery, setSearchQuery] = useState(initialQ);
   const [selectedCategories, setSelectedCategories] = useState(
-    () => new Set(searchParams.get("category") ? [searchParams.get("category")] : []),
+    () =>
+      new Set(
+        searchParams.get("category") ? [searchParams.get("category")] : [],
+      ),
   );
   const [selectedLevels, setSelectedLevels] = useState(new Set());
   const [sortBy, setSortBy] = useState("newest");
@@ -61,6 +78,7 @@ const Courses = () => {
   const [levelOpen, setLevelOpen] = useState(true);
   // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
 
   // Serialize Sets for query keys (Sets are not serializable)
   const selectedCategoriesArr = useMemo(
@@ -81,7 +99,9 @@ const Courses = () => {
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
-      coursesApi.getCategories({ "page-size": 50 }).then((r) => r?.data?.items || []),
+      coursesApi
+        .getCategories({ "page-size": 50 })
+        .then((r) => r?.data?.items || []),
   });
   const categories = categoriesData ?? [];
 
@@ -97,7 +117,13 @@ const Courses = () => {
   // Courses — re-fetch when search/page/filters change; shorter stale time
   const hasFilters = selectedCategories.size > 0 || selectedLevels.size > 0;
   const { data: coursesData, isLoading: loading } = useQuery({
-    queryKey: ["courses", searchQuery, page, selectedCategoriesArr, selectedLevelsArr],
+    queryKey: [
+      "courses",
+      searchQuery,
+      page,
+      selectedCategoriesArr,
+      selectedLevelsArr,
+    ],
     queryFn: () => {
       const params = { Status: "Published" };
       if (hasFilters) {
@@ -221,9 +247,17 @@ const Courses = () => {
               By Skill
             </span>
             {skillOpen ? (
-              <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowUp
+                weight="BoldDuotone"
+                size={16}
+                style={{ color: colors.text.secondary }}
+              />
             ) : (
-              <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowDown
+                weight="BoldDuotone"
+                size={16}
+                style={{ color: colors.text.secondary }}
+              />
             )}
           </button>
           {skillOpen && (
@@ -291,9 +325,17 @@ const Courses = () => {
               By Purpose
             </span>
             {purposeOpen ? (
-              <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowUp
+                weight="BoldDuotone"
+                size={16}
+                style={{ color: colors.text.secondary }}
+              />
             ) : (
-              <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+              <AltArrowDown
+                weight="BoldDuotone"
+                size={16}
+                style={{ color: colors.text.secondary }}
+              />
             )}
           </button>
           {purposeOpen && (
@@ -360,9 +402,17 @@ const Courses = () => {
             {t("courses.categories.level")}
           </span>
           {levelOpen ? (
-            <AltArrowUp weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+            <AltArrowUp
+              weight="BoldDuotone"
+              size={16}
+              style={{ color: colors.text.secondary }}
+            />
           ) : (
-            <AltArrowDown weight="BoldDuotone" size={16} style={{ color: colors.text.secondary }} />
+            <AltArrowDown
+              weight="BoldDuotone"
+              size={16}
+              style={{ color: colors.text.secondary }}
+            />
           )}
         </button>
         {levelOpen && (
@@ -480,6 +530,22 @@ const Courses = () => {
               >
                 {t("courses.hero.description")}
               </p>
+              <div className="flex justify-center lg:justify-start">
+                <Button
+                  onPress={() => setQuizOpen(true)}
+                  startContent={<Stars2 weight="BoldDuotone" size={18} />}
+                  endContent={<AltArrowRight weight="BoldDuotone" size={18} />}
+                  radius="full"
+                  style={{
+                    backgroundColor: colors.primary.main,
+                    color: colors.text.white,
+                    fontWeight: 600,
+                  }}
+                  size="lg"
+                >
+                  {t("courses.quiz.heroButton")}
+                </Button>
+              </div>
             </motion.div>
 
             <motion.div
@@ -518,7 +584,8 @@ const Courses = () => {
                   if (e.key === "Enter") setSearchQuery(searchInput.trim());
                 }}
                 startContent={
-                  <MinimalisticMagnifier weight="BoldDuotone"
+                  <MinimalisticMagnifier
+                    weight="BoldDuotone"
                     size={18}
                     style={{ color: colors.text.secondary }}
                   />
@@ -532,7 +599,11 @@ const Courses = () => {
                       }}
                       className="hover:opacity-70"
                     >
-                      <CloseSquare weight="BoldDuotone" size={16} style={{ color: colors.text.tertiary }} />
+                      <CloseSquare
+                        weight="BoldDuotone"
+                        size={16}
+                        style={{ color: colors.text.tertiary }}
+                      />
                     </button>
                   ) : null
                 }
@@ -904,6 +975,16 @@ const Courses = () => {
       </section>
 
       <Footer />
+
+      <CourseQuizModal
+        isOpen={quizOpen}
+        onClose={() => setQuizOpen(false)}
+        onSubmit={(query) => {
+          setSearchInput(query);
+          setSearchQuery(query);
+          setQuizOpen(false);
+        }}
+      />
     </div>
   );
 };

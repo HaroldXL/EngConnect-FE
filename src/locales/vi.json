@@ -2066,6 +2066,62 @@
       "button": "Bắt đầu miễn phí",
       "viewPricing": "Xem bảng giá"
     },
+    "quiz": {
+      "heroButton": "Gợi ý khóa học phù hợp",
+      "modalTitle": "Gợi ý khóa học",
+      "step1": {
+        "eyebrow": "Bước 1 / 3",
+        "title": "Trình độ tiếng Anh",
+        "titleHighlight": "hiện tại của bạn?",
+        "subtitle": "Chọn mức phù hợp nhất. Không có đúng hay sai.",
+        "beginner": { "sub": "A1 — Mới bắt đầu", "desc": "Biết vài từ và câu chào hỏi cơ bản" },
+        "elementary": { "sub": "A2 — Cơ bản", "desc": "Giao tiếp được vài câu đơn giản" },
+        "intermediate": { "sub": "B1 — Trung cấp", "desc": "Xử lý được tình huống thông thường" },
+        "upperIntermediate": { "sub": "B2 — Trung cao", "desc": "Tự tin trong hầu hết tình huống công việc" },
+        "advanced": { "sub": "C1+ — Nâng cao", "desc": "Gần thành thạo, muốn hoàn thiện sự tinh tế" },
+        "unsure": { "label": "Tôi không chắc", "sub": "Bỏ qua", "desc": "Sẽ gợi ý cho mọi trình độ" }
+      },
+      "step2": {
+        "eyebrow": "Bước 2 / 3",
+        "title": "Mục tiêu học",
+        "titleHighlight": "của bạn?",
+        "subtitle": "Chọn tối đa {{max}} mục tiêu quan trọng nhất.",
+        "selectedCount": "Đã chọn {{count}} / {{max}}",
+        "ielts": "IELTS",
+        "toeic": "TOEIC",
+        "toefl": "TOEFL",
+        "businessEnglish": "Tiếng Anh công việc",
+        "jobInterview": "Phỏng vấn xin việc",
+        "studyAbroad": "Du học",
+        "travel": "Du lịch",
+        "dailyConversation": "Giao tiếp hàng ngày",
+        "children": "Tiếng Anh trẻ em",
+        "academicWriting": "Viết học thuật",
+        "presentation": "Thuyết trình",
+        "emailWriting": "Email & báo cáo"
+      },
+      "step3": {
+        "eyebrow": "Bước 3 / 3",
+        "title": "Kỹ năng muốn",
+        "titleHighlight": "cải thiện?",
+        "subtitle": "Có thể chọn nhiều. Bỏ qua nếu muốn học toàn diện.",
+        "emptyHint": "Bỏ trống → gợi ý khóa học toàn diện",
+        "previewLabel": "Từ khóa tìm kiếm",
+        "speaking": "Speaking",
+        "listening": "Listening",
+        "reading": "Reading",
+        "writing": "Writing",
+        "grammar": "Grammar",
+        "vocabulary": "Vocabulary",
+        "pronunciation": "Pronunciation"
+      },
+      "nav": {
+        "close": "Đóng",
+        "back": "Quay lại",
+        "next": "Tiếp theo",
+        "submit": "Tìm khóa học"
+      }
+    },
     "search": {
       "searchPlaceholder": "Tìm khóa học theo tên hoặc mô tả...",
       "backToCourses": "Quay lại khóa học",

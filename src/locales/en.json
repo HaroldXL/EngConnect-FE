@@ -2068,6 +2068,62 @@
       "button": "Get Started Free",
       "viewPricing": "View Pricing"
     },
+    "quiz": {
+      "heroButton": "Get Course Suggestions",
+      "modalTitle": "Course Suggestions",
+      "step1": {
+        "eyebrow": "Step 1 of 3",
+        "title": "Your current",
+        "titleHighlight": "English level?",
+        "subtitle": "Pick the closest match. There's no right or wrong.",
+        "beginner": { "sub": "A1 — Just starting", "desc": "Know a few words and basic greetings" },
+        "elementary": { "sub": "A2 — Basic", "desc": "Can handle a few simple sentences" },
+        "intermediate": { "sub": "B1 — Intermediate", "desc": "Manage everyday situations comfortably" },
+        "upperIntermediate": { "sub": "B2 — Upper-Intermediate", "desc": "Confident in most workplace situations" },
+        "advanced": { "sub": "C1+ — Advanced", "desc": "Near-fluent, refining finer points" },
+        "unsure": { "label": "Not sure", "sub": "Skip", "desc": "We'll suggest for all levels" }
+      },
+      "step2": {
+        "eyebrow": "Step 2 of 3",
+        "title": "Your learning",
+        "titleHighlight": "goals?",
+        "subtitle": "Pick up to {{max}} goals that matter most.",
+        "selectedCount": "Selected {{count}} / {{max}}",
+        "ielts": "IELTS",
+        "toeic": "TOEIC",
+        "toefl": "TOEFL",
+        "businessEnglish": "Business English",
+        "jobInterview": "Job Interview",
+        "studyAbroad": "Study Abroad",
+        "travel": "Travel English",
+        "dailyConversation": "Daily Conversation",
+        "children": "Children English",
+        "academicWriting": "Academic Writing",
+        "presentation": "Presentation",
+        "emailWriting": "Email & Reports"
+      },
+      "step3": {
+        "eyebrow": "Step 3 of 3",
+        "title": "Skills to",
+        "titleHighlight": "improve?",
+        "subtitle": "Select multiple. Skip for a well-rounded course.",
+        "emptyHint": "Empty → we'll suggest a well-rounded course",
+        "previewLabel": "Search keyword",
+        "speaking": "Speaking",
+        "listening": "Listening",
+        "reading": "Reading",
+        "writing": "Writing",
+        "grammar": "Grammar",
+        "vocabulary": "Vocabulary",
+        "pronunciation": "Pronunciation"
+      },
+      "nav": {
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "submit": "Find Courses"
+      }
+    },
     "search": {
       "searchPlaceholder": "Search courses by name or description...",
       "backToCourses": "Back to Courses",
