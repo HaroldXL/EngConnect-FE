@@ -1002,6 +1002,80 @@
       "deleteAccount": "Xóa tài khoản",
       "paymentHistory": "Lịch sử thanh toán"
     },
+    "orders": {
+      "title": "Thanh toán của tôi",
+      "subtitle": "Xem lịch sử mua khóa học và trạng thái thanh toán.",
+      "summary": {
+        "paid": "Đã thanh toán",
+        "pending": "Chờ xử lý",
+        "cancelled": "Đã hủy"
+      },
+      "tabs": {
+        "orders": "Đơn hàng",
+        "refunds": "Hoàn tiền"
+      },
+      "filter": {
+        "status": "Trạng thái: {{value}}"
+      },
+      "status": {
+        "all": "Tất cả",
+        "paid": "Đã thanh toán",
+        "pending": "Chờ xử lý",
+        "failed": "Thất bại",
+        "cancelled": "Đã hủy"
+      },
+      "table": {
+        "orderNo": "Mã đơn",
+        "course": "Khóa học",
+        "schedule": "Lịch học",
+        "amount": "Số tiền",
+        "status": "Trạng thái",
+        "date": "Ngày",
+        "loading": "Đang tải...",
+        "empty": "Chưa có đơn hàng.",
+        "emptyRefunds": "Chưa có hoàn tiền."
+      },
+      "refundTable": {
+        "type": "Loại",
+        "subject": "Đối tượng",
+        "account": "Tài khoản",
+        "paidOn": "Ngày hoàn"
+      },
+      "refundType": {
+        "NoTutorLesson": "Buổi học thiếu gia sư",
+        "CourseCancellation": "Hủy khóa học",
+        "StudentRequest": "Yêu cầu học viên",
+        "TutorCancellation": "Gia sư hủy"
+      },
+      "orderDetail": {
+        "title": "Đơn #{{orderNo}} — Chi tiết",
+        "status": "Trạng thái",
+        "course": "Khóa học",
+        "schedule": "Lịch học",
+        "amount": "Số tiền",
+        "description": "Mô tả",
+        "paymentRef": "Mã tham chiếu",
+        "orderedOn": "Ngày đặt",
+        "paidOn": "Ngày thanh toán"
+      },
+      "refundDetail": {
+        "title": "Chi tiết hoàn tiền",
+        "type": "Loại",
+        "course": "Khóa học",
+        "tutor": "Gia sư",
+        "sessionsCompleted": "Buổi đã học",
+        "lesson": "Buổi học",
+        "time": "Thời gian",
+        "status": "Trạng thái",
+        "amount": "Số tiền",
+        "accountNumber": "Số tài khoản",
+        "accountName": "Tên tài khoản",
+        "note": "Ghi chú",
+        "transactionId": "Mã giao dịch",
+        "requestedOn": "Ngày yêu cầu",
+        "paidOn": "Ngày hoàn"
+      }
+    },
     "notifications": {
       "title": "Thông báo",
       "subtitle": "Cập nhật các hoạt động học tập của bạn",

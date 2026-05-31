@@ -1004,6 +1004,80 @@
       "deleteAccount": "Delete Account",
       "paymentHistory": "Payment History"
     },
+    "orders": {
+      "title": "My Payment",
+      "subtitle": "View your course purchase history and payment status.",
+      "summary": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
+      },
+      "tabs": {
+        "orders": "Orders",
+        "refunds": "Refunds"
+      },
+      "filter": {
+        "status": "Status: {{value}}"
+      },
+      "status": {
+        "all": "All",
+        "paid": "Paid",
+        "pending": "Pending",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "table": {
+        "orderNo": "Order #",
+        "course": "Course",
+        "schedule": "Schedule",
+        "amount": "Amount",
+        "status": "Status",
+        "date": "Date",
+        "loading": "Loading...",
+        "empty": "No orders yet.",
+        "emptyRefunds": "No refunds yet."
+      },
+      "refundTable": {
+        "type": "Type",
+        "subject": "Subject",
+        "account": "Account",
+        "paidOn": "Paid On"
+      },
+      "refundType": {
+        "NoTutorLesson": "No-Tutor Lesson",
+        "CourseCancellation": "Course Cancellation",
+        "StudentRequest": "Student Request",
+        "TutorCancellation": "Tutor Cancellation"
+      },
+      "orderDetail": {
+        "title": "Order #{{orderNo}} — Details",
+        "status": "Status",
+        "course": "Course",
+        "schedule": "Schedule",
+        "amount": "Amount",
+        "description": "Description",
+        "paymentRef": "Payment Reference",
+        "orderedOn": "Ordered On",
+        "paidOn": "Paid On"
+      },
+      "refundDetail": {
+        "title": "Refund Details",
+        "type": "Type",
+        "course": "Course",
+        "tutor": "Tutor",
+        "sessionsCompleted": "Sessions Completed",
+        "lesson": "Lesson",
+        "time": "Time",
+        "status": "Status",
+        "amount": "Amount",
+        "accountNumber": "Account Number",
+        "accountName": "Account Name",
+        "note": "Note",
+        "transactionId": "Transaction ID",
+        "requestedOn": "Requested On",
+        "paidOn": "Paid On"
+      }
+    },
     "notifications": {
       "title": "Notifications",
       "subtitle": "Stay updated with your learning activities",

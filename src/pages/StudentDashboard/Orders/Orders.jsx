@@ -13,6 +13,7 @@ import {
 } from "@solar-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardBody,
@@ -58,8 +59,8 @@ const parseMeta = (raw) => {
 const formatAmount = (amount, currency) =>
   new Intl.NumberFormat("vi-VN").format(amount) + " " + (currency || "VND");
 
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-GB", {
+const formatDate = (iso, locale = "en-GB") =>
+  new Date(iso).toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -68,13 +69,6 @@ const formatDate = (iso) =>
   });
 
 const ORDER_STATUSES = ["All", "Paid", "Pending", "Failed", "Cancelled"];
-
-const REFUND_TYPE_LABEL = {
-  NoTutorLesson: "No-Tutor Lesson",
-  CourseCancellation: "Course Cancellation",
-  StudentRequest: "Student Request",
-  TutorCancellation: "Tutor Cancellation",
-};
 
 const DetailRow = ({ label, children }) => {
   const colors = useThemeColors();
@@ -163,7 +157,29 @@ const Orders = () => {
     }
   };
 
+  const { t, i18n } = useTranslation();
   const user = useSelector(selectUser);
+
+  const dateLocale = i18n.language === "vi" ? "vi-VN" : "en-GB";
+
+  const STATUS_LABELS = {
+    All: t("studentDashboard.orders.status.all"),
+    Paid: t("studentDashboard.orders.status.paid"),
+    Pending: t("studentDashboard.orders.status.pending"),
+    Failed: t("studentDashboard.orders.status.failed"),
+    Cancelled: t("studentDashboard.orders.status.cancelled"),
+  };
+
+  const REFUND_TYPE_LABEL = {
+    NoTutorLesson: t("studentDashboard.orders.refundType.NoTutorLesson"),
+    CourseCancellation: t(
+      "studentDashboard.orders.refundType.CourseCancellation",
+    ),
+    StudentRequest: t("studentDashboard.orders.refundType.StudentRequest"),
+    TutorCancellation: t(
+      "studentDashboard.orders.refundType.TutorCancellation",
+    ),
+  };
 
   const [orders, setOrders] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -351,10 +367,10 @@ const Orders = () => {
           className="text-2xl lg:text-3xl font-bold mb-1"
           style={{ color: colors.text.primary }}
         >
-          My Payment
+          {t("studentDashboard.orders.title")}
         </h1>
         <p style={{ color: colors.text.secondary }}>
-          View your course purchase history and payment status.
+          {t("studentDashboard.orders.subtitle")}
         </p>
       </motion.div>
 
@@ -362,21 +378,21 @@ const Orders = () => {
       <div className="grid grid-cols-3 gap-4">
         {[
           {
-            label: "Paid",
+            label: t("studentDashboard.orders.summary.paid"),
             value: paidCount,
             icon: CheckCircle,
             color: colors.state.success,
             bg: `${colors.state.success}20`,
           },
           {
-            label: "Pending",
+            label: t("studentDashboard.orders.summary.pending"),
             value: pendingCount,
             icon: ClockCircle,
             color: colors.state.warning,
             bg: `${colors.state.warning}20`,
           },
           {
-            label: "Cancelled",
+            label: t("studentDashboard.orders.summary.cancelled"),
             value: cancelledCount,
             icon: CloseCircle,
             color: colors.state.error,
@@ -437,7 +453,7 @@ const Orders = () => {
           title={
             <div className="flex items-center gap-2">
               <ClipboardList weight="BoldDuotone" className="w-4 h-4" />
-              Orders
+              {t("studentDashboard.orders.tabs.orders")}
             </div>
           }
         >
@@ -456,7 +472,9 @@ const Orders = () => {
                     }
                     style={{ color: colors.text.primary }}
                   >
-                    Status: {statusFilter}
+                    {t("studentDashboard.orders.filter.status", {
+                      value: STATUS_LABELS[statusFilter] ?? statusFilter,
+                    })}
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -469,7 +487,7 @@ const Orders = () => {
                   }}
                 >
                   {ORDER_STATUSES.map((s) => (
-                    <DropdownItem key={s}>{s}</DropdownItem>
+                    <DropdownItem key={s}>{STATUS_LABELS[s] ?? s}</DropdownItem>
                   ))}
                 </DropdownMenu>
               </Dropdown>
@@ -506,12 +524,24 @@ const Orders = () => {
                     }
                   >
                     <TableHeader>
-                      <TableColumn>Order #</TableColumn>
-                      <TableColumn>Course</TableColumn>
-                      <TableColumn>Schedule</TableColumn>
-                      <TableColumn>Amount</TableColumn>
-                      <TableColumn>Status</TableColumn>
-                      <TableColumn>Date</TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.orderNo")}
+                      </TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.course")}
+                      </TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.schedule")}
+                      </TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.amount")}
+                      </TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.status")}
+                      </TableColumn>
+                      <TableColumn>
+                        {t("studentDashboard.orders.table.date")}
+                      </TableColumn>
                       <TableColumn> </TableColumn>
                     </TableHeader>
                     <TableBody
@@ -526,7 +556,7 @@ const Orders = () => {
                               style={{ color: colors.text.tertiary }}
                             />
                             <span style={{ color: colors.text.tertiary }}>
-                              No orders yet.
+                              {t("studentDashboard.orders.table.empty")}
                             </span>
                           </div>
                         )
@@ -551,7 +581,8 @@ const Orders = () => {
                                 style={{ color: colors.text.primary }}
                               >
                                 {meta.courseId
-                                  ? courseMap[meta.courseId] || "Loading..."
+                                  ? courseMap[meta.courseId] ||
+                                    t("studentDashboard.orders.table.loading")
                                   : "—"}
                               </span>
                             </TableCell>
@@ -601,7 +632,8 @@ const Orders = () => {
                                       color: getOrderStatusColor(order.status),
                                     }}
                                   >
-                                    {order.status}
+                                    {STATUS_LABELS[order.status] ??
+                                      order.status}
                                   </Chip>
                                 );
                               })()}
@@ -611,7 +643,7 @@ const Orders = () => {
                                 className="text-sm"
                                 style={{ color: colors.text.tertiary }}
                               >
-                                {formatDate(order.createdAt)}
+                                {formatDate(order.createdAt, dateLocale)}
                               </span>
                             </TableCell>
                             <TableCell>
@@ -648,7 +680,7 @@ const Orders = () => {
           title={
             <div className="flex items-center gap-2">
               <Restart weight="BoldDuotone" className="w-4 h-4" />
-              Refunds
+              {t("studentDashboard.orders.tabs.refunds")}
             </div>
           }
         >
@@ -680,11 +712,21 @@ const Orders = () => {
                   }
                 >
                   <TableHeader>
-                    <TableColumn>Type</TableColumn>
-                    <TableColumn>Subject</TableColumn>
-                    <TableColumn>Amount</TableColumn>
-                    <TableColumn>Account</TableColumn>
-                    <TableColumn>Paid On</TableColumn>
+                    <TableColumn>
+                      {t("studentDashboard.orders.refundTable.type")}
+                    </TableColumn>
+                    <TableColumn>
+                      {t("studentDashboard.orders.refundTable.subject")}
+                    </TableColumn>
+                    <TableColumn>
+                      {t("studentDashboard.orders.table.amount")}
+                    </TableColumn>
+                    <TableColumn>
+                      {t("studentDashboard.orders.refundTable.account")}
+                    </TableColumn>
+                    <TableColumn>
+                      {t("studentDashboard.orders.refundTable.paidOn")}
+                    </TableColumn>
                     <TableColumn> </TableColumn>
                   </TableHeader>
                   <TableBody
@@ -712,7 +754,7 @@ const Orders = () => {
                       if (!subject) {
                         subjectCell = (
                           <span style={{ color: colors.text.tertiary }}>
-                            Loading...
+                            {t("studentDashboard.orders.table.loading")}
                           </span>
                         );
                       } else if (refund.refundType === "CourseCancellation") {
@@ -724,6 +766,13 @@ const Orders = () => {
                       } else {
                         subjectCell = <span>—</span>;
                       }
+                      // replace loading span with i18n
+                      if (!subject)
+                        subjectCell = (
+                          <span style={{ color: colors.text.tertiary }}>
+                            {t("studentDashboard.orders.table.loading")}
+                          </span>
+                        );
 
                       return (
                         <TableRow key={refund.id}>
@@ -773,7 +822,9 @@ const Orders = () => {
                               className="text-sm"
                               style={{ color: colors.text.tertiary }}
                             >
-                              {refund.paidAt ? formatDate(refund.paidAt) : "—"}
+                              {refund.paidAt
+                                ? formatDate(refund.paidAt, dateLocale)
+                                : "—"}
                             </span>
                           </TableCell>
                           <TableCell>
@@ -813,12 +864,16 @@ const Orders = () => {
       >
         <ModalContent style={{ backgroundColor: colors.background.light }}>
           <ModalHeader style={{ color: colors.text.primary }}>
-            Order #{selected?.orderNo} — Details
+            {t("studentDashboard.orders.orderDetail.title", {
+              orderNo: selected?.orderNo,
+            })}
           </ModalHeader>
           <ModalBody className="pb-6">
             {selected && (
               <div className="space-y-4">
-                <DetailRow label="Status">
+                <DetailRow
+                  label={t("studentDashboard.orders.orderDetail.status")}
+                >
                   {(() => {
                     const OrderStatusIcon = getOrderStatusIcon(selected.status);
                     return (
@@ -836,14 +891,16 @@ const Orders = () => {
                           color: getOrderStatusColor(selected.status),
                         }}
                       >
-                        {selected.status}
+                        {STATUS_LABELS[selected.status] ?? selected.status}
                       </Chip>
                     );
                   })()}
                 </DetailRow>
 
                 {selectedMeta.courseId && (
-                  <DetailRow label="Course">
+                  <DetailRow
+                    label={t("studentDashboard.orders.orderDetail.course")}
+                  >
                     <button
                       className="flex items-center gap-1 font-medium hover:underline"
                       style={{ color: colors.primary.main }}
@@ -863,7 +920,9 @@ const Orders = () => {
                 )}
 
                 {selectedMeta.scheduleSlots?.length > 0 && (
-                  <DetailRow label="Schedule">
+                  <DetailRow
+                    label={t("studentDashboard.orders.orderDetail.schedule")}
+                  >
                     <div className="space-y-0.5">
                       {selectedMeta.scheduleSlots.map((s, i) => (
                         <div key={i}>
@@ -875,27 +934,37 @@ const Orders = () => {
                   </DetailRow>
                 )}
 
-                <DetailRow label="Amount">
+                <DetailRow
+                  label={t("studentDashboard.orders.orderDetail.amount")}
+                >
                   <span className="font-semibold">
                     {formatAmount(selected.totalAmount, selected.currency)}
                   </span>
                 </DetailRow>
 
-                <DetailRow label="Description">
+                <DetailRow
+                  label={t("studentDashboard.orders.orderDetail.description")}
+                >
                   {selected.description || "—"}
                 </DetailRow>
 
-                <DetailRow label="Payment Reference">
+                <DetailRow
+                  label={t("studentDashboard.orders.orderDetail.paymentRef")}
+                >
                   {selected.paymentReference || "—"}
                 </DetailRow>
 
-                <DetailRow label="Ordered On">
-                  {formatDate(selected.createdAt)}
+                <DetailRow
+                  label={t("studentDashboard.orders.orderDetail.orderedOn")}
+                >
+                  {formatDate(selected.createdAt, dateLocale)}
                 </DetailRow>
 
                 {selected.status === "Paid" && (
-                  <DetailRow label="Paid On">
-                    {formatDate(selected.updatedAt)}
+                  <DetailRow
+                    label={t("studentDashboard.orders.orderDetail.paidOn")}
+                  >
+                    {formatDate(selected.updatedAt, dateLocale)}
                   </DetailRow>
                 )}
               </div>
@@ -921,7 +990,7 @@ const Orders = () => {
               className="w-5 h-5"
               style={{ color: colors.state.success }}
             />
-            Refund Details
+            {t("studentDashboard.orders.refundDetail.title")}
           </ModalHeader>
           <ModalBody className="pb-6">
             {selectedRefund &&
@@ -929,7 +998,9 @@ const Orders = () => {
                 const subject = refundSubjectMap[selectedRefund.id];
                 return (
                   <div className="space-y-4">
-                    <DetailRow label="Type">
+                    <DetailRow
+                      label={t("studentDashboard.orders.refundDetail.type")}
+                    >
                       <Chip
                         size="sm"
                         variant="flat"
@@ -946,7 +1017,9 @@ const Orders = () => {
 
                     {/* CourseCancellation — show course info */}
                     {selectedRefund.refundType === "CourseCancellation" && (
-                      <DetailRow label="Course">
+                      <DetailRow
+                        label={t("studentDashboard.orders.refundDetail.course")}
+                      >
                         {subject?.courseTitle ? (
                           <button
                             className="flex items-center gap-1 font-medium hover:underline"
@@ -965,7 +1038,7 @@ const Orders = () => {
                           </button>
                         ) : (
                           <span style={{ color: colors.text.tertiary }}>
-                            Loading...
+                            {t("studentDashboard.orders.table.loading")}
                           </span>
                         )}
                       </DetailRow>
@@ -973,19 +1046,31 @@ const Orders = () => {
 
                     {selectedRefund.refundType === "CourseCancellation" &&
                       subject?.tutorName && (
-                        <DetailRow label="Tutor">{subject.tutorName}</DetailRow>
+                        <DetailRow
+                          label={t(
+                            "studentDashboard.orders.refundDetail.tutor",
+                          )}
+                        >
+                          {subject.tutorName}
+                        </DetailRow>
                       )}
 
                     {selectedRefund.refundType === "CourseCancellation" &&
                       subject && (
-                        <DetailRow label="Sessions Completed">
+                        <DetailRow
+                          label={t(
+                            "studentDashboard.orders.refundDetail.sessionsCompleted",
+                          )}
+                        >
                           {subject.completedSessions} / {subject.totalSessions}
                         </DetailRow>
                       )}
 
                     {/* NoTutorLesson — show lesson info */}
                     {selectedRefund.refundType === "NoTutorLesson" && (
-                      <DetailRow label="Lesson">
+                      <DetailRow
+                        label={t("studentDashboard.orders.refundDetail.lesson")}
+                      >
                         {subject?.sessionTitle ? (
                           <button
                             className="flex items-center gap-1 font-medium hover:underline"
@@ -1005,7 +1090,7 @@ const Orders = () => {
                           </button>
                         ) : (
                           <span style={{ color: colors.text.tertiary }}>
-                            Loading...
+                            {t("studentDashboard.orders.table.loading")}
                           </span>
                         )}
                       </DetailRow>
@@ -1014,9 +1099,11 @@ const Orders = () => {
                     {selectedRefund.refundType === "NoTutorLesson" &&
                       subject?.lessonStart &&
                       subject?.lessonEnd && (
-                        <DetailRow label="Time">
+                        <DetailRow
+                          label={t("studentDashboard.orders.refundDetail.time")}
+                        >
                           {new Date(subject.lessonStart).toLocaleString(
-                            "en-GB",
+                            dateLocale,
                             {
                               day: "2-digit",
                               month: "short",
@@ -1027,7 +1114,7 @@ const Orders = () => {
                           )}
                           {" – "}
                           {new Date(subject.lessonEnd).toLocaleTimeString(
-                            "en-GB",
+                            dateLocale,
                             {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -1036,7 +1123,9 @@ const Orders = () => {
                         </DetailRow>
                       )}
 
-                    <DetailRow label="Status">
+                    <DetailRow
+                      label={t("studentDashboard.orders.refundDetail.status")}
+                    >
                       {(() => {
                         const RefundStatusIcon = getRefundStatusIcon(
                           selectedRefund.status,
@@ -1058,13 +1147,16 @@ const Orders = () => {
                               ),
                             }}
                           >
-                            {selectedRefund.status}
+                            {STATUS_LABELS[selectedRefund.status] ??
+                              selectedRefund.status}
                           </Chip>
                         );
                       })()}
                     </DetailRow>
 
-                    <DetailRow label="Amount">
+                    <DetailRow
+                      label={t("studentDashboard.orders.refundDetail.amount")}
+                    >
                       <span
                         className="font-semibold text-base"
                         style={{ color: colors.state.success }}
@@ -1077,35 +1169,57 @@ const Orders = () => {
                       </span>
                     </DetailRow>
 
-                    <DetailRow label="Account Number">
+                    <DetailRow
+                      label={t(
+                        "studentDashboard.orders.refundDetail.accountNumber",
+                      )}
+                    >
                       <span className="font-mono">
                         {selectedRefund.bankAccountNumber || "—"}
                       </span>
                     </DetailRow>
 
-                    <DetailRow label="Account Name">
+                    <DetailRow
+                      label={t(
+                        "studentDashboard.orders.refundDetail.accountName",
+                      )}
+                    >
                       {selectedRefund.bankAccountName || "—"}
                     </DetailRow>
 
                     {selectedRefund.note && (
-                      <DetailRow label="Note">{selectedRefund.note}</DetailRow>
+                      <DetailRow
+                        label={t("studentDashboard.orders.refundDetail.note")}
+                      >
+                        {selectedRefund.note}
+                      </DetailRow>
                     )}
 
                     {selectedRefund.externalTransactionId && (
-                      <DetailRow label="Transaction ID">
+                      <DetailRow
+                        label={t(
+                          "studentDashboard.orders.refundDetail.transactionId",
+                        )}
+                      >
                         <span className="font-mono text-xs break-all">
                           {selectedRefund.externalTransactionId}
                         </span>
                       </DetailRow>
                     )}
 
-                    <DetailRow label="Requested On">
-                      {formatDate(selectedRefund.requestedAt)}
+                    <DetailRow
+                      label={t(
+                        "studentDashboard.orders.refundDetail.requestedOn",
+                      )}
+                    >
+                      {formatDate(selectedRefund.requestedAt, dateLocale)}
                     </DetailRow>
 
                     {selectedRefund.paidAt && (
-                      <DetailRow label="Paid On">
-                        {formatDate(selectedRefund.paidAt)}
+                      <DetailRow
+                        label={t("studentDashboard.orders.refundDetail.paidOn")}
+                      >
+                        {formatDate(selectedRefund.paidAt, dateLocale)}
                       </DetailRow>
                     )}
                   </div>
