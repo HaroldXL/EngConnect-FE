@@ -1123,6 +1123,17 @@ const CourseDetail = () => {
                       </Button>
                     )}
 
+                    {/* First-lesson guarantee — only show to potential buyers */}
+                    {!isEnrolled &&
+                      !(user?.tutorId && user.tutorId === course.tutorId) && (
+                        <p
+                          className="text-sm text-center leading-relaxed"
+                          style={{ color: colors.text.secondary }}
+                        >
+                          {t("courses.detail.trialGuaranteeDesc")}
+                        </p>
+                      )}
+
                     <Divider />
 
                     {/* Quick Stats */}

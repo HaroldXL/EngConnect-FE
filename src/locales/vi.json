@@ -2325,7 +2325,9 @@
       "studentReviews": "Đánh giá từ học viên",
       "noReviews": "Chưa có đánh giá nào.",
       "anonymous": "Nặc danh",
-      "loadMoreReviews": "Xem thêm"
+      "loadMoreReviews": "Xem thêm",
+      "trialGuarantee": "Đảm bảo buổi học đầu tiên",
+      "trialGuaranteeDesc": "Không hài lòng sau buổi học đầu? Được hoàn tiền 100%."
     }
   },
   "checkout": {

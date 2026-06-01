@@ -64,6 +64,7 @@ axiosInstance.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
+            originalRequest._retry = true;
             originalRequest.headers.Authorization = `Bearer ${token}`;
             return axiosInstance(originalRequest);
           })
@@ -107,6 +108,11 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
+        console.error(
+          "[auth] Token refresh failed:",
+          refreshError?.response?.status,
+          refreshError?.response?.data ?? refreshError?.message,
+        );
         clearAuthAndRedirect();
         throw refreshError;
       } finally {

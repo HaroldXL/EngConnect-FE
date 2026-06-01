@@ -1,4 +1,7 @@
-﻿import axiosInstance from "./axiosConfig";
+﻿import axios from "axios";
+import axiosInstance from "./axiosConfig";
+
+const BASE_URL = axiosInstance.defaults.baseURL;
 
 export const authApi = {
   // Register - Đăng ký người dùng mới
@@ -28,9 +31,13 @@ export const authApi = {
   },
 
   // Refresh Token - Làm mới access token bằng refresh token
-  refreshToken: async (refreshToken) => {
-    const response = await axiosInstance.post("/auth/v1/refresh-token", {
-      refreshToken,
+  // Uses plain axios (no auth header) to avoid the interceptor treating
+  // an expired access token on the Authorization header as a second 401.
+  refreshToken: async (refreshTokenValue) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(`${BASE_URL}auth/v1/refresh-token`, {
+      accessToken,
+      refreshToken: refreshTokenValue,
     });
     return response.data;
   },

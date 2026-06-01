@@ -2327,7 +2327,9 @@
       "studentReviews": "Student Reviews",
       "noReviews": "No reviews yet.",
       "anonymous": "Anonymous",
-      "loadMoreReviews": "Load More"
+      "loadMoreReviews": "Load More",
+      "trialGuarantee": "First Lesson Guarantee",
+      "trialGuaranteeDesc": "Not satisfied after the first lesson? Get a full refund."
     }
   },
   "checkout": {
