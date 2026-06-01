@@ -321,12 +321,16 @@ const StudentMyCourseDetail = () => {
     if (!enrollment?.id || !user?.userId) return;
     setSubmittingCourseRefund(true);
     const completed = enrollment.numOfCompleteSession ?? 0;
-    const refundType = completed <= 1 ? "Full" : "Partial";
+    const noStudentSessions = lessons.filter(
+      (l) => l.status === "NoStudent",
+    ).length;
+    const effective = completed + noStudentSessions;
+    const refundType = effective <= 1 ? "Full" : "Partial";
     try {
       const description =
         `Student course cancellation refund request.\n` +
         `Course: ${course?.title || "—"}\n` +
-        `Refund type: ${refundType} (${completed} session(s) completed)\n` +
+        `Refund type: ${refundType} (${completed} completed + ${noStudentSessions} no-show = ${effective} session(s) used)\n` +
         (courseRefundNote.trim() ? `Note: ${courseRefundNote.trim()}\n` : "") +
         `\n[EnrollmentId]: ${enrollment.id}`;
       await supportApi.createTicket({
@@ -878,11 +882,14 @@ const StudentMyCourseDetail = () => {
       ? Math.round((completedSessions / totalSessionsFromEnrollment) * 100)
       : 0;
 
+  const noStudentCount = lessons.filter((l) => l.status === "NoStudent").length;
+  const effectiveUsed = completedSessions + noStudentCount;
+
   const courseRefundEligible =
     enrollment?.status === "InProgress" &&
-    completedSessions >= 1 &&
-    completedSessions < totalSessionsFromEnrollment;
-  const isCourseFullRefund = completedSessions === 1;
+    effectiveUsed < totalSessionsFromEnrollment;
+  const isNoSessionRefund = effectiveUsed === 0;
+  const isCourseFullRefund = effectiveUsed <= 1;
 
   // ---- Lesson Action Buttons renderer ----
   const LessonActions = ({ lesson, size = "sm", onOpenDetail }) => {
@@ -3089,7 +3096,9 @@ const StudentMyCourseDetail = () => {
                       style={{ color: colors.text.secondary }}
                     >
                       {isCourseFullRefund
-                        ? t("courses.detail.courseRefund.fullRefundHint")
+                        ? isNoSessionRefund
+                          ? t("courses.detail.courseRefund.noSessionRefundHint")
+                          : t("courses.detail.courseRefund.fullRefundHint")
                         : t("courses.detail.courseRefund.partialRefundHint", {
                             completed: completedSessions,
                             total: totalSessionsFromEnrollment,

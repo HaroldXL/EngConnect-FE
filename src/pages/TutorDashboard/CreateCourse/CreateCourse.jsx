@@ -4911,9 +4911,7 @@ const CreateCourse = () => {
                 color: colors.text.white,
               }}
               startContent={
-                !loading && (
-                  <Plain weight="BoldDuotone" className="w-5 h-5" />
-                )
+                !loading && <Plain weight="BoldDuotone" className="w-5 h-5" />
               }
             >
               {loading

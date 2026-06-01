@@ -1527,7 +1527,6 @@ const Schedule = () => {
                       "Completed",
                       "NoStudent",
                       "NoTutor",
-                      "Cancelled",
                       "Refund",
                     ].map((status) => (
                       <div key={status} className="flex items-center gap-1.5">
@@ -2413,8 +2412,13 @@ const Schedule = () => {
                       key="reschedule"
                       title={
                         <div className="flex items-center gap-1.5">
-                          <Restart weight="BoldDuotone" className="w-3.5 h-3.5" />
-                          <span>{t("tutorDashboard.schedule.panel.offersTab")}</span>
+                          <Restart
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
+                          <span>
+                            {t("tutorDashboard.schedule.panel.offersTab")}
+                          </span>
                           {pendingOffers.length > 0 && (
                             <span
                               className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
@@ -2433,8 +2437,13 @@ const Schedule = () => {
                       key="makeup"
                       title={
                         <div className="flex items-center gap-1.5">
-                          <CircleBottomUp weight="BoldDuotone" className="w-3.5 h-3.5" />
-                          <span>{t("tutorDashboard.schedule.panel.makeupTab")}</span>
+                          <CircleBottomUp
+                            weight="BoldDuotone"
+                            className="w-3.5 h-3.5"
+                          />
+                          <span>
+                            {t("tutorDashboard.schedule.panel.makeupTab")}
+                          </span>
                           {pendingMakeups.length > 0 && (
                             <span
                               className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
@@ -2466,9 +2475,9 @@ const Schedule = () => {
                           const offerLesson =
                             lessons.find((l) => l.id === offer.lessonId) ||
                             lessonExtras[offer.lessonId];
-                          const sortedOptions = [
-                            ...(offer.options || []),
-                          ].sort((a, b) => a.optionOrder - b.optionOrder);
+                          const sortedOptions = [...(offer.options || [])].sort(
+                            (a, b) => a.optionOrder - b.optionOrder,
+                          );
                           return (
                             <div
                               key={offer.id}
@@ -2715,7 +2724,9 @@ const Schedule = () => {
                                     className="text-[10px] font-medium mb-0.5"
                                     style={{ color: colors.text.tertiary }}
                                   >
-                                    {t("tutorDashboard.schedule.makeup.requestNote")}
+                                    {t(
+                                      "tutorDashboard.schedule.makeup.requestNote",
+                                    )}
                                   </p>
                                   <p
                                     className="text-xs italic"

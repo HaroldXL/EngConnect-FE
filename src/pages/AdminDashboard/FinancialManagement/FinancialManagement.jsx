@@ -280,7 +280,9 @@ const FinancialManagement = () => {
     placeholderData: keepPreviousData,
     staleTime: 30 * 1000,
   });
-  const refunds = refundsData?.items ?? [];
+  const refunds = (refundsData?.items ?? [])
+    .slice()
+    .sort((a, b) => new Date(b.requestedAt) - new Date(a.requestedAt));
   const refundsTotal = refundsData?.totalPages ?? 1;
 
   // Resolve course names

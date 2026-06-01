@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { CheckCircle, Eye, EyeClosed } from "@solar-icons/react";
+import React, { useState } from "react";
+import { Eye, EyeClosed } from "@solar-icons/react";
 import {
   Input,
   Button,
@@ -10,7 +10,6 @@ import {
   addToast,
 } from "@heroui/react";
 import LegalModal from "./LegalModal";
-import { TERMS, PRIVACY } from "../../Legal/legalData";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,10 +36,8 @@ const Register = () => {
   const { inputClassNames } = useInputStyles();
   const { loading, error } = useSelector((state) => state.auth);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [termsAgreed, setTermsAgreed] = useState(false);
-  const [privacyAgreed, setPrivacyAgreed] = useState(false);
-  const [termsOpen, setTermsOpen] = useState(false);
-  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [legalOpen, setLegalOpen] = useState(false);
+  const [legalTab, setLegalTab] = useState("terms");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -52,10 +49,6 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
-
-  useEffect(() => {
-    if (termsAgreed && privacyAgreed) setAgreeToTerms(true);
-  }, [termsAgreed, privacyAgreed]);
 
   const validateForm = () => {
     const errors = {};
@@ -354,50 +347,55 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="mb-6">
+              <div className="mb-6 flex items-center gap-2">
                 <Checkbox
                   isSelected={agreeToTerms}
-                  onValueChange={(v) => {
-                    setAgreeToTerms(v);
-                    if (!v) { setTermsAgreed(false); setPrivacyAgreed(false); }
-                  }}
+                  onValueChange={setAgreeToTerms}
                   size="sm"
-                  classNames={{ label: "text-sm" }}
+                />
+                <span
+                  className="text-sm leading-relaxed"
+                  style={{ color: colors.text.secondary }}
                 >
+                  {t("auth.register.agreeToTerms")}{" "}
                   <span
-                    className="leading-relaxed"
-                    style={{ color: colors.text.secondary }}
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer underline-offset-2 hover:underline"
+                    style={{ color: colors.primary.main }}
+                    onClick={() => {
+                      setLegalTab("terms");
+                      setLegalOpen(true);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setLegalTab("terms");
+                        setLegalOpen(true);
+                      }
+                    }}
                   >
-                    {t("auth.register.agreeToTerms")}{" "}
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
-                      style={{ color: termsAgreed ? colors.state.success : colors.primary.main }}
-                      onClick={(e) => { e.stopPropagation(); setTermsOpen(true); }}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); setTermsOpen(true); } }}
-                    >
-                      {termsAgreed && (
-                        <CheckCircle weight="Bold" className="w-3.5 h-3.5" />
-                      )}
-                      {t("auth.register.termsAndConditions")}
-                    </span>{" "}
-                    {t("auth.register.and")}{" "}
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
-                      style={{ color: privacyAgreed ? colors.state.success : colors.primary.main }}
-                      onClick={(e) => { e.stopPropagation(); setPrivacyOpen(true); }}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); setPrivacyOpen(true); } }}
-                    >
-                      {privacyAgreed && (
-                        <CheckCircle weight="Bold" className="w-3.5 h-3.5" />
-                      )}
-                      {t("auth.register.privacyPolicy")}
-                    </span>
+                    {t("auth.register.termsAndConditions")}
+                  </span>{" "}
+                  {t("auth.register.and")}{" "}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer underline-offset-2 hover:underline"
+                    style={{ color: colors.primary.main }}
+                    onClick={() => {
+                      setLegalTab("privacy");
+                      setLegalOpen(true);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setLegalTab("privacy");
+                        setLegalOpen(true);
+                      }
+                    }}
+                  >
+                    {t("auth.register.privacyPolicy")}
                   </span>
-                </Checkbox>
+                </span>
               </div>
 
               {validationErrors.terms && (
@@ -442,18 +440,13 @@ const Register = () => {
       </div>
 
       <LegalModal
-        isOpen={termsOpen}
-        onClose={() => setTermsOpen(false)}
-        data={TERMS}
-        onAgree={() => setTermsAgreed(true)}
-        hasAgreed={termsAgreed}
-      />
-      <LegalModal
-        isOpen={privacyOpen}
-        onClose={() => setPrivacyOpen(false)}
-        data={PRIVACY}
-        onAgree={() => setPrivacyAgreed(true)}
-        hasAgreed={privacyAgreed}
+        isOpen={legalOpen}
+        defaultTab={legalTab}
+        onClose={() => setLegalOpen(false)}
+        onAgree={() => {
+          setAgreeToTerms(true);
+          setLegalOpen(false);
+        }}
       />
     </div>
   );

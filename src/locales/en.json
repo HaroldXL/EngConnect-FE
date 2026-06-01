@@ -2313,6 +2313,7 @@
         "modalTitle": "Course Cancellation Refund",
         "fullRefundLabel": "Full Refund",
         "fullRefundHint": "You completed only the trial lesson. You are eligible for a full refund of the course fee.",
+        "noSessionRefundHint": "You haven't attended any lessons yet. You can cancel and receive a full refund of the course fee.",
         "partialRefundLabel": "Partial Refund",
         "partialRefundHint": "You completed {{completed}} of {{total}} sessions. A refund will be issued for the remaining unattended sessions.",
         "noteLabel": "Note (optional)",
