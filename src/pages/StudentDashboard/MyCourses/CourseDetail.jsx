@@ -1434,7 +1434,7 @@ const StudentMyCourseDetail = () => {
                   {t("courses.detail.aboutCourse")}
                 </h2>
                 <p
-                  className="leading-relaxed"
+                  className="leading-relaxed whitespace-pre-wrap"
                   style={{ color: colors.text.secondary }}
                 >
                   {course.fullDescription || course.shortDescription}
@@ -1483,7 +1483,10 @@ const StudentMyCourseDetail = () => {
                           style={{ color: colors.primary.main }}
                         />
                       </div>
-                      <span style={{ color: colors.text.secondary }}>
+                      <span
+                        className="whitespace-pre-wrap"
+                        style={{ color: colors.text.secondary }}
+                      >
                         {item}
                       </span>
                     </div>
@@ -1935,41 +1938,6 @@ const StudentMyCourseDetail = () => {
                                                     </div>
                                                   );
                                                 })}
-                                              </div>
-                                            )}
-
-                                            {/* Outcomes */}
-                                            {outcomesList.length > 0 && (
-                                              <div className="mt-3 flex flex-col gap-1">
-                                                {outcomesList.map(
-                                                  (outcome, i) => (
-                                                    <div
-                                                      key={i}
-                                                      className="flex items-start gap-1.5"
-                                                    >
-                                                      <AltArrowRight
-                                                        size={11}
-                                                        weight="BoldDuotone"
-                                                        className="flex-shrink-0 mt-0.5"
-                                                        style={{
-                                                          color:
-                                                            colors.state
-                                                              .success,
-                                                        }}
-                                                      />
-                                                      <span
-                                                        className="text-xs"
-                                                        style={{
-                                                          color:
-                                                            colors.text
-                                                              .secondary,
-                                                        }}
-                                                      >
-                                                        {outcome}
-                                                      </span>
-                                                    </div>
-                                                  ),
-                                                )}
                                               </div>
                                             )}
 

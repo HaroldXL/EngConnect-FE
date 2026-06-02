@@ -554,7 +554,7 @@ const TutorCourseDetail = () => {
   const allCategories = course.courseCategories || [];
   const outcomes = course.outcomes
     ? course.outcomes
-        .split(";")
+        .split(/[;\n]+/)
         .map((s) => s.trim())
         .filter(Boolean)
     : [];
@@ -985,7 +985,7 @@ const TutorCourseDetail = () => {
                   {t("courses.detail.aboutCourse")}
                 </h2>
                 <p
-                  className="leading-relaxed"
+                  className="leading-relaxed whitespace-pre-wrap"
                   style={{ color: colors.text.secondary }}
                 >
                   {course.fullDescription || course.shortDescription}
@@ -1028,7 +1028,7 @@ const TutorCourseDetail = () => {
                           />
                         </div>
                         <span
-                          className="text-sm"
+                          className="text-sm whitespace-pre-wrap"
                           style={{ color: colors.text.secondary }}
                         >
                           {item}

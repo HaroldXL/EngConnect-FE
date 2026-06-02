@@ -1,5 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { AltArrowDown, AltArrowLeft, AltArrowRight, AltArrowUp, BookBookmark, CheckCircle, Checklist, ClockCircle, Diploma, PlayCircle, Star, UsersGroupRounded } from "@solar-icons/react"
+import {
+  AltArrowDown,
+  AltArrowLeft,
+  AltArrowRight,
+  AltArrowUp,
+  BookBookmark,
+  Check,
+  Checklist,
+  ClockCircle,
+  Diploma,
+  PlayCircle,
+  Star,
+  UsersGroupRounded,
+} from "@solar-icons/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, Chip, Avatar, Divider } from "@heroui/react";
@@ -283,7 +296,7 @@ const StudentCourseDetail = () => {
                   {t("courses.detail.aboutCourse")}
                 </h2>
                 <p
-                  className="leading-relaxed"
+                  className="leading-relaxed whitespace-pre-wrap"
                   style={{ color: colors.text.secondary }}
                 >
                   {course.fullDescription || course.shortDescription}
@@ -319,13 +332,16 @@ const StudentCourseDetail = () => {
                               backgroundColor: colors.background.primaryLight,
                             }}
                           >
-                            <CheckCircle
+                            <Check
                               size={14}
                               weight="BoldDuotone"
                               style={{ color: colors.primary.main }}
                             />
                           </div>
-                          <span style={{ color: colors.text.secondary }}>
+                          <span
+                            className="whitespace-pre-wrap"
+                            style={{ color: colors.text.secondary }}
+                          >
                             {item}
                           </span>
                         </div>
@@ -343,13 +359,16 @@ const StudentCourseDetail = () => {
                               backgroundColor: colors.background.primaryLight,
                             }}
                           >
-                            <CheckCircle
+                            <Check
                               size={14}
                               weight="BoldDuotone"
                               style={{ color: colors.primary.main }}
                             />
                           </div>
-                          <span style={{ color: colors.text.secondary }}>
+                          <span
+                            className="whitespace-pre-wrap"
+                            style={{ color: colors.text.secondary }}
+                          >
                             {item}
                           </span>
                         </div>
@@ -641,7 +660,8 @@ const StudentCourseDetail = () => {
                     </div>
                     {tutorInfo.monthExperience > 0 && (
                       <div className="flex items-center gap-1">
-                        <ClockCircle weight="BoldDuotone"
+                        <ClockCircle
+                          weight="BoldDuotone"
                           size={18}
                           style={{ color: colors.primary.main }}
                         />

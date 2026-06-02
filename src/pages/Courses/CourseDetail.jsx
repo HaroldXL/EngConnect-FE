@@ -518,7 +518,7 @@ const CourseDetail = () => {
                       {t("courses.detail.aboutCourse")}
                     </h2>
                     <p
-                      className="leading-relaxed"
+                      className="leading-relaxed whitespace-pre-wrap"
                       style={{ color: colors.text.secondary }}
                     >
                       {course.fullDescription || course.shortDescription}
@@ -561,7 +561,10 @@ const CourseDetail = () => {
                                   style={{ color: colors.primary.main }}
                                 />
                               </div>
-                              <span style={{ color: colors.text.secondary }}>
+                              <span
+                                className="whitespace-pre-wrap"
+                                style={{ color: colors.text.secondary }}
+                              >
                                 {item}
                               </span>
                             </div>
@@ -586,7 +589,10 @@ const CourseDetail = () => {
                                   style={{ color: colors.primary.main }}
                                 />
                               </div>
-                              <span style={{ color: colors.text.secondary }}>
+                              <span
+                                className="whitespace-pre-wrap"
+                                style={{ color: colors.text.secondary }}
+                              >
                                 {item}
                               </span>
                             </div>
