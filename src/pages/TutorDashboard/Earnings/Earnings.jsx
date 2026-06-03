@@ -240,9 +240,14 @@ const Earnings = () => {
   }, [activeTab, fetchSales]);
 
   const fetchRefunds = useCallback(async () => {
+    if (!user?.tutorId) return;
     setRefundsLoading(true);
     try {
-      const params = { page: refundsPage, "page-size": 10 };
+      const params = {
+        TutorId: user.tutorId,
+        page: refundsPage,
+        "page-size": 10,
+      };
       if (refundStatusFilter) params.Status = refundStatusFilter;
       if (refundTypeFilter) params.RefundType = refundTypeFilter;
       const res = await paymentApi.getStudentRefundDetails(params);
@@ -253,7 +258,7 @@ const Earnings = () => {
     } finally {
       setRefundsLoading(false);
     }
-  }, [refundsPage, refundStatusFilter, refundTypeFilter]);
+  }, [user?.tutorId, refundsPage, refundStatusFilter, refundTypeFilter]);
 
   useEffect(() => {
     if (activeTab === "refunds") fetchRefunds();
