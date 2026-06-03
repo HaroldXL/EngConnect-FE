@@ -110,7 +110,10 @@ const Courses = () => {
     [categories],
   );
   const purposeCategories = useMemo(
-    () => categories.filter((c) => c.type === "Purpose"),
+    () =>
+      categories
+        .filter((c) => c.type === "Purpose")
+        .sort((a, b) => a.name.localeCompare(b.name)),
     [categories],
   );
 

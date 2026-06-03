@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import {
   AddCircle,
   Folder2,
@@ -13,6 +18,8 @@ import {
   Button,
   Input,
   Chip,
+  Select,
+  SelectItem,
   Table,
   TableHeader,
   TableColumn,
@@ -47,6 +54,7 @@ const CategoryManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [typeFilter, setTypeFilter] = useState("");
 
   // Create/Edit modal
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,10 +83,11 @@ const CategoryManagement = () => {
   }, [searchQuery]);
 
   const { data: catData, isLoading: loading } = useQuery({
-    queryKey: ["admin-categories", page, pageSize, debouncedSearch],
+    queryKey: ["admin-categories", page, pageSize, debouncedSearch, typeFilter],
     queryFn: () => {
       const params = { page, "page-size": pageSize };
       if (debouncedSearch) params["search-term"] = debouncedSearch;
+      if (typeFilter) params["type"] = typeFilter;
       return coursesApi.getCategories(params).then((r) => r.data);
     },
     placeholderData: keepPreviousData,
@@ -91,7 +100,9 @@ const CategoryManagement = () => {
 
   const saveMutation = useMutation({
     mutationFn: ({ id, data }) =>
-      id ? coursesApi.updateCategory(id, data) : coursesApi.createCategory(data),
+      id
+        ? coursesApi.updateCategory(id, data)
+        : coursesApi.createCategory(data),
     onSuccess: (_, { id }) => {
       addToast({
         title: id
@@ -116,13 +127,19 @@ const CategoryManagement = () => {
   const deleteMutation = useMutation({
     mutationFn: (id) => coursesApi.deleteCategory(id),
     onSuccess: () => {
-      addToast({ title: t("adminDashboard.categories.deleteSuccess"), color: "success" });
+      addToast({
+        title: t("adminDashboard.categories.deleteSuccess"),
+        color: "success",
+      });
       onDeleteClose();
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
     onError: () => {
-      addToast({ title: t("adminDashboard.categories.deleteFailed"), color: "danger" });
+      addToast({
+        title: t("adminDashboard.categories.deleteFailed"),
+        color: "danger",
+      });
     },
   });
 
@@ -139,7 +156,7 @@ const CategoryManagement = () => {
     setEditingCategory(null);
     setFormName("");
     setFormDescription("");
-    setFormType("");
+    setFormType("Purpose");
     onOpen();
   };
 
@@ -265,7 +282,7 @@ const CategoryManagement = () => {
           className="border-none"
           style={{ backgroundColor: colors.background.light }}
         >
-          <CardBody className="p-4">
+          <CardBody className="p-4 space-y-3">
             <Input
               type="text"
               placeholder={t("adminDashboard.categories.searchPlaceholder")}
@@ -280,6 +297,32 @@ const CategoryManagement = () => {
               }
               classNames={inputClassNames}
             />
+            <div className="flex gap-2">
+              {["", "Skill", "Purpose"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => {
+                    setTypeFilter(type);
+                    setPage(1);
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+                  style={{
+                    backgroundColor:
+                      typeFilter === type
+                        ? colors.primary.main
+                        : colors.background.gray,
+                    color:
+                      typeFilter === type
+                        ? colors.text.white
+                        : colors.text.secondary,
+                  }}
+                >
+                  {type === ""
+                    ? t("adminDashboard.categories.filterAll")
+                    : type}
+                </button>
+              ))}
+            </div>
           </CardBody>
         </Card>
       </motion.div>
@@ -461,19 +504,25 @@ const CategoryManagement = () => {
                     onValueChange={setFormDescription}
                     classNames={inputClassNames}
                   />
-                  <Input
+                  <Select
                     label={t("adminDashboard.categories.form.type")}
-                    placeholder={t(
-                      "adminDashboard.categories.form.typePlaceholder",
-                    )}
-                    value={formType}
-                    onValueChange={setFormType}
+                    selectedKeys={formType ? [formType] : ["Purpose"]}
+                    onSelectionChange={(keys) =>
+                      setFormType(Array.from(keys)[0] ?? "Purpose")
+                    }
                     classNames={inputClassNames}
-                  />
+                  >
+                    <SelectItem key="Purpose">Purpose</SelectItem>
+                    <SelectItem key="Skill">Skill</SelectItem>
+                  </Select>
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={saveMutation.isPending}>
+                <Button
+                  variant="light"
+                  onPress={onClose}
+                  isDisabled={saveMutation.isPending}
+                >
                   {t("adminDashboard.categories.cancel")}
                 </Button>
                 <Button
@@ -507,7 +556,11 @@ const CategoryManagement = () => {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose} isDisabled={deleteMutation.isPending}>
+                <Button
+                  variant="light"
+                  onPress={onClose}
+                  isDisabled={deleteMutation.isPending}
+                >
                   {t("adminDashboard.categories.cancel")}
                 </Button>
                 <Button

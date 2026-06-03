@@ -2855,6 +2855,7 @@
       "subtitle": "Manage course categories",
       "totalCategories": "Total Categories",
       "searchPlaceholder": "Search categories...",
+      "filterAll": "All",
       "addCategory": "Add Category",
       "editCategory": "Edit Category",
       "table": {

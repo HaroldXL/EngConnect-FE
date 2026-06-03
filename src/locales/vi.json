@@ -2852,6 +2852,7 @@
       "subtitle": "Quản lý danh mục khóa học",
       "totalCategories": "Tổng danh mục",
       "searchPlaceholder": "Tìm kiếm danh mục...",
+      "filterAll": "Tất cả",
       "addCategory": "Thêm danh mục",
       "editCategory": "Sửa danh mục",
       "table": {
@@ -2880,7 +2881,8 @@
       "updateFailed": "Cập nhật danh mục thất bại",
       "deleteSuccess": "Xóa danh mục thành công",
       "deleteFailed": "Xóa danh mục thất bại",
-      "noData": "Không tìm thấy danh mục"
+      "noData": "Không tìm thấy danh mục",
+      "filterAll": "Tất cả"
     },
     "analytics": {
       "title": "Phân tích & Báo cáo",

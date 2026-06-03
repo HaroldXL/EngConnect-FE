@@ -771,7 +771,7 @@ const Home = () => {
                   </div>
                 </div> */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {purposeCategories.map((cat, index) => (
+                  {purposeCategories.slice(0, 4).map((cat, index) => (
                     <motion.div
                       key={cat.id}
                       initial={{ opacity: 0, y: 16 }}

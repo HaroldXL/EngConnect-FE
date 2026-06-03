@@ -17,21 +17,29 @@ const getSkillStyle = (name = "") => {
       Icon: VolumeLoud,
       color: "#F97316",
       iconBg: "rgba(249,115,22,0.15)",
+      short: "Speaking",
     };
   if (n.includes("listen"))
     return {
       Icon: HeadphonesRound,
       color: "#06B6D4",
       iconBg: "rgba(6,182,212,0.15)",
+      short: "Listening",
     };
   if (n.includes("read"))
     return {
       Icon: BookBookmark,
       color: "#10B981",
       iconBg: "rgba(16,185,129,0.15)",
+      short: "Reading",
     };
   if (n.includes("writ"))
-    return { Icon: Pen, color: "#3B82F6", iconBg: "rgba(59,130,246,0.15)" };
+    return {
+      Icon: Pen,
+      color: "#3B82F6",
+      iconBg: "rgba(59,130,246,0.15)",
+      short: "Writing",
+    };
   return null;
 };
 
@@ -58,6 +66,9 @@ const CourseCard = ({
     getSkillStyle(c.categoryName),
   );
   const fallbackCat = !skillCat ? course.courseCategories?.[0] : null;
+  const skillCats = (course.courseCategories || [])
+    .filter((c) => getSkillStyle(c.categoryName))
+    .slice(0, 2);
 
   return (
     <Card
@@ -111,13 +122,14 @@ const CourseCard = ({
             </Chip>
           )}
           {showCategory &&
-            skillCat &&
-            (() => {
-              const { Icon, color, iconBg } = getSkillStyle(
-                skillCat.categoryName,
+            skillCats.length > 0 &&
+            skillCats.map((cat) => {
+              const { Icon, color, iconBg, short } = getSkillStyle(
+                cat.categoryName,
               );
               return (
                 <Chip
+                  key={cat.categoryName}
                   size="sm"
                   variant="flat"
                   startContent={
@@ -125,10 +137,10 @@ const CourseCard = ({
                   }
                   style={{ backgroundColor: iconBg, color }}
                 >
-                  {skillCat.categoryName}
+                  {short}
                 </Chip>
               );
-            })()}
+            })}
           {showCategory && fallbackCat && (
             <Chip
               size="sm"
