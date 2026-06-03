@@ -1,5 +1,20 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
-import { AddCircle, AltArrowDown, AltArrowLeft, ChatRoundDots, ClockCircle, MinimalisticMagnifier, PresentationGraph, QuestionCircle, Plain, ShieldCheck, SquareAcademicCap, Ticket, UserCircle, UsersGroupRounded } from "@solar-icons/react"
+import {
+  AddCircle,
+  AltArrowDown,
+  AltArrowLeft,
+  ChatRoundDots,
+  ClockCircle,
+  MinimalisticMagnifier,
+  PresentationGraph,
+  QuestionCircle,
+  Plain,
+  ShieldCheck,
+  SquareAcademicCap,
+  Ticket,
+  UserCircle,
+  UsersGroupRounded,
+} from "@solar-icons/react";
 import {
   Card,
   CardBody,
@@ -35,15 +50,13 @@ import Footer from "../../components/Footer/Footer";
 import hybridWorkImage from "../../assets/illustrations/hybrid-work.avif";
 import chill from "../../assets/illustrations/chill.avif";
 
-
-
 // eslint-disable-next-line no-unused-vars
 const { motion } = MotionLib;
 
 const TICKET_TYPES = [
   "Error",
   "TechnicalIssue",
-  "QuestionCircle",
+  "Question",
   "FeatureRequest",
   "Billing",
   "Payout",
@@ -261,7 +274,9 @@ const HelpSupport = () => {
       >
         <Button
           variant="light"
-          startContent={<AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />}
+          startContent={
+            <AltArrowLeft weight="BoldDuotone" className="w-5 h-5" />
+          }
           onPress={() => {
             setView("list");
             setSelectedTicket(null);
@@ -341,7 +356,10 @@ const HelpSupport = () => {
                   >
                     {t("helpSupport.detail.description")}
                   </p>
-                  <p className="whitespace-pre-wrap" style={{ color: colors.text.primary }}>
+                  <p
+                    className="whitespace-pre-wrap"
+                    style={{ color: colors.text.primary }}
+                  >
                     {selectedTicket.description}
                   </p>
                 </div>
@@ -515,10 +533,7 @@ const HelpSupport = () => {
                           isDisabled={!messageText.trim()}
                           startContent={
                             !sending && (
-                              <Plain
-                                weight="BoldDuotone"
-                                className="w-4 h-4"
-                              />
+                              <Plain weight="BoldDuotone" className="w-4 h-4" />
                             )
                           }
                           style={{
@@ -597,7 +612,12 @@ const HelpSupport = () => {
                       size="lg"
                       radius="full"
                       className="font-semibold"
-                      startContent={<AltArrowDown weight="BoldDuotone" className="w-5 h-5" />}
+                      startContent={
+                        <AltArrowDown
+                          weight="BoldDuotone"
+                          className="w-5 h-5"
+                        />
+                      }
                       style={{
                         backgroundColor: colors.primary.main,
                         color: colors.text.white,
@@ -686,7 +706,10 @@ const HelpSupport = () => {
                     key="general"
                     title={
                       <div className="flex items-center gap-2">
-                        <UsersGroupRounded weight="BoldDuotone" className="w-5 h-5" />
+                        <UsersGroupRounded
+                          weight="BoldDuotone"
+                          className="w-5 h-5"
+                        />
                         <span>{t("helpSupport.faq.tabs.general")}</span>
                       </div>
                     }
@@ -695,7 +718,10 @@ const HelpSupport = () => {
                     key="student"
                     title={
                       <div className="flex items-center gap-2">
-                        <SquareAcademicCap weight="BoldDuotone" className="w-5 h-5" />
+                        <SquareAcademicCap
+                          weight="BoldDuotone"
+                          className="w-5 h-5"
+                        />
                         <span>{t("helpSupport.faq.tabs.student")}</span>
                       </div>
                     }
@@ -794,7 +820,9 @@ const HelpSupport = () => {
                       </div>
                     </div>
                     <Button
-                      startContent={<AddCircle weight="BoldDuotone" className="w-5 h-5" />}
+                      startContent={
+                        <AddCircle weight="BoldDuotone" className="w-5 h-5" />
+                      }
                       onPress={() => setCreateOpen(true)}
                       style={{
                         backgroundColor: colors.primary.main,
@@ -818,7 +846,10 @@ const HelpSupport = () => {
                           onValueChange={setSearchTerm}
                           placeholder={t("helpSupport.searchPlaceholder")}
                           startContent={
-                            <MinimalisticMagnifier weight="BoldDuotone" className="w-4 h-4 text-gray-400" />
+                            <MinimalisticMagnifier
+                              weight="BoldDuotone"
+                              className="w-4 h-4 text-gray-400"
+                            />
                           }
                           classNames={inputClassNames}
                           className="flex-1"
@@ -946,7 +977,8 @@ const HelpSupport = () => {
                                   {ticket.description}
                                 </p>
                                 <div className="flex items-center gap-2 mt-2 text-xs">
-                                  <ClockCircle weight="BoldDuotone"
+                                  <ClockCircle
+                                    weight="BoldDuotone"
                                     className="w-3 h-3"
                                     style={{ color: colors.text.tertiary }}
                                   />
@@ -955,7 +987,8 @@ const HelpSupport = () => {
                                   </span>
                                   {ticket.supportTicketMessages?.length > 0 && (
                                     <>
-                                      <ChatRoundDots weight="BoldDuotone"
+                                      <ChatRoundDots
+                                        weight="BoldDuotone"
                                         className="w-3 h-3 ml-2"
                                         style={{
                                           color: colors.text.tertiary,

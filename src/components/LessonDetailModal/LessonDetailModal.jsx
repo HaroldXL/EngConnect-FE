@@ -287,9 +287,7 @@ const LessonDetailModal = ({
                   l.courseId === lesson.courseId &&
                   new Date(l.startTime) > new Date(lesson.startTime),
               )
-              .sort(
-                (a, b) => new Date(a.startTime) - new Date(b.startTime),
-              )[0];
+              .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
             setMakeupDeadline(
               nextCourse
                 ? new Date(
@@ -514,8 +512,8 @@ const LessonDetailModal = ({
 
   const internalCanStudentMakeup =
     isStudentView && lesson.status === "NoStudent";
-  const internalCanTutorMakeup =
-    !isStudentView && lesson.status === "NoTutor";
+  const internalCanTutorMakeup = !isStudentView && lesson.status === "NoTutor";
+
   // For tutor+NoTutor, reuse effectiveDeadline (prop-aware) instead of computing separately
   const resolvedMakeupDeadline =
     internalCanTutorMakeup && effectiveDeadline
@@ -540,6 +538,16 @@ const LessonDetailModal = ({
       : null;
   const reviewMakeupReq =
     internalStudentMakeupForTutor || internalTutorMakeupForStudent;
+
+  const autoRefundAt =
+    isStudentView && lesson.status === "NoTutor" && lesson.endTime
+      ? new Date(new Date(lesson.endTime).getTime() + 3 * 24 * 60 * 60 * 1000)
+      : null;
+  const showAutoRefundBanner =
+    autoRefundAt !== null &&
+    autoRefundAt > new Date() &&
+    !internalHasPendingOffer &&
+    !internalTutorMakeupForStudent;
 
   const makeupNs = isStudentView
     ? "studentDashboard.schedule.makeup"
@@ -632,7 +640,7 @@ const LessonDetailModal = ({
                 {getLessonStatusLabel(lesson.status)}
               </Chip>
             </ModalHeader>
-            <ModalBody className="space-y-4 pt-0">
+            <ModalBody className="space-y-1 pt-0">
               {/* Person info */}
               <div
                 className={`flex items-center gap-3 p-3 rounded-xl${personProfileLink ? " cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
@@ -679,7 +687,8 @@ const LessonDetailModal = ({
                   </p>
                 </div>
                 {personProfileLink && (
-                  <AltArrowRight weight="BoldDuotone"
+                  <AltArrowRight
+                    weight="BoldDuotone"
                     className="w-4 h-4 flex-shrink-0"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -754,7 +763,8 @@ const LessonDetailModal = ({
               {/* Session Description & Resources */}
               {lessonExtraLoading ? (
                 <div className="flex items-center justify-center gap-2 py-2">
-                  <MenuDots weight="BoldDuotone"
+                  <MenuDots
+                    weight="BoldDuotone"
                     className="w-4 h-4 animate-spin"
                     style={{ color: colors.text.tertiary }}
                   />
@@ -822,7 +832,10 @@ const LessonDetailModal = ({
                                 className="flex items-center gap-2 text-sm hover:underline"
                                 style={{ color: colors.primary.main }}
                               >
-                                <DocumentText weight="BoldDuotone" className="w-3.5 h-3.5 flex-shrink-0" />
+                                <DocumentText
+                                  weight="BoldDuotone"
+                                  className="w-3.5 h-3.5 flex-shrink-0"
+                                />
                                 {r.title || r.resourceTitle || r.resourceUrl}
                               </a>
                             ))}
@@ -931,25 +944,17 @@ const LessonDetailModal = ({
 
               {/* Lesson Rating — visible once meeting ended */}
               {lesson.meetingStatus === "Ended" && (
-                <div className="flex flex-col gap-2">
-                  <p
-                    className="text-sm font-semibold"
-                    style={{ color: colors.text.secondary }}
-                  >
-                    {t("lessonRating.sectionTitle")}
-                  </p>
-                  <LessonRatingDisplay
-                    rating={localRating}
-                    canEdit={isStudentView}
-                    onAdd={() => setRatingModalOpen(true)}
-                    onEdit={() => setRatingModalOpen(true)}
-                    emptyMessage={
-                      isStudentView
-                        ? t("lessonRating.studentEmpty")
-                        : t("lessonRating.tutorEmpty")
-                    }
-                  />
-                </div>
+                <LessonRatingDisplay
+                  rating={localRating}
+                  canEdit={isStudentView}
+                  onAdd={() => setRatingModalOpen(true)}
+                  onEdit={() => setRatingModalOpen(true)}
+                  emptyMessage={
+                    isStudentView
+                      ? t("lessonRating.studentEmpty")
+                      : t("lessonRating.tutorEmpty")
+                  }
+                />
               )}
 
               {/* Lesson Summary + Quiz — side by side */}
@@ -1069,49 +1074,84 @@ const LessonDetailModal = ({
               )}
 
               {/* Makeup deadline banner — hide for tutor+NoTutor since reschedule banner already shows */}
-              {resolvedMakeupDeadline &&
-                internalCanStudentMakeup && (
-                  <div
-                    className="flex items-center gap-2 p-3 rounded-xl"
+              {resolvedMakeupDeadline && internalCanStudentMakeup && (
+                <div
+                  className="flex items-center gap-2 p-3 rounded-xl"
+                  style={{
+                    backgroundColor: `${makeupDeadlinePassed ? colors.state.error : colors.state.warning}12`,
+                    border: `1px solid ${makeupDeadlinePassed ? colors.state.error : colors.state.warning}30`,
+                  }}
+                >
+                  {makeupDeadlinePassed ? (
+                    <DangerTriangle
+                      weight="BoldDuotone"
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: colors.state.error }}
+                    />
+                  ) : (
+                    <ClockCircle
+                      weight="BoldDuotone"
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: colors.state.warning }}
+                    />
+                  )}
+                  <span
+                    className="text-sm"
                     style={{
-                      backgroundColor: `${makeupDeadlinePassed ? colors.state.error : colors.state.warning}12`,
-                      border: `1px solid ${makeupDeadlinePassed ? colors.state.error : colors.state.warning}30`,
+                      color: makeupDeadlinePassed
+                        ? colors.state.error
+                        : colors.state.warning,
                     }}
                   >
-                    {makeupDeadlinePassed ? (
-                      <DangerTriangle
-                        weight="BoldDuotone"
-                        className="w-4 h-4 flex-shrink-0"
-                        style={{ color: colors.state.error }}
-                      />
-                    ) : (
-                      <ClockCircle
-                        weight="BoldDuotone"
-                        className="w-4 h-4 flex-shrink-0"
-                        style={{ color: colors.state.warning }}
-                      />
-                    )}
-                    <span
-                      className="text-sm"
-                      style={{
-                        color: makeupDeadlinePassed
-                          ? colors.state.error
-                          : colors.state.warning,
-                      }}
-                    >
-                      {makeupDeadlinePassed
-                        ? t(`${makeupNs}.deadlinePassed`)
-                        : t(`${makeupNs}.deadlineUntil`, {
-                            date: resolvedMakeupDeadline.toLocaleString(dateLocale, {
+                    {makeupDeadlinePassed
+                      ? t(`${makeupNs}.deadlinePassed`)
+                      : t(`${makeupNs}.deadlineUntil`, {
+                          date: resolvedMakeupDeadline.toLocaleString(
+                            dateLocale,
+                            {
                               month: "short",
                               day: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
-                            }),
-                          })}
-                    </span>
-                  </div>
-                )}
+                            },
+                          ),
+                        })}
+                  </span>
+                </div>
+              )}
+
+              {/* Auto-refund info — student viewing NoTutor lesson */}
+              {showAutoRefundBanner && (
+                <div
+                  className="flex items-start gap-2 p-3 rounded-xl"
+                  style={{
+                    backgroundColor: `${colors.state.warning}12`,
+                    border: `1px solid ${colors.state.warning}30`,
+                  }}
+                >
+                  <ClockCircle
+                    weight="BoldDuotone"
+                    className="w-4 h-4 flex-shrink-0 mt-0.5"
+                    style={{ color: colors.state.warning }}
+                  />
+                  <span
+                    className="text-sm"
+                    style={{ color: colors.state.warning }}
+                  >
+                    {t(
+                      "studentDashboard.schedule.refundRequest.autoRefund.banner",
+                      {
+                        date: autoRefundAt.toLocaleString(dateLocale, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }),
+                      },
+                    )}
+                  </span>
+                </div>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button variant="light" onPress={onClose}>
@@ -1136,7 +1176,8 @@ const LessonDetailModal = ({
                     >
                       {t("tutorDashboard.schedule.reschedule.pendingChip")}
                     </Button>
-                  ) : !myMakeupRequest || myMakeupRequest.status === "Rejected" ? (
+                  ) : !myMakeupRequest ||
+                    myMakeupRequest.status === "Rejected" ? (
                     <Button
                       variant="flat"
                       startContent={
@@ -1467,10 +1508,7 @@ const LessonDetailModal = ({
                         className="text-xs mt-0.5 flex items-center gap-1"
                         style={{ color: colors.text.secondary }}
                       >
-                        <ClockCircle
-                          weight="BoldDuotone"
-                          className="w-3 h-3"
-                        />
+                        <ClockCircle weight="BoldDuotone" className="w-3 h-3" />
                         {new Date(lesson.startTime).toLocaleString(dateLocale, {
                           weekday: "short",
                           month: "short",

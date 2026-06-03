@@ -718,7 +718,7 @@
       "noUpcoming": "Không có buổi học sắp tới",
       "noPast": "Không có buổi học đã qua",
       "meetingWaiting": "Đang chờ",
-      "meetingEnded": "Đã kết thúc",
+      "meetingEnded": "Cuộc họp đã kết thúc",
       "meetingInProgress": "Đang học",
       "roomOpen": "Phòng đang mở",
       "noStudent": "Học viên vắng",
@@ -815,7 +815,11 @@
         "noTickets": "Chưa có ticket hoàn tiền nào",
         "noBankTitle": "Chưa có tài khoản ngân hàng",
         "noBankMessage": "Bạn cần thêm tài khoản ngân hàng vào hồ sơ trước khi gửi yêu cầu hoàn tiền. Tiền hoàn sẽ được chuyển vào tài khoản ngân hàng của bạn.",
-        "goToProfile": "Đến trang hồ sơ"
+        "goToProfile": "Đến trang hồ sơ",
+        "autoRefund": {
+          "banner": "Nếu không có hành động nào được thực hiện, buổi học này sẽ được hoàn tiền tự động vào {{date}}.",
+          "chip": "Hoàn tiền tự động: {{date}}"
+        }
       },
       "makeup": {
         "makeupBtn": "Bù vào cuối khoá",
@@ -1455,7 +1459,7 @@
       },
       "studentLabel": "Học viên",
       "meetingWaiting": "Đang chờ",
-      "meetingEnded": "Đã kết thúc",
+      "meetingEnded": "Cuộc họp đã kết thúc",
       "meetingInProgress": "Đang học",
       "watchRecording": "Xem bản ghi",
       "recordingAvailable": "Có bản ghi",

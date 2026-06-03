@@ -1859,6 +1859,64 @@ const StudentMyCourseDetail = () => {
                                               </div>
                                             )}
 
+                                            {/* Auto-refund chip — NoTutor lesson */}
+                                            {primary?.status === "NoTutor" &&
+                                              (() => {
+                                                const refundAt = primary.endTime
+                                                  ? new Date(
+                                                      new Date(
+                                                        primary.endTime,
+                                                      ).getTime() +
+                                                        3 * 24 * 60 * 60 * 1000,
+                                                    )
+                                                  : null;
+                                                if (
+                                                  !refundAt ||
+                                                  refundAt <= new Date(now)
+                                                )
+                                                  return null;
+                                                return (
+                                                  <div
+                                                    className="mt-2 flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
+                                                    style={{
+                                                      backgroundColor: `${colors.state.success}12`,
+                                                      border: `1px solid ${colors.state.success}30`,
+                                                    }}
+                                                  >
+                                                    <ClockCircle
+                                                      size={12}
+                                                      weight="BoldDuotone"
+                                                      style={{
+                                                        color:
+                                                          colors.state.success,
+                                                      }}
+                                                    />
+                                                    <span
+                                                      className="text-xs"
+                                                      style={{
+                                                        color:
+                                                          colors.state.success,
+                                                      }}
+                                                    >
+                                                      {t(
+                                                        "studentDashboard.schedule.refundRequest.autoRefund.chip",
+                                                        {
+                                                          date: refundAt.toLocaleString(
+                                                            dateLocale,
+                                                            {
+                                                              month: "short",
+                                                              day: "numeric",
+                                                              hour: "2-digit",
+                                                              minute: "2-digit",
+                                                            },
+                                                          ),
+                                                        },
+                                                      )}
+                                                    </span>
+                                                  </div>
+                                                );
+                                              })()}
+
                                             {/* Extra lessons (reschedules / additional) */}
                                             {extraLessons.length > 0 && (
                                               <div className="mt-2 space-y-1.5">

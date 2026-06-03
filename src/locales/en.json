@@ -720,7 +720,7 @@
       "noUpcoming": "No upcoming lessons",
       "noPast": "No past lessons",
       "meetingWaiting": "Waiting",
-      "meetingEnded": "Ended",
+      "meetingEnded": "Meeting Ended",
       "meetingInProgress": "In Session",
       "roomOpen": "Room Open",
       "noStudent": "No Show",
@@ -817,7 +817,11 @@
         "noTickets": "No refund tickets yet",
         "noBankTitle": "Bank Account Required",
         "noBankMessage": "You need to add a bank account to your profile before submitting a refund request. The refund will be transferred to your bank account.",
-        "goToProfile": "Go to Profile"
+        "goToProfile": "Go to Profile",
+        "autoRefund": {
+          "banner": "If no action is taken, this lesson will be automatically refunded on {{date}}.",
+          "chip": "Auto-refund: {{date}}"
+        }
       },
       "makeup": {
         "makeupBtn": "Add to end of course",
@@ -1457,7 +1461,7 @@
       },
       "studentLabel": "Student",
       "meetingWaiting": "Waiting",
-      "meetingEnded": "Ended",
+      "meetingEnded": "Meeting Ended",
       "meetingInProgress": "In Session",
       "watchRecording": "Watch Recording",
       "recordingAvailable": "Recording available",
