@@ -289,6 +289,8 @@ const Earnings = () => {
         return colors.state.success;
       case "Unpaid":
         return colors.state.warning;
+      case "Locked":
+        return colors.primary.main;
       default:
         return colors.text.tertiary;
     }
@@ -685,6 +687,9 @@ const Earnings = () => {
                   </SelectItem>
                   <SelectItem key="Paid">
                     {t("tutorDashboard.earnings.statuses.Paid")}
+                  </SelectItem>
+                  <SelectItem key="Locked">
+                    {t("tutorDashboard.earnings.statuses.Locked")}
                   </SelectItem>
                 </Select>
               </div>

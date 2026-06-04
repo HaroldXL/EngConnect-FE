@@ -1837,7 +1837,8 @@
       "payoutDetail": "Chi tiết thanh toán",
       "statuses": {
         "Unpaid": "Chưa trả",
-        "Paid": "Đã trả"
+        "Paid": "Đã trả",
+        "Locked": "Đang khóa"
       },
       "payoutTypes": {
         "Payroll": "Lương tháng",
@@ -3011,7 +3012,8 @@
       "periodStatuses": {
         "Closed": "Đã đóng",
         "Processing": "Đang xử lý",
-        "Paid": "Đã trả"
+        "Paid": "Đã trả",
+        "Failed": "Thất bại"
       },
       "payoutTypes": {
         "Payroll": "Lương tháng",

@@ -122,12 +122,20 @@ const PayrollManagement = () => {
   const { data: allPeriods = [] } = useQuery({
     queryKey: ["admin-all-periods"],
     queryFn: () =>
-      paymentApi.getPayrollPeriods({ "page-size": 100 }).then((res) => res?.data?.items || []),
+      paymentApi
+        .getPayrollPeriods({ "page-size": 100 })
+        .then((res) => res?.data?.items || []),
     staleTime: 5 * 60 * 1000,
   });
 
   const { data: payoutsData, isLoading: payoutsLoading } = useQuery({
-    queryKey: ["admin-payouts", payoutsPage, payoutTypeFilter, payoutStatusFilter, payoutPeriodFilter],
+    queryKey: [
+      "admin-payouts",
+      payoutsPage,
+      payoutTypeFilter,
+      payoutStatusFilter,
+      payoutPeriodFilter,
+    ],
     queryFn: async () => {
       const params = { page: payoutsPage, "page-size": 10 };
       if (payoutTypeFilter) params.PayoutType = payoutTypeFilter;
@@ -142,13 +150,16 @@ const PayrollManagement = () => {
   const payouts = payoutsData?.items ?? [];
   const payoutsTotalPages = payoutsData?.totalPages ?? 1;
 
-  const { data: tutorsSummary = [], isLoading: tutorsSummaryLoading } = useQuery({
-    queryKey: ["admin-tutors-summary"],
-    queryFn: () =>
-      paymentApi.getTotalEarning({}).then((res) => res?.data?.allTutors?.tutors || []),
-    enabled: activeTab === "overview",
-    staleTime: 2 * 60 * 1000,
-  });
+  const { data: tutorsSummary = [], isLoading: tutorsSummaryLoading } =
+    useQuery({
+      queryKey: ["admin-tutors-summary"],
+      queryFn: () =>
+        paymentApi
+          .getTotalEarning({})
+          .then((res) => res?.data?.allTutors?.tutors || []),
+      enabled: activeTab === "overview",
+      staleTime: 2 * 60 * 1000,
+    });
 
   // ── Open payout detail modal ────────────────────────
   const openPayoutDetail = async (payout) => {
@@ -187,6 +198,8 @@ const PayrollManagement = () => {
         return colors.primary.main;
       case "Closed":
         return colors.text.tertiary;
+      case "Failed":
+        return colors.state.error;
       default:
         return colors.text.secondary;
     }
@@ -336,7 +349,7 @@ const PayrollManagement = () => {
                   setPeriodsPage(1);
                 }}
               >
-                {["Closed", "Processing", "Paid"].map((s) => (
+                {["Closed", "Processing", "Paid", "Failed"].map((s) => (
                   <SelectItem key={s}>
                     {t(`adminDashboard.payroll.periodStatuses.${s}`)}
                   </SelectItem>

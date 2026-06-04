@@ -1839,7 +1839,8 @@
       "payoutDetail": "Payout Detail",
       "statuses": {
         "Unpaid": "Unpaid",
-        "Paid": "Paid"
+        "Paid": "Paid",
+        "Locked": "Locked"
       },
       "payoutTypes": {
         "Payroll": "Monthly Payroll",
@@ -3013,7 +3014,8 @@
       "periodStatuses": {
         "Closed": "Closed",
         "Processing": "Processing",
-        "Paid": "Paid"
+        "Paid": "Paid",
+        "Failed": "Failed"
       },
       "payoutTypes": {
         "Payroll": "Monthly Payroll",
