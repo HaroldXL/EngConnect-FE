@@ -42,7 +42,7 @@ const itemVariants = {
 
 // Import images
 import avatarGiap from "../../assets/images/avatar-Giap.jpg";
-import avatarKaius from "../../assets/images/alovu.jpg";
+import avatarKaius from "../../assets/images/avatar-Thinh.jpg";
 import avatarThien from "../../assets/images/avatar-Thien.png";
 import avatarCuong from "../../assets/images/avatar-Cuong.jpg";
 import projectImage from "../../assets/illustrations/selfie.avif";
