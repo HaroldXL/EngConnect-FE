@@ -65,8 +65,9 @@ const getLessonBlockColor = (status) => {
     case "Cancelled":
     case "NoStudent":
     case "NoTutor":
-    case "Refund":
       return { bg: "#FEE2E2", border: "#EF4444", text: "#991B1B" };
+    case "Refund":
+      return { bg: "#FEF3C7", border: "#F97316", text: "#92400E" };
     default:
       return { bg: "#F3F4F6", border: "#9CA3AF", text: "#374151" };
   }

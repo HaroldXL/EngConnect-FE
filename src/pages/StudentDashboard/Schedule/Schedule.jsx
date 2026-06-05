@@ -530,11 +530,16 @@ const Schedule = () => {
       case "Cancelled":
       case "NoStudent":
       case "NoTutor":
-      case "Refund":
         return {
           bg: `${colors.state.error}25`,
           border: colors.state.error,
           text: colors.state.error,
+        };
+      case "Refund":
+        return {
+          bg: `${colors.state.refund}25`,
+          border: colors.state.refund,
+          text: colors.state.refund,
         };
       case "Reschedule":
         return {

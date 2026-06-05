@@ -49,6 +49,7 @@ const lightColors = {
     success: '#10B981',
     warning: '#F59E0B',
     info: '#3B82F6',
+    refund: '#F97316',
   },
   social: {
     google: '#4285F4',
@@ -105,6 +106,7 @@ const darkColors = {
     success: '#4ADE80',
     warning: '#FCD34D',
     info: '#60A5FA',
+    refund: '#F97316',
   },
   social: {
     google: '#4285F4',
