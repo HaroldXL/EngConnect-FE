@@ -8,6 +8,7 @@ import {
   BookBookmark,
   CheckCircle,
   CloseSquare,
+  DangerTriangle,
   Diskette,
   Eye,
   File,
@@ -23,6 +24,7 @@ import {
   TrashBinMinimalistic,
   Videocamera,
   VolumeLoud,
+  InfoCircle,
 } from "@solar-icons/react";
 import {
   Input,
@@ -2644,6 +2646,7 @@ const CreateCourse = () => {
                   })()}
                 </div>
               </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Input
                   label={t("tutorDashboard.createCourse.sessionsPerWeek")}
@@ -3023,6 +3026,34 @@ const CreateCourse = () => {
               </div>
             </CardBody>
           </Card>
+
+          {/* Trial policy notice */}
+          <div
+            className="flex items-start gap-2.5 p-3 rounded-xl"
+            style={{
+              backgroundColor: `${colors.state.warning}12`,
+            }}
+          >
+            <InfoCircle
+              weight="BoldDuotone"
+              className="w-4 h-4 flex-shrink-0 mt-0.5"
+              style={{ color: colors.state.warning }}
+            />
+            <div className="flex flex-col gap-0.5">
+              <span
+                className="text-sm font-semibold"
+                style={{ color: colors.state.warning }}
+              >
+                {t("tutorDashboard.createCourse.trialPolicy.title")}
+              </span>
+              <span
+                className="text-xs leading-relaxed"
+                style={{ color: colors.text.secondary }}
+              >
+                {t("tutorDashboard.createCourse.trialPolicy.desc")}
+              </span>
+            </div>
+          </div>
 
           <div className="flex justify-end">
             <Button

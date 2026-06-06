@@ -1375,7 +1375,7 @@
       },
       "trialPolicy": {
         "title": "Chính sách học thử",
-        "desc": "Học viên có thể hủy đăng ký và được hoàn toàn bộ học phí bất kỳ lúc nào trước khi buổi học đầu tiên bắt đầu, hoặc sau khi hoàn thành buổi học đầu tiên như một buổi thử. Thù lao từ buổi 1 sẽ bị hoàn lại nếu học viên hủy trong thời gian học thử."
+        "desc": "Học viên có thể hủy đăng ký và được hoàn toàn bộ học phí bất kỳ lúc nào trước khi buổi học đầu tiên bắt đầu, hoặc sau khi hoàn thành buổi học đầu tiên như một buổi học thử. Thù lao từ buổi 1 sẽ bị hoàn lại nếu học viên hủy trong thời gian học thử."
       },
       "validation": {
         "titleRequired": "Vui lòng nhập tên khóa học",
@@ -1479,6 +1479,9 @@
       "sessionDescription": "Mô tả buổi học",
       "sessionOutcomes": "Mục tiêu buổi học",
       "resources": "Tài liệu",
+      "trialLesson": {
+        "banner": "Buổi học này là buổi 1 (học thử) của học viên. Học viên vẫn có thể hủy đăng ký để được hoàn tiền sau buổi này."
+      },
       "moduleLabel": "Module",
       "sessionLabel": "Buổi học",
       "lessonSummary": "Tóm tắt buổi học",

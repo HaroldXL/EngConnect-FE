@@ -1377,7 +1377,7 @@
       },
       "trialPolicy": {
         "title": "Free Trial Policy",
-        "desc": "Students may cancel their enrollment and receive a full refund at any time before the first session starts, or after completing the first session as a trial. Earnings from session 1 will be reversed if the student cancels within the trial window."
+        "desc": "Students may cancel their enrollment and receive a full refund at any time before the first session starts, or after completing the first session as a trial. Your earnings from session 1 will be reversed if the student cancels within the trial window."
       },
       "validation": {
         "titleRequired": "Course title is required",
@@ -1482,7 +1482,7 @@
       "sessionOutcomes": "Session Outcomes",
       "resources": "Resources",
       "trialLesson": {
-        "banner": "This is the student's first session (trial). They may still cancel the enrollment for a full refund after completing this session."
+        "banner": "This is the student\u2019s 1st session (trial). They may still cancel for a full refund after this session."
       },
       "moduleLabel": "Module",
       "sessionLabel": "Session",

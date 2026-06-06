@@ -287,7 +287,8 @@ const Schedule = () => {
         .filter(
           (l) =>
             new Date(l.startTime) > now &&
-            new Date(l.startTime).toDateString() !== todayStr,
+            new Date(l.startTime).toDateString() !== todayStr &&
+            l.status !== "Refund",
         )
         .sort((a, b) => new Date(a.startTime) - new Date(b.startTime)),
     [lessons, todayStr],

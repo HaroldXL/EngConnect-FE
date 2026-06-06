@@ -1029,8 +1029,8 @@ const LessonDetailModal = ({
                   )}
                 </div>
               )}
-              {/* Reschedule deadline — NoTutor */}
-              {effectiveDeadline && (
+              {/* Reschedule deadline — NoTutor, tutor view only */}
+              {!isStudentView && effectiveDeadline && (
                 <div
                   className="flex items-center gap-2 p-3 rounded-xl"
                   style={{

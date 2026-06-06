@@ -256,16 +256,10 @@ export const POLICIES = {
           heading: "Account and Profile",
           bullets: [
             "At sign-up, first and last names are required and limited to 50 characters each.",
-            "Username is required and limited to 30 characters.",
             "Email must be valid.",
             "Password must be at least 6 characters.",
-            "If you provide a phone number at sign-up, it must be in international format: optional + followed by 2-15 digits, starting with a non-zero digit.",
-            "Address number at sign-up is limited to 100 characters.",
             "On profile updates, first and last names are limited to 100 characters.",
-            "If you update your phone number, it must start with 84 or 03/05/07/08/09 and include 8 more digits.",
             "Address number on profile updates is limited to 255 characters.",
-            "Province and ward details must be provided as matching code + name pairs; you cannot submit only one of each pair.",
-            "Province code max 20 characters, province name max 100; ward code max 20, ward name max 100.",
             "Student profile fields: class and grade max 50 characters, school max 255, notes max 200.",
             "Avatar uploads must include a non-empty file with a filename extension.",
           ],
@@ -323,6 +317,9 @@ export const POLICIES = {
         {
           heading: "Refunds and Cancellations",
           bullets: [
+            "Students may cancel their enrollment and receive a full refund at any time before the first session starts.",
+            "After completing the first session (trial session), students may still cancel for a full refund before the second session begins — this is the platform's free-trial guarantee.",
+            "After the trial window closes (second session started or no cancellation submitted), the course is non-refundable except for tutor-absent lessons.",
             "Refunds are available only for lessons marked as a tutor-absent.",
             "Students must have valid bank details on file to receive a refund.",
             "Only one open tutor-absent refund request is allowed per lesson at a time.",
@@ -379,16 +376,9 @@ export const POLICIES = {
           heading: "Account and Profile",
           bullets: [
             "At sign-up, first and last names are required and limited to 50 characters each.",
-            "Username is required and limited to 30 characters.",
             "Email must be valid.",
             "Password must be at least 6 characters.",
-            "If you provide a phone number at sign-up, it must be in international format: optional + followed by 2-15 digits, starting with a non-zero digit.",
-            "Address number at sign-up is limited to 100 characters.",
             "On profile updates, first and last names are limited to 100 characters.",
-            "If you update your phone number, it must start with 84 or 03/05/07/08/09 and include 8 more digits.",
-            "Address number on profile updates is limited to 255 characters.",
-            "Province and ward details must be provided as matching code + name pairs; you cannot submit only one of each pair.",
-            "Province code max 20 characters, province name max 100; ward code max 20, ward name max 100.",
             "Tutor headline is limited to 255 characters.",
             "Tutor bio cannot be blank if you choose to provide it.",
             "If you provide any bank details, bank code and account number are required; account number max 50 characters and account name max 255.",
@@ -482,6 +472,7 @@ export const POLICIES = {
           heading: "Payments and Payouts",
           bullets: [
             "Tutor payout calculations use a monthly cutoff on the 25th at 00:00. Payouts are issued on the 28th at 09:00.",
+            "The platform offers a free-trial policy: students can cancel for a full refund before the first session starts, or after completing the first session before the second session begins. Earnings from the first session will be reversed if the student cancels within this trial window.",
           ],
         },
         {
@@ -521,16 +512,10 @@ export const POLICIES = {
           heading: "Tài khoản và Hồ sơ",
           bullets: [
             "Khi đăng ký, tên và họ là bắt buộc và giới hạn tối đa 50 ký tự cho mỗi trường.",
-            "Tên đăng nhập là bắt buộc và giới hạn tối đa 30 ký tự.",
             "Email phải hợp lệ.",
             "Mật khẩu phải có ít nhất 6 ký tự.",
-            "Nếu cung cấp số điện thoại khi đăng ký, số đó phải ở định dạng quốc tế: có thể bắt đầu bằng dấu + kèm theo 2-15 chữ số, bắt đầu bằng một chữ số khác 0.",
-            "Số nhà/địa chỉ khi đăng ký giới hạn tối đa 100 ký tự.",
             "Khi cập nhật hồ sơ, tên và họ giới hạn tối đa 100 ký tự.",
-            "Nếu cập nhật số điện thoại, số phải bắt đầu bằng 84 hoặc 03/05/07/08/09 và bao gồm thêm 8 chữ số.",
             "Số nhà/địa chỉ khi cập nhật hồ sơ giới hạn tối đa 255 ký tự.",
-            "Thông tin Tỉnh/Thành phố và Quận/Huyện/Phường/Xã phải được cung cấp theo cặp mã + tên; không được gửi thiếu một trong hai.",
-            "Mã tỉnh/thành tối đa 20 ký tự, tên tỉnh/thành tối đa 100; mã phường/xã tối đa 20, tên phường/xã tối đa 100.",
             "Các trường hồ sơ học viên: lớp và khối tối đa 50 ký tự, trường học tối đa 255, ghi chú tối đa 200.",
             "Tải lên ảnh đại diện phải bao gồm một tệp không rỗng có đuôi mở rộng hợp lệ.",
           ],
@@ -588,6 +573,9 @@ export const POLICIES = {
         {
           heading: "Hoàn tiền và Hủy khóa học",
           bullets: [
+            "Học viên có thể hủy đăng ký và được hoàn toàn bộ học phí bất kỳ lúc nào trước khi buổi học đầu tiên bắt đầu.",
+            "Sau khi hoàn thành buổi học đầu tiên (buổi học thử), học viên vẫn có thể hủy để được hoàn tiền 100% trước khi buổi học thứ hai bắt đầu — đây là chính sách học thử miễn phí của nền tảng.",
+            "Sau khi hết thời gian học thử (buổi học thứ hai đã bắt đầu hoặc chưa gửi yêu cầu hủy), khóa học không được hoàn tiền ngoại trừ các buổi học gia sư vắng mặt.",
             "Chỉ hoàn tiền cho các buổi học được ghi nhận là gia sư vắng mặt.",
             "Học viên phải có thông tin ngân hàng hợp lệ trên hệ thống để nhận hoàn tiền.",
             "Chỉ cho phép một yêu cầu hoàn tiền vì gia sư vắng mặt được mở tại một thời điểm cho mỗi buổi học.",
@@ -644,16 +632,9 @@ export const POLICIES = {
           heading: "Tài khoản và Hồ sơ",
           bullets: [
             "Khi đăng ký, tên và họ là bắt buộc và giới hạn 50 ký tự cho mỗi trường.",
-            "Tên đăng nhập là bắt buộc và giới hạn 30 ký tự.",
             "Email phải hợp lệ.",
             "Mật khẩu phải có ít nhất 6 ký tự.",
-            "Nếu cung cấp số điện thoại khi đăng ký, số đó phải ở định dạng quốc tế: có thể bắt đầu bằng dấu + kèm theo 2-15 chữ số, bắt đầu bằng một chữ số khác 0.",
-            "Số nhà/địa chỉ khi đăng ký giới hạn 100 ký tự.",
             "Khi cập nhật hồ sơ, tên và họ giới hạn 100 ký tự.",
-            "Nếu cập nhật số điện thoại, số phải bắt đầu bằng 84 hoặc 03/05/07/08/09 và bao gồm thêm 8 chữ số.",
-            "Số nhà/địa chỉ khi cập nhật hồ sơ giới hạn 255 ký tự.",
-            "Thông tin Tỉnh/Thành phố và Quận/Huyện/Phường/Xã phải được cung cấp theo cặp mã + tên; không được gửi thiếu một trong hai.",
-            "Mã tỉnh/thành tối đa 20 ký tự, tên tỉnh/thành tối đa 100; mã phường/xã tối đa 20, tên phường/xã tối đa 100.",
             "Tiêu đề hồ sơ gia sư giới hạn ở 255 ký tự.",
             "Phần giới thiệu bản thân của gia sư không được để trống nếu bạn chọn cung cấp.",
             "Nếu cung cấp chi tiết ngân hàng, mã ngân hàng và số tài khoản là bắt buộc; số tài khoản tối đa 50 ký tự và tên tài khoản tối đa 255 ký tự.",
@@ -747,6 +728,7 @@ export const POLICIES = {
           heading: "Thanh toán và Chi trả",
           bullets: [
             "Việc tính toán chi trả cho gia sư sử dụng mốc chốt hàng tháng vào lúc 00:00 ngày 25. Các khoản chi trả sẽ được phát hành vào lúc 09:00 ngày 28.",
+            "Nền tảng áp dụng chính sách học thử miễn phí: học viên có thể hủy đăng ký để được hoàn tiền 100% trước khi buổi học đầu tiên bắt đầu, hoặc sau khi hoàn thành buổi học đầu tiên trước khi buổi học thứ hai bắt đầu. Thu nhập từ buổi học đầu tiên sẽ bị hoàn lại nếu học viên hủy trong thời gian học thử này.",
           ],
         },
         {
@@ -795,6 +777,7 @@ export const OPERATIONAL = {
       {
         heading: "Refund / Risk / Dispute",
         bullets: [
+          "Free-trial refunds: if a student cancels before the first session starts, or after the first session but before the second begins, all lessons are fully refunded and any earnings from session 1 are reversed.",
           "If both tutor and student attend at least 80% of the scheduled time, the lesson is completed: no refund and full tutor payout.",
           "If the student attends less than 80% while the tutor attends at least 80%, there is no refund and full tutor payout.",
           "If the tutor attends less than 80% while the student attends at least 80%, the student receives a full refund for that lesson and the tutor receives no payout.",
@@ -820,6 +803,7 @@ export const OPERATIONAL = {
       {
         heading: "Hoàn tiền / Rủi ro / Tranh chấp",
         bullets: [
+          "Hoàn tiền học thử: nếu học viên hủy trước khi buổi học đầu tiên bắt đầu, hoặc sau buổi học đầu tiên nhưng trước khi buổi học thứ hai bắt đầu, toàn bộ các buổi học sẽ được hoàn tiền và thu nhập từ buổi 1 sẽ bị hoàn lại.",
           "Nếu cả gia sư và học viên tham gia ít nhất 80% thời gian theo lịch trình, buổi học được coi là hoàn thành: không hoàn tiền và chi trả toàn bộ cho gia sư.",
           "Nếu học viên tham gia dưới 80% trong khi gia sư tham gia ít nhất 80%, sẽ không hoàn tiền và chi trả toàn bộ cho gia sư.",
           "Nếu gia sư tham gia dưới 80% trong khi học viên tham gia ít nhất 80%, học viên sẽ được hoàn tiền 100% cho buổi học đó và gia sư không nhận khoản chi trả nào.",
