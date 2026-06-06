@@ -57,7 +57,7 @@
       },
       "earnings": {
         "title": "Thu nhập cạnh tranh",
-        "description": "Kiếm đến $50/giờ với hệ thống thanh toán minh bạch"
+        "description": "Kiếm thu nhập với hệ thống thanh toán minh bạch"
       },
       "support": {
         "title": "Hỗ trợ đầy đủ",
@@ -1372,6 +1372,10 @@
         "revert": "Khôi phục",
         "revertApplied": "Đã khôi phục phiên bản vào biểu mẫu. Lưu để áp dụng.",
         "close": "Đóng"
+      },
+      "trialPolicy": {
+        "title": "Chính sách học thử",
+        "desc": "Học viên có thể hủy đăng ký và được hoàn toàn bộ học phí bất kỳ lúc nào trước khi buổi học đầu tiên bắt đầu, hoặc sau khi hoàn thành buổi học đầu tiên như một buổi thử. Thù lao từ buổi 1 sẽ bị hoàn lại nếu học viên hủy trong thời gian học thử."
       },
       "validation": {
         "titleRequired": "Vui lòng nhập tên khóa học",

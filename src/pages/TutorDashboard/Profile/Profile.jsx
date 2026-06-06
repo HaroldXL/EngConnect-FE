@@ -624,12 +624,12 @@ const Profile = () => {
                     ))}
                   </div>
                 )}
-                <p
+                {/* <p
                   className="text-sm max-w-lg whitespace-pre-wrap"
                   style={{ color: colors.text.secondary }}
                 >
                   {tutorProfile?.bio}
-                </p>
+                </p> */}
               </div>
 
               {/* Stats hidden */}

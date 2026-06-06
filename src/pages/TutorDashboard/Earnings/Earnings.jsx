@@ -47,8 +47,9 @@ import useTableStyles from "../../../hooks/useTableStyles";
 import { motion } from "framer-motion";
 
 import { selectUser } from "../../../store";
-import { paymentApi, tutorApi } from "../../../api";
+import { paymentApi, tutorApi, studentApi } from "../../../api";
 import TutorWithdrawTicketModal from "../../../components/TutorWithdrawTicketModal/TutorWithdrawTicketModal";
+import LessonDetailModal from "../../../components/LessonDetailModal/LessonDetailModal";
 
 const formatVND = (amount) => {
   if (amount == null) return "0 ₫";
@@ -123,6 +124,11 @@ const Earnings = () => {
   const [refundTypeFilter, setRefundTypeFilter] = useState("");
   const [selectedRefund, setSelectedRefund] = useState(null);
   const [refundDetailOpen, setRefundDetailOpen] = useState(false);
+
+  // View lesson modal (from earnings row)
+  const [earningLesson, setEarningLesson] = useState(null);
+  const [earningLessonLoading, setEarningLessonLoading] = useState(false);
+  const [earningLessonOpen, setEarningLessonOpen] = useState(false);
 
   // ── Fetchers ────────────────────────────────────────
   useEffect(() => {
@@ -238,6 +244,20 @@ const Earnings = () => {
   useEffect(() => {
     if (activeTab === "course-sales") fetchSales();
   }, [activeTab, fetchSales]);
+
+  const openEarningLesson = async (lessonId) => {
+    setEarningLesson(null);
+    setEarningLessonOpen(true);
+    setEarningLessonLoading(true);
+    try {
+      const res = await studentApi.getLessonById(lessonId);
+      setEarningLesson(res?.data || null);
+    } catch {
+      setEarningLesson(null);
+    } finally {
+      setEarningLessonLoading(false);
+    }
+  };
 
   const fetchRefunds = useCallback(async () => {
     if (!user?.tutorId) return;
@@ -714,6 +734,9 @@ const Earnings = () => {
                   <TableColumn>
                     {t("tutorDashboard.earnings.status")}
                   </TableColumn>
+                  <TableColumn>
+                    {t("tutorDashboard.earnings.actions")}
+                  </TableColumn>
                 </TableHeader>
                 <TableBody
                   isLoading={earningsLoading}
@@ -776,6 +799,25 @@ const Earnings = () => {
                           {t(`tutorDashboard.earnings.statuses.${e.status}`) ||
                             e.status}
                         </Chip>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={
+                            <SquareBottomUp
+                              weight="BoldDuotone"
+                              className="w-4 h-4"
+                            />
+                          }
+                          onPress={() => openEarningLesson(e.lessonId)}
+                          style={{
+                            backgroundColor: `${colors.primary.main}15`,
+                            color: colors.primary.main,
+                          }}
+                        >
+                          {t("tutorDashboard.earnings.viewItems")}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -1374,6 +1416,17 @@ const Earnings = () => {
           </CardBody>
         </Card>
       )}
+
+      {/* View Lesson from Earnings Modal */}
+      <LessonDetailModal
+        isOpen={earningLessonOpen}
+        onClose={() => {
+          setEarningLessonOpen(false);
+          setEarningLesson(null);
+        }}
+        lesson={earningLessonLoading ? null : earningLesson}
+        role="tutor"
+      />
 
       {/* Withdraw Ticket Modal */}
       <TutorWithdrawTicketModal

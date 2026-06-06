@@ -2715,7 +2715,7 @@ const CreateCourse = () => {
                             cat.id,
                           );
                           const isDisabled =
-                            !isSelected && courseData.CategoryIds.length >= 3;
+                            !isSelected && courseData.CategoryIds.length >= 4;
                           return (
                             <button
                               key={cat.id}
@@ -2799,7 +2799,7 @@ const CreateCourse = () => {
                             cat.id,
                           );
                           const isDisabled =
-                            !isSelected && courseData.CategoryIds.length >= 3;
+                            !isSelected && courseData.CategoryIds.length >= 4;
                           return (
                             <button
                               key={cat.id}

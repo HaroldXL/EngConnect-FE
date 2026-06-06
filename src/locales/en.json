@@ -57,7 +57,7 @@
       },
       "earnings": {
         "title": "Competitive Earnings",
-        "description": "Earn up to $50/hour with our transparent payment system"
+        "description": "Earn money with our transparent payment system"
       },
       "support": {
         "title": "Full Support",
@@ -1375,6 +1375,10 @@
         "revertApplied": "Version restored to form. Save to apply changes.",
         "close": "Close"
       },
+      "trialPolicy": {
+        "title": "Free Trial Policy",
+        "desc": "Students may cancel their enrollment and receive a full refund at any time before the first session starts, or after completing the first session as a trial. Earnings from session 1 will be reversed if the student cancels within the trial window."
+      },
       "validation": {
         "titleRequired": "Course title is required",
         "shortDescRequired": "Short description is required",
@@ -1477,6 +1481,9 @@
       "sessionDescription": "Session Description",
       "sessionOutcomes": "Session Outcomes",
       "resources": "Resources",
+      "trialLesson": {
+        "banner": "This is the student's first session (trial). They may still cancel the enrollment for a full refund after completing this session."
+      },
       "moduleLabel": "Module",
       "sessionLabel": "Session",
       "lessonSummary": "Lesson Summary",

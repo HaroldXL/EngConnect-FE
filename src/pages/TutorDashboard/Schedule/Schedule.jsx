@@ -531,7 +531,7 @@ const Schedule = () => {
       case "Cancelled":
         return colors.state.error;
       case "Refund":
-        return colors.state.warning;
+        return colors.state.refund;
       case "InProgress":
         return colors.state.warning;
       case "NoStudent":
