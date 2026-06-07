@@ -228,7 +228,7 @@ const FinancialManagement = () => {
       const params = {
         page: ordersPage,
         "page-size": PAGE_SIZE,
-        "sort-params": "OrderNo-asc",
+        "sort-params": "CreatedAt-desc",
       };
       if (ordersDebSearch) params["search-term"] = ordersDebSearch;
       if (ordersStatus !== "All") params.Status = ordersStatus;
